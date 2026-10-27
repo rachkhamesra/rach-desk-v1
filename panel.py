@@ -2,9 +2,10 @@
 import numpy as np, pandas as pd
 
 
-def universe(parsed):
-    last = [d for d in sorted(parsed) if parsed[d]["fo"] is not None][-1]
-    return list(parsed[last]["fo"].index)
+def universe(parsed, requested=None):
+    last = [d for d in sorted(parsed) if parsed[d]["cm"] is not None][-1]
+    available = set(parsed[last]["cm"].index)
+    return [s for s in (requested or sorted(available)) if s in available]
 
 
 def wide(parsed, dates, symbols, part, col):

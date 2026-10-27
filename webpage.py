@@ -61,8 +61,10 @@ def table(head, rows, cls=""):
 
 
 # ------------------------------------------------------------------ tabs
-def tab_screen(M, n=30):
-    df = M["screen"].head(n); mx = df["ratio"].max(); rows = []
+def tab_screen(M, n=30, allowed=None):
+    df = M["screen"]
+    if allowed is not None: df = df[df.sym.isin(allowed)]
+    df = df.head(n).reset_index(drop=True); mx = df["ratio"].max(); rows = []
     for i, r in df.iterrows():
         bse = M["bse_share"][r.sym].iloc[-1]
         rows.append(f'<tr><td class="mut">{i + 1}</td><td class="l">{stk(r.sym, M)}</td><td>{fs(r.dq)}</td><td class="mut">{bse:.0f}</td>'
@@ -71,29 +73,37 @@ def tab_screen(M, n=30):
                     f'<td>{pct_badge(r.pct)}</td><td class="mut">{r.value_cr:,.0f}</td></tr>')
     head = [("#", "mut"), ("STOCK", "l"), ("DELIVERED", ""), ("BSE %", ""), (f"÷ 20-DAY AVG", "l"), ("DELIV %", ""), ("PX 1D", ""), ("SSF OI", ""), ("ΔOI 1D", ""), ("ΔOI %", ""), ("DELIV ÷ ΔOI", ""), (f"{M['hist_label']} PCT", ""), ("₹ CR", "")]
     return (f'<h2>1-day delivery vs 20-day average <span class="sub">TOP {n}</span></h2>'
-            f'<p class="desc">F&amp;O universe, {len(M["syms"])} names; shares, NSE + BSE. Deliv % = share of traded quantity that went home. {M["hist_label"]} pct = today\'s deliverable quantity against the stock\'s own history in this file ({M["N"]} sessions so far). '
+            f'<p class="desc">Selected universe, {len(allowed or M["syms"])} names; shares, NSE + BSE. Deliv % = share of traded quantity that went home. {M["hist_label"]} pct = today\'s deliverable quantity against the stock\'s own history in this file ({M["N"]} sessions so far). '
             f'The 20-day average is the mean of the previous 20 sessions\' delivered shares. Futures OI is shares summed over all expiries. ₹ cr = delivered value.</p>' + table(head, rows))
 
 
-def tab_persist(M, n=40):
-    df = M["persist"].head(n); mx = df["ratio"].max() if len(df) else 1; rows = []
+def tab_persist(M, n=40, allowed=None):
+    all_df = M["persist"]
+    if allowed is not None: all_df = all_df[all_df.sym.isin(allowed)]
+    df = all_df.head(n).reset_index(drop=True); mx = df["ratio"].max() if len(df) else 1; rows = []
     for i, r in df.iterrows():
         rows.append(f'<tr><td class="mut">{i + 1}</td><td class="l">{stk(r.sym, M)}</td><td>{int(r.d125)} <span class="mut">/</span> {int(r.d150)}</td><td class="l">{bar(r.ratio, mx)}<span class="bv">{r.ratio:.2f}×</span></td>'
                     f'<td>{fs(r.dq5)}</td><td>{r.delivpct:.1f}</td><td{heat(r.px5, 10)}>{pc(r.px5)}</td><td>{fs(r.oi)}</td><td{heat(r.doi_pct, 25)}>{fl(r.doi5)}</td><td{heat(r.doi_pct, 25)}>{pc(r.doi_pct)}</td>'
                     f'<td>{mult(r.d_over_doi)}</td><td>{pct_badge(r.pct)}</td></tr>')
     head = [("#", "mut"), ("STOCK", "l"), ("DAYS ≥1.25× / 1.5×", ""), ("5-DAY AVG ÷ 20D", "l"), ("5D DELIVERED", ""), ("DELIV %", ""), ("PX 5D", ""), ("SSF OI", ""), ("ΔOI 5D", ""), ("ΔOI %", ""), ("DELIV ÷ ΔOI", ""), (f"{M['hist_label']} PCT", "")]
-    q = len(M["persist"]); q15 = int((M["persist"]["d150"] >= 3).sum())
+    q = len(all_df); q15 = int((all_df["d150"] >= 3).sum())
     return (f'<h2>Persistent delivery <span class="sub">≥3 OF THE LAST 5 SESSIONS ABOVE 1.25× 20D</span></h2>'
             f'<p class="desc">{q} qualify ({q15} at 1.5×); sorted by 5-day average ÷ 20d (the 5-day mean of delivered shares over the mean of the 20 sessions before them). Price and OI change from {M["persist_from"]:%d %b}. '
             f'{M["hist_label"]} pct ranks the 5-day average against the stock\'s own rolling 5-day averages.</p>' + table(head, rows))
 
 
-def tab_rel(M):
-    active = M["active_ma"]; blocks = []
+def tab_rel(M, allowed=None):
+    active = M["active_ma"]; blocks = []; allowed = set(allowed or M["syms"])
+    cnt_top = pd.Series(0, index=M["syms"]); cnt_bot = pd.Series(0, index=M["syms"]); lists = {}
+    for name, _ in metrics.HORIZONS:
+        now = M["relT"][name].loc[list(allowed)].dropna(); prev = M["relPrev"][name].loc[list(allowed)].dropna()
+        top, bot = now.nlargest(metrics.LIST_N), now.nsmallest(metrics.LIST_N)
+        lists[name] = dict(top=top, bot=bot, new_top=set(top.index) - set(prev.nlargest(metrics.LIST_N).index), new_bot=set(bot.index) - set(prev.nsmallest(metrics.LIST_N).index))
+        cnt_top.loc[top.index] += 1; cnt_bot.loc[bot.index] += 1
     for k, (name, h) in enumerate(metrics.HORIZONS):
-        L = M["rel"][name]; parts = []
+        L = lists[name]; parts = []
         for side, title, col in (("top", "Outperformers", "g"), ("bot", "Underperformers", "r")):
-            ser = L[side]; newset = L["new_" + side]; cnt = M["cnt_top"] if side == "top" else M["cnt_bot"]; rows = []
+            ser = L[side]; newset = L["new_" + side]; cnt = cnt_top if side == "top" else cnt_bot; rows = []
             for s, v in ser.items():
                 cells = "".join(f'<td{heat(M["dist"][n][s].iloc[M["T"]], 25)}>{pc(M["dist"][n][s].iloc[M["T"]], 0)}</td>' if pd.notna(M["dist"][n][s].iloc[M["T"]]) else '<td class="mut">–</td>' for n in active)
                 strong = ' class="strong ' + col + '"' if cnt[s] >= 3 else ""
@@ -102,15 +112,17 @@ def tab_rel(M):
             parts.append(f'<div class="card"><div class="ch"><span class="ct {col}">{title}</span><span class="mut">{name}</span></div>{table(head, rows, "rel")}</div>')
         blocks.append(f'<div class="hz" data-h="{k}"{"" if k == 0 else " hidden"}>{"".join(parts)}</div>')
     btns = "".join(f'<button class="seg{" on" if k == 0 else ""}" data-h="{k}">{name}</button>' for k, (name, _) in enumerate(metrics.HORIZONS))
-    return (f'<h2>Relative performance</h2><div class="subl">TOP AND BOTTOM {metrics.LIST_N} OF {len(M["syms"])} VS NIFTY</div><div class="segs">{btns}</div>{"".join(blocks)}'
+    return (f'<h2>Relative performance</h2><div class="subl">TOP AND BOTTOM {metrics.LIST_N} OF {len(allowed)} VS NIFTY</div><div class="segs">{btns}</div>{"".join(blocks)}'
             f'<p class="desc">Rel % = return relative to the Nifty over the horizon ((1 + stock) ÷ (1 + Nifty) − 1); the numbered columns = % distance from that moving average (green above, red below, full depth at 25%). '
             f'A red bar = new on that list since the previous session; green / red bold ticker = on three or more of the five horizons.</p>')
 
 
-def tab_results(M):
+def tab_results(M, allowed=None):
     rows = []
     events = M.get("results", [])
+    allowed = set(allowed or M["syms"])
     for r in events:
+        if r["symbol"] not in allowed: continue
         hits = [x for x in r["sessions"] if x["hit"]]
         signal = ('<span class="rsig">PRE-RESULT ACTIVITY</span>' if hits else '<span class="mut">—</span>')
         trail = []
@@ -135,10 +147,11 @@ def tab_results(M):
             + table(head, rows, "results"))
 
 
-def tab_at(M):
+def tab_at(M, allowed=None):
     out = []
+    allowed = set(allowed or M["syms"])
     for n in M["active_ma"]:
-        items = M["at"][n]
+        items = [x for x in M["at"][n] if x["sym"] in allowed]
         chips = "".join(f'<span class="chip {"u" if x["above"] else "d"}{" cr" if x["crossed"] else ""}{" nw" if x["new"] else ""}" title="{x["dist"]:+.2f}% from the {n}-day average = {x["k"]:.2f} σ (σ = {x["sigma"]:.2f}% daily)">'
                         f'{"▲" if x["above"] else "▼"} <a class="stk" data-s="{esc(x["sym"])}">{esc(x["sym"])}</a></span>' for x in items) or '<span class="mut">none</span>'
         out.append(f'<div class="atrow"><div class="atn"><div class="big">{n}</div><div class="mut">{len(items)} NAMES</div></div><div class="chips">{chips}</div></div>')
@@ -163,7 +176,7 @@ def stocks_json(M):
                       rat=[nz(x, lambda v: round(float(v), 2)) for x in M["RAT"][s]], d=[nz(x, int) for x in M["dcode"][s]], oi=[nz(x, int) for x in M["OIadj"][s]], sm=sm,
                       ev=[[di[e["date"]], round(float(e["factor"]), 4), e["decision"]] for _, e in ev[ev["symbol"] == s].iterrows() if e["date"] in di and e["decision"] in ("auto", "accepted")])
     default = M["screen"]["sym"].iloc[0] if len(M["screen"]) else M["syms"][0]
-    return dict(dates=dates, mas=metrics.MA_SET, nifty=[nz(x, lambda v: round(float(v), 2)) for x in M["nifty"]], hz=[[n, h] for n, h in metrics.HORIZONS], default=default, stocks=out)
+    return dict(dates=dates, mas=metrics.MA_SET, nifty=[nz(x, lambda v: round(float(v), 2)) for x in M["nifty"]], hz=[[n, h] for n, h in metrics.HORIZONS], default=default, universes=M["memberships"], stocks=out)
 
 
 def tab_stocks(M):
@@ -178,11 +191,17 @@ def tab_stocks(M):
 def render(M, asof_text):
     M["hist_label"] = "1Y" if M["N"] < 600 else "3Y"
     data = json.dumps(stocks_json(M), separators=(",", ":"))
-    panels = [("stocks", "STOCKS", tab_stocks(M)), ("screen", "1-DAY SCREEN", tab_screen(M)), ("persist", "PERSISTENT DELIVERY", tab_persist(M)),
-              ("results", "RESULTS CALENDAR", tab_results(M)), ("rel", "RELATIVE PERFORMANCE", tab_rel(M)), ("at", "AT A MOVING AVERAGE", tab_at(M))]
+    choices = [("top1000", "TOP 1000"), ("nifty500", "NIFTY 500"), ("smallcap250", "NIFTY SMALLCAP 250"),
+               ("nifty250", "NIFTY 100 + MIDCAP 150"), ("nifty100", "NIFTY 100"), ("fo", "F&O")]
+    choices = [(k, label) for k, label in choices if M["memberships"].get(k)]
+    def views(fn):
+        return "".join(f'<div class="uview" data-u="{k}"{("" if k == "top1000" else " hidden")}>{fn(M, allowed=M["memberships"][k])}</div>' for k, _ in choices)
+    panels = [("stocks", "STOCKS", tab_stocks(M)), ("screen", "1-DAY SCREEN", views(tab_screen)), ("persist", "PERSISTENT DELIVERY", views(tab_persist)),
+              ("results", "RESULTS CALENDAR", views(tab_results)), ("rel", "RELATIVE PERFORMANCE", views(tab_rel)), ("at", "AT A MOVING AVERAGE", views(tab_at))]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}" data-t="{k}">{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
-    head = (f'<header><div class="brand">DESK</div><div class="meta">{asof_text}<br><span class="mut">{M["N"]} sessions since {M["dates"][0]:%d %b %Y} · {len(M["syms"])} F&amp;O names · NSE + BSE delivery</span></div></header>')
+    opts = "".join(f'<option value="{k}">{label}</option>' for k, label in choices)
+    head = (f'<header><div class="brand">DESK</div><div class="headright"><select id="universe" aria-label="Stock universe">{opts}</select><div class="meta">{asof_text}<br><span class="mut">{M["N"]} sessions since {M["dates"][0]:%d %b %Y} · top 1,000 NSE shares · NSE + BSE delivery</span></div></div></header>')
     foot = '<footer>Splits, bonuses and demergers are detected and adjusted automatically (prices, averages and delivered shares are all on today\'s share basis). Delivery % is shown for reference and never used to rank.</footer>'
     return (HTML.replace("%%CSS%%", CSS).replace("%%HEAD%%", head).replace("%%NAV%%", nav).replace("%%BODY%%", body + foot)
             .replace("%%DATA%%", data.replace("</", "<\\/")).replace("%%JS%%", JS).replace("%%TITLE%%", f"Desk · {M['dates'][-1]:%d %b %Y}"))
@@ -199,7 +218,8 @@ padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bott
 *,*::before,*::after{box-sizing:inherit}[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45}
 header{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;padding:18px 22px 12px;border-bottom:1px solid var(--line)}
-.brand{font-weight:800;letter-spacing:.18em;font-size:20px}.meta{font-family:var(--mono);font-size:12px;text-align:right}.mut{color:var(--mut)}
+.brand{font-weight:800;letter-spacing:.18em;font-size:20px}.headright{display:flex;align-items:center;gap:16px}.meta{font-family:var(--mono);font-size:12px;text-align:right}.mut{color:var(--mut)}
+#universe{font:700 12px var(--sans);letter-spacing:.06em;background:#f4f4f0;color:#0a0a0a;border:0;padding:10px 12px;max-width:250px}
 .tabs{display:flex;gap:4px;padding:10px 18px;border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
 .tab{font:600 13px var(--sans);letter-spacing:.09em;color:var(--mut);background:none;border:0;padding:11px 16px;cursor:pointer;white-space:nowrap}
 .tab.on{background:#f4f4f0;color:#0a0a0a}.tab:focus-visible,.seg:focus-visible,#mx:focus-visible{outline:2px solid var(--am);outline-offset:2px}
@@ -237,19 +257,20 @@ table.ca td.note{white-space:normal;min-width:340px;max-width:560px;color:#b9b9b
 #chartbox{background:var(--panel);padding:6px 4px 2px}#ch{display:block;width:100%;touch-action:pan-y}#ro{min-height:24px;font:13px var(--mono);color:#cfcfc8;padding:8px 4px}
 #lg{display:flex;flex-wrap:wrap;gap:6px 18px;font:12px var(--mono);color:var(--mut);padding:2px 4px 10px}#lg i{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px}#lg u{display:inline-block;width:18px;border-top:2px solid;margin-right:5px;vertical-align:middle}
 footer{max-width:1280px;margin:0 auto;padding:0 22px 40px;color:var(--mut);font-size:13px}
-@media (max-width:900px){.sx{grid-template-columns:1fr}.sl{position:static}#list{max-height:230px}.hd1 b{font-size:24px}header{flex-direction:column;align-items:flex-start}.meta{text-align:left}h2{font-size:25px}.desc{font-size:15px}.hz{grid-template-columns:1fr}table{font-size:13.5px}td{padding:11px 9px}.atrow{flex-direction:column;gap:12px}main{padding:6px 12px 50px}}
+@media (max-width:900px){.sx{grid-template-columns:1fr}.sl{position:static}#list{max-height:230px}.hd1 b{font-size:24px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:25px}.desc{font-size:15px}.hz{grid-template-columns:1fr}table{font-size:13.5px}td{padding:11px 9px}.atrow{flex-direction:column;gap:12px}main{padding:6px 12px 50px}}
 """
 
 JS = r"""
-const D=JSON.parse(document.getElementById('data').textContent),SY=Object.keys(D.stocks);
+const D=JSON.parse(document.getElementById('data').textContent),ALL=Object.keys(D.stocks);
 const COL={32:'#5aa9ff',50:'#f5a623',100:'#b58cff',200:'#ffd84d',233:'#3fd0a0',377:'#ff7aa2',610:'#9a9a94'};
 const G='#2fbf71',R='#ef5a4d',GL='rgba(47,191,113,.46)',RL='rgba(239,90,77,.46)',GR='#a3a39c',GRL='rgba(163,163,156,.30)';
-let cur=null,rng=252,thr=1.25;
+let cur=null,rng=252,thr=1.25,universe='top1000',SY=D.universes[universe]||ALL;
 function tab(t){const b=document.querySelector('.tab[data-t="'+t+'"]');if(b)b.click()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+b.dataset.t);if(b.dataset.t==='stocks'){draw()}});
-document.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
+document.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{const v=b.closest('.uview')||document;v.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
 document.querySelectorAll('.seg[data-r]').forEach(b=>b.onclick=()=>{rng=+b.dataset.r;document.querySelectorAll('.seg[data-r]').forEach(x=>x.classList.toggle('on',x===b));draw()});
 document.getElementById('thr').onchange=e=>{thr=+e.target.value;draw()};
+document.getElementById('universe').onchange=e=>{universe=e.target.value;SY=D.universes[universe]||ALL;document.querySelectorAll('.uview').forEach(v=>v.hidden=v.dataset.u!==universe);if(!SY.includes(cur))cur=SY[0]||D.default;list();draw()};
 function sma(a,n){const o=new Array(a.length).fill(null);let s=0,c=0;for(let i=0;i<a.length;i++){const v=a[i];if(v!=null){s+=v;c++}if(i>=n){const u=a[i-n];if(u!=null){s-=u;c--}}if(c===n&&i>=n-1)o[i]=s/n}return o}
 function fmt(x){if(x==null)return'–';const a=Math.abs(x);return a>=1e7?(x/1e7).toFixed(2)+' cr':a>=1e5?(x/1e5).toFixed(1)+' L':Math.round(x).toLocaleString()}
 function fL(x){return x==null?'–':(x>=0?'+':'−')+Math.abs(x/1e5).toLocaleString(undefined,{maximumFractionDigits:1,minimumFractionDigits:1})+' L'}
