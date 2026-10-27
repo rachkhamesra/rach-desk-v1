@@ -6,11 +6,26 @@ MA_SET = (32, 50, 100, 200, 233, 377, 610)
 HORIZONS = [("5 days", 5), ("20 days", 20), ("3 months", 63), ("6 months", 126), ("12 months", 252)]
 SIGMA_WINDOW = 60       # sessions of daily returns used for the 0.5 sigma "at a moving average" rule
 LIST_N = 30             # names per side in the relative-performance lists
+CASH_MAS = (50, 100, 200)
 
 
 def pctile(series, value):
     s = series.dropna()
     return float((s < value).mean() * 100) if len(s) > 20 and pd.notna(value) else np.nan
+
+
+def episode_state(flags, cooldown=2):
+    """Count qualifying days in an episode, retaining it through short pauses."""
+    hits, misses, last_hit = 0, cooldown + 1, None
+    for i, value in enumerate(flags):
+        is_hit = pd.notna(value) and bool(value)
+        if is_hit:
+            hits = hits + 1 if hits and misses <= cooldown else 1
+            misses, last_hit = 0, i
+        elif hits:
+            misses += 1
+            if misses > cooldown: hits, last_hit = 0, None
+    return dict(days=hits, cooldown=misses, last_hit=last_hit) if hits else None
 
 
 def build(parsed, overrides=None, memberships=None):
@@ -79,6 +94,24 @@ def build(parsed, overrides=None, memberships=None):
     M["ma"] = ma; M["active_ma"] = [n for n in MA_SET if N >= n + 1]
     M["inactive_ma"] = [(n, n + 1 - N) for n in MA_SET if N < n + 1]
     dist = {n: (C / ma[n] - 1) * 100 for n in MA_SET}; M["dist"] = dist
+
+    # ---------------- cash accumulation watch (F&O only)
+    oi_adj = M["OIadj"]; oi_change = oi_adj.diff(); active_cash_mas = [n for n in CASH_MAS if N >= n]
+    above = pd.DataFrame(True, index=C.index, columns=C.columns)
+    for n in active_cash_mas: above &= C > ma[n]
+    qualifies = (ret1 > 0) & (RAT > 1.0) & (oi_change < 0) & above
+    cash_rows = []
+    for s in memberships.get("fo", []):
+        state = episode_state(qualifies[s].tolist(), cooldown=2)
+        if not state: continue
+        i = state["last_hit"]; prior_oi = oi_adj[s].iloc[i - 1] if i else np.nan; delta = oi_change[s].iloc[i]
+        cash_rows.append(dict(sym=s, days=state["days"], cooldown=state["cooldown"], signal_date=dates[i],
+                              mas=" / ".join(str(n) for n in active_cash_mas), ratio=RAT[s].iloc[i], px1d=ret1[s].iloc[i] * 100,
+                              oi=oi_adj[s].iloc[i], doi=delta, doi_pct=delta / prior_oi * 100 if pd.notna(prior_oi) and prior_oi else np.nan,
+                              close=C[s].iloc[i]))
+    cash = pd.DataFrame(cash_rows)
+    if len(cash): cash = cash.sort_values(["cooldown", "days", "ratio"], ascending=[True, False, False]).reset_index(drop=True)
+    M["cash_accumulation"] = cash; M["cash_mas"] = active_cash_mas
 
     # ---------------- relative performance
     def rel_at(t, h):
