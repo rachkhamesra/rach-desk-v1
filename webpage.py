@@ -47,7 +47,12 @@ def pct_badge(p):
 
 def stk(s, M):
     w = ' <span class="warn" title="Unresolved price jump in this stock\'s history (see Corporate Actions). Moving averages may be distorted.">⚠</span>' if s in M["unresolved"] else ""
-    return f'<a class="stk" data-s="{esc(s)}">{esc(s)}</a>{w}'
+    upcoming = [r for r in M.get("results", []) if r["symbol"] == s and r["event_date"].normalize() >= M["dates"][-1].normalize()]
+    result = ""
+    if upcoming:
+        event = min(upcoming, key=lambda r: r["event_date"])
+        result = f' <span class="resultmark" title="Upcoming result: {event["event_date"]:%d %b %Y}">R</span>'
+    return f'<a class="stk" data-s="{esc(s)}">{esc(s)}</a>{result}{w}'
 
 
 def bar(v, mx):
@@ -166,14 +171,21 @@ def tab_at(M, allowed=None):
 def stocks_json(M):
     dates = [f"{d:%Y-%m-%d}" for d in M["dates"]]; out = {}; T = M["T"]
     ev = M["events"]; di = {d: i for i, d in enumerate(M["dates"])}
+    upcoming = {}
+    for r in M.get("results", []):
+        if r["event_date"].normalize() < M["dates"][-1].normalize(): continue
+        old = upcoming.get(r["symbol"])
+        if old is None or r["event_date"] < old["event_date"]: upcoming[r["symbol"]] = r
     nz = lambda x, f=float: None if x is None or pd.isna(x) else f(x)
     for s in M["syms"]:
         rel = [[nz(M["relT"][name][s], lambda v: round(float(v), 2)), nz(M["relrank"][name][s], int)] for name, _ in metrics.HORIZONS]
         sm = dict(px=nz(M["ret1"][s].iloc[T] * 100, lambda v: round(float(v), 2)), ratio=nz(M["RAT"][s].iloc[T], lambda v: round(float(v), 2)),
                   dp=nz(M["dq_raw"][s].iloc[T] / M["tq_raw"][s].iloc[T] * 100, lambda v: round(float(v), 1)), bse=nz(M["bse_share"][s].iloc[T], lambda v: round(float(v), 0)),
                   oi=nz(M["oi"][s].iloc[T], int), doi=nz(M["doi"][s].iloc[T], int), dq=nz(M["DQ"][s].iloc[T], int), rel=rel)
+        result = upcoming.get(s)
         out[s] = dict(c=[nz(x, lambda v: round(float(v), 2)) for x in M["C"][s]], dq=[nz(x, int) for x in M["DQ"][s]],
                       rat=[nz(x, lambda v: round(float(v), 2)) for x in M["RAT"][s]], d=[nz(x, int) for x in M["dcode"][s]], oi=[nz(x, int) for x in M["OIadj"][s]], sm=sm,
+                      result=None if result is None else dict(date=f'{result["event_date"]:%Y-%m-%d}', status=result["status"]),
                       ev=[[di[e["date"]], round(float(e["factor"]), 4), e["decision"]] for _, e in ev[ev["symbol"] == s].iterrows() if e["date"] in di and e["decision"] in ("auto", "accepted")])
     default = M["screen"]["sym"].iloc[0] if len(M["screen"]) else M["syms"][0]
     return dict(dates=dates, mas=metrics.MA_SET, nifty=[nz(x, lambda v: round(float(v), 2)) for x in M["nifty"]], hz=[[n, h] for n, h in metrics.HORIZONS], default=default, universes=M["memberships"], stocks=out)
@@ -185,7 +197,9 @@ def tab_stocks(M):
             '<div id="list"></div></aside><div class="sr"><div id="sh"></div>'
             '<div class="rb"><span class="mut">RANGE</span><button class="seg on" data-r="252">1Y</button><button class="seg" data-r="126">6M</button><button class="seg" data-r="63">3M</button>'
             '<span class="mut" style="margin-left:18px">ABOVE-AVERAGE DELIVERY</span><select id="thr"><option value="1">1.0×</option><option value="1.25" selected>1.25×</option><option value="1.5">1.5×</option><option value="2">2.0×</option></select></div>'
-            '<div id="chartbox"><svg id="ch"></svg></div><div id="ro"></div><div id="lg"></div></div></div>')
+            '<div class="chartgrid"><div class="charts"><div id="chartbox" class="chartcard"><svg id="ch"></svg></div>'
+            '<div class="chartcard"><svg id="rsch"></svg></div><div class="chartcard"><svg id="oich"></svg></div>'
+            '<div id="ro"></div><div id="lg"></div></div><aside id="insights"></aside></div></div></div>')
 
 
 def render(M, asof_text):
@@ -234,6 +248,7 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .warn{color:var(--am);font-size:12px}.bar{display:inline-block;height:12px;background:#f4f4f0;border-radius:3px;vertical-align:middle;margin-right:10px}.bv{display:inline-block;min-width:56px}
 .pb{display:inline-block;min-width:44px;padding:6px 8px;border-radius:3px;color:#fff;background:#222;text-align:center}
 .rsig{display:inline-block;padding:5px 8px;background:var(--am);color:#0a0a0a;font:700 11px var(--sans);letter-spacing:.06em}.rhit{background:rgba(232,169,58,.2);color:#ffd17a}.src{color:var(--ink)}.rempty{padding:22px;color:var(--mut)}
+.resultmark{display:inline-grid!important;place-items:center;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--am);color:#090909!important;font:800 9px var(--sans)!important;vertical-align:2px;cursor:help}
 .segs{display:flex;gap:0;margin:0 0 16px;border:2px solid #f4f4f0;width:max-content;max-width:100%;overflow-x:auto}.seg{font:600 15px var(--sans);color:var(--ink);background:none;border:0;padding:12px 22px;cursor:pointer;white-space:nowrap}.seg.on{background:#f4f4f0;color:#0a0a0a}
 .hz{display:grid;grid-template-columns:1fr 1fr;gap:20px}.ch{display:flex;justify-content:space-between;padding:20px 18px 6px}.ct{font-size:22px;font-weight:700}.g{color:var(--g)}.r{color:var(--r)}
 table.rel td,table.rel th{padding:11px 12px}tr.newrow td.tk{box-shadow:inset 5px 0 var(--r)}span.strong.g a{color:var(--g)}span.strong.r a{color:var(--r)}
@@ -254,10 +269,12 @@ table.ca td.note{white-space:normal;min-width:340px;max-width:560px;color:#b9b9b
 .chips2{display:flex;flex-wrap:wrap;gap:5px 17px;margin-top:7px;font:11px var(--mono)}.chips2 div span{display:block;color:var(--mut);font:600 9px var(--sans);letter-spacing:.08em;margin-bottom:1px}
 .rsrow{display:flex;flex-wrap:wrap;gap:5px 14px;margin-top:7px;padding-top:7px;border-top:1px solid var(--line);font:11px var(--mono)}.rsrow span{color:var(--mut)}
 .rb{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:7px 0 6px;font:600 10px var(--sans);letter-spacing:.08em}.rb .seg{padding:5px 10px;font-size:11px;border:1px solid #444}
-#chartbox{background:var(--panel);padding:6px 4px 2px}#ch{display:block;width:100%;touch-action:pan-y}#ro{min-height:24px;font:13px var(--mono);color:#cfcfc8;padding:8px 4px}
+#chartbox{padding-top:6px}.chartgrid{display:grid;grid-template-columns:minmax(0,2fr) minmax(250px,1fr);gap:10px}.charts{min-width:0}.chartcard{background:var(--panel);padding:3px 4px 1px;margin-bottom:8px}.chartcard svg{display:block;width:100%;touch-action:pan-y}
+#insights{background:var(--panel);border-top:3px solid #f4f4f0;padding:12px;align-self:start;position:sticky;top:58px;max-height:calc(100vh - 80px);overflow:auto}.ititle{font:800 12px var(--sans);letter-spacing:.1em;margin-bottom:9px}.resultbox{background:rgba(232,169,58,.15);border-left:3px solid var(--am);padding:10px;margin-bottom:12px}.resultbox b{display:block;color:#ffd17a}.ievent{padding:9px 0;border-top:1px solid var(--line);font:11px var(--mono)}.ievent .idate{color:var(--mut);margin-right:7px}.itag{display:inline-block;font:800 9px var(--sans);letter-spacing:.06em;padding:3px 5px;margin-right:6px;background:#292929}.itag.del{color:#fff}.itag.oi{color:#8fc0ff}.inone{color:var(--mut);font-size:12px;line-height:1.5}
+#ro{min-height:22px;font:11px var(--mono);color:#cfcfc8;padding:5px 4px}
 #lg{display:flex;flex-wrap:wrap;gap:6px 18px;font:12px var(--mono);color:var(--mut);padding:2px 4px 10px}#lg i{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px}#lg u{display:inline-block;width:18px;border-top:2px solid;margin-right:5px;vertical-align:middle}
 footer{max-width:1280px;margin:0 auto;padding:0 22px 40px;color:var(--mut);font-size:13px}
-@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}
+@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.chartgrid{grid-template-columns:1fr}#insights{position:static;max-height:none}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}
 """
 
 JS = r"""
@@ -280,14 +297,14 @@ function cls(x){return x==null?'':x>=0?'g':'r'}
 function list(){const q=document.getElementById('q').value.trim().toUpperCase(),so=document.getElementById('sort').value;
  const key={az:s=>s,ratio:s=>-(D.stocks[s].sm.ratio??-1e9),px:s=>-(D.stocks[s].sm.px??-1e9),rs:s=>-(D.stocks[s].sm.rel[1][0]??-1e9)}[so];
  const a=SY.filter(s=>!q||s.includes(q)).sort((x,y)=>{const a=key(x),b=key(y);return a<b?-1:a>b?1:0});
- document.getElementById('list').innerHTML=a.map(s=>{const m=D.stocks[s].sm;return `<div class="li${s===cur?' on':''}" data-s="${s}" tabindex="-1"><b>${s}</b><span class="${cls(m.px)}">${pc(m.px)}</span><span class="mut">${m.ratio==null?'–':m.ratio.toFixed(1)+'×'}</span></div>`}).join('')||'<div class="li mut">No match</div>'}
+ document.getElementById('list').innerHTML=a.map(s=>{const m=D.stocks[s].sm,r=D.stocks[s].result?'<span class="resultmark" title="Upcoming result">R</span>':'';return `<div class="li${s===cur?' on':''}" data-s="${s}" tabindex="-1"><b>${s} ${r}</b><span class="${cls(m.px)}">${pc(m.px)}</span><span class="mut">${m.ratio==null?'–':m.ratio.toFixed(1)+'×'}</span></div>`}).join('')||'<div class="li mut">No match</div>'}
 document.getElementById('q').oninput=list;document.getElementById('sort').onchange=list;
 document.getElementById('q').onkeydown=e=>{if(e.key==='Enter'){const f=document.querySelector('#list .li[data-s]');if(f)pick(f.dataset.s)}};
 document.getElementById('list').onclick=e=>{const li=e.target.closest('.li[data-s]');if(li)pick(li.dataset.s)};
 function pick(s){cur=s;list();draw();history.replaceState(null,'','#'+s);if(document.activeElement)document.activeElement.blur();if(window.innerWidth<900)document.getElementById('sh').scrollIntoView({behavior:'smooth',block:'start'})}
 document.addEventListener('click',e=>{const a=e.target.closest('a.stk');if(a){e.preventDefault();tab('stocks');cur=a.dataset.s;list();draw();history.replaceState(null,'','#'+cur);window.scrollTo(0,0)}});
 /* ---------- chart ---------- */
-function draw(){
+function drawLegacy(){
  if(!cur||document.getElementById('p-stocks').hidden)return;
  const S=D.stocks[cur],n=S.c.length,v0=Math.max(0,n-rng),box=document.getElementById('chartbox'),W=Math.max(320,Math.min(1460,box.clientWidth-8)),sm=W<560,fs=sm?9:10,L=sm?42:54,Rr=8;
  const H=sm?[150,62,58,46,46]:[205,76,70,54,54],gap=sm?18:21,tops=[6];for(let k=1;k<5;k++)tops.push(tops[k-1]+H[k-1]+gap);const TH=tops[4]+H[4]+18;
@@ -328,18 +345,40 @@ function draw(){
  const svg=document.getElementById('ch');svg.setAttribute('viewBox',`0 0 ${W} ${TH}`);svg.setAttribute('width',W);svg.setAttribute('height',TH);svg.innerHTML=g;
  /* header */
  const m=S.sm,last=S.c[n-1],lastOI=S.oi[n-1],dOI=dl[n-1],up=S.c[n-1]>=S.c[n-2];
- const bu=dOI==null?'–':dOI>=0?(up?'Long build-up':'Short build-up'):(up?'Short covering':'Long unwinding'),buc=dOI==null?'':(up?'g':'r');
+ const bu=dOI==null?'–':dOI>=0?(up?'Long Buildup':'Cash Selling'):(up?'Cash Buying':'Long Unwind'),buc=dOI==null?'':(up?'g':'r');
  const rs=D.hz.map((h,k)=>{const r=m.rel[k];return `<div><span>${h[0].toUpperCase()}</span><b class="${cls(r[0])}">${pc(r[0])}</b> <i class="mut" style="font-style:normal">#${r[1]??'–'}/${SY.length}</i></div>`}).join('');
  document.getElementById('sh').innerHTML=`<div class="hd1"><b>${cur}</b><span class="px">${last==null?'–':last.toFixed(2)}</span><span class="${cls(m.px)}">${pc(m.px,2)}</span></div>
  <div class="chips2"><div><span>DELIVERED</span>${fmt(m.dq)}</div><div><span>÷ 20D AVG</span>${m.ratio==null?'–':m.ratio.toFixed(2)+'×'}</div><div><span>DELIV %</span>${m.dp==null?'–':m.dp.toFixed(1)}</div><div><span>BSE %</span>${m.bse==null?'–':m.bse.toFixed(0)}</div>
  <div><span>SSF OI</span>${fmt(lastOI)}</div><div><span>ΔOI 1D</span><b class="${cls(dOI)}">${fL(dOI)}</b></div><div><span>OI BUILD-UP</span><b class="${buc}">${bu}</b></div></div>
  <div class="rsrow">${rs}</div>`;
  /* legend + hover */
- document.getElementById('lg').innerHTML=mas.map(([m])=>`<span><u style="border-color:${COL[m]}"></u>${m}</span>`).join('')+`<span><u style="border-color:#fff"></u>price</span><span><i style="background:${G}"></i>up, delivery ≥${thr}× avg</span><span><i style="background:${GL}"></i>up, lower delivery</span><span><i style="background:${R}"></i>down, delivery ≥${thr}× avg</span><span><i style="background:${RL}"></i>down, lower delivery</span><span><i style="background:${GR}"></i>move under 0.5σ (grey)</span><span>OI bars: dark green = long build-up, dark red = short build-up, light green = short covering, light red = long unwinding</span>`;
+ document.getElementById('lg').innerHTML=mas.map(([m])=>`<span><u style="border-color:${COL[m]}"></u>${m}</span>`).join('')+`<span><u style="border-color:#fff"></u>price</span><span><i style="background:${G}"></i>Long Buildup</span><span><i style="background:#5aa9ff"></i>Cash Buying</span><span><i style="background:${R}"></i>Cash Selling</span><span><i style="background:#e8a93a"></i>Long Unwind</span>`;
  const ro=document.getElementById('ro');ro.innerHTML='<span class="mut">Move over the chart for daily detail</span>';
  const mv=e=>{const r=svg.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W;let i=Math.round(v0+(x-L)*(n-1-v0)/(W-L-Rr));i=Math.max(v0,Math.min(n-1,i));const xh=document.getElementById('xh');xh.setAttribute('x1',xs(i));xh.setAttribute('x2',xs(i));xh.setAttribute('visibility','visible');
   const ch=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null;ro.innerHTML=`${D.dates[i]} · close ${S.c[i]??'–'} <span class="${cls(ch)}">${pc(ch,2)}</span> · delivered ${fmt(S.dq[i])} (${S.rat[i]==null?'–':S.rat[i].toFixed(2)+'× avg'}) · ΔOI ${fL(dl[i])}`};
  svg.onpointermove=mv;svg.onpointerdown=mv;svg.onpointerleave=()=>{document.getElementById('xh').setAttribute('visibility','hidden')};
+}
+function draw(){
+ if(!cur||document.getElementById('p-stocks').hidden)return;
+ const S=D.stocks[cur],n=S.c.length,v0=Math.max(0,n-rng),box=document.getElementById('chartbox'),W=Math.max(320,box.clientWidth-8),sm=W<560,fs=sm?9:10,L=sm?42:54,Rr=8;
+ const xs=i=>L+(i-v0)*(W-L-Rr)/Math.max(1,n-1-v0),bw=Math.max(1,(W-L-Rr)/(n-v0)*.72);
+ const line=(a,y,col,sw=1.5,dash=null,map=v=>v)=>{let d='',pen=false;for(let i=v0;i<n;i++){const v=a[i];if(v==null){pen=false;continue}d+=(pen?'L':'M')+xs(i).toFixed(1)+','+y(map(v)).toFixed(1);pen=true}return `<path d="${d}" fill="none" stroke="${col}" stroke-width="${sw}"${dash?' stroke-dasharray="'+dash+'"':''} stroke-linejoin="round"/>`};
+ const frame=(lo,hi,H,title,format=v=>v.toFixed(0))=>{const y=v=>8+(1-(v-lo)/(hi-lo||1))*(H-18);let g=`<text x="${L+4}" y="18" fill="#77776f" font-size="${fs}" font-family="monospace" letter-spacing="1">${title}</text>`;for(let j=0;j<=2;j++){const v=lo+(hi-lo)*j/2,yy=y(v);g+=`<line x1="${L}" x2="${W-Rr}" y1="${yy}" y2="${yy}" stroke="#222"/><text x="${L-5}" y="${yy+3}" fill="#77776f" font-size="${fs}" text-anchor="end" font-family="monospace">${format(v)}</text>`}return [y,g]};
+ const setsvg=(id,H,g)=>{const s=document.getElementById(id);s.setAttribute('viewBox',`0 0 ${W} ${H}`);s.setAttribute('width',W);s.setAttribute('height',H);s.innerHTML=g;return s};
+ const mas=D.mas.filter(m=>n>=m+1).map(m=>[m,sma(S.c,m)]),PH=sm?150:190,DH=sm?62:72,gap=18,MH=PH+DH+gap;
+ let lo=1e18,hi=-1e18;for(let i=v0;i<n;i++){const v=S.c[i];if(v!=null){lo=Math.min(lo,v);hi=Math.max(hi,v)}}const lo0=lo,hi0=hi;mas.forEach(([,a])=>{for(let i=v0;i<n;i++){const v=a[i];if(v!=null&&v>lo0*.8&&v<hi0*1.25){lo=Math.min(lo,v);hi=Math.max(hi,v)}}});let pad=(hi-lo)*.05||1;lo-=pad;hi+=pad;
+ let [yp,g]=frame(lo,hi,PH,sm?'PRICE · AVERAGES':'PRICE (ADJUSTED) · MOVING AVERAGES',v=>v.toFixed(v>=1000?0:1));mas.forEach(([m,a])=>g+=line(a,yp,COL[m],m===200?1.9:1.3));g+=line(S.c,yp,'#fff',1.8);
+ const avg=new Array(n).fill(null);for(let i=20;i<n;i++){let s=0,c=0;for(let j=i-20;j<i;j++)if(S.dq[j]!=null){s+=S.dq[j];c++}if(c>=15)avg[i]=s/c}let dmax=0;for(let i=v0;i<n;i++)dmax=Math.max(dmax,S.dq[i]||0,avg[i]||0);dmax*=1.05;
+ const yd=v=>PH+gap+(1-v/(dmax||1))*(DH-12);g+=`<text x="${L+4}" y="${PH+gap+11}" fill="#77776f" font-size="${fs}" font-family="monospace" letter-spacing="1">DELIVERED SHARES · DASHED = 20D AVG</text>`;for(let i=v0;i<n;i++){const q=S.dq[i];if(q==null)continue;const hot=(S.rat[i]??0)>=thr,d=S.d[i],col=d===0?(hot?GR:GRL):d===1?(hot?G:GL):(hot?R:RL),h=q/(dmax||1)*(DH-12);g+=`<rect x="${(xs(i)-bw/2).toFixed(1)}" y="${(PH+gap+DH-h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" fill="${col}"/>`}g+=line(avg,yd,'#e8e8e2',1.2,'4 3');
+ S.ev.forEach(([i,f])=>{if(i<v0)return;const x=xs(i);g+=`<line x1="${x}" x2="${x}" y1="8" y2="${MH}" stroke="${G}" stroke-dasharray="4 3" opacity=".7"/><text x="${x+4}" y="31" fill="${G}" font-size="${fs}" font-family="monospace">adjusted ×${f}</text>`});[v0,Math.round((v0+n-1)/2),n-1].forEach(i=>g+=`<text x="${xs(i)}" y="${MH-2}" fill="#77776f" font-size="${fs}" text-anchor="${i===v0?'start':i===n-1?'end':'middle'}" font-family="monospace">${D.dates[i]}</text>`);g+=`<line id="xh" x1="0" x2="0" y1="8" y2="${MH-14}" stroke="#aaa" visibility="hidden"/>`;const main=setsvg('ch',MH,g);
+ const RH=sm?74:92,rsf=S.c.map((v,i)=>v!=null&&D.nifty[i]!=null?v/D.nifty[i]:null),rsm=sma(rsf,50);let base=null;for(let i=v0;i<n;i++)if(rsf[i]!=null){base=rsf[i];break}let rg='';if(base){const rb=v=>v/base*100;let rlo=1e18,rhi=-1e18;for(let i=v0;i<n;i++)for(const v of [rsf[i],rsm[i]])if(v!=null){rlo=Math.min(rlo,rb(v));rhi=Math.max(rhi,rb(v))}const rp=(rhi-rlo)*.08||1;rlo-=rp;rhi+=rp;let yr;[yr,rg]=frame(rlo,rhi,RH,'RELATIVE STRENGTH VS NIFTY · ORANGE = 50D AVG',v=>v.toFixed(0));rg+=line(rsm,yr,'#f5a623',1.3,null,rb)+line(rsf,yr,'#fff',1.7,null,rb)}setsvg('rsch',RH,rg);
+ const OH=sm?78:98,dl=new Array(n).fill(null);let omax=0;for(let i=1;i<n;i++){if(S.oi[i]!=null&&S.oi[i-1]!=null)dl[i]=S.oi[i]-S.oi[i-1];if(i>=v0)omax=Math.max(omax,S.oi[i]||0)}let [yo,og]=frame(0,omax*1.05||1,OH,'TOTAL SSF OPEN INTEREST · COLOUR = PRICE/OI BEHAVIOUR',fmt);if(omax){for(let i=v0;i<n;i++){const oi=S.oi[i];if(oi==null)continue;const up=i>0&&S.c[i]!=null&&S.c[i-1]!=null&&S.c[i]>=S.c[i-1],od=dl[i],col=od==null?'#555':od>=0?(up?G:R):(up?'#5aa9ff':'#e8a93a'),h=OH-18-yo(oi);og+=`<rect x="${(xs(i)-bw/2).toFixed(1)}" y="${yo(oi).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(.5,h).toFixed(1)}" fill="${col}"/>`}}else og+=`<text x="${L+4}" y="${OH/2}" fill="#555" font-size="${fs}" font-family="monospace">not in F&amp;O for this period</text>`;setsvg('oich',OH,og);
+ const m=S.sm,last=S.c[n-1],lastOI=S.oi[n-1],dOI=dl[n-1],up=S.c[n-1]>=S.c[n-2],bu=dOI==null?'–':dOI>=0?(up?'Long Buildup':'Cash Selling'):(up?'Cash Buying':'Long Unwind'),buc=dOI==null?'':bu==='Long Buildup'?'g':bu==='Cash Selling'?'r':'';
+ const rs=D.hz.map((h,k)=>{const r=m.rel[k];return `<div><span>${h[0].toUpperCase()}</span><b class="${cls(r[0])}">${pc(r[0])}</b> <i class="mut" style="font-style:normal">#${r[1]??'–'}/${SY.length}</i></div>`}).join(''),rbadge=S.result?`<span class="resultmark" title="Upcoming result">R</span>`:'';
+ document.getElementById('sh').innerHTML=`<div class="hd1"><b>${cur}</b>${rbadge}<span class="px">${last==null?'–':last.toFixed(2)}</span><span class="${cls(m.px)}">${pc(m.px,2)}</span></div><div class="chips2"><div><span>DELIVERED</span>${fmt(m.dq)}</div><div><span>÷ 20D AVG</span>${m.ratio==null?'–':m.ratio.toFixed(2)+'×'}</div><div><span>DELIV %</span>${m.dp==null?'–':m.dp.toFixed(1)}</div><div><span>BSE %</span>${m.bse==null?'–':m.bse.toFixed(0)}</div><div><span>SSF OI</span>${fmt(lastOI)}</div><div><span>ΔOI 1D</span><b class="${cls(dOI)}">${fL(dOI)}</b></div><div><span>OI SIGNAL</span><b class="${buc}">${bu}</b></div></div><div class="rsrow">${rs}</div>`;
+ const events=[];for(let i=Math.max(1,n-30);i<n;i++){const move=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null;if((S.rat[i]??0)>=1.5)events.push({i,kind:'del',txt:`${S.rat[i].toFixed(2)}× delivery · ${pc(move)}`});if(dl[i]!=null&&S.oi[i-1]){const op=dl[i]/S.oi[i-1]*100;if(Math.abs(op)>=3){const pu=move>=0,label=dl[i]>=0?(pu?'Long Buildup':'Cash Selling'):(pu?'Cash Buying':'Long Unwind');events.push({i,kind:'oi',txt:`${label} · ${pc(op)} OI`})}}}events.sort((a,b)=>b.i-a.i);let ih='<div class="ititle">RECENT ACTIVITY · 30 SESSIONS</div>';if(S.result)ih+=`<div class="resultbox"><b>UPCOMING RESULT</b>${S.result.date} · ${S.result.status}</div>`;ih+=events.length?events.slice(0,14).map(e=>`<div class="ievent"><span class="idate">${D.dates[e.i].slice(5)}</span><span class="itag ${e.kind}">${e.kind==='del'?'DELIVERY':'OI'}</span>${e.txt}</div>`).join(''):'<div class="inone">No delivery ≥1.5× average or daily OI move ≥3% in the last 30 sessions.</div>';document.getElementById('insights').innerHTML=ih;
+ document.getElementById('lg').innerHTML=mas.map(([m])=>`<span><u style="border-color:${COL[m]}"></u>${m}</span>`).join('')+`<span><u style="border-color:#fff"></u>price / RS</span><span><i style="background:${G}"></i>Long Buildup</span><span><i style="background:#5aa9ff"></i>Cash Buying</span><span><i style="background:${R}"></i>Cash Selling</span><span><i style="background:#e8a93a"></i>Long Unwind</span>`;
+ const ro=document.getElementById('ro');ro.innerHTML='<span class="mut">Move over the price chart for daily detail</span>';const mv=e=>{const r=main.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W;let i=Math.round(v0+(x-L)*(n-1-v0)/(W-L-Rr));i=Math.max(v0,Math.min(n-1,i));const xh=document.getElementById('xh');xh.setAttribute('x1',xs(i));xh.setAttribute('x2',xs(i));xh.setAttribute('visibility','visible');const ch=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null;ro.innerHTML=`${D.dates[i]} · close ${S.c[i]??'–'} <span class="${cls(ch)}">${pc(ch,2)}</span> · delivered ${fmt(S.dq[i])} (${S.rat[i]==null?'–':S.rat[i].toFixed(2)+'× avg'}) · OI ${fmt(S.oi[i])} · ΔOI ${fL(dl[i])}`};main.onpointermove=mv;main.onpointerdown=mv;main.onpointerleave=()=>document.getElementById('xh').setAttribute('visibility','hidden');
 }
 let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,120)});
 const h0=location.hash.slice(1);cur=D.stocks[h0]?h0:D.default;list();draw();
