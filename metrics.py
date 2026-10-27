@@ -13,8 +13,12 @@ def pctile(series, value):
     return float((s < value).mean() * 100) if len(s) > 20 and pd.notna(value) else np.nan
 
 
-def build(parsed, overrides=None):
-    dates = sorted(parsed); syms = panel.universe(parsed); N = len(dates); T = N - 1
+def build(parsed, overrides=None, memberships=None):
+    dates = sorted(parsed); memberships = memberships or {}
+    fo_date = [d for d in dates if parsed[d]["fo"] is not None][-1]
+    memberships["fo"] = list(parsed[fo_date]["fo"].index)
+    requested = list(dict.fromkeys(memberships.get("top1000", []) + sum((memberships.get(k, []) for k in ("nifty500", "smallcap250", "nifty250", "nifty100", "fo")), [])))
+    syms = panel.universe(parsed, requested); N = len(dates); T = N - 1
     W = lambda part, col: panel.wide(parsed, dates, syms, part, col)
     close_raw, isin, lot = W("cm", "close"), W("cm", "isin"), W("fo", "lot")
     nse_dq, nse_tq = W("deliv", "dq"), W("deliv", "tq")
@@ -27,12 +31,14 @@ def build(parsed, overrides=None):
     ev = corp.find_events(close_raw.ffill(limit=5), isin, lot, turn, overrides)
     F = corp.factors(pd.DatetimeIndex(dates), syms, ev)
     C = (close_raw * F).ffill(limit=5); DQ = dq_raw / F; TQ = tq_raw / F
-    M = dict(bse_share=bse_share, dates=dates, syms=syms, N=N, T=T, events=ev, C=C, DQ=DQ, TQ=TQ, oi=oi, doi=doi, nifty=nifty, close_raw=close_raw, dq_raw=dq_raw, tq_raw=tq_raw)
+    allowed = set(syms)
+    memberships = {k: [s for s in v if s in allowed] for k, v in memberships.items()}
+    M = dict(bse_share=bse_share, dates=dates, syms=syms, memberships=memberships, N=N, T=T, events=ev, C=C, DQ=DQ, TQ=TQ, oi=oi, doi=doi, nifty=nifty, close_raw=close_raw, dq_raw=dq_raw, tq_raw=tq_raw)
     M["unresolved"] = set()
 
     ret1 = C.pct_change(fill_method=None); sig_prev = ret1.rolling(60, min_periods=30).std().shift(1)
     small = ret1.abs() < 0.5 * sig_prev
-    M["ret1"] = ret1; M["OIadj"] = oi / F
+    M["ret1"] = ret1; M["zmove"] = ret1 / sig_prev; M["OIadj"] = oi / F
     M["dcode"] = pd.DataFrame(np.where(ret1.isna(), np.nan, np.where(small, 0.0, np.sign(ret1))), index=ret1.index, columns=ret1.columns)
     A20 = DQ.shift(1).rolling(20, min_periods=15).mean(); RAT = DQ / A20; M["RAT"] = RAT
     ret1 = C.pct_change(fill_method=None)
@@ -86,6 +92,7 @@ def build(parsed, overrides=None):
         ptop, pbot = set(prev.sort_values(ascending=False).head(LIST_N).index), set(prev.sort_values().head(LIST_N).index)
         lists[name] = dict(top=top, bot=bot, new_top=set(top.index) - ptop, new_bot=set(bot.index) - pbot, n=len(now))
     relT = {name: rel_at(T, h) for name, h in HORIZONS}; M["relT"] = relT
+    M["relPrev"] = {name: rel_at(T - 1, h) for name, h in HORIZONS}
     M["relrank"] = {name: relT[name].rank(ascending=False, method="min") for name, _ in HORIZONS}
     cnt_top = pd.Series(0, index=syms); cnt_bot = pd.Series(0, index=syms)
     for name, _ in HORIZONS:

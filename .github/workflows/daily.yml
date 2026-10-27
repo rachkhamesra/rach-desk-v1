@@ -25,6 +25,9 @@
                path: |
                  data/parsed.pkl
                  data/holidays.txt
+                 data/results_calendar.csv
+                 data/results_actual.csv
+                 data/universes.json
                key: desk-data-${{ github.run_id }}
                restore-keys: desk-data-
            - run: python run.py --wait-minutes 120

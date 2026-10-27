@@ -3,7 +3,7 @@
 import argparse, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import nse, metrics, webpage
+import nse, metrics, webpage, results, universes
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -22,7 +22,10 @@ def main():
     if parsed[last].get("bse") is None:
         if a.wait_minutes > 0: sys.exit(f"BSE delivery for {last.date()} is not usable yet; not publishing a page with NSE-only delivery.")
         warn = f"<br><span style='color:#e8a93a'>BSE delivery for {last:%d %b} is not published yet: latest-day delivered shares are NSE-only</span>"
-    M = metrics.build(parsed, ov)
+    memberships = universes.load(a.root)
+    M = metrics.build(parsed, ov, memberships)
+    calendar, actual = results.load(a.root, end)
+    M["results"] = results.build_signals(M, calendar, actual)
     os.makedirs(a.out, exist_ok=True)
     page = webpage.render(M, f"AS OF {M['dates'][-1]:%a %d %b %Y}".upper() + warn)
     M["events"].to_csv(os.path.join(a.out, "corporate_actions.csv"), index=False)       # audit log only, not shown in the UI

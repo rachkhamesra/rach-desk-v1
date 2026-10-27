@@ -61,8 +61,10 @@ def table(head, rows, cls=""):
 
 
 # ------------------------------------------------------------------ tabs
-def tab_screen(M, n=30):
-    df = M["screen"].head(n); mx = df["ratio"].max(); rows = []
+def tab_screen(M, n=30, allowed=None):
+    df = M["screen"]
+    if allowed is not None: df = df[df.sym.isin(allowed)]
+    df = df.head(n).reset_index(drop=True); mx = df["ratio"].max(); rows = []
     for i, r in df.iterrows():
         bse = M["bse_share"][r.sym].iloc[-1]
         rows.append(f'<tr><td class="mut">{i + 1}</td><td class="l">{stk(r.sym, M)}</td><td>{fs(r.dq)}</td><td class="mut">{bse:.0f}</td>'
@@ -71,29 +73,37 @@ def tab_screen(M, n=30):
                     f'<td>{pct_badge(r.pct)}</td><td class="mut">{r.value_cr:,.0f}</td></tr>')
     head = [("#", "mut"), ("STOCK", "l"), ("DELIVERED", ""), ("BSE %", ""), (f"÷ 20-DAY AVG", "l"), ("DELIV %", ""), ("PX 1D", ""), ("SSF OI", ""), ("ΔOI 1D", ""), ("ΔOI %", ""), ("DELIV ÷ ΔOI", ""), (f"{M['hist_label']} PCT", ""), ("₹ CR", "")]
     return (f'<h2>1-day delivery vs 20-day average <span class="sub">TOP {n}</span></h2>'
-            f'<p class="desc">F&amp;O universe, {len(M["syms"])} names; shares, NSE + BSE. Deliv % = share of traded quantity that went home. {M["hist_label"]} pct = today\'s deliverable quantity against the stock\'s own history in this file ({M["N"]} sessions so far). '
+            f'<p class="desc">Selected universe, {len(allowed or M["syms"])} names; shares, NSE + BSE. Deliv % = share of traded quantity that went home. {M["hist_label"]} pct = today\'s deliverable quantity against the stock\'s own history in this file ({M["N"]} sessions so far). '
             f'The 20-day average is the mean of the previous 20 sessions\' delivered shares. Futures OI is shares summed over all expiries. ₹ cr = delivered value.</p>' + table(head, rows))
 
 
-def tab_persist(M, n=40):
-    df = M["persist"].head(n); mx = df["ratio"].max() if len(df) else 1; rows = []
+def tab_persist(M, n=40, allowed=None):
+    all_df = M["persist"]
+    if allowed is not None: all_df = all_df[all_df.sym.isin(allowed)]
+    df = all_df.head(n).reset_index(drop=True); mx = df["ratio"].max() if len(df) else 1; rows = []
     for i, r in df.iterrows():
         rows.append(f'<tr><td class="mut">{i + 1}</td><td class="l">{stk(r.sym, M)}</td><td>{int(r.d125)} <span class="mut">/</span> {int(r.d150)}</td><td class="l">{bar(r.ratio, mx)}<span class="bv">{r.ratio:.2f}×</span></td>'
                     f'<td>{fs(r.dq5)}</td><td>{r.delivpct:.1f}</td><td{heat(r.px5, 10)}>{pc(r.px5)}</td><td>{fs(r.oi)}</td><td{heat(r.doi_pct, 25)}>{fl(r.doi5)}</td><td{heat(r.doi_pct, 25)}>{pc(r.doi_pct)}</td>'
                     f'<td>{mult(r.d_over_doi)}</td><td>{pct_badge(r.pct)}</td></tr>')
     head = [("#", "mut"), ("STOCK", "l"), ("DAYS ≥1.25× / 1.5×", ""), ("5-DAY AVG ÷ 20D", "l"), ("5D DELIVERED", ""), ("DELIV %", ""), ("PX 5D", ""), ("SSF OI", ""), ("ΔOI 5D", ""), ("ΔOI %", ""), ("DELIV ÷ ΔOI", ""), (f"{M['hist_label']} PCT", "")]
-    q = len(M["persist"]); q15 = int((M["persist"]["d150"] >= 3).sum())
+    q = len(all_df); q15 = int((all_df["d150"] >= 3).sum())
     return (f'<h2>Persistent delivery <span class="sub">≥3 OF THE LAST 5 SESSIONS ABOVE 1.25× 20D</span></h2>'
             f'<p class="desc">{q} qualify ({q15} at 1.5×); sorted by 5-day average ÷ 20d (the 5-day mean of delivered shares over the mean of the 20 sessions before them). Price and OI change from {M["persist_from"]:%d %b}. '
             f'{M["hist_label"]} pct ranks the 5-day average against the stock\'s own rolling 5-day averages.</p>' + table(head, rows))
 
 
-def tab_rel(M):
-    active = M["active_ma"]; blocks = []
+def tab_rel(M, allowed=None):
+    active = M["active_ma"]; blocks = []; allowed = set(allowed or M["syms"])
+    cnt_top = pd.Series(0, index=M["syms"]); cnt_bot = pd.Series(0, index=M["syms"]); lists = {}
+    for name, _ in metrics.HORIZONS:
+        now = M["relT"][name].loc[list(allowed)].dropna(); prev = M["relPrev"][name].loc[list(allowed)].dropna()
+        top, bot = now.nlargest(metrics.LIST_N), now.nsmallest(metrics.LIST_N)
+        lists[name] = dict(top=top, bot=bot, new_top=set(top.index) - set(prev.nlargest(metrics.LIST_N).index), new_bot=set(bot.index) - set(prev.nsmallest(metrics.LIST_N).index))
+        cnt_top.loc[top.index] += 1; cnt_bot.loc[bot.index] += 1
     for k, (name, h) in enumerate(metrics.HORIZONS):
-        L = M["rel"][name]; parts = []
+        L = lists[name]; parts = []
         for side, title, col in (("top", "Outperformers", "g"), ("bot", "Underperformers", "r")):
-            ser = L[side]; newset = L["new_" + side]; cnt = M["cnt_top"] if side == "top" else M["cnt_bot"]; rows = []
+            ser = L[side]; newset = L["new_" + side]; cnt = cnt_top if side == "top" else cnt_bot; rows = []
             for s, v in ser.items():
                 cells = "".join(f'<td{heat(M["dist"][n][s].iloc[M["T"]], 25)}>{pc(M["dist"][n][s].iloc[M["T"]], 0)}</td>' if pd.notna(M["dist"][n][s].iloc[M["T"]]) else '<td class="mut">–</td>' for n in active)
                 strong = ' class="strong ' + col + '"' if cnt[s] >= 3 else ""
@@ -102,15 +112,46 @@ def tab_rel(M):
             parts.append(f'<div class="card"><div class="ch"><span class="ct {col}">{title}</span><span class="mut">{name}</span></div>{table(head, rows, "rel")}</div>')
         blocks.append(f'<div class="hz" data-h="{k}"{"" if k == 0 else " hidden"}>{"".join(parts)}</div>')
     btns = "".join(f'<button class="seg{" on" if k == 0 else ""}" data-h="{k}">{name}</button>' for k, (name, _) in enumerate(metrics.HORIZONS))
-    return (f'<h2>Relative performance</h2><div class="subl">TOP AND BOTTOM {metrics.LIST_N} OF {len(M["syms"])} VS NIFTY</div><div class="segs">{btns}</div>{"".join(blocks)}'
+    return (f'<h2>Relative performance</h2><div class="subl">TOP AND BOTTOM {metrics.LIST_N} OF {len(allowed)} VS NIFTY</div><div class="segs">{btns}</div>{"".join(blocks)}'
             f'<p class="desc">Rel % = return relative to the Nifty over the horizon ((1 + stock) ÷ (1 + Nifty) − 1); the numbered columns = % distance from that moving average (green above, red below, full depth at 25%). '
             f'A red bar = new on that list since the previous session; green / red bold ticker = on three or more of the five horizons.</p>')
 
 
-def tab_at(M):
+def tab_results(M, allowed=None):
+    rows = []
+    events = M.get("results", [])
+    allowed = set(allowed or M["syms"])
+    for r in events:
+        if r["symbol"] not in allowed: continue
+        hits = [x for x in r["sessions"] if x["hit"]]
+        signal = ('<span class="rsig">PRE-RESULT ACTIVITY</span>' if hits else '<span class="mut">—</span>')
+        trail = []
+        by_lag = {x["lag"]: x for x in r["sessions"]}
+        for lag in (3, 2, 1):
+            x = by_lag.get(lag)
+            if not x:
+                trail.append('<td class="mut">—</td>'); continue
+            cls = ' class="rhit"' if x["hit"] else ''
+            trail.append(f'<td{cls}><b>D−{lag}</b> {x["ratio"]:.2f}× / {pc(x["move"])} / {x["z"]:+.2f}σ</td>')
+        when = f'{r["declared_at"]:%d %b %H:%M}' if pd.notna(r["declared_at"]) else f'{r["event_date"]:%d %b}'
+        source = f'<a class="src" href="{esc(str(r["source_url"]))}" target="_blank" rel="noopener">NSE ↗</a>' if r.get("source_url") else ''
+        rows.append(f'<tr><td class="l">{stk(r["symbol"], M)}</td><td>{when}</td><td>{r["status"]}</td><td>{signal}</td>{"".join(trail)}<td>{source}</td></tr>')
+    head = [("STOCK", "l"), ("RESULT DATE", ""), ("STATUS", ""), ("SIGNAL", ""),
+            ("D−3: DELIVERY / MOVE / σ", ""), ("D−2", ""), ("D−1", ""), ("FILING", "")]
+    if not rows:
+        empty = '<div class="card rempty">No result dates in the current F&amp;O window. The calendar will fill automatically as NSE filings arrive.</div>'
+        return '<h2>Results calendar</h2>' + empty
+    return (f'<h2>Results calendar</h2><div class="subl">PRE-RESULT DELIVERY AND PRICE ACTIVITY</div>'
+            '<p class="desc">A signal requires delivered shares above the prior 20-session average and an absolute price move above 0.8σ on the same session. '
+            'σ is the stock’s prior-60-session daily-return volatility. D−1 to D−3 are completed trading sessions before the declaration date; no future data is used.</p>'
+            + table(head, rows, "results"))
+
+
+def tab_at(M, allowed=None):
     out = []
+    allowed = set(allowed or M["syms"])
     for n in M["active_ma"]:
-        items = M["at"][n]
+        items = [x for x in M["at"][n] if x["sym"] in allowed]
         chips = "".join(f'<span class="chip {"u" if x["above"] else "d"}{" cr" if x["crossed"] else ""}{" nw" if x["new"] else ""}" title="{x["dist"]:+.2f}% from the {n}-day average = {x["k"]:.2f} σ (σ = {x["sigma"]:.2f}% daily)">'
                         f'{"▲" if x["above"] else "▼"} <a class="stk" data-s="{esc(x["sym"])}">{esc(x["sym"])}</a></span>' for x in items) or '<span class="mut">none</span>'
         out.append(f'<div class="atrow"><div class="atn"><div class="big">{n}</div><div class="mut">{len(items)} NAMES</div></div><div class="chips">{chips}</div></div>')
@@ -135,7 +176,7 @@ def stocks_json(M):
                       rat=[nz(x, lambda v: round(float(v), 2)) for x in M["RAT"][s]], d=[nz(x, int) for x in M["dcode"][s]], oi=[nz(x, int) for x in M["OIadj"][s]], sm=sm,
                       ev=[[di[e["date"]], round(float(e["factor"]), 4), e["decision"]] for _, e in ev[ev["symbol"] == s].iterrows() if e["date"] in di and e["decision"] in ("auto", "accepted")])
     default = M["screen"]["sym"].iloc[0] if len(M["screen"]) else M["syms"][0]
-    return dict(dates=dates, mas=metrics.MA_SET, nifty=[nz(x, lambda v: round(float(v), 2)) for x in M["nifty"]], hz=[[n, h] for n, h in metrics.HORIZONS], default=default, stocks=out)
+    return dict(dates=dates, mas=metrics.MA_SET, nifty=[nz(x, lambda v: round(float(v), 2)) for x in M["nifty"]], hz=[[n, h] for n, h in metrics.HORIZONS], default=default, universes=M["memberships"], stocks=out)
 
 
 def tab_stocks(M):
@@ -150,11 +191,17 @@ def tab_stocks(M):
 def render(M, asof_text):
     M["hist_label"] = "1Y" if M["N"] < 600 else "3Y"
     data = json.dumps(stocks_json(M), separators=(",", ":"))
-    panels = [("stocks", "STOCKS", tab_stocks(M)), ("screen", "1-DAY SCREEN", tab_screen(M)), ("persist", "PERSISTENT DELIVERY", tab_persist(M)),
-              ("rel", "RELATIVE PERFORMANCE", tab_rel(M)), ("at", "AT A MOVING AVERAGE", tab_at(M))]
+    choices = [("top1000", "TOP 1000"), ("nifty500", "NIFTY 500"), ("smallcap250", "NIFTY SMALLCAP 250"),
+               ("nifty250", "NIFTY 100 + MIDCAP 150"), ("nifty100", "NIFTY 100"), ("fo", "F&O")]
+    choices = [(k, label) for k, label in choices if M["memberships"].get(k)]
+    def views(fn):
+        return "".join(f'<div class="uview" data-u="{k}"{("" if k == "top1000" else " hidden")}>{fn(M, allowed=M["memberships"][k])}</div>' for k, _ in choices)
+    panels = [("stocks", "STOCKS", tab_stocks(M)), ("screen", "1-DAY SCREEN", views(tab_screen)), ("persist", "PERSISTENT DELIVERY", views(tab_persist)),
+              ("results", "RESULTS CALENDAR", views(tab_results)), ("rel", "RELATIVE PERFORMANCE", views(tab_rel)), ("at", "AT A MOVING AVERAGE", views(tab_at))]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}" data-t="{k}">{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
-    head = (f'<header><div class="brand">DESK</div><div class="meta">{asof_text}<br><span class="mut">{M["N"]} sessions since {M["dates"][0]:%d %b %Y} · {len(M["syms"])} F&amp;O names · NSE + BSE delivery</span></div></header>')
+    opts = "".join(f'<option value="{k}">{label}</option>' for k, label in choices)
+    head = (f'<header><div class="brand">DESK</div><div class="headright"><select id="universe" aria-label="Stock universe">{opts}</select><div class="meta">{asof_text}<br><span class="mut">{M["N"]} sessions since {M["dates"][0]:%d %b %Y} · top 1,000 NSE shares · NSE + BSE delivery</span></div></div></header>')
     foot = '<footer>Splits, bonuses and demergers are detected and adjusted automatically (prices, averages and delivered shares are all on today\'s share basis). Delivery % is shown for reference and never used to rank.</footer>'
     return (HTML.replace("%%CSS%%", CSS).replace("%%HEAD%%", head).replace("%%NAV%%", nav).replace("%%BODY%%", body + foot)
             .replace("%%DATA%%", data.replace("</", "<\\/")).replace("%%JS%%", JS).replace("%%TITLE%%", f"Desk · {M['dates'][-1]:%d %b %Y}"))
@@ -169,22 +216,24 @@ CSS = r"""
 --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;box-sizing:border-box;
 padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *,*::before,*::after{box-sizing:inherit}[hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45}
-header{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;padding:18px 22px 12px;border-bottom:1px solid var(--line)}
-.brand{font-weight:800;letter-spacing:.18em;font-size:20px}.meta{font-family:var(--mono);font-size:12px;text-align:right}.mut{color:var(--mut)}
-.tabs{display:flex;gap:4px;padding:10px 18px;border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
-.tab{font:600 13px var(--sans);letter-spacing:.09em;color:var(--mut);background:none;border:0;padding:11px 16px;cursor:pointer;white-space:nowrap}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:13px;line-height:1.35}
+header{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 18px 8px;border-bottom:1px solid var(--line)}
+.brand{font-weight:800;letter-spacing:.18em;font-size:17px}.headright{display:flex;align-items:center;gap:12px}.meta{font-family:var(--mono);font-size:10.5px;text-align:right}.mut{color:var(--mut)}
+#universe{font:700 11px var(--sans);letter-spacing:.05em;background:#f4f4f0;color:#0a0a0a;border:0;padding:7px 9px;max-width:220px}
+.tabs{display:flex;gap:3px;padding:5px 14px;border-bottom:1px solid var(--line);overflow-x:auto;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
+.tab{font:600 11px var(--sans);letter-spacing:.08em;color:var(--mut);background:none;border:0;padding:8px 12px;cursor:pointer;white-space:nowrap}
 .tab.on{background:#f4f4f0;color:#0a0a0a}.tab:focus-visible,.seg:focus-visible,#mx:focus-visible{outline:2px solid var(--am);outline-offset:2px}
-main{max-width:1280px;margin:0 auto;padding:6px 22px 60px}
-h2{font-size:30px;line-height:1.1;margin:30px 0 6px;font-weight:800;letter-spacing:-.01em}h2 .sub,.subl{font:600 13px var(--sans);letter-spacing:.12em;color:var(--mut);margin-left:10px}.subl{margin:0 0 12px}
-.desc{color:#9a9a94;font-size:17px;line-height:1.6;max-width:1000px;margin:6px 0 18px}.desc b{color:var(--ink)}
+main{max-width:1500px;margin:0 auto;padding:4px 16px 40px}
+h2{font-size:23px;line-height:1.1;margin:20px 0 4px;font-weight:800;letter-spacing:-.01em}h2 .sub,.subl{font:600 11px var(--sans);letter-spacing:.1em;color:var(--mut);margin-left:8px}.subl{margin:0 0 8px}
+.desc{color:#9a9a94;font-size:13px;line-height:1.45;max-width:1100px;margin:4px 0 11px}.desc b{color:var(--ink)}
 .card,.tw{background:var(--panel);border-top:3px solid #f4f4f0}.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}.card .tw{border-top:0}
-table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:15px}
-th{font:600 12.5px var(--sans);letter-spacing:.1em;color:var(--mut);text-align:right;padding:18px 12px 12px;white-space:nowrap;border-bottom:2px solid #2c2c2c}
-td{padding:14px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}th.l,td.l{text-align:left}th.mut,td.mut{color:var(--mut)}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12.5px}
+th{font:600 10.5px var(--sans);letter-spacing:.08em;color:var(--mut);text-align:right;padding:11px 8px 8px;white-space:nowrap;border-bottom:2px solid #2c2c2c}
+td{padding:8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}th.l,td.l{text-align:left}th.mut,td.mut{color:var(--mut)}
 td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;color:var(--ink);text-decoration:none}.stk:hover{text-decoration:underline}
 .warn{color:var(--am);font-size:12px}.bar{display:inline-block;height:12px;background:#f4f4f0;border-radius:3px;vertical-align:middle;margin-right:10px}.bv{display:inline-block;min-width:56px}
 .pb{display:inline-block;min-width:44px;padding:6px 8px;border-radius:3px;color:#fff;background:#222;text-align:center}
+.rsig{display:inline-block;padding:5px 8px;background:var(--am);color:#0a0a0a;font:700 11px var(--sans);letter-spacing:.06em}.rhit{background:rgba(232,169,58,.2);color:#ffd17a}.src{color:var(--ink)}.rempty{padding:22px;color:var(--mut)}
 .segs{display:flex;gap:0;margin:0 0 16px;border:2px solid #f4f4f0;width:max-content;max-width:100%;overflow-x:auto}.seg{font:600 15px var(--sans);color:var(--ink);background:none;border:0;padding:12px 22px;cursor:pointer;white-space:nowrap}.seg.on{background:#f4f4f0;color:#0a0a0a}
 .hz{display:grid;grid-template-columns:1fr 1fr;gap:20px}.ch{display:flex;justify-content:space-between;padding:20px 18px 6px}.ct{font-size:22px;font-weight:700}.g{color:var(--g)}.r{color:var(--r)}
 table.rel td,table.rel th{padding:11px 12px}tr.newrow td.tk{box-shadow:inset 5px 0 var(--r)}span.strong.g a{color:var(--g)}span.strong.r a{color:var(--r)}
@@ -196,31 +245,32 @@ table.ca td.note{white-space:normal;min-width:340px;max-width:560px;color:#b9b9b
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:20;display:flex;align-items:center;justify-content:center;padding:14px}.mbox{background:#101010;border:1px solid #333;width:min(1040px,100%);max-height:100%;overflow:auto;padding:16px 18px;position:relative}
 #mx{position:absolute;right:10px;top:6px;font-size:30px;color:var(--mut);background:none;border:0;cursor:pointer}#mh{font:600 15px var(--mono);margin:0 40px 8px 0}#mh b{font-size:22px;font-family:var(--sans)}#mc{width:100%;height:auto;display:block}#ml{font:12px var(--mono);color:var(--mut);margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 16px}
 #ml i{display:inline-block;width:18px;border-top:2px solid;vertical-align:middle;margin-right:5px}
-.sx{display:grid;grid-template-columns:290px minmax(0,1fr);gap:18px;margin-top:18px}.sl{background:var(--panel);border-top:3px solid #f4f4f0;padding:12px;align-self:start;position:sticky;top:72px}
-#q{width:100%;font:600 16px var(--mono);background:#0d0d0d;color:var(--ink);border:1px solid #333;padding:11px 12px;margin-bottom:8px;border-radius:3px}#q:focus{outline:2px solid var(--am)}
-#sort,#thr{font:600 13px var(--sans);background:#0d0d0d;color:var(--ink);border:1px solid #333;padding:7px 8px;border-radius:3px}#sort{width:100%;margin-bottom:6px}
-#list{max-height:68vh;overflow:auto;margin:0 -12px -12px}.li{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer;font-family:var(--mono);font-size:14px;align-items:center}
+.sx{position:relative;margin-top:10px;padding-top:40px}.sl{position:absolute;right:0;top:0;z-index:4;display:flex;gap:6px;width:390px;padding:0}
+#q{flex:1;min-width:0;font:600 12px var(--mono);background:#0d0d0d;color:var(--ink);border:1px solid #333;padding:8px 9px;border-radius:3px}#q:focus{outline:2px solid var(--am)}
+#sort,#thr{font:600 11px var(--sans);background:#0d0d0d;color:var(--ink);border:1px solid #333;padding:6px 7px;border-radius:3px}#sort{width:175px}
+#list{display:none;position:absolute;right:0;top:38px;width:390px;max-height:55vh;overflow:auto;background:var(--panel);border:1px solid #333;box-shadow:0 12px 30px #000}.sl:focus-within #list{display:block}.li{display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:7px 10px;border-bottom:1px solid var(--line);cursor:pointer;font-family:var(--mono);font-size:12px;align-items:center}
 .li:hover{background:#1c1c1c}.li.on{background:#262626;box-shadow:inset 4px 0 #f4f4f0}.li b{letter-spacing:.02em}.li span{min-width:52px;text-align:right}
-.sr{min-width:0}#sh{background:var(--panel);border-top:3px solid #f4f4f0;padding:16px 18px 14px}.hd1{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}.hd1 b{font-size:30px;letter-spacing:.01em}.hd1 .px{font:700 24px var(--mono)}
-.chips2{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:12px;font:13px var(--mono)}.chips2 div span{display:block;color:var(--mut);font:600 11px var(--sans);letter-spacing:.1em;margin-bottom:2px}
-.rsrow{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font:13px var(--mono)}.rsrow span{color:var(--mut)}
-.rb{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 0 10px;font:600 12px var(--sans);letter-spacing:.1em}.rb .seg{padding:8px 14px;font-size:13px;border:1px solid #444}
+.sr{min-width:0}#sh{background:var(--panel);border-top:3px solid #f4f4f0;padding:10px 13px 9px}.hd1{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 11px}.hd1 b{font-size:23px;letter-spacing:.01em}.hd1 .px{font:700 18px var(--mono)}
+.chips2{display:flex;flex-wrap:wrap;gap:5px 17px;margin-top:7px;font:11px var(--mono)}.chips2 div span{display:block;color:var(--mut);font:600 9px var(--sans);letter-spacing:.08em;margin-bottom:1px}
+.rsrow{display:flex;flex-wrap:wrap;gap:5px 14px;margin-top:7px;padding-top:7px;border-top:1px solid var(--line);font:11px var(--mono)}.rsrow span{color:var(--mut)}
+.rb{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:7px 0 6px;font:600 10px var(--sans);letter-spacing:.08em}.rb .seg{padding:5px 10px;font-size:11px;border:1px solid #444}
 #chartbox{background:var(--panel);padding:6px 4px 2px}#ch{display:block;width:100%;touch-action:pan-y}#ro{min-height:24px;font:13px var(--mono);color:#cfcfc8;padding:8px 4px}
 #lg{display:flex;flex-wrap:wrap;gap:6px 18px;font:12px var(--mono);color:var(--mut);padding:2px 4px 10px}#lg i{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px}#lg u{display:inline-block;width:18px;border-top:2px solid;margin-right:5px;vertical-align:middle}
 footer{max-width:1280px;margin:0 auto;padding:0 22px 40px;color:var(--mut);font-size:13px}
-@media (max-width:900px){.sx{grid-template-columns:1fr}.sl{position:static}#list{max-height:230px}.hd1 b{font-size:24px}header{flex-direction:column;align-items:flex-start}.meta{text-align:left}h2{font-size:25px}.desc{font-size:15px}.hz{grid-template-columns:1fr}table{font-size:13.5px}td{padding:11px 9px}.atrow{flex-direction:column;gap:12px}main{padding:6px 12px 50px}}
+@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}
 """
 
 JS = r"""
-const D=JSON.parse(document.getElementById('data').textContent),SY=Object.keys(D.stocks);
+const D=JSON.parse(document.getElementById('data').textContent),ALL=Object.keys(D.stocks);
 const COL={32:'#5aa9ff',50:'#f5a623',100:'#b58cff',200:'#ffd84d',233:'#3fd0a0',377:'#ff7aa2',610:'#9a9a94'};
 const G='#2fbf71',R='#ef5a4d',GL='rgba(47,191,113,.46)',RL='rgba(239,90,77,.46)',GR='#a3a39c',GRL='rgba(163,163,156,.30)';
-let cur=null,rng=252,thr=1.25;
+let cur=null,rng=252,thr=1.25,universe='top1000',SY=D.universes[universe]||ALL;
 function tab(t){const b=document.querySelector('.tab[data-t="'+t+'"]');if(b)b.click()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+b.dataset.t);if(b.dataset.t==='stocks'){draw()}});
-document.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
+document.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{const v=b.closest('.uview')||document;v.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
 document.querySelectorAll('.seg[data-r]').forEach(b=>b.onclick=()=>{rng=+b.dataset.r;document.querySelectorAll('.seg[data-r]').forEach(x=>x.classList.toggle('on',x===b));draw()});
 document.getElementById('thr').onchange=e=>{thr=+e.target.value;draw()};
+document.getElementById('universe').onchange=e=>{universe=e.target.value;SY=D.universes[universe]||ALL;document.querySelectorAll('.uview').forEach(v=>v.hidden=v.dataset.u!==universe);if(!SY.includes(cur))cur=SY[0]||D.default;list();draw()};
 function sma(a,n){const o=new Array(a.length).fill(null);let s=0,c=0;for(let i=0;i<a.length;i++){const v=a[i];if(v!=null){s+=v;c++}if(i>=n){const u=a[i-n];if(u!=null){s-=u;c--}}if(c===n&&i>=n-1)o[i]=s/n}return o}
 function fmt(x){if(x==null)return'–';const a=Math.abs(x);return a>=1e7?(x/1e7).toFixed(2)+' cr':a>=1e5?(x/1e5).toFixed(1)+' L':Math.round(x).toLocaleString()}
 function fL(x){return x==null?'–':(x>=0?'+':'−')+Math.abs(x/1e5).toLocaleString(undefined,{maximumFractionDigits:1,minimumFractionDigits:1})+' L'}
@@ -230,17 +280,17 @@ function cls(x){return x==null?'':x>=0?'g':'r'}
 function list(){const q=document.getElementById('q').value.trim().toUpperCase(),so=document.getElementById('sort').value;
  const key={az:s=>s,ratio:s=>-(D.stocks[s].sm.ratio??-1e9),px:s=>-(D.stocks[s].sm.px??-1e9),rs:s=>-(D.stocks[s].sm.rel[1][0]??-1e9)}[so];
  const a=SY.filter(s=>!q||s.includes(q)).sort((x,y)=>{const a=key(x),b=key(y);return a<b?-1:a>b?1:0});
- document.getElementById('list').innerHTML=a.map(s=>{const m=D.stocks[s].sm;return `<div class="li${s===cur?' on':''}" data-s="${s}"><b>${s}</b><span class="${cls(m.px)}">${pc(m.px)}</span><span class="mut">${m.ratio==null?'–':m.ratio.toFixed(1)+'×'}</span></div>`}).join('')||'<div class="li mut">No match</div>'}
+ document.getElementById('list').innerHTML=a.map(s=>{const m=D.stocks[s].sm;return `<div class="li${s===cur?' on':''}" data-s="${s}" tabindex="-1"><b>${s}</b><span class="${cls(m.px)}">${pc(m.px)}</span><span class="mut">${m.ratio==null?'–':m.ratio.toFixed(1)+'×'}</span></div>`}).join('')||'<div class="li mut">No match</div>'}
 document.getElementById('q').oninput=list;document.getElementById('sort').onchange=list;
 document.getElementById('q').onkeydown=e=>{if(e.key==='Enter'){const f=document.querySelector('#list .li[data-s]');if(f)pick(f.dataset.s)}};
 document.getElementById('list').onclick=e=>{const li=e.target.closest('.li[data-s]');if(li)pick(li.dataset.s)};
-function pick(s){cur=s;list();draw();history.replaceState(null,'','#'+s);if(window.innerWidth<900)document.getElementById('sh').scrollIntoView({behavior:'smooth',block:'start'})}
+function pick(s){cur=s;list();draw();history.replaceState(null,'','#'+s);if(document.activeElement)document.activeElement.blur();if(window.innerWidth<900)document.getElementById('sh').scrollIntoView({behavior:'smooth',block:'start'})}
 document.addEventListener('click',e=>{const a=e.target.closest('a.stk');if(a){e.preventDefault();tab('stocks');cur=a.dataset.s;list();draw();history.replaceState(null,'','#'+cur);window.scrollTo(0,0)}});
 /* ---------- chart ---------- */
 function draw(){
  if(!cur||document.getElementById('p-stocks').hidden)return;
- const S=D.stocks[cur],n=S.c.length,v0=Math.max(0,n-rng),box=document.getElementById('chartbox'),W=Math.max(320,Math.min(1060,box.clientWidth-8)),sm=W<560,fs=sm?10:11,L=sm?46:60,Rr=10;
- const H=sm?[210,90,80,64,64]:[290,115,105,80,80],gap=sm?24:28,tops=[8];for(let k=1;k<5;k++)tops.push(tops[k-1]+H[k-1]+gap);const TH=tops[4]+H[4]+24;
+ const S=D.stocks[cur],n=S.c.length,v0=Math.max(0,n-rng),box=document.getElementById('chartbox'),W=Math.max(320,Math.min(1460,box.clientWidth-8)),sm=W<560,fs=sm?9:10,L=sm?42:54,Rr=8;
+ const H=sm?[150,62,58,46,46]:[205,76,70,54,54],gap=sm?18:21,tops=[6];for(let k=1;k<5;k++)tops.push(tops[k-1]+H[k-1]+gap);const TH=tops[4]+H[4]+18;
  const xs=i=>L+(i-v0)*(W-L-Rr)/Math.max(1,n-1-v0),bw=Math.max(1,(W-L-Rr)/(n-v0)*.72);
  const y=(v,lo,hi,k)=>tops[k]+(1-(v-lo)/(hi-lo||1))*H[k];
  let g='';const lab=(t,k)=>`<text x="${L+4}" y="${tops[k]+11}" fill="#77776f" font-size="${fs}" font-family="monospace" letter-spacing="1">${t}</text>`;
