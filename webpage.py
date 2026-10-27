@@ -107,6 +107,34 @@ def tab_rel(M):
             f'A red bar = new on that list since the previous session; green / red bold ticker = on three or more of the five horizons.</p>')
 
 
+def tab_results(M):
+    rows = []
+    events = M.get("results", [])
+    for r in events:
+        hits = [x for x in r["sessions"] if x["hit"]]
+        signal = ('<span class="rsig">PRE-RESULT ACTIVITY</span>' if hits else '<span class="mut">—</span>')
+        trail = []
+        by_lag = {x["lag"]: x for x in r["sessions"]}
+        for lag in (3, 2, 1):
+            x = by_lag.get(lag)
+            if not x:
+                trail.append('<td class="mut">—</td>'); continue
+            cls = ' class="rhit"' if x["hit"] else ''
+            trail.append(f'<td{cls}><b>D−{lag}</b> {x["ratio"]:.2f}× / {pc(x["move"])} / {x["z"]:+.2f}σ</td>')
+        when = f'{r["declared_at"]:%d %b %H:%M}' if pd.notna(r["declared_at"]) else f'{r["event_date"]:%d %b}'
+        source = f'<a class="src" href="{esc(str(r["source_url"]))}" target="_blank" rel="noopener">NSE ↗</a>' if r.get("source_url") else ''
+        rows.append(f'<tr><td class="l">{stk(r["symbol"], M)}</td><td>{when}</td><td>{r["status"]}</td><td>{signal}</td>{"".join(trail)}<td>{source}</td></tr>')
+    head = [("STOCK", "l"), ("RESULT DATE", ""), ("STATUS", ""), ("SIGNAL", ""),
+            ("D−3: DELIVERY / MOVE / σ", ""), ("D−2", ""), ("D−1", ""), ("FILING", "")]
+    if not rows:
+        empty = '<div class="card rempty">No result dates in the current F&amp;O window. The calendar will fill automatically as NSE filings arrive.</div>'
+        return '<h2>Results calendar</h2>' + empty
+    return (f'<h2>Results calendar</h2><div class="subl">PRE-RESULT DELIVERY AND PRICE ACTIVITY</div>'
+            '<p class="desc">A signal requires delivered shares above the prior 20-session average and an absolute price move above 0.8σ on the same session. '
+            'σ is the stock’s prior-60-session daily-return volatility. D−1 to D−3 are completed trading sessions before the declaration date; no future data is used.</p>'
+            + table(head, rows, "results"))
+
+
 def tab_at(M):
     out = []
     for n in M["active_ma"]:
@@ -151,7 +179,7 @@ def render(M, asof_text):
     M["hist_label"] = "1Y" if M["N"] < 600 else "3Y"
     data = json.dumps(stocks_json(M), separators=(",", ":"))
     panels = [("stocks", "STOCKS", tab_stocks(M)), ("screen", "1-DAY SCREEN", tab_screen(M)), ("persist", "PERSISTENT DELIVERY", tab_persist(M)),
-              ("rel", "RELATIVE PERFORMANCE", tab_rel(M)), ("at", "AT A MOVING AVERAGE", tab_at(M))]
+              ("results", "RESULTS CALENDAR", tab_results(M)), ("rel", "RELATIVE PERFORMANCE", tab_rel(M)), ("at", "AT A MOVING AVERAGE", tab_at(M))]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}" data-t="{k}">{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
     head = (f'<header><div class="brand">DESK</div><div class="meta">{asof_text}<br><span class="mut">{M["N"]} sessions since {M["dates"][0]:%d %b %Y} · {len(M["syms"])} F&amp;O names · NSE + BSE delivery</span></div></header>')
@@ -185,6 +213,7 @@ td{padding:14px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid
 td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;color:var(--ink);text-decoration:none}.stk:hover{text-decoration:underline}
 .warn{color:var(--am);font-size:12px}.bar{display:inline-block;height:12px;background:#f4f4f0;border-radius:3px;vertical-align:middle;margin-right:10px}.bv{display:inline-block;min-width:56px}
 .pb{display:inline-block;min-width:44px;padding:6px 8px;border-radius:3px;color:#fff;background:#222;text-align:center}
+.rsig{display:inline-block;padding:5px 8px;background:var(--am);color:#0a0a0a;font:700 11px var(--sans);letter-spacing:.06em}.rhit{background:rgba(232,169,58,.2);color:#ffd17a}.src{color:var(--ink)}.rempty{padding:22px;color:var(--mut)}
 .segs{display:flex;gap:0;margin:0 0 16px;border:2px solid #f4f4f0;width:max-content;max-width:100%;overflow-x:auto}.seg{font:600 15px var(--sans);color:var(--ink);background:none;border:0;padding:12px 22px;cursor:pointer;white-space:nowrap}.seg.on{background:#f4f4f0;color:#0a0a0a}
 .hz{display:grid;grid-template-columns:1fr 1fr;gap:20px}.ch{display:flex;justify-content:space-between;padding:20px 18px 6px}.ct{font-size:22px;font-weight:700}.g{color:var(--g)}.r{color:var(--r)}
 table.rel td,table.rel th{padding:11px 12px}tr.newrow td.tk{box-shadow:inset 5px 0 var(--r)}span.strong.g a{color:var(--g)}span.strong.r a{color:var(--r)}

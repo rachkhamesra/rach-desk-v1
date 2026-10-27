@@ -2,7 +2,7 @@
 
 A searchable stock screen on GitHub Pages, rebuilt every weekday evening from NSE and BSE end-of-day files.
 
-Main screen: search a ticker, see its adjusted price with moving averages, delivered-share bars (green = up on above-average delivery, red = down on above-average delivery, faded green/red = ordinary days, grey = a move under 0.5 standard deviations), its relative strength against the Nifty, and the futures open-interest build-up. Other tabs: 1-day delivery screen, persistent delivery, relative performance, and stocks at a moving average.
+Main screen: search a ticker, see its adjusted price with moving averages, delivered-share bars (green = up on above-average delivery, red = down on above-average delivery, faded green/red = ordinary days, grey = a move under 0.5 standard deviations), its relative strength against the Nifty, and the futures open-interest build-up. Other tabs: 1-day delivery screen, persistent delivery, results calendar, relative performance, and stocks at a moving average.
 
 ## Set up (once)
 1. Create a GitHub repo and push this folder.
@@ -24,6 +24,11 @@ NSE and BSE do not adjust the previous close, so a split or bonus looks like a c
 2. it has no such signal (the stock was not in F&O then) but rupee turnover stayed normal. A split changes the share count, not the rupees traded; a crash or news gap comes with a turnover spike (3x the prior 20-day average or more).
 
 Otherwise it is a real move and is left alone. Prices before the date are multiplied by the factor and delivered shares and open interest divided by it, so charts, averages and the 20-day baseline stay on one share basis. Each adjustment shows as a green dashed line on the stock's chart, and `site/corporate_actions.csv` is an audit log. On the 14 events in the first year: 13 adjusted (KOTAKBANK 5:1 split, LICI and PIDILITIND bonuses, ANGELONE 10:1, the VEDL demerger, among them) and POLICYBZR's -36% crash left alone. Nothing needs maintaining by hand; `corp_actions.csv` exists only as an override if you ever disagree with a call (symbol,date,action,ratio,note).
+
+## Results calendar and pre-result activity
+The results tab reads NSE's board-meeting filings for scheduled dates and its corporate-announcement filings for the actual declaration timestamp. It excludes press releases, call transcripts and newspaper notices. The feeds are cached and merged on each run, so temporary NSE downtime leaves the most recent calendar in place and does not stop the rest of the desk from publishing.
+
+For each result it examines the three completed trading sessions before the declaration date. `PRE-RESULT ACTIVITY` means that, on at least one of those sessions, delivered shares were above the prior 20-session average and the absolute price move was greater than 0.8 times the stock's prior-60-session daily-return standard deviation. Both baselines are shifted, so the signal uses no future data.
 
 ## Definitions
 - Delivered shares = NSE + BSE (mapped through the ISIN). Delivery % is shown for reference, never used to rank.

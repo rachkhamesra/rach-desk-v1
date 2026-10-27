@@ -32,7 +32,7 @@ def build(parsed, overrides=None):
 
     ret1 = C.pct_change(fill_method=None); sig_prev = ret1.rolling(60, min_periods=30).std().shift(1)
     small = ret1.abs() < 0.5 * sig_prev
-    M["ret1"] = ret1; M["OIadj"] = oi / F
+    M["ret1"] = ret1; M["zmove"] = ret1 / sig_prev; M["OIadj"] = oi / F
     M["dcode"] = pd.DataFrame(np.where(ret1.isna(), np.nan, np.where(small, 0.0, np.sign(ret1))), index=ret1.index, columns=ret1.columns)
     A20 = DQ.shift(1).rolling(20, min_periods=15).mean(); RAT = DQ / A20; M["RAT"] = RAT
     ret1 = C.pct_change(fill_method=None)
