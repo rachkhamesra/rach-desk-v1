@@ -24,6 +24,17 @@ class CallIntelligenceTest(unittest.TestCase):
         payload = {"output": [{"content": [{"type": "output_text", "text": "{\"ok\":true}"}]}]}
         self.assertEqual(calls._response_text(payload), '{"ok":true}')
 
+    def test_priority_calls_take_first_five_slots_then_newest(self):
+        latest = {}
+        for i, symbol in enumerate(calls.PRIORITY_SYMBOLS):
+            latest[symbol] = {"symbol": symbol, "filed_at": f"2026-01-0{i + 1}T00:00:00", "source_url": f"https://x/{symbol}.pdf"}
+        for i in range(10):
+            symbol = f"LATEST{i}"
+            latest[symbol] = {"symbol": symbol, "filed_at": f"2026-10-{i + 1:02d}T00:00:00", "source_url": f"https://x/{symbol}.pdf"}
+        got = calls.select_pending(latest, {}, limit=12)
+        self.assertEqual([x["symbol"] for x in got[:5]], list(calls.PRIORITY_SYMBOLS))
+        self.assertEqual([x["symbol"] for x in got[5:]], [f"LATEST{i}" for i in range(9, 2, -1)])
+
 
 if __name__ == "__main__":
     unittest.main()
