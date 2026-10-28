@@ -1,3 +1,4 @@
+/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
 # Desk
 
 A searchable stock screen on GitHub Pages, rebuilt every weekday evening from NSE and BSE end-of-day files.
@@ -9,6 +10,8 @@ Main screen: search a ticker, see its adjusted price with moving averages, deliv
 2. Settings, Pages, Source: **GitHub Actions**.
 3. Actions tab, run **Daily desk** once ("Run workflow"). The first run downloads about 14 months of files (a few minutes). After that it runs by itself.
 
+To enable the F&O conference-call summaries, create an OpenAI API key and add it at **Settings → Secrets and variables → Actions → New repository secret** with the name `OPENAI_API_KEY`. The dashboard still builds normally when the secret is absent; it simply shows no call analysis.
+
 The page is at `https://<you>.github.io/<repo>/`. Locally: `pip install -r requirements.txt`, then `python run.py` (writes `site/index.html`). `--asof 2026-10-23` rebuilds for an earlier date; `--days 1100` pulls about three years.
 
 ## What happens each night
@@ -17,6 +20,11 @@ Monday to Friday at 20:00 IST the workflow starts, restores the small cached his
 - On an exchange holiday NSE serves the previous day's file; the job notices and rebuilds on the last real session.
 - GitHub can start scheduled jobs a few minutes late. In a public repo GitHub switches scheduled workflows off after 60 days without any repository activity; re-enable them in the Actions tab, or keep the repo private.
 - NSE and BSE sometimes block GitHub's servers. If the run fails on downloads, run `python run.py` from cron on your own machine and push `site/` to a `gh-pages` branch; nothing else changes.
+
+## Conference-call intelligence
+The nightly job looks back 150 days for NSE filings explicitly marked as transcripts, restricts them to the current F&O universe, and retains the latest call for each stock. It analyses at most 12 new or changed transcripts per run, newest first, then caches the structured output. Existing calls are never sent to the model again unless the exchange publishes a new transcript.
+
+The STOCKS page shows the result below the charts: next-quarter outlook, the subjects receiving the most analyst questions, a congratulations index, short supporting excerpts, and sector-specific metrics. Manufacturers focus on revenue and volume growth, order inflow, demand, margin outlook and EBITDA margin. Banks and lenders focus on credit growth, credit–deposit ratio, disbursements, NIM, asset quality and credit costs. These are model-generated reading aids; the linked exchange transcript remains the source of record.
 
 ## Corporate actions (automatic)
 NSE and BSE do not adjust the previous close, so a split or bonus looks like a crash. A one-day jump is treated as a corporate action when
