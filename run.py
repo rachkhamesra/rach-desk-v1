@@ -3,7 +3,7 @@
 import argparse, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import nse, metrics, webpage, results, universes, calls
+import nse, metrics, webpage, results, universes, calls, exchange_tracker
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,6 +27,9 @@ def main():
     calendar, actual = results.load(a.root, end)
     M["results"] = results.build_signals(M, calendar, actual)
     M["calls"] = calls.load(a.root, end, memberships.get("fo", []))
+    exchange_history = exchange_tracker.load(a.root, end)
+    exchange_prices = M["C"]["BSE"] if "BSE" in M["C"] else pd.Series(dtype=float)
+    M["exchange_tracker"] = exchange_tracker.build(exchange_history, exchange_prices)
     os.makedirs(a.out, exist_ok=True)
     page = webpage.render(M, f"AS OF {M['dates'][-1]:%a %d %b %Y}".upper() + warn)
     M["events"].to_csv(os.path.join(a.out, "corporate_actions.csv"), index=False)       # audit log only, not shown in the UI

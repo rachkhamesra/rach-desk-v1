@@ -189,6 +189,57 @@ def tab_at(M, allowed=None):
             f'<div class="card">{"".join(out)}</div>')
 
 
+def _line_points(values, width, height, left=44, top=18, right=18, bottom=30):
+    vals = pd.Series(values, dtype=float); good = vals.dropna()
+    if good.empty: return "", np.nan, np.nan
+    lo, hi = float(good.min()), float(good.max())
+    if hi == lo: hi = lo + 1
+    xs = np.linspace(left, width - right, len(vals))
+    ys = top + (hi - vals) / (hi - lo) * (height - top - bottom)
+    points = " ".join(f"{x:.1f},{y:.1f}" for x, y in zip(xs, ys) if pd.notna(y))
+    return points, lo, hi
+
+
+def tab_exchange(M):
+    X = M.get("exchange_tracker", {})
+    if not X.get("available"):
+        return ('<h2>Exchange Tracker</h2><div class="subl">BSE OPTIONS ACTIVITY</div>'
+                f'<div class="card rempty">{esc(X.get("commentary", ["BSE data is not available yet."])[0])}</div>')
+    s = X["series"].dropna(subset=["roll5", "price"]).reset_index(drop=True)
+    W, H = 900, 300
+    tp, tlo, thi = _line_points(s["roll5"], W, H)
+    pp, plo, phi = _line_points(s["price"], W, H)
+    x0, xb = 44, W - 18; base = H - 30
+    area = f'{x0},{base} {tp} {xb},{base}'
+    ticks = "".join(f'<text x="{44 + (W - 62) * i / 4:.0f}" y="292" text-anchor="middle">{s.date.iloc[round((len(s)-1)*i/4)]:%b %y}</text>' for i in range(5))
+    hero = (f'<svg class="exsvg hero" viewBox="0 0 {W} {H}" role="img" aria-label="BSE premium turnover and BSE share price">'
+            f'<polygon points="{area}" class="exarea"/><polyline points="{tp}" class="exto"/><polyline points="{pp}" class="expx"/>'
+            f'<text x="8" y="20">₹{thi:,.0f}cr</text><text x="8" y="{base}">₹{tlo:,.0f}cr</text>'
+            f'<text x="{W-8}" y="20" text-anchor="end">₹{phi:,.0f}</text><text x="{W-8}" y="{base}" text-anchor="end">₹{plo:,.0f}</text>{ticks}</svg>')
+
+    def bars(df, label, value, colour, current=False):
+        w, h, l, top, bot = 560, 250, 40, 18, 42
+        vals = pd.to_numeric(df[value], errors="coerce"); mx = max(float(vals.max()), 1)
+        bw = (w - l - 12) / max(len(df), 1); out = []
+        for i, (_, r) in enumerate(df.iterrows()):
+            bh = float(r[value]) / mx * (h - top - bot); x = l + i * bw + 2; y = h - bot - bh
+            cls = colour + (" latest" if current and i == len(df)-1 else "")
+            out.append(f'<rect class="{cls}" x="{x:.1f}" y="{y:.1f}" width="{max(3,bw-4):.1f}" height="{bh:.1f}"><title>{r[label]} · ₹{r[value]:,.0f} cr</title></rect>')
+            out.append(f'<text x="{x+bw/2-2:.1f}" y="{h-24}" text-anchor="end" transform="rotate(-45 {x+bw/2-2:.1f} {h-24})">{r[label]}</text>')
+        return f'<svg class="exsvg" viewBox="0 0 {w} {h}"><line x1="{l}" y1="{h-bot}" x2="{w-8}" y2="{h-bot}"/>' + "".join(out) + f'<text x="6" y="18">₹{mx:,.0f}cr</text></svg>'
+
+    wd = X["same_weekday"].copy(); wd["label"] = wd.date.dt.strftime("%d %b %y")
+    monthly = X["monthly"].copy(); monthly["label"] = pd.to_datetime(monthly.month + "-01").dt.strftime("%b %y")
+    comments = "".join(f'<li>{esc(x)}</li>' for x in X["commentary"])
+    return (f'<h2>Exchange Tracker</h2><div class="subl">BSE OPTIONS PREMIUM TURNOVER · ₹ CRORE</div>'
+            f'<div class="exheadline"><div><span>LATEST</span><b>₹{X["latest"]:,.0f} cr</b></div><div><span>AS OF</span><b>{X["asof"]:%d %b %Y}</b></div><div><span>DAY</span><b>{esc(X["weekday"])}</b></div></div>'
+            f'<div class="card excard"><div class="ch"><span class="ct">5D ROLLING PREMIUM TURNOVER</span><span><i class="exkey to"></i>5D premium <i class="exkey px"></i>BSE price</span></div>{hero}</div>'
+            f'<div class="exgrid"><div class="card excard"><div class="ch"><span class="ct">{esc(X["weekday"].upper())} VS PRIOR {esc(X["weekday"].upper())}S</span><span class="mut">LATEST 13</span></div>{bars(wd,"label","premium_turnover_cr","exbar",True)}</div>'
+            f'<div class="card excard"><div class="ch"><span class="ct">AVERAGE DAILY PREMIUM TURNOVER</span><span class="mut">CURRENT MONTH IS PARTIAL</span></div>{bars(monthly,"label","mean","exbar month",True)}</div></div>'
+            f'<div class="card excomment"><h3>DAILY READ</h3><ul>{comments}</ul><a href="{esc(X["source"])}" target="_blank" rel="noopener">BSE KEY STATISTICS ↗</a></div>'
+            '<p class="desc">Premium turnover is the BSE-reported daily Options Premium Turnover. The current month updates incrementally; if BSE has not published a new session, the last available observation remains visible.</p>')
+
+
 # ------------------------------------------------------------------ assemble
 def stocks_json(M):
     dates = [f"{d:%Y-%m-%d}" for d in M["dates"]]; out = {}; T = M["T"]
@@ -243,7 +294,8 @@ def render(M, asof_text):
         return "".join(f'<div class="uview" data-u="{k}"{("" if k == "top1000" else " hidden")}>{fn(M, allowed=M["memberships"][k])}</div>' for k, _ in choices)
     panels = [("stocks", "STOCKS", tab_stocks(M)), ("screen", "1-DAY SCREEN", views(tab_screen)), ("persist", "PERSISTENT DELIVERY", views(tab_persist)),
               ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)), ("results", "RESULTS CALENDAR", views(tab_results)),
-              ("rel", "RELATIVE PERFORMANCE", views(tab_rel)), ("at", "AT A MOVING AVERAGE", views(tab_at))]
+              ("rel", "RELATIVE PERFORMANCE", views(tab_rel)), ("at", "AT A MOVING AVERAGE", views(tab_at)),
+              ("exchange", "EXCHANGE TRACKER", tab_exchange(M))]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}" data-t="{k}">{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
     opts = "".join(f'<option value="{k}">{label}</option>' for k, label in choices)
@@ -284,6 +336,11 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .setupstate{display:inline-block;padding:4px 7px;font:800 9px var(--sans);letter-spacing:.07em;white-space:nowrap}.setupstate.active{background:var(--g);color:#06160d}.setupstate.cool{border:1px solid var(--am);color:#ffd17a}.cashwatch td b{color:var(--g)}
 .cashsub{margin:18px 0 7px;font:800 11px var(--sans);letter-spacing:.1em}.cashsub.track{color:#ffd17a;margin-top:26px}
 .cashwatch tr.cashnew td{background:rgba(232,169,58,.08)}.cashwatch tr.cashnew td:first-child{box-shadow:inset 4px 0 var(--am)}.newcash{display:inline-block;margin-left:5px;padding:3px 5px;background:var(--am);color:#090909;font:800 8px var(--sans);letter-spacing:.06em;vertical-align:1px}
+.exheadline{display:flex;gap:28px;margin:12px 0 14px}.exheadline div{display:flex;flex-direction:column}.exheadline span{font:700 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.exheadline b{font:700 17px var(--mono)}
+.excard{padding:12px 14px;margin-bottom:12px}.exsvg{width:100%;height:auto;display:block;background:#111}.exsvg text{fill:var(--mut);font:10px var(--mono)}.exsvg line{stroke:var(--line)}
+.exarea{fill:rgba(59,130,246,.22)}.exto{fill:none;stroke:#5aa9ff;stroke-width:2}.expx{fill:none;stroke:var(--am);stroke-width:2.3}.exkey{display:inline-block;width:17px;border-top:2px solid;margin:0 5px 2px 12px}.exkey.to{border-color:#5aa9ff}.exkey.px{border-color:var(--am)}
+.exgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.exbar{fill:#4e85d8}.exbar.month{fill:#607fc2}.exbar.latest{fill:var(--am)}.excomment{padding:16px 18px;border-left:4px solid var(--am)}.excomment h3{margin:0 0 8px;font:800 10px var(--sans);letter-spacing:.11em}.excomment ul{margin:0 0 10px;padding-left:20px}.excomment li{margin:6px 0}.excomment a{font:700 9px var(--sans);letter-spacing:.08em;color:var(--am)}
+@media(max-width:850px){.exgrid{grid-template-columns:1fr}.exheadline{gap:16px;flex-wrap:wrap}}
 .segs{display:flex;gap:0;margin:0 0 16px;border:2px solid #f4f4f0;width:max-content;max-width:100%;overflow-x:auto}.seg{font:600 15px var(--sans);color:var(--ink);background:none;border:0;padding:12px 22px;cursor:pointer;white-space:nowrap}.seg.on{background:#f4f4f0;color:#0a0a0a}
 .hz{display:grid;grid-template-columns:1fr 1fr;gap:20px}.ch{display:flex;justify-content:space-between;padding:20px 18px 6px}.ct{font-size:22px;font-weight:700}.g{color:var(--g)}.r{color:var(--r)}
 table.rel td,table.rel th{padding:11px 12px}tr.newrow td.tk{box-shadow:inset 5px 0 var(--r)}span.strong.g a{color:var(--g)}span.strong.r a{color:var(--r)}
@@ -306,7 +363,7 @@ table.ca td.note{white-space:normal;min-width:340px;max-width:560px;color:#b9b9b
 .rb{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:7px 0 6px;font:600 10px var(--sans);letter-spacing:.08em}.rb .seg{padding:5px 10px;font-size:11px;border:1px solid #444}
 .rb .mab{padding:5px 8px}.rb .mab.on{background:var(--am);border-color:var(--am);color:#090909}.rb .mab:disabled{opacity:.28;cursor:not-allowed}.malabel{margin-left:12px}
 #chartbox{padding-top:6px}.chartgrid{display:grid;grid-template-columns:minmax(0,2fr) minmax(250px,1fr);gap:10px}.charts{min-width:0}.chartcard{background:var(--panel);padding:3px 4px 1px;margin-bottom:8px}.chartcard svg{display:block;width:100%;touch-action:pan-y}
-#insights{background:var(--panel);border-top:3px solid #f4f4f0;padding:12px;align-self:start;position:sticky;top:58px;max-height:calc(100vh - 80px);overflow:auto}.ititle{font:800 12px var(--sans);letter-spacing:.1em;margin-bottom:9px}.resultbox{background:rgba(232,169,58,.15);border-left:3px solid var(--am);padding:10px;margin-bottom:12px}.resultbox b{display:block;color:#ffd17a}.ievent{padding:9px 0;border-top:1px solid var(--line);font:11px var(--mono)}.ievent .idate{color:var(--mut);margin-right:7px}.itag{display:inline-block;font:800 9px var(--sans);letter-spacing:.06em;padding:3px 5px;margin-right:6px;background:#292929}.itag.del{color:#fff}.itag.oi{color:#8fc0ff}.inone{color:var(--mut);font-size:12px;line-height:1.5}
+#insights{background:var(--panel);border-top:3px solid #f4f4f0;padding:12px;align-self:start}.ititle{font:800 12px var(--sans);letter-spacing:.1em;margin-bottom:9px}.resultbox{background:rgba(232,169,58,.15);border-left:3px solid var(--am);padding:10px;margin-bottom:12px}.resultbox b{display:block;color:#ffd17a}.ievent{padding:9px 0;border-top:1px solid var(--line);font:11px var(--mono)}.ievent .idate{color:var(--mut);margin-right:7px}.itag{display:inline-block;font:800 9px var(--sans);letter-spacing:.06em;padding:3px 5px;margin-right:6px;background:#292929}.itag.del{color:#fff}.itag.oi{color:#8fc0ff}.inone{color:var(--mut);font-size:12px;line-height:1.5}
 .mahere{margin-top:15px;padding-top:13px;border-top:2px solid #333}.mahit{margin-top:7px;padding:9px 10px;background:#1b1b1b;border-left:3px solid var(--am);font:11px var(--mono);line-height:1.5}.mahit b{font:800 12px var(--sans);color:#ffd17a}.mahit .cross{display:inline-block;margin-left:6px;padding:2px 5px;background:var(--g);color:#07140c;font:800 8px var(--sans);letter-spacing:.05em}.mahit .fresh{color:var(--g)}
 #callintel{margin-top:10px}.callhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;background:var(--panel);border-top:3px solid #f4f4f0;padding:12px 14px;margin-bottom:8px}.callhead h3{margin:0;font-size:16px;letter-spacing:.04em}.callhead a{color:#ffd17a;font:11px var(--mono)}.callmeta{color:var(--mut);font:10px var(--mono);margin-top:3px}.callpanels{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:8px}.callsection{background:var(--panel);border-top:3px solid #444;padding:12px;min-width:0}.callsection.outlookpanel{border-color:var(--g)}.callsection.focuspanel{border-color:var(--am)}.callsection.actualspanel{border-color:#5aa9ff}.callsection h4{margin:0 0 9px;font:800 10px var(--sans);letter-spacing:.1em;color:var(--mut)}.outlook{padding:9px 10px;margin-bottom:7px;background:#191919;border-left:3px solid #777;font-size:12px;line-height:1.45}.outlook.positive{border-color:var(--g)}.outlook.cautious,.outlook.negative{border-color:var(--r)}.outlook b{display:block;margin-bottom:2px}.evidence{display:block;color:#9d9d96;font:10px var(--mono);margin-top:4px}.focus{display:grid;grid-template-columns:1fr auto;gap:9px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}.focus small{display:block;color:var(--mut);margin-top:2px}.qcount{font:700 11px var(--mono);color:#ffd17a}.metricgrid{display:grid;grid-template-columns:1fr;gap:7px}.metric{background:#191919;padding:8px 9px;font-size:11px;line-height:1.4}.metric b{display:block;color:var(--mut);font:800 9px var(--sans);letter-spacing:.07em;margin-bottom:2px}.congrats{display:flex;gap:16px;align-items:baseline;padding:10px;background:rgba(232,169,58,.1);margin-top:12px}.congrats strong{font:700 24px var(--mono);color:#ffd17a}.congrats span{font-size:11px;color:var(--mut)}.callnone{background:var(--panel);border-top:3px solid #444;padding:12px;color:var(--mut);font-size:12px}.aicaveat{margin-top:8px;color:#666;font-size:10px}
 #ro{min-height:22px;font:11px var(--mono);color:#cfcfc8;padding:5px 4px}
@@ -418,7 +475,7 @@ function draw(){
  const m=S.sm,last=S.c[n-1],lastOI=S.oi[n-1],dOI=dl[n-1],up=S.c[n-1]>=S.c[n-2],bu=dOI==null?'–':dOI>=0?(up?'Long Buildup':'Cash Selling'):(up?'Cash Buying':'Long Unwind'),buc=dOI==null?'':bu==='Long Buildup'?'g':bu==='Cash Selling'?'r':'';
  const rs=D.hz.map((h,k)=>{const r=m.rel[k];return `<div><span>${h[0].toUpperCase()}</span><b class="${cls(r[0])}">${pc(r[0])}</b> <i class="mut" style="font-style:normal">#${r[1]??'–'}/${SY.length}</i></div>`}).join(''),rbadge=S.result?`<span class="resultmark" title="Upcoming result">R</span>`:'';
  document.getElementById('sh').innerHTML=`<div class="hd1"><b>${cur}</b>${rbadge}<span class="px">${last==null?'–':last.toFixed(2)}</span><span class="${cls(m.px)}">${pc(m.px,2)}</span></div><div class="chips2"><div><span>DELIVERED</span>${fmt(m.dq)}</div><div><span>÷ 20D AVG</span>${m.ratio==null?'–':m.ratio.toFixed(2)+'×'}</div><div><span>DELIV %</span>${m.dp==null?'–':m.dp.toFixed(1)}</div><div><span>BSE %</span>${m.bse==null?'–':m.bse.toFixed(0)}</div><div><span>SSF OI</span>${fmt(lastOI)}</div><div><span>ΔOI 1D</span><b class="${cls(dOI)}">${fL(dOI)}</b></div><div><span>OI SIGNAL</span><b class="${buc}">${bu}</b></div></div><div class="rsrow">${rs}</div>`;
- const events=[];for(let i=Math.max(1,n-30);i<n;i++){const move=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null;if((S.rat[i]??0)>=1.5)events.push({i,kind:'del',txt:`${S.rat[i].toFixed(2)}× delivery · ${pc(move)}`});if(dl[i]!=null&&S.oi[i-1]){const op=dl[i]/S.oi[i-1]*100;if(Math.abs(op)>=3){const pu=move>=0,label=dl[i]>=0?(pu?'Long Buildup':'Cash Selling'):(pu?'Cash Buying':'Long Unwind');events.push({i,kind:'oi',txt:`${label} · ${pc(op)} OI`})}}}events.sort((a,b)=>b.i-a.i);let ih='<div class="ititle">RECENT ACTIVITY · 30 SESSIONS</div>';if(S.result)ih+=`<div class="resultbox"><b>UPCOMING RESULT</b>${S.result.date} · ${S.result.status}</div>`;ih+=events.length?events.slice(0,14).map(e=>`<div class="ievent"><span class="idate">${D.dates[e.i].slice(5)}</span><span class="itag ${e.kind}">${e.kind==='del'?'DELIVERY':'OI'}</span>${e.txt}</div>`).join(''):'<div class="inone">No delivery ≥1.5× average or daily OI move ≥3% in the last 30 sessions.</div>';ih+='<div class="mahere"><div class="ititle">AT A MOVING AVERAGE</div>'+(S.at&&S.at.length?S.at.map(a=>`<div class="mahit"><b>${a.ma}-DAY MA</b>${a.crossed?'<span class="cross">CROSSED TODAY</span>':''}<br><span class="${a.new?'fresh':''}">${a.above?'above':'below'} by ${Math.abs(a.dist).toFixed(2)}% · ${Math.abs(a.dist/a.sigma).toFixed(2)}σ${a.new?' · new today':''}</span></div>`).join(''):'<div class="inone">Not currently within 0.5σ of an active moving average.</div>')+'</div>';document.getElementById('insights').innerHTML=ih;
+ const events=[];for(let i=Math.max(1,n-5);i<n;i++){const move=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null;if((S.rat[i]??0)>=1.5)events.push({i,kind:'del',txt:`${S.rat[i].toFixed(2)}× delivery · ${pc(move)}`});if(dl[i]!=null&&S.oi[i-1]){const op=dl[i]/S.oi[i-1]*100;if(Math.abs(op)>=3){const pu=move>=0,label=dl[i]>=0?(pu?'Long Buildup':'Cash Selling'):(pu?'Cash Buying':'Long Unwind');events.push({i,kind:'oi',txt:`${label} · ${pc(op)} OI`})}}}events.sort((a,b)=>b.i-a.i);let ih='<div class="ititle">RECENT ACTIVITY · 5 SESSIONS</div>';if(S.result)ih+=`<div class="resultbox"><b>UPCOMING RESULT</b>${S.result.date} · ${S.result.status}</div>`;ih+=events.length?events.map(e=>`<div class="ievent"><span class="idate">${D.dates[e.i].slice(5)}</span><span class="itag ${e.kind}">${e.kind==='del'?'DELIVERY':'OI'}</span>${e.txt}</div>`).join(''):'<div class="inone">No delivery ≥1.5× average or daily OI move ≥3% in the last 5 sessions.</div>';ih+='<div class="mahere"><div class="ititle">AT A MOVING AVERAGE</div>'+(S.at&&S.at.length?S.at.map(a=>`<div class="mahit"><b>${a.ma}-DAY MA</b>${a.crossed?'<span class="cross">CROSSED TODAY</span>':''}<br><span class="${a.new?'fresh':''}">${a.above?'above':'below'} by ${Math.abs(a.dist).toFixed(2)}% · ${Math.abs(a.dist/a.sigma).toFixed(2)}σ${a.new?' · new today':''}</span></div>`).join(''):'<div class="inone">Not currently within 0.5σ of an active moving average.</div>')+'</div>';document.getElementById('insights').innerHTML=ih;
  callPanel(S);
  document.getElementById('lg').innerHTML=mas.map(([m])=>`<span><u style="border-color:${COL[m]}"></u>${m}</span>`).join('')+`<span><u style="border-color:#fff"></u>price / RS</span><span><i style="background:${G}"></i>Long Buildup</span><span><i style="background:#5aa9ff"></i>Cash Buying</span><span><i style="background:${R}"></i>Cash Selling</span><span><i style="background:#e8a93a"></i>Long Unwind</span>`;
  const ro=document.getElementById('ro');ro.innerHTML='<span class="mut">Move over the price chart for daily detail</span>';const mv=e=>{const r=main.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W;let i=Math.round(v0+(x-L)*(n-1-v0)/(W-L-Rr));i=Math.max(v0,Math.min(n-1,i));const xh=document.getElementById('xh');xh.setAttribute('x1',xs(i));xh.setAttribute('x2',xs(i));xh.setAttribute('visibility','visible');const ch=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null;ro.innerHTML=`${D.dates[i]} · close ${S.c[i]??'–'} <span class="${cls(ch)}">${pc(ch,2)}</span> · delivered ${fmt(S.dq[i])} (${S.rat[i]==null?'–':S.rat[i].toFixed(2)+'× avg'}) · OI ${fmt(S.oi[i])} · ΔOI ${fL(dl[i])}`};main.onpointermove=mv;main.onpointerdown=mv;main.onpointerleave=()=>document.getElementById('xh').setAttribute('visibility','hidden');

@@ -33,6 +33,7 @@ jobs:
             data/results_actual.csv
             data/universes.json
             data/call_intelligence.json
+            data/bse_premium_turnover.csv
           key: desk-data-${{ github.run_id }}
           restore-keys: desk-data-
       - name: Build latest available market session
