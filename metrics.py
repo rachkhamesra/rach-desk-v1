@@ -7,6 +7,7 @@ HORIZONS = [("5 days", 5), ("20 days", 20), ("3 months", 63), ("6 months", 126),
 SIGMA_WINDOW = 60       # sessions of daily returns used for the 0.5 sigma "at a moving average" rule
 LIST_N = 30             # names per side in the relative-performance lists
 CASH_MAS = (50, 100, 200)
+CASH_MIN_DAYS = 2
 
 
 def pctile(series, value):
@@ -33,10 +34,11 @@ def split_cash_signals(base, above):
     return base & above, base & ~above
 
 
-def appeared_today(flags, cooldown=2):
+def appeared_today(flags, cooldown=2, min_days=1):
     """True when an episode is on today's table but was absent yesterday."""
     values = list(flags)
-    return bool(values) and episode_state(values, cooldown) is not None and episode_state(values[:-1], cooldown) is None
+    now, prev = episode_state(values, cooldown), episode_state(values[:-1], cooldown)
+    return bool(now and now["days"] >= min_days and (not prev or prev["days"] < min_days))
 
 
 def build(parsed, overrides=None, memberships=None):
@@ -120,13 +122,13 @@ def build(parsed, overrides=None, memberships=None):
         rows = []
         for s in memberships.get("fo", []):
             state = episode_state(flags[s].tolist(), cooldown=2)
-            if not state: continue
+            if not state or state["days"] < CASH_MIN_DAYS: continue
             i = state["last_hit"]; prior_oi = oi_adj[s].iloc[i - 1] if i else np.nan; delta = oi_change[s].iloc[i]
             ma_pos = []
             for n in active_cash_mas:
                 distance = dist[n][s].iloc[i]
                 if (track and distance <= 0) or (not track and distance > 0): ma_pos.append(f"{n} ({distance:+.1f}%)")
-            rows.append(dict(sym=s, days=state["days"], cooldown=state["cooldown"], new=appeared_today(flags[s].tolist()), signal_date=dates[i],
+            rows.append(dict(sym=s, days=state["days"], cooldown=state["cooldown"], new=appeared_today(flags[s].tolist(), min_days=CASH_MIN_DAYS), signal_date=dates[i],
                              mas=" / ".join(ma_pos), ratio=RAT[s].iloc[i], px1d=ret1[s].iloc[i] * 100,
                              oi=oi_adj[s].iloc[i], doi=delta, doi_pct=delta / prior_oi * 100 if pd.notna(prior_oi) and prior_oi else np.nan,
                              close=C[s].iloc[i]))
