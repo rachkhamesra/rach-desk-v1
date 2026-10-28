@@ -17,6 +17,8 @@ class CashAccumulationEpisodeTest(unittest.TestCase):
         self.assertFalse(metrics.appeared_today([False, True, True]))
         self.assertFalse(metrics.appeared_today([True, False]))
         self.assertTrue(metrics.appeared_today([True, False, False, False, True]))
+        self.assertFalse(metrics.appeared_today([False, True], min_days=2))
+        self.assertTrue(metrics.appeared_today([False, True, True], min_days=2))
 
     def test_one_and_two_signal_days_are_counted(self):
         self.assertEqual(metrics.episode_state([False, True])["days"], 1)
