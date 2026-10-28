@@ -34,6 +34,12 @@ def split_cash_signals(base, above):
     return base & above, base & ~above
 
 
+def appeared_today(flags, cooldown=2):
+    """True when an episode is on today's table but was absent yesterday."""
+    values = list(flags)
+    return bool(values) and episode_state(values, cooldown) is not None and episode_state(values[:-1], cooldown) is None
+
+
 def build(parsed, overrides=None, memberships=None):
     dates = sorted(parsed); memberships = memberships or {}
     fo_date = [d for d in dates if parsed[d]["fo"] is not None][-1]
@@ -121,7 +127,7 @@ def build(parsed, overrides=None, memberships=None):
             for n in active_cash_mas:
                 distance = dist[n][s].iloc[i]
                 if (track and distance <= 0) or (not track and distance > 0): ma_pos.append(f"{n} ({distance:+.1f}%)")
-            rows.append(dict(sym=s, days=state["days"], cooldown=state["cooldown"], signal_date=dates[i],
+            rows.append(dict(sym=s, days=state["days"], cooldown=state["cooldown"], new=appeared_today(flags[s].tolist()), signal_date=dates[i],
                              mas=" / ".join(ma_pos), ratio=RAT[s].iloc[i], px1d=ret1[s].iloc[i] * 100,
                              oi=oi_adj[s].iloc[i], doi=delta, doi_pct=delta / prior_oi * 100 if pd.notna(prior_oi) and prior_oi else np.nan,
                              close=C[s].iloc[i]))
