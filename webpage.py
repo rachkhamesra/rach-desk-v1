@@ -189,6 +189,57 @@ def tab_at(M, allowed=None):
             f'<div class="card">{"".join(out)}</div>')
 
 
+def _line_points(values, width, height, left=44, top=18, right=18, bottom=30):
+    vals = pd.Series(values, dtype=float); good = vals.dropna()
+    if good.empty: return "", np.nan, np.nan
+    lo, hi = float(good.min()), float(good.max())
+    if hi == lo: hi = lo + 1
+    xs = np.linspace(left, width - right, len(vals))
+    ys = top + (hi - vals) / (hi - lo) * (height - top - bottom)
+    points = " ".join(f"{x:.1f},{y:.1f}" for x, y in zip(xs, ys) if pd.notna(y))
+    return points, lo, hi
+
+
+def tab_exchange(M):
+    X = M.get("exchange_tracker", {})
+    if not X.get("available"):
+        return ('<h2>Exchange Tracker</h2><div class="subl">BSE OPTIONS ACTIVITY</div>'
+                f'<div class="card rempty">{esc(X.get("commentary", ["BSE data is not available yet."])[0])}</div>')
+    s = X["series"].dropna(subset=["roll5", "price"]).reset_index(drop=True)
+    W, H = 900, 300
+    tp, tlo, thi = _line_points(s["roll5"], W, H)
+    pp, plo, phi = _line_points(s["price"], W, H)
+    x0, xb = 44, W - 18; base = H - 30
+    area = f'{x0},{base} {tp} {xb},{base}'
+    ticks = "".join(f'<text x="{44 + (W - 62) * i / 4:.0f}" y="292" text-anchor="middle">{s.date.iloc[round((len(s)-1)*i/4)]:%b %y}</text>' for i in range(5))
+    hero = (f'<svg class="exsvg hero" viewBox="0 0 {W} {H}" role="img" aria-label="BSE premium turnover and BSE share price">'
+            f'<polygon points="{area}" class="exarea"/><polyline points="{tp}" class="exto"/><polyline points="{pp}" class="expx"/>'
+            f'<text x="8" y="20">₹{thi:,.0f}cr</text><text x="8" y="{base}">₹{tlo:,.0f}cr</text>'
+            f'<text x="{W-8}" y="20" text-anchor="end">₹{phi:,.0f}</text><text x="{W-8}" y="{base}" text-anchor="end">₹{plo:,.0f}</text>{ticks}</svg>')
+
+    def bars(df, label, value, colour, current=False):
+        w, h, l, top, bot = 560, 250, 40, 18, 42
+        vals = pd.to_numeric(df[value], errors="coerce"); mx = max(float(vals.max()), 1)
+        bw = (w - l - 12) / max(len(df), 1); out = []
+        for i, (_, r) in enumerate(df.iterrows()):
+            bh = float(r[value]) / mx * (h - top - bot); x = l + i * bw + 2; y = h - bot - bh
+            cls = colour + (" latest" if current and i == len(df)-1 else "")
+            out.append(f'<rect class="{cls}" x="{x:.1f}" y="{y:.1f}" width="{max(3,bw-4):.1f}" height="{bh:.1f}"><title>{r[label]} · ₹{r[value]:,.0f} cr</title></rect>')
+            out.append(f'<text x="{x+bw/2-2:.1f}" y="{h-24}" text-anchor="end" transform="rotate(-45 {x+bw/2-2:.1f} {h-24})">{r[label]}</text>')
+        return f'<svg class="exsvg" viewBox="0 0 {w} {h}"><line x1="{l}" y1="{h-bot}" x2="{w-8}" y2="{h-bot}"/>' + "".join(out) + f'<text x="6" y="18">₹{mx:,.0f}cr</text></svg>'
+
+    wd = X["same_weekday"].copy(); wd["label"] = wd.date.dt.strftime("%d %b %y")
+    monthly = X["monthly"].copy(); monthly["label"] = pd.to_datetime(monthly.month + "-01").dt.strftime("%b %y")
+    comments = "".join(f'<li>{esc(x)}</li>' for x in X["commentary"])
+    return (f'<h2>Exchange Tracker</h2><div class="subl">BSE OPTIONS PREMIUM TURNOVER · ₹ CRORE</div>'
+            f'<div class="exheadline"><div><span>LATEST</span><b>₹{X["latest"]:,.0f} cr</b></div><div><span>AS OF</span><b>{X["asof"]:%d %b %Y}</b></div><div><span>DAY</span><b>{esc(X["weekday"])}</b></div></div>'
+            f'<div class="card excard"><div class="ch"><span class="ct">5D ROLLING PREMIUM TURNOVER</span><span><i class="exkey to"></i>5D premium <i class="exkey px"></i>BSE price</span></div>{hero}</div>'
+            f'<div class="exgrid"><div class="card excard"><div class="ch"><span class="ct">{esc(X["weekday"].upper())} VS PRIOR {esc(X["weekday"].upper())}S</span><span class="mut">LATEST 13</span></div>{bars(wd,"label","premium_turnover_cr","exbar",True)}</div>'
+            f'<div class="card excard"><div class="ch"><span class="ct">AVERAGE DAILY PREMIUM TURNOVER</span><span class="mut">CURRENT MONTH IS PARTIAL</span></div>{bars(monthly,"label","mean","exbar month",True)}</div></div>'
+            f'<div class="card excomment"><h3>DAILY READ</h3><ul>{comments}</ul><a href="{esc(X["source"])}" target="_blank" rel="noopener">BSE KEY STATISTICS ↗</a></div>'
+            '<p class="desc">Premium turnover is the BSE-reported daily Options Premium Turnover. The current month updates incrementally; if BSE has not published a new session, the last available observation remains visible.</p>')
+
+
 # ------------------------------------------------------------------ assemble
 def stocks_json(M):
     dates = [f"{d:%Y-%m-%d}" for d in M["dates"]]; out = {}; T = M["T"]
@@ -243,7 +294,8 @@ def render(M, asof_text):
         return "".join(f'<div class="uview" data-u="{k}"{("" if k == "top1000" else " hidden")}>{fn(M, allowed=M["memberships"][k])}</div>' for k, _ in choices)
     panels = [("stocks", "STOCKS", tab_stocks(M)), ("screen", "1-DAY SCREEN", views(tab_screen)), ("persist", "PERSISTENT DELIVERY", views(tab_persist)),
               ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)), ("results", "RESULTS CALENDAR", views(tab_results)),
-              ("rel", "RELATIVE PERFORMANCE", views(tab_rel)), ("at", "AT A MOVING AVERAGE", views(tab_at))]
+              ("rel", "RELATIVE PERFORMANCE", views(tab_rel)), ("at", "AT A MOVING AVERAGE", views(tab_at)),
+              ("exchange", "EXCHANGE TRACKER", tab_exchange(M))]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}" data-t="{k}">{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
     opts = "".join(f'<option value="{k}">{label}</option>' for k, label in choices)
@@ -284,6 +336,11 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .setupstate{display:inline-block;padding:4px 7px;font:800 9px var(--sans);letter-spacing:.07em;white-space:nowrap}.setupstate.active{background:var(--g);color:#06160d}.setupstate.cool{border:1px solid var(--am);color:#ffd17a}.cashwatch td b{color:var(--g)}
 .cashsub{margin:18px 0 7px;font:800 11px var(--sans);letter-spacing:.1em}.cashsub.track{color:#ffd17a;margin-top:26px}
 .cashwatch tr.cashnew td{background:rgba(232,169,58,.08)}.cashwatch tr.cashnew td:first-child{box-shadow:inset 4px 0 var(--am)}.newcash{display:inline-block;margin-left:5px;padding:3px 5px;background:var(--am);color:#090909;font:800 8px var(--sans);letter-spacing:.06em;vertical-align:1px}
+.exheadline{display:flex;gap:28px;margin:12px 0 14px}.exheadline div{display:flex;flex-direction:column}.exheadline span{font:700 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.exheadline b{font:700 17px var(--mono)}
+.excard{padding:12px 14px;margin-bottom:12px}.exsvg{width:100%;height:auto;display:block;background:#111}.exsvg text{fill:var(--mut);font:10px var(--mono)}.exsvg line{stroke:var(--line)}
+.exarea{fill:rgba(59,130,246,.22)}.exto{fill:none;stroke:#5aa9ff;stroke-width:2}.expx{fill:none;stroke:var(--am);stroke-width:2.3}.exkey{display:inline-block;width:17px;border-top:2px solid;margin:0 5px 2px 12px}.exkey.to{border-color:#5aa9ff}.exkey.px{border-color:var(--am)}
+.exgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.exbar{fill:#4e85d8}.exbar.month{fill:#607fc2}.exbar.latest{fill:var(--am)}.excomment{padding:16px 18px;border-left:4px solid var(--am)}.excomment h3{margin:0 0 8px;font:800 10px var(--sans);letter-spacing:.11em}.excomment ul{margin:0 0 10px;padding-left:20px}.excomment li{margin:6px 0}.excomment a{font:700 9px var(--sans);letter-spacing:.08em;color:var(--am)}
+@media(max-width:850px){.exgrid{grid-template-columns:1fr}.exheadline{gap:16px;flex-wrap:wrap}}
 .segs{display:flex;gap:0;margin:0 0 16px;border:2px solid #f4f4f0;width:max-content;max-width:100%;overflow-x:auto}.seg{font:600 15px var(--sans);color:var(--ink);background:none;border:0;padding:12px 22px;cursor:pointer;white-space:nowrap}.seg.on{background:#f4f4f0;color:#0a0a0a}
 .hz{display:grid;grid-template-columns:1fr 1fr;gap:20px}.ch{display:flex;justify-content:space-between;padding:20px 18px 6px}.ct{font-size:22px;font-weight:700}.g{color:var(--g)}.r{color:var(--r)}
 table.rel td,table.rel th{padding:11px 12px}tr.newrow td.tk{box-shadow:inset 5px 0 var(--r)}span.strong.g a{color:var(--g)}span.strong.r a{color:var(--r)}

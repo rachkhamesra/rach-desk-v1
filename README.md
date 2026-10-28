@@ -2,7 +2,7 @@
 
 A searchable stock screen on GitHub Pages, rebuilt every weekday evening from NSE and BSE end-of-day files.
 
-Main screen: search a ticker, see its adjusted price with moving averages, delivered-share bars (green = up on above-average delivery, red = down on above-average delivery, faded green/red = ordinary days, grey = a move under 0.5 standard deviations), its relative strength against the Nifty, and the futures open-interest build-up. Other tabs: 1-day delivery screen, persistent delivery, results calendar, relative performance, and stocks at a moving average.
+Main screen: search a ticker, see its adjusted price with moving averages, delivered-share bars (green = up on above-average delivery, red = down on above-average delivery, faded green/red = ordinary days, grey = a move under 0.5 standard deviations), its relative strength against the Nifty, and the futures open-interest build-up. Other tabs: 1-day delivery screen, persistent delivery, results calendar, relative performance, stocks at a moving average, and Exchange Tracker.
 
 ## Set up (once)
 1. Create a GitHub repo and push this folder.
@@ -24,6 +24,9 @@ Monday to Friday at 20:00 IST the workflow starts, restores the small cached his
 The initial prototype bundles the latest transcript analysis for CUMMINSIND, ABB, PNB, PNBHOUSING and HEROMOTOCO directly in the repository. It therefore renders as ordinary website text without a model call at build time. The optional nightly automation can later look back 150 days for new NSE transcript filings and refresh only changed calls.
 
 The STOCKS page shows the result below the charts: next-quarter outlook, the subjects receiving the most analyst questions, a congratulations index, short supporting excerpts, and sector-specific metrics. Manufacturers focus on revenue and volume growth, order inflow, demand, margin outlook and EBITDA margin. Banks and lenders focus on credit growth, credit–deposit ratio, disbursements, NIM, asset quality and credit costs. These are model-generated reading aids; the linked exchange transcript remains the source of record.
+
+## Exchange Tracker
+The BSE tracker reads the official Equity Derivatives Key Statistics history from January 2025 onward. It stores daily Options Premium Turnover in ₹ crore, refreshes only the current month after the initial backfill, and keeps the last valid cache if BSE temporarily rejects a request. The page plots the five-session rolling premium turnover against BSE Ltd's adjusted share price, compares the newest observation with prior occurrences of the same weekday, shows monthly average daily premium turnover, and writes a short factual summary from those calculations.
 
 ## Corporate actions (automatic)
 NSE and BSE do not adjust the previous close, so a split or bonus looks like a crash. A one-day jump is treated as a corporate action when
