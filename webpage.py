@@ -276,6 +276,43 @@ def tab_exchange(M):
             '<p class="desc">Premium turnover is the BSE-reported daily Options Premium Turnover. The current month updates incrementally; if BSE has not published a new session, the last available observation remains visible.</p>')
 
 
+def tab_call_library(M):
+    calls = M.get("calls", {})
+    labels = {"revenue_growth": "Revenue growth", "volume_growth": "Volume growth", "order_inflow": "Order inflow",
+              "demand_outlook": "Demand outlook", "margin_outlook": "Margin outlook", "ebitda_margin": "EBITDA margin",
+              "credit_growth": "Credit growth", "credit_deposit_ratio": "Credit–deposit ratio", "disbursements": "Disbursements",
+              "nim_outlook": "NIM outlook", "asset_quality": "Asset quality", "credit_cost_outlook": "Credit-cost outlook"}
+    available = [(s, c) for s, c in calls.items() if c.get("analysis")]
+    available.sort(key=lambda x: x[1].get("filed_at", ""), reverse=True)
+    cards = []
+    for symbol, call in available:
+        analysis = call["analysis"]; outlook = analysis.get("next_quarter_outlook", [])[:3]; focus = analysis.get("analyst_focus", [])[:3]
+        cg = analysis.get("congratulations", {}); filed = pd.to_datetime(call.get("filed_at"), errors="coerce")
+        filed_text = "–" if pd.isna(filed) else f"{filed:%d %b %Y}"
+        sector = analysis.get("manufacturer") if analysis.get("company_type") == "manufacturer" else analysis.get("bank_lender") if analysis.get("company_type") == "bank_lender" else None
+        takeaways = []
+        if sector:
+            priority = (["revenue_growth", "order_inflow", "demand_outlook", "margin_outlook", "ebitda_margin", "volume_growth"]
+                        if analysis.get("company_type") == "manufacturer" else
+                        ["credit_growth", "nim_outlook", "asset_quality", "credit_cost_outlook", "disbursements", "credit_deposit_ratio"])
+            takeaways.extend((labels.get(k, k.replace("_", " ").title()), sector.get(k)) for k in priority if sector.get(k))
+        risks = analysis.get("key_risks", [])
+        takeaway_rows = takeaways[:3] + ([('Risk / watchpoint', risks[0])] if risks else [])
+        outlook_html = "".join(f'<li><b>{esc(x.get("topic", ""))}</b>{esc(x.get("summary", ""))}</li>' for x in outlook) or '<li class="mut">No explicit outlook stored.</li>'
+        focus_html = "".join(f'<li><b>{esc(x.get("topic", ""))}</b>{esc(x.get("why_it_mattered", ""))}<span>{int(x.get("question_count", 0))}Q</span></li>' for x in focus) or '<li class="mut">No analyst themes stored.</li>'
+        takeaway_html = "".join(f'<li><b>{esc(k)}</b>{esc(str(v))}</li>' for k, v in takeaway_rows) or '<li class="mut">No additional takeaways stored.</li>'
+        cards.append(f'<article class="callcard"><div class="callcardhead"><div><h3>{stk(symbol, M)}</h3><div>{esc(analysis.get("call_period", "Latest call"))} · transcript {filed_text}</div></div>'
+                     f'<div class="callscore"><strong>{float(cg.get("index_pct", 0)):.0f}%</strong><span>CONGRATULATIONS<br>{int(cg.get("count", 0))}/{int(cg.get("analyst_turns", 0))} TURNS</span></div></div>'
+                     f'<div class="callcols"><section><h4>NEXT QUARTER OUTLOOK</h4><ol>{outlook_html}</ol></section><section><h4>TOP ANALYST CONCERNS</h4><ol class="concerns">{focus_html}</ol></section></div>'
+                     f'<section class="takeaways"><h4>IMPORTANT TAKEAWAYS</h4><ul>{takeaway_html}</ul></section><a class="callsource" href="{esc(call.get("source_url", "#"))}" target="_blank" rel="noopener">OPEN SOURCE ↗</a></article>')
+    latest = available[0][1] if available else None
+    latest_label = "–" if latest is None else f'{esc(latest.get("symbol", ""))} · {esc(latest.get("analysis", {}).get("call_period", ""))}'
+    return (f'<h2>Conference Call Library</h2><div class="subl">{len(available)} STATIC TRANSCRIPT SUMMARIES AVAILABLE</div>'
+            f'<div class="calllibmeta"><span>LATEST COVERED CALL</span><b>{latest_label}</b></div>'
+            '<p class="desc">A compact index of the transcript research already stored in Rachit’s Market Lens. Outlook, analyst concerns and takeaways below are pulled directly from the existing summaries; no additional analysis is performed on this page.</p>'
+            f'<div class="calllibrary">{"".join(cards)}</div>' if cards else '<div class="card rempty">No conference-call summaries are available yet.</div>')
+
+
 # ------------------------------------------------------------------ assemble
 def stocks_json(M):
     dates = [f"{d:%Y-%m-%d}" for d in M["dates"]]; out = {}; T = M["T"]
@@ -331,6 +368,7 @@ def render(M, asof_text):
     panels = [("stocks", "STOCKS", tab_stocks(M)), ("persist", "PERSISTENT DELIVERY", views(tab_persist)),
               ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)), ("results", "RESULTS CALENDAR", views(tab_results)),
               ("rel", "RELATIVE PERFORMANCE", views(tab_rel)), ("at", "AT A MOVING AVERAGE", views(tab_at)),
+              ("calls", "CALL LIBRARY", tab_call_library(M)),
               ("exchange", "EXCHANGE TRACKER", tab_exchange(M))]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}" data-t="{k}">{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
@@ -402,10 +440,11 @@ table.ca td.note{white-space:normal;min-width:340px;max-width:560px;color:#b9b9b
 #insights{background:var(--panel);border-top:3px solid #f4f4f0;padding:12px;align-self:start}.ititle{font:800 12px var(--sans);letter-spacing:.1em;margin-bottom:9px}.resultbox{background:rgba(232,169,58,.15);border-left:3px solid var(--am);padding:10px;margin-bottom:12px}.resultbox b{display:block;color:#ffd17a}.ievent{padding:9px 6px;border-top:1px solid var(--line);font:11px var(--mono);white-space:nowrap}.ievent.cashbuy{background:rgba(63,191,122,.13);box-shadow:inset 3px 0 var(--g);color:#d7f5e5}.ievent .idate{display:inline-block;color:var(--mut);margin-right:7px;white-space:nowrap}.itag{display:inline-block;font:800 9px var(--sans);letter-spacing:.06em;padding:3px 5px;margin-right:6px;background:#292929}.itag.del{color:#fff}.itag.oi{color:#8fc0ff}.itag.cash{background:var(--g);color:#06160d}.inone{color:var(--mut);font-size:12px;line-height:1.5}
 .mahere{margin-top:15px;padding-top:13px;border-top:2px solid #333}.mahit{margin-top:7px;padding:9px 10px;background:#1b1b1b;border-left:3px solid var(--am);font:11px var(--mono);line-height:1.5}.mahit b{font:800 12px var(--sans);color:#ffd17a}.mahit .cross{display:inline-block;margin-left:6px;padding:2px 5px;background:var(--g);color:#07140c;font:800 8px var(--sans);letter-spacing:.05em}.mahit .fresh{color:var(--g)}
 #callintel{margin-top:10px}.callhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;background:var(--panel);border-top:3px solid #f4f4f0;padding:12px 14px;margin-bottom:8px}.callhead h3{margin:0;font-size:16px;letter-spacing:.04em}.callhead a{color:#ffd17a;font:11px var(--mono)}.callmeta{color:var(--mut);font:10px var(--mono);margin-top:3px}.callpanels{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:8px}.callsection{background:var(--panel);border-top:3px solid #444;padding:12px;min-width:0}.callsection.outlookpanel{border-color:var(--g)}.callsection.focuspanel{border-color:var(--am)}.callsection.actualspanel{border-color:#5aa9ff}.callsection h4{margin:0 0 9px;font:800 10px var(--sans);letter-spacing:.1em;color:var(--mut)}.outlook{padding:9px 10px;margin-bottom:7px;background:#191919;border-left:3px solid #777;font-size:12px;line-height:1.45}.outlook.positive{border-color:var(--g)}.outlook.cautious,.outlook.negative{border-color:var(--r)}.outlook b{display:block;margin-bottom:2px}.evidence{display:block;color:#9d9d96;font:10px var(--mono);margin-top:4px}.focus{display:grid;grid-template-columns:1fr auto;gap:9px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}.focus small{display:block;color:var(--mut);margin-top:2px}.qcount{font:700 11px var(--mono);color:#ffd17a}.metricgrid{display:grid;grid-template-columns:1fr;gap:7px}.metric{background:#191919;padding:8px 9px;font-size:11px;line-height:1.4}.metric b{display:block;color:var(--mut);font:800 9px var(--sans);letter-spacing:.07em;margin-bottom:2px}.congrats{display:flex;gap:16px;align-items:baseline;padding:10px;background:rgba(232,169,58,.1);margin-top:12px}.congrats strong{font:700 24px var(--mono);color:#ffd17a}.congrats span{font-size:11px;color:var(--mut)}.callnone{background:var(--panel);border-top:3px solid #444;padding:12px;color:var(--mut);font-size:12px}.aicaveat{margin-top:8px;color:#666;font-size:10px}
+.calllibmeta{display:flex;flex-direction:column;margin:12px 0}.calllibmeta span{font:800 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.calllibmeta b{font:700 15px var(--mono)}.calllibrary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.callcard{background:var(--panel);border-top:3px solid #f4f4f0;padding:13px;min-width:0}.callcardhead{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;padding-bottom:11px;border-bottom:1px solid var(--line)}.callcardhead h3{margin:0 0 2px;font-size:18px}.callcardhead>div>div{color:var(--mut);font:10px var(--mono)}.callscore{display:flex;gap:7px;align-items:center;text-align:right}.callscore strong{font:800 23px var(--mono);color:#ffd17a}.callscore span{font:800 8px var(--sans);letter-spacing:.07em;color:var(--mut)}.callcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.callcard h4{margin:13px 0 5px;font:800 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.callcard ol,.callcard ul{margin:0;padding-left:20px}.callcard li{position:relative;padding:6px 0 7px 2px;border-bottom:1px solid var(--line);font-size:11px;line-height:1.4}.callcard li b{display:block;font-size:11px;margin-bottom:1px}.callcard .concerns li{padding-right:28px}.callcard .concerns li span{position:absolute;right:0;top:7px;color:#ffd17a;font:700 10px var(--mono)}.takeaways{border-top:2px solid #333;margin-top:8px}.takeaways ul{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;list-style:none;padding:0}.callsource{display:inline-block;margin-top:10px;color:#ffd17a;font:800 9px var(--sans);letter-spacing:.08em}
 #ro{min-height:22px;font:11px var(--mono);color:#cfcfc8;padding:5px 4px}
 #lg{display:flex;flex-wrap:wrap;gap:6px 18px;font:12px var(--mono);color:var(--mut);padding:2px 4px 10px}#lg i{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px}#lg u{display:inline-block;width:18px;border-top:2px solid;margin-right:5px;vertical-align:middle}
 footer{max-width:1280px;margin:0 auto;padding:0 22px 40px;color:var(--mut);font-size:13px}
-@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.chartgrid,.callpanels{grid-template-columns:1fr}#insights{position:static;max-height:none}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}
+@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.chartgrid,.callpanels,.calllibrary{grid-template-columns:1fr}#insights{position:static;max-height:none}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}
 """
 
 JS = r"""

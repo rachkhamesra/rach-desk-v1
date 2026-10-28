@@ -5,6 +5,7 @@ import json, os
 import pandas as pd
 
 import calls
+import webpage
 
 
 class CallIntelligenceTest(unittest.TestCase):
@@ -16,6 +17,17 @@ class CallIntelligenceTest(unittest.TestCase):
         self.assertTrue(requested.issubset(seed))
         self.assertTrue(all(x.get("analysis", {}).get("next_quarter_outlook") for x in seed.values()))
         self.assertTrue(all(x.get("analysis", {}).get("analyst_focus") for x in seed.values()))
+
+    def test_call_library_reuses_stored_summary_fields(self):
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
+        with open(path, encoding="utf-8") as f: seed = json.load(f)
+        html = webpage.tab_call_library({"calls": seed, "unresolved": set(), "results": [], "dates": [pd.Timestamp("2026-10-29")]})
+        self.assertIn("Conference Call Library", html)
+        self.assertIn("NEXT QUARTER OUTLOOK", html)
+        self.assertIn("TOP ANALYST CONCERNS", html)
+        self.assertIn("IMPORTANT TAKEAWAYS", html)
+        self.assertIn("CONGRATULATIONS", html)
+        self.assertIn("transcript", html)
 
     @patch("calls.results._get")
     def test_discover_keeps_latest_transcript_for_fo_only(self, get):
