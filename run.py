@@ -1,4 +1,3 @@
-/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
 #!/usr/bin/env python3
 """Daily job: pull NSE/BSE end-of-day files, rebuild everything, write site/index.html."""
 import argparse, os, sys, time
