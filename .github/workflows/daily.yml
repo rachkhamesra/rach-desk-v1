@@ -1,3 +1,4 @@
+/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
      name: Daily desk
      on:
        schedule:
@@ -28,9 +29,14 @@
                  data/results_calendar.csv
                  data/results_actual.csv
                  data/universes.json
+                 data/call_intelligence.json
                key: desk-data-${{ github.run_id }}
                restore-keys: desk-data-
            - run: python run.py --wait-minutes 120
+             env:
+               OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+               CALLS_MODEL: gpt-6-luna
+               CALLS_MAX_NEW: "12"
            - uses: actions/upload-pages-artifact@v3
              with:
                path: site

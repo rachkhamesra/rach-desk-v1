@@ -1,9 +1,10 @@
+/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
 #!/usr/bin/env python3
 """Daily job: pull NSE/BSE end-of-day files, rebuild everything, write site/index.html."""
 import argparse, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import nse, metrics, webpage, results, universes
+import nse, metrics, webpage, results, universes, calls
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -26,6 +27,7 @@ def main():
     M = metrics.build(parsed, ov, memberships)
     calendar, actual = results.load(a.root, end)
     M["results"] = results.build_signals(M, calendar, actual)
+    M["calls"] = calls.load(a.root, end, memberships.get("fo", []))
     os.makedirs(a.out, exist_ok=True)
     page = webpage.render(M, f"AS OF {M['dates'][-1]:%a %d %b %Y}".upper() + warn)
     M["events"].to_csv(os.path.join(a.out, "corporate_actions.csv"), index=False)       # audit log only, not shown in the UI

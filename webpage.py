@@ -1,3 +1,4 @@
+/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
 """Static page: tabs, tables and an in-page chart. Everything is inline (no external requests), so it works on GitHub Pages or from a file."""
 import html, json
 import numpy as np, pandas as pd
@@ -98,19 +99,25 @@ def tab_persist(M, n=40, allowed=None):
 
 
 def tab_cash_accumulation(M):
-    df = M["cash_accumulation"]; rows = []
-    for i, r in df.iterrows():
-        state = f'<span class="setupstate active">ACTIVE</span>' if r.cooldown == 0 else f'<span class="setupstate cool">COOLDOWN {int(r.cooldown)}/2</span>'
-        rows.append(f'<tr><td class="mut">{i + 1}</td><td class="l">{stk(r.sym, M)}</td><td>{state}</td><td><b>{int(r.days)}D</b></td>'
-                    f'<td>{r.signal_date:%d %b}</td><td>{r.mas}</td><td{heat(r.ratio - 1, 1.5)}>{r.ratio:.2f}×</td><td{heat(r.px1d, 5)}>{pc(r.px1d)}</td>'
-                    f'<td>{fs(r.oi)}</td><td{heat(r.doi_pct, 8)}>{fl(r.doi)}</td><td{heat(r.doi_pct, 8)}>{pc(r.doi_pct)}</td><td>{r.close:,.2f}</td></tr>')
-    head = [("#", "mut"), ("STOCK", "l"), ("STATUS", ""), ("SETUP DAYS", ""), ("LAST SIGNAL", ""), ("ABOVE MA", ""),
-            ("DELIVERY ÷ 20D", ""), ("PX 1D", ""), ("SSF OI", ""), ("ΔOI", ""), ("ΔOI %", ""), ("CLOSE", "")]
-    empty = '<div class="card rempty">No F&amp;O stocks currently meet the setup or its two-session cooldown.</div>'
-    body = table(head, rows, "cashwatch") if rows else empty
+    def block(df, ma_heading, empty_text):
+        rows = []
+        for i, r in df.iterrows():
+            state = f'<span class="setupstate active">ACTIVE</span>' if r.cooldown == 0 else f'<span class="setupstate cool">COOLDOWN {int(r.cooldown)}/2</span>'
+            fresh = '<span class="newcash">NEW TODAY</span>' if r.new else ''
+            rows.append(f'<tr class="{"cashnew" if r.new else ""}"><td class="mut">{i + 1}</td><td class="l">{stk(r.sym, M)} {fresh}</td><td>{state}</td><td><b>{int(r.days)}D</b></td>'
+                        f'<td>{r.signal_date:%d %b}</td><td>{r.mas}</td><td{heat(r.ratio - 1, 1.5)}>{r.ratio:.2f}×</td><td{heat(r.px1d, 5)}>{pc(r.px1d)}</td>'
+                        f'<td>{fs(r.oi)}</td><td{heat(r.doi_pct, 8)}>{fl(r.doi)}</td><td{heat(r.doi_pct, 8)}>{pc(r.doi_pct)}</td><td>{r.close:,.2f}</td></tr>')
+        head = [("#", "mut"), ("STOCK", "l"), ("STATUS", ""), ("SETUP DAYS", ""), ("LAST SIGNAL", ""), (ma_heading, ""),
+                ("DELIVERY ÷ 20D", ""), ("PX 1D", ""), ("SSF OI", ""), ("ΔOI", ""), ("ΔOI %", ""), ("CLOSE", "")]
+        return table(head, rows, "cashwatch") if rows else f'<div class="card rempty">{empty_text}</div>'
+    confirmed = block(M["cash_accumulation"], "ABOVE MA", "No F&amp;O stocks currently meet the confirmed setup or its two-session cooldown.")
+    tracking = block(M["cash_tracking"], "BELOW MA", "No below-MA F&amp;O tracking candidates currently qualify or remain in cooldown.")
     return ('<h2>Cash Accumulation Watch</h2><div class="subl">F&amp;O · PRICE STRENGTH + DELIVERY + FALLING OI</div>'
             f'<p class="desc">A qualifying day closes higher and above the {" / ".join(str(n) for n in M["cash_mas"])}-day averages, with delivered shares above the prior 20-session average and total SSF OI falling. '
-            'Setup Days counts qualifying sessions in the current episode; a pause remains visible for two trading sessions and resumes the same episode if the signal returns.</p>' + body)
+            'Setup Days counts qualifying sessions in the current episode; a pause remains visible for two trading sessions and resumes the same episode if the signal returns.</p>'
+            '<h3 class="cashsub">CONFIRMED · ABOVE ALL ACTIVE AVERAGES</h3>' + confirmed +
+            '<h3 class="cashsub track">TRACKING LIST · SAME SIGNAL, BELOW AT LEAST ONE AVERAGE</h3>'
+            '<p class="desc">These names have positive price, above-average delivery and declining SSF OI, but still sit below one or more required averages. The Below MA column shows each unconfirmed average and the distance at the last signal.</p>' + tracking)
 
 
 def tab_rel(M, allowed=None):
@@ -194,14 +201,22 @@ def stocks_json(M):
         if old is None or r["event_date"] < old["event_date"]: upcoming[r["symbol"]] = r
     nz = lambda x, f=float: None if x is None or pd.isna(x) else f(x)
     for s in M["syms"]:
+        at = []
+        for ma in M["active_ma"]:
+            hit = next((x for x in M["at"][ma] if x["sym"] == s), None)
+            if hit:
+                at.append(dict(ma=ma, above=bool(hit["above"]), crossed=bool(hit["crossed"]),
+                               new=bool(hit["new"]), dist=round(float(hit["dist"]), 2),
+                               sigma=round(float(hit["sigma"]), 2)))
         rel = [[nz(M["relT"][name][s], lambda v: round(float(v), 2)), nz(M["relrank"][name][s], int)] for name, _ in metrics.HORIZONS]
         sm = dict(px=nz(M["ret1"][s].iloc[T] * 100, lambda v: round(float(v), 2)), ratio=nz(M["RAT"][s].iloc[T], lambda v: round(float(v), 2)),
                   dp=nz(M["dq_raw"][s].iloc[T] / M["tq_raw"][s].iloc[T] * 100, lambda v: round(float(v), 1)), bse=nz(M["bse_share"][s].iloc[T], lambda v: round(float(v), 0)),
                   oi=nz(M["oi"][s].iloc[T], int), doi=nz(M["doi"][s].iloc[T], int), dq=nz(M["DQ"][s].iloc[T], int), rel=rel)
         result = upcoming.get(s)
+        call = M.get("calls", {}).get(s)
         out[s] = dict(c=[nz(x, lambda v: round(float(v), 2)) for x in M["C"][s]], dq=[nz(x, int) for x in M["DQ"][s]],
                       rat=[nz(x, lambda v: round(float(v), 2)) for x in M["RAT"][s]], d=[nz(x, int) for x in M["dcode"][s]], oi=[nz(x, int) for x in M["OIadj"][s]], sm=sm,
-                      result=None if result is None else dict(date=f'{result["event_date"]:%Y-%m-%d}', status=result["status"]),
+                      result=None if result is None else dict(date=f'{result["event_date"]:%Y-%m-%d}', status=result["status"]), at=at, call=call,
                       ev=[[di[e["date"]], round(float(e["factor"]), 4), e["decision"]] for _, e in ev[ev["symbol"] == s].iterrows() if e["date"] in di and e["decision"] in ("auto", "accepted")])
     default = M["screen"]["sym"].iloc[0] if len(M["screen"]) else M["syms"][0]
     return dict(dates=dates, mas=metrics.MA_SET, nifty=[nz(x, lambda v: round(float(v), 2)) for x in M["nifty"]], hz=[[n, h] for n, h in metrics.HORIZONS], default=default, universes=M["memberships"], stocks=out)
@@ -216,7 +231,7 @@ def tab_stocks(M):
             '<span class="mut" style="margin-left:18px">ABOVE-AVERAGE DELIVERY</span><select id="thr"><option value="1">1.0×</option><option value="1.25" selected>1.25×</option><option value="1.5">1.5×</option><option value="2">2.0×</option></select></div>'
             '<div class="chartgrid"><div class="charts"><div id="chartbox" class="chartcard"><svg id="ch"></svg></div>'
             '<div class="chartcard"><svg id="rsch"></svg></div><div class="chartcard"><svg id="oich"></svg></div>'
-            '<div id="ro"></div><div id="lg"></div></div><aside id="insights"></aside></div></div></div>')
+            '<div id="ro"></div><div id="lg"></div></div><aside id="insights"></aside></div><section id="callintel"></section></div></div>')
 
 
 def render(M, asof_text):
@@ -268,6 +283,8 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .rsig{display:inline-block;padding:5px 8px;background:var(--am);color:#0a0a0a;font:700 11px var(--sans);letter-spacing:.06em}.rhit{background:rgba(232,169,58,.2);color:#ffd17a}.src{color:var(--ink)}.rempty{padding:22px;color:var(--mut)}
 .resultmark{display:inline-grid!important;place-items:center;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--am);color:#090909!important;font:800 9px var(--sans)!important;vertical-align:2px;cursor:help}
 .setupstate{display:inline-block;padding:4px 7px;font:800 9px var(--sans);letter-spacing:.07em;white-space:nowrap}.setupstate.active{background:var(--g);color:#06160d}.setupstate.cool{border:1px solid var(--am);color:#ffd17a}.cashwatch td b{color:var(--g)}
+.cashsub{margin:18px 0 7px;font:800 11px var(--sans);letter-spacing:.1em}.cashsub.track{color:#ffd17a;margin-top:26px}
+.cashwatch tr.cashnew td{background:rgba(232,169,58,.08)}.cashwatch tr.cashnew td:first-child{box-shadow:inset 4px 0 var(--am)}.newcash{display:inline-block;margin-left:5px;padding:3px 5px;background:var(--am);color:#090909;font:800 8px var(--sans);letter-spacing:.06em;vertical-align:1px}
 .segs{display:flex;gap:0;margin:0 0 16px;border:2px solid #f4f4f0;width:max-content;max-width:100%;overflow-x:auto}.seg{font:600 15px var(--sans);color:var(--ink);background:none;border:0;padding:12px 22px;cursor:pointer;white-space:nowrap}.seg.on{background:#f4f4f0;color:#0a0a0a}
 .hz{display:grid;grid-template-columns:1fr 1fr;gap:20px}.ch{display:flex;justify-content:space-between;padding:20px 18px 6px}.ct{font-size:22px;font-weight:700}.g{color:var(--g)}.r{color:var(--r)}
 table.rel td,table.rel th{padding:11px 12px}tr.newrow td.tk{box-shadow:inset 5px 0 var(--r)}span.strong.g a{color:var(--g)}span.strong.r a{color:var(--r)}
@@ -291,10 +308,12 @@ table.ca td.note{white-space:normal;min-width:340px;max-width:560px;color:#b9b9b
 .rb .mab{padding:5px 8px}.rb .mab.on{background:var(--am);border-color:var(--am);color:#090909}.rb .mab:disabled{opacity:.28;cursor:not-allowed}.malabel{margin-left:12px}
 #chartbox{padding-top:6px}.chartgrid{display:grid;grid-template-columns:minmax(0,2fr) minmax(250px,1fr);gap:10px}.charts{min-width:0}.chartcard{background:var(--panel);padding:3px 4px 1px;margin-bottom:8px}.chartcard svg{display:block;width:100%;touch-action:pan-y}
 #insights{background:var(--panel);border-top:3px solid #f4f4f0;padding:12px;align-self:start;position:sticky;top:58px;max-height:calc(100vh - 80px);overflow:auto}.ititle{font:800 12px var(--sans);letter-spacing:.1em;margin-bottom:9px}.resultbox{background:rgba(232,169,58,.15);border-left:3px solid var(--am);padding:10px;margin-bottom:12px}.resultbox b{display:block;color:#ffd17a}.ievent{padding:9px 0;border-top:1px solid var(--line);font:11px var(--mono)}.ievent .idate{color:var(--mut);margin-right:7px}.itag{display:inline-block;font:800 9px var(--sans);letter-spacing:.06em;padding:3px 5px;margin-right:6px;background:#292929}.itag.del{color:#fff}.itag.oi{color:#8fc0ff}.inone{color:var(--mut);font-size:12px;line-height:1.5}
+.mahere{margin-top:15px;padding-top:13px;border-top:2px solid #333}.mahit{margin-top:7px;padding:9px 10px;background:#1b1b1b;border-left:3px solid var(--am);font:11px var(--mono);line-height:1.5}.mahit b{font:800 12px var(--sans);color:#ffd17a}.mahit .cross{display:inline-block;margin-left:6px;padding:2px 5px;background:var(--g);color:#07140c;font:800 8px var(--sans);letter-spacing:.05em}.mahit .fresh{color:var(--g)}
+#callintel{margin-top:10px;background:var(--panel);border-top:3px solid #f4f4f0;padding:14px}.callhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}.callhead h3{margin:0;font-size:16px;letter-spacing:.04em}.callhead a{color:#ffd17a;font:11px var(--mono)}.callmeta{color:var(--mut);font:10px var(--mono);margin-top:3px}.callgrid{display:grid;grid-template-columns:1.15fr 1fr;gap:18px}.callsection h4{margin:0 0 8px;font:800 10px var(--sans);letter-spacing:.1em;color:var(--mut)}.outlook{padding:9px 10px;margin-bottom:7px;background:#191919;border-left:3px solid #777;font-size:12px;line-height:1.45}.outlook.positive{border-color:var(--g)}.outlook.cautious,.outlook.negative{border-color:var(--r)}.outlook b{display:block;margin-bottom:2px}.evidence{display:block;color:#9d9d96;font:10px var(--mono);margin-top:4px}.focus{display:grid;grid-template-columns:1fr auto;gap:9px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}.focus small{display:block;color:var(--mut);margin-top:2px}.qcount{font:700 11px var(--mono);color:#ffd17a}.metricgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:14px}.metric{background:#191919;padding:8px 9px;font-size:11px;line-height:1.4}.metric b{display:block;color:var(--mut);font:800 9px var(--sans);letter-spacing:.07em;margin-bottom:2px}.congrats{display:flex;gap:16px;align-items:baseline;padding:10px;background:rgba(232,169,58,.1);margin-top:12px}.congrats strong{font:700 24px var(--mono);color:#ffd17a}.congrats span{font-size:11px;color:var(--mut)}.callnone{color:var(--mut);font-size:12px}.aicaveat{margin-top:10px;color:#666;font-size:10px}
 #ro{min-height:22px;font:11px var(--mono);color:#cfcfc8;padding:5px 4px}
 #lg{display:flex;flex-wrap:wrap;gap:6px 18px;font:12px var(--mono);color:var(--mut);padding:2px 4px 10px}#lg i{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px}#lg u{display:inline-block;width:18px;border-top:2px solid;margin-right:5px;vertical-align:middle}
 footer{max-width:1280px;margin:0 auto;padding:0 22px 40px;color:var(--mut);font-size:13px}
-@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.chartgrid{grid-template-columns:1fr}#insights{position:static;max-height:none}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}
+@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.chartgrid,.callgrid{grid-template-columns:1fr}#insights{position:static;max-height:none}.metricgrid{grid-template-columns:1fr}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}
 """
 
 JS = r"""
@@ -315,6 +334,8 @@ function fmt(x){if(x==null)return'–';const a=Math.abs(x);return a>=1e7?(x/1e7)
 function fL(x){return x==null?'–':(x>=0?'+':'−')+Math.abs(x/1e5).toLocaleString(undefined,{maximumFractionDigits:1,minimumFractionDigits:1})+' L'}
 function pc(x,d=1){return x==null?'–':(x>=0?'+':'−')+Math.abs(x).toFixed(d)+'%'}
 function cls(x){return x==null?'':x>=0?'g':'r'}
+function escH(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function callPanel(S){const el=document.getElementById('callintel'),c=S.call;if(!c||!c.analysis){el.innerHTML='<div class="callnone">CALL INTELLIGENCE · Latest F&amp;O transcript is not yet available in the analysis cache.</div>';return}const a=c.analysis,o=a.next_quarter_outlook||[],f=a.analyst_focus||[],cg=a.congratulations||{},sector=a.company_type==='manufacturer'?a.manufacturer:a.company_type==='bank_lender'?a.bank_lender:null;const labels={revenue_growth:'Revenue growth',volume_growth:'Volume growth',order_inflow:'Order inflow',demand_outlook:'Demand outlook',margin_outlook:'Margin outlook',ebitda_margin:'EBITDA margin',credit_growth:'Credit growth',credit_deposit_ratio:'Credit–deposit ratio',disbursements:'Disbursements',nim_outlook:'NIM outlook',asset_quality:'Asset quality',credit_cost_outlook:'Credit cost outlook'};let h=`<div class="callhead"><div><h3>CALL INTELLIGENCE · ${escH(a.call_period||'LATEST CALL')}</h3><div class="callmeta">${escH(a.company_type.replace('_',' ').toUpperCase())} · filed ${escH((c.filed_at||'').slice(0,10))}</div></div><a href="${escH(c.source_url)}" target="_blank" rel="noopener">OPEN TRANSCRIPT ↗</a></div><div class="callgrid"><div class="callsection"><h4>NEXT QUARTER OUTLOOK</h4>${o.length?o.map(x=>`<div class="outlook ${escH(x.tone)}"><b>${escH(x.topic)}</b>${escH(x.summary)}<span class="evidence">“${escH(x.evidence)}”</span></div>`).join(''):'<div class="callnone">No explicit next-quarter guidance found.</div>'}</div><div class="callsection"><h4>WHAT ANALYSTS CARED ABOUT</h4>${f.length?f.map(x=>`<div class="focus"><div><b>${escH(x.topic)}</b><small>${escH(x.why_it_mattered)}</small></div><span class="qcount">${x.question_count}Q</span></div>`).join(''):'<div class="callnone">No analyst-question themes extracted.</div>'}<div class="congrats"><strong>${Number(cg.index_pct||0).toFixed(0)}%</strong><div>CONGRATULATIONS INDEX<br><span>${cg.count||0} congratulatory turns / ${cg.analyst_turns||0} analyst turns</span></div></div></div></div>`;if(sector){const rows=Object.entries(sector).filter(([,v])=>v);h+=`<div class="metricgrid">${rows.map(([k,v])=>`<div class="metric"><b>${escH(labels[k]||k)}</b>${escH(v)}</div>`).join('')}</div>`}if((a.key_risks||[]).length)h+=`<div class="metricgrid">${a.key_risks.map(v=>`<div class="metric"><b>RISK / WATCHPOINT</b>${escH(v)}</div>`).join('')}</div>`;h+='<div class="aicaveat">AI-generated from the linked transcript. Check the source before relying on a statement.</div>';el.innerHTML=h}
 /* ---------- ticker list ---------- */
 function list(){const q=document.getElementById('q').value.trim().toUpperCase(),so=document.getElementById('sort').value;
  const key={az:s=>s,ratio:s=>-(D.stocks[s].sm.ratio??-1e9),px:s=>-(D.stocks[s].sm.px??-1e9),rs:s=>-(D.stocks[s].sm.rel[1][0]??-1e9)}[so];
@@ -398,7 +419,8 @@ function draw(){
  const m=S.sm,last=S.c[n-1],lastOI=S.oi[n-1],dOI=dl[n-1],up=S.c[n-1]>=S.c[n-2],bu=dOI==null?'–':dOI>=0?(up?'Long Buildup':'Cash Selling'):(up?'Cash Buying':'Long Unwind'),buc=dOI==null?'':bu==='Long Buildup'?'g':bu==='Cash Selling'?'r':'';
  const rs=D.hz.map((h,k)=>{const r=m.rel[k];return `<div><span>${h[0].toUpperCase()}</span><b class="${cls(r[0])}">${pc(r[0])}</b> <i class="mut" style="font-style:normal">#${r[1]??'–'}/${SY.length}</i></div>`}).join(''),rbadge=S.result?`<span class="resultmark" title="Upcoming result">R</span>`:'';
  document.getElementById('sh').innerHTML=`<div class="hd1"><b>${cur}</b>${rbadge}<span class="px">${last==null?'–':last.toFixed(2)}</span><span class="${cls(m.px)}">${pc(m.px,2)}</span></div><div class="chips2"><div><span>DELIVERED</span>${fmt(m.dq)}</div><div><span>÷ 20D AVG</span>${m.ratio==null?'–':m.ratio.toFixed(2)+'×'}</div><div><span>DELIV %</span>${m.dp==null?'–':m.dp.toFixed(1)}</div><div><span>BSE %</span>${m.bse==null?'–':m.bse.toFixed(0)}</div><div><span>SSF OI</span>${fmt(lastOI)}</div><div><span>ΔOI 1D</span><b class="${cls(dOI)}">${fL(dOI)}</b></div><div><span>OI SIGNAL</span><b class="${buc}">${bu}</b></div></div><div class="rsrow">${rs}</div>`;
- const events=[];for(let i=Math.max(1,n-30);i<n;i++){const move=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null;if((S.rat[i]??0)>=1.5)events.push({i,kind:'del',txt:`${S.rat[i].toFixed(2)}× delivery · ${pc(move)}`});if(dl[i]!=null&&S.oi[i-1]){const op=dl[i]/S.oi[i-1]*100;if(Math.abs(op)>=3){const pu=move>=0,label=dl[i]>=0?(pu?'Long Buildup':'Cash Selling'):(pu?'Cash Buying':'Long Unwind');events.push({i,kind:'oi',txt:`${label} · ${pc(op)} OI`})}}}events.sort((a,b)=>b.i-a.i);let ih='<div class="ititle">RECENT ACTIVITY · 30 SESSIONS</div>';if(S.result)ih+=`<div class="resultbox"><b>UPCOMING RESULT</b>${S.result.date} · ${S.result.status}</div>`;ih+=events.length?events.slice(0,14).map(e=>`<div class="ievent"><span class="idate">${D.dates[e.i].slice(5)}</span><span class="itag ${e.kind}">${e.kind==='del'?'DELIVERY':'OI'}</span>${e.txt}</div>`).join(''):'<div class="inone">No delivery ≥1.5× average or daily OI move ≥3% in the last 30 sessions.</div>';document.getElementById('insights').innerHTML=ih;
+ const events=[];for(let i=Math.max(1,n-30);i<n;i++){const move=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null;if((S.rat[i]??0)>=1.5)events.push({i,kind:'del',txt:`${S.rat[i].toFixed(2)}× delivery · ${pc(move)}`});if(dl[i]!=null&&S.oi[i-1]){const op=dl[i]/S.oi[i-1]*100;if(Math.abs(op)>=3){const pu=move>=0,label=dl[i]>=0?(pu?'Long Buildup':'Cash Selling'):(pu?'Cash Buying':'Long Unwind');events.push({i,kind:'oi',txt:`${label} · ${pc(op)} OI`})}}}events.sort((a,b)=>b.i-a.i);let ih='<div class="ititle">RECENT ACTIVITY · 30 SESSIONS</div>';if(S.result)ih+=`<div class="resultbox"><b>UPCOMING RESULT</b>${S.result.date} · ${S.result.status}</div>`;ih+=events.length?events.slice(0,14).map(e=>`<div class="ievent"><span class="idate">${D.dates[e.i].slice(5)}</span><span class="itag ${e.kind}">${e.kind==='del'?'DELIVERY':'OI'}</span>${e.txt}</div>`).join(''):'<div class="inone">No delivery ≥1.5× average or daily OI move ≥3% in the last 30 sessions.</div>';if(S.at&&S.at.length){ih+='<div class="mahere"><div class="ititle">AT A MOVING AVERAGE</div>'+S.at.map(a=>`<div class="mahit"><b>${a.ma}-DAY MA</b>${a.crossed?'<span class="cross">CROSSED TODAY</span>':''}<br><span class="${a.new?'fresh':''}">${a.above?'above':'below'} by ${Math.abs(a.dist).toFixed(2)}% · ${Math.abs(a.dist/a.sigma).toFixed(2)}σ${a.new?' · new today':''}</span></div>`).join('')+'</div>';}document.getElementById('insights').innerHTML=ih;
+ callPanel(S);
  document.getElementById('lg').innerHTML=mas.map(([m])=>`<span><u style="border-color:${COL[m]}"></u>${m}</span>`).join('')+`<span><u style="border-color:#fff"></u>price / RS</span><span><i style="background:${G}"></i>Long Buildup</span><span><i style="background:#5aa9ff"></i>Cash Buying</span><span><i style="background:${R}"></i>Cash Selling</span><span><i style="background:#e8a93a"></i>Long Unwind</span>`;
  const ro=document.getElementById('ro');ro.innerHTML='<span class="mut">Move over the price chart for daily detail</span>';const mv=e=>{const r=main.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W;let i=Math.round(v0+(x-L)*(n-1-v0)/(W-L-Rr));i=Math.max(v0,Math.min(n-1,i));const xh=document.getElementById('xh');xh.setAttribute('x1',xs(i));xh.setAttribute('x2',xs(i));xh.setAttribute('visibility','visible');const ch=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null;ro.innerHTML=`${D.dates[i]} · close ${S.c[i]??'–'} <span class="${cls(ch)}">${pc(ch,2)}</span> · delivered ${fmt(S.dq[i])} (${S.rat[i]==null?'–':S.rat[i].toFixed(2)+'× avg'}) · OI ${fmt(S.oi[i])} · ΔOI ${fL(dl[i])}`};main.onpointermove=mv;main.onpointerdown=mv;main.onpointerleave=()=>document.getElementById('xh').setAttribute('visibility','hidden');
 }

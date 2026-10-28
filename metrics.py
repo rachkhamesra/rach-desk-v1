@@ -1,3 +1,4 @@
+/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
 """Everything the pages show, computed from adjusted panels."""
 import numpy as np, pandas as pd
 import corp, panel
@@ -26,6 +27,17 @@ def episode_state(flags, cooldown=2):
             misses += 1
             if misses > cooldown: hits, last_hit = 0, None
     return dict(days=hits, cooldown=misses, last_hit=last_hit) if hits else None
+
+
+def split_cash_signals(base, above):
+    """Keep confirmed setups and below-MA tracking candidates mutually exclusive."""
+    return base & above, base & ~above
+
+
+def appeared_today(flags, cooldown=2):
+    """True when an episode is on today's table but was absent yesterday."""
+    values = list(flags)
+    return bool(values) and episode_state(values, cooldown) is not None and episode_state(values[:-1], cooldown) is None
 
 
 def build(parsed, overrides=None, memberships=None):
@@ -98,20 +110,34 @@ def build(parsed, overrides=None, memberships=None):
     # ---------------- cash accumulation watch (F&O only)
     oi_adj = M["OIadj"]; oi_change = oi_adj.diff(); active_cash_mas = [n for n in CASH_MAS if N >= n]
     above = pd.DataFrame(True, index=C.index, columns=C.columns)
-    for n in active_cash_mas: above &= C > ma[n]
-    qualifies = (ret1 > 0) & (RAT > 1.0) & (oi_change < 0) & above
-    cash_rows = []
-    for s in memberships.get("fo", []):
-        state = episode_state(qualifies[s].tolist(), cooldown=2)
-        if not state: continue
-        i = state["last_hit"]; prior_oi = oi_adj[s].iloc[i - 1] if i else np.nan; delta = oi_change[s].iloc[i]
-        cash_rows.append(dict(sym=s, days=state["days"], cooldown=state["cooldown"], signal_date=dates[i],
-                              mas=" / ".join(str(n) for n in active_cash_mas), ratio=RAT[s].iloc[i], px1d=ret1[s].iloc[i] * 100,
-                              oi=oi_adj[s].iloc[i], doi=delta, doi_pct=delta / prior_oi * 100 if pd.notna(prior_oi) and prior_oi else np.nan,
-                              close=C[s].iloc[i]))
-    cash = pd.DataFrame(cash_rows)
-    if len(cash): cash = cash.sort_values(["cooldown", "days", "ratio"], ascending=[True, False, False]).reset_index(drop=True)
-    M["cash_accumulation"] = cash; M["cash_mas"] = active_cash_mas
+    known = pd.DataFrame(True, index=C.index, columns=C.columns)
+    for n in active_cash_mas:
+        above &= C > ma[n]
+        known &= ma[n].notna()
+    base = (ret1 > 0) & (RAT > 1.0) & (oi_change < 0) & known
+    qualifies, tracking = split_cash_signals(base, above)
+
+    def episode_rows(flags, track=False):
+        rows = []
+        for s in memberships.get("fo", []):
+            state = episode_state(flags[s].tolist(), cooldown=2)
+            if not state: continue
+            i = state["last_hit"]; prior_oi = oi_adj[s].iloc[i - 1] if i else np.nan; delta = oi_change[s].iloc[i]
+            ma_pos = []
+            for n in active_cash_mas:
+                distance = dist[n][s].iloc[i]
+                if (track and distance <= 0) or (not track and distance > 0): ma_pos.append(f"{n} ({distance:+.1f}%)")
+            rows.append(dict(sym=s, days=state["days"], cooldown=state["cooldown"], new=appeared_today(flags[s].tolist()), signal_date=dates[i],
+                             mas=" / ".join(ma_pos), ratio=RAT[s].iloc[i], px1d=ret1[s].iloc[i] * 100,
+                             oi=oi_adj[s].iloc[i], doi=delta, doi_pct=delta / prior_oi * 100 if pd.notna(prior_oi) and prior_oi else np.nan,
+                             close=C[s].iloc[i]))
+        out = pd.DataFrame(rows)
+        if len(out): out = out.sort_values(["cooldown", "days", "ratio"], ascending=[True, False, False]).reset_index(drop=True)
+        return out
+
+    M["cash_accumulation"] = episode_rows(qualifies)
+    M["cash_tracking"] = episode_rows(tracking, track=True)
+    M["cash_mas"] = active_cash_mas
 
     # ---------------- relative performance
     def rel_at(t, h):
