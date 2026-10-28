@@ -8,160 +8,1234 @@
       "company_type": "manufacturer",
       "call_period": "Q1 FY2027",
       "next_quarter_outlook": [
-        {"topic":"Overall demand","summary":"Management expects strong domestic demand across several end markets to continue.","tone":"positive","evidence":"strong demand in various end markets will sustain"},
-        {"topic":"Data centres","summary":"The inquiry pipeline remains strong and extends into the next two years; customers are seeking earlier deliveries.","tone":"positive","evidence":"the next year and the year after that"},
-        {"topic":"Distribution growth","summary":"Management believes distribution can sustain roughly 20% growth this year and over the next few years.","tone":"positive","evidence":"potential to grow at 20%"},
-        {"topic":"Margins","summary":"Pricing and internal cost actions should improve margins, without a promise to return to historical highs.","tone":"cautious","evidence":"there is scope to improve our margins"}
+        {
+          "topic": "Overall demand",
+          "summary": "Management expects strong domestic demand across several end markets to continue.",
+          "tone": "positive",
+          "evidence": "strong demand in various end markets will sustain"
+        },
+        {
+          "topic": "Data centres",
+          "summary": "The inquiry pipeline remains strong and extends into the next two years; customers are seeking earlier deliveries.",
+          "tone": "positive",
+          "evidence": "the next year and the year after that"
+        },
+        {
+          "topic": "Distribution growth",
+          "summary": "Management believes distribution can sustain roughly 20% growth this year and over the next few years.",
+          "tone": "positive",
+          "evidence": "potential to grow at 20%"
+        },
+        {
+          "topic": "Margins",
+          "summary": "Pricing and internal cost actions should improve margins, without a promise to return to historical highs.",
+          "tone": "cautious",
+          "evidence": "there is scope to improve our margins"
+        }
       ],
       "analyst_focus": [
-        {"topic":"Data-centre demand and capacity","why_it_mattered":"Analysts tested whether rapid growth is sustainable, capacity-constrained and sufficiently profitable.","question_count":7},
-        {"topic":"Inflation, pricing and margins","why_it_mattered":"The central concern was whether pricing can offset metals, freight and supply-chain inflation.","question_count":5},
-        {"topic":"Exports and geographic demand","why_it_mattered":"Analysts separated weak Middle-East demand from improving Europe and Asia-Pacific exports.","question_count":4},
-        {"topic":"Domestic end markets","why_it_mattered":"Questions tested growth durability across power generation, construction, mining and railways.","question_count":4}
+        {
+          "topic": "Data-centre demand and capacity",
+          "why_it_mattered": "Analysts tested whether rapid growth is sustainable, capacity-constrained and sufficiently profitable.",
+          "question_count": 7
+        },
+        {
+          "topic": "Inflation, pricing and margins",
+          "why_it_mattered": "The central concern was whether pricing can offset metals, freight and supply-chain inflation.",
+          "question_count": 5
+        },
+        {
+          "topic": "Exports and geographic demand",
+          "why_it_mattered": "Analysts separated weak Middle-East demand from improving Europe and Asia-Pacific exports.",
+          "question_count": 4
+        },
+        {
+          "topic": "Domestic end markets",
+          "why_it_mattered": "Questions tested growth durability across power generation, construction, mining and railways.",
+          "question_count": 4
+        }
       ],
-      "congratulations":{"count":6,"analyst_turns":15,"index_pct":40.0},
-      "manufacturer":{
-        "revenue_growth":"Q1 sales ₹3,375 crore, up 18% YoY and 14% QoQ; domestic sales rose 22% YoY.",
-        "volume_growth":"Power-generation momentum remains strong; non-HHP volumes have further potential, without a numerical target.",
-        "order_inflow":"No consolidated figure disclosed; data-centre inquiries extend into FY28–FY29 delivery discussions.",
-        "demand_outlook":"Strong power-generation and railway demand; mining improving, construction mixed and exports geopolitically uncertain.",
-        "margin_outlook":"Pricing, cost control and supply-chain actions should help, but historical gross margins were not guided.",
-        "ebitda_margin":null
+      "congratulations": {
+        "count": 6,
+        "analyst_turns": 15,
+        "index_pct": 40.0
       },
-      "bank_lender":null,
-      "key_risks":["Metal inflation may outpace price recovery.","Freight disruption and supplier labour shortages affect costs and availability.","High-horsepower demand is outpacing industry capacity.","Middle-East instability is suppressing exports."]
+      "manufacturer": {
+        "revenue_growth": "Q1 sales ₹3,375 crore, up 18% YoY and 14% QoQ; domestic sales rose 22% YoY.",
+        "volume_growth": "Power-generation momentum remains strong; non-HHP volumes have further potential, without a numerical target.",
+        "order_inflow": "No consolidated figure disclosed; data-centre inquiries extend into FY28–FY29 delivery discussions.",
+        "demand_outlook": "Strong power-generation and railway demand; mining improving, construction mixed and exports geopolitically uncertain.",
+        "margin_outlook": "Pricing, cost control and supply-chain actions should help, but historical gross margins were not guided.",
+        "ebitda_margin": null
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "Metal inflation may outpace price recovery.",
+        "Freight disruption and supplier labour shortages affect costs and availability.",
+        "High-horsepower demand is outpacing industry capacity.",
+        "Middle-East instability is suppressing exports."
+      ]
     }
   },
   "ABB": {
-    "symbol":"ABB",
-    "filed_at":"2026-08-07T00:00:00+05:30",
-    "source_url":"https://new.abb.com/docs/librariesprovider19/default-document-library/transcriptofanalystcallq22026.pdf",
-    "description":"Latest earnings-call transcript · static research prototype",
-    "analysis":{
-      "company_type":"manufacturer",
-      "call_period":"Q2 CY2026",
-      "next_quarter_outlook":[
-        {"topic":"Revenue conversion","summary":"The ₹11,900 crore executable backlog should support revenue conversion over forthcoming quarters.","tone":"positive","evidence":"converted in the next quarters"},
-        {"topic":"Operating leverage","summary":"Management expects better operating leverage over the next two quarters, subject to stable inputs and supply chains.","tone":"positive","evidence":"going forward in the next 2 quarters"},
-        {"topic":"Margin recovery","summary":"Management prioritises protecting current margins before expansion and declined to guide toward mid-teens EBITDA.","tone":"cautious","evidence":"Most important is protect what we are today"},
-        {"topic":"Data centres","summary":"Management expects demand to multiply and is expanding capacity and local product availability.","tone":"positive","evidence":"demand will multifold in the coming quarters"}
+    "symbol": "ABB",
+    "filed_at": "2026-08-07T00:00:00+05:30",
+    "source_url": "https://new.abb.com/docs/librariesprovider19/default-document-library/transcriptofanalystcallq22026.pdf",
+    "description": "Latest earnings-call transcript · static research prototype",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q2 CY2026",
+      "next_quarter_outlook": [
+        {
+          "topic": "Revenue conversion",
+          "summary": "The ₹11,900 crore executable backlog should support revenue conversion over forthcoming quarters.",
+          "tone": "positive",
+          "evidence": "converted in the next quarters"
+        },
+        {
+          "topic": "Operating leverage",
+          "summary": "Management expects better operating leverage over the next two quarters, subject to stable inputs and supply chains.",
+          "tone": "positive",
+          "evidence": "going forward in the next 2 quarters"
+        },
+        {
+          "topic": "Margin recovery",
+          "summary": "Management prioritises protecting current margins before expansion and declined to guide toward mid-teens EBITDA.",
+          "tone": "cautious",
+          "evidence": "Most important is protect what we are today"
+        },
+        {
+          "topic": "Data centres",
+          "summary": "Management expects demand to multiply and is expanding capacity and local product availability.",
+          "tone": "positive",
+          "evidence": "demand will multifold in the coming quarters"
+        }
       ],
-      "analyst_focus":[
-        {"topic":"Order growth and sustainability","why_it_mattered":"Analysts examined 50% order growth, its composition and durability.","question_count":5},
-        {"topic":"Margins and price transmission","why_it_mattered":"The market tested whether pricing and leverage can offset metals and forex pressure.","question_count":4},
-        {"topic":"End-market demand and execution","why_it_mattered":"Questions covered data centres, buildings, railways, metros and core industries.","question_count":4},
-        {"topic":"Data-centre pipeline and capacity","why_it_mattered":"Investors wanted evidence of localisation and capacity expansion ahead of demand.","question_count":1}
+      "analyst_focus": [
+        {
+          "topic": "Order growth and sustainability",
+          "why_it_mattered": "Analysts examined 50% order growth, its composition and durability.",
+          "question_count": 5
+        },
+        {
+          "topic": "Margins and price transmission",
+          "why_it_mattered": "The market tested whether pricing and leverage can offset metals and forex pressure.",
+          "question_count": 4
+        },
+        {
+          "topic": "End-market demand and execution",
+          "why_it_mattered": "Questions covered data centres, buildings, railways, metros and core industries.",
+          "question_count": 4
+        },
+        {
+          "topic": "Data-centre pipeline and capacity",
+          "why_it_mattered": "Investors wanted evidence of localisation and capacity expansion ahead of demand.",
+          "question_count": 1
+        }
       ],
-      "congratulations":{"count":3,"analyst_turns":9,"index_pct":33.3},
-      "manufacturer":{
-        "revenue_growth":"Q2 revenue grew 21% YoY; H1 revenue was ₹6,743 crore, up 13%.",
-        "volume_growth":"Management said order growth was mostly volume-led because pricing passes through with a lag.",
-        "order_inflow":"Q2 orders rose 50% YoY; H1 orders increased 36% to about ₹8,600 crore; backlog reached ₹11,900 crore.",
-        "demand_outlook":"Strong data-centre, commercial-building and metro pipelines; emerging industries are growing faster than core industries.",
-        "margin_outlook":"Leverage may improve over two quarters, but commodity, forex and mix headwinds make mid-teens guidance premature.",
-        "ebitda_margin":"Q2 EBITDA margin was 12.6%, versus 13.6% in the comparative period."
+      "congratulations": {
+        "count": 3,
+        "analyst_turns": 9,
+        "index_pct": 33.3
       },
-      "bank_lender":null,
-      "key_risks":["Copper and metal inflation pressure gross margins.","Rupee depreciation may continue for several quarters.","Price increases reach customers with a lag.","Geopolitical and export disruption may affect execution."]
+      "manufacturer": {
+        "revenue_growth": "Q2 revenue grew 21% YoY; H1 revenue was ₹6,743 crore, up 13%.",
+        "volume_growth": "Management said order growth was mostly volume-led because pricing passes through with a lag.",
+        "order_inflow": "Q2 orders rose 50% YoY; H1 orders increased 36% to about ₹8,600 crore; backlog reached ₹11,900 crore.",
+        "demand_outlook": "Strong data-centre, commercial-building and metro pipelines; emerging industries are growing faster than core industries.",
+        "margin_outlook": "Leverage may improve over two quarters, but commodity, forex and mix headwinds make mid-teens guidance premature.",
+        "ebitda_margin": "Q2 EBITDA margin was 12.6%, versus 13.6% in the comparative period."
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "Copper and metal inflation pressure gross margins.",
+        "Rupee depreciation may continue for several quarters.",
+        "Price increases reach customers with a lag.",
+        "Geopolitical and export disruption may affect execution."
+      ]
     }
   },
   "PNB": {
-    "symbol":"PNB",
-    "filed_at":"2026-10-23T20:50:00+05:30",
-    "source_url":"https://www.nseindia.com/companies-listing/corporate-filings-announcements?symbol=PNB",
-    "description":"Latest earnings-call transcript · static research prototype",
-    "analysis":{
-      "company_type":"bank_lender",
-      "call_period":"Q2 FY2027 / H1 FY2027",
-      "next_quarter_outlook":[
-        {"topic":"NIM expansion","summary":"Management expects further margin improvement next quarter from repricing and balance-sheet optimisation.","tone":"positive","evidence":"Minimum 7 basis point overall impact"},
-        {"topic":"Credit growth","summary":"A large sanctioned corporate pipeline supports continued above-system credit growth into H2.","tone":"positive","evidence":"INR1,57,000 crore of disbursements"},
-        {"topic":"Loan mix","summary":"Low-yield loans will keep being replaced by better-priced corporate and RAM assets through Q3 and Q4.","tone":"positive","evidence":"this quarter and the next quarter also"},
-        {"topic":"Recoveries","summary":"Q3 recoveries should improve to about ₹3,500 crore; FY27 target remains ₹12,000–13,000 crore.","tone":"positive","evidence":"recovery should happen around INR3,500 crore"}
+    "symbol": "PNB",
+    "filed_at": "2026-10-23T20:50:00+05:30",
+    "source_url": "https://www.nseindia.com/companies-listing/corporate-filings-announcements?symbol=PNB",
+    "description": "Latest earnings-call transcript · static research prototype",
+    "analysis": {
+      "company_type": "bank_lender",
+      "call_period": "Q2 FY2027 / H1 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "NIM expansion",
+          "summary": "Management expects further margin improvement next quarter from repricing and balance-sheet optimisation.",
+          "tone": "positive",
+          "evidence": "Minimum 7 basis point overall impact"
+        },
+        {
+          "topic": "Credit growth",
+          "summary": "A large sanctioned corporate pipeline supports continued above-system credit growth into H2.",
+          "tone": "positive",
+          "evidence": "INR1,57,000 crore of disbursements"
+        },
+        {
+          "topic": "Loan mix",
+          "summary": "Low-yield loans will keep being replaced by better-priced corporate and RAM assets through Q3 and Q4.",
+          "tone": "positive",
+          "evidence": "this quarter and the next quarter also"
+        },
+        {
+          "topic": "Recoveries",
+          "summary": "Q3 recoveries should improve to about ₹3,500 crore; FY27 target remains ₹12,000–13,000 crore.",
+          "tone": "positive",
+          "evidence": "recovery should happen around INR3,500 crore"
+        }
       ],
-      "analyst_focus":[
-        {"topic":"NIM, repricing and funding cost","why_it_mattered":"Investors tested whether Q2 margin recovery can continue.","question_count":4},
-        {"topic":"ECL and credit cost","why_it_mattered":"Analysts wanted the remaining transition provision and recurring impact quantified.","question_count":4},
-        {"topic":"Deposits, CASA and CD ratio","why_it_mattered":"Credit growth depends on funding without sacrificing margins.","question_count":3},
-        {"topic":"Credit growth and pipeline","why_it_mattered":"Investors assessed whether emerging-sector sanctions can drive above-system growth.","question_count":3}
+      "analyst_focus": [
+        {
+          "topic": "NIM, repricing and funding cost",
+          "why_it_mattered": "Investors tested whether Q2 margin recovery can continue.",
+          "question_count": 4
+        },
+        {
+          "topic": "ECL and credit cost",
+          "why_it_mattered": "Analysts wanted the remaining transition provision and recurring impact quantified.",
+          "question_count": 4
+        },
+        {
+          "topic": "Deposits, CASA and CD ratio",
+          "why_it_mattered": "Credit growth depends on funding without sacrificing margins.",
+          "question_count": 3
+        },
+        {
+          "topic": "Credit growth and pipeline",
+          "why_it_mattered": "Investors assessed whether emerging-sector sanctions can drive above-system growth.",
+          "question_count": 3
+        }
       ],
-      "congratulations":{"count":4,"analyst_turns":10,"index_pct":40.0},
-      "manufacturer":null,
-      "bank_lender":{
-        "credit_growth":"Advances +14.7% YoY; core advances excluding IBPC +17.4%. A ₹1.58 lakh crore pipeline supports H2.",
-        "credit_deposit_ratio":"75.5%; management is comfortable moving toward 77%–78% with current deposit sourcing.",
-        "disbursements":"₹1.57–1.58 lakh crore sanctioned corporate pipeline remains to disburse.",
-        "nim_outlook":"Domestic NIM 2.74%; at least 7 bps further improvement expected next quarter; guidance remains 2.6%–2.7%.",
-        "asset_quality":"GNPA 2.55%, NNPA 0.25%, PCR 97.32%; slippage ratio 0.77%.",
-        "credit_cost_outlook":"Guided 0.25%–0.30%, including roughly 15 bps steady-state ECL impact."
+      "congratulations": {
+        "count": 4,
+        "analyst_turns": 10,
+        "index_pct": 40.0
       },
-      "key_risks":["ECL transition needs about ₹5,000 crore additional provisioning.","Savings-account growth remains pressured.","Deposit costs could dilute margins.","Recovery and treasury income will normalise."]
+      "manufacturer": null,
+      "bank_lender": {
+        "credit_growth": "Advances +14.7% YoY; core advances excluding IBPC +17.4%. A ₹1.58 lakh crore pipeline supports H2.",
+        "credit_deposit_ratio": "75.5%; management is comfortable moving toward 77%–78% with current deposit sourcing.",
+        "disbursements": "₹1.57–1.58 lakh crore sanctioned corporate pipeline remains to disburse.",
+        "nim_outlook": "Domestic NIM 2.74%; at least 7 bps further improvement expected next quarter; guidance remains 2.6%–2.7%.",
+        "asset_quality": "GNPA 2.55%, NNPA 0.25%, PCR 97.32%; slippage ratio 0.77%.",
+        "credit_cost_outlook": "Guided 0.25%–0.30%, including roughly 15 bps steady-state ECL impact."
+      },
+      "key_risks": [
+        "ECL transition needs about ₹5,000 crore additional provisioning.",
+        "Savings-account growth remains pressured.",
+        "Deposit costs could dilute margins.",
+        "Recovery and treasury income will normalise."
+      ]
     }
   },
   "PNBHOUSING": {
-    "symbol":"PNBHOUSING",
-    "filed_at":"2026-04-25T16:24:41+05:30",
-    "source_url":"https://nsearchives.nseindia.com/corporate/PNBHOUSING_25042026162441_Earningscall_Transcript_SD.pdf",
-    "description":"Latest earnings-call transcript · static research prototype",
-    "analysis":{
-      "company_type":"bank_lender",
-      "call_period":"Q4 FY2026 / FY2026",
-      "next_quarter_outlook":[
-        {"topic":"Retail growth","summary":"FY27 retail loan-book growth is targeted at 18%–20%, taking the total book beyond ₹1 lakh crore.","tone":"positive","evidence":"grow between 18% to 20%"},
-        {"topic":"Affordable housing","summary":"Affordable disbursements should grow about 50%; management expects Q4's rebound to persist.","tone":"positive","evidence":"grow almost 50% in Affordable segment"},
-        {"topic":"NIM and yields","summary":"Yields have likely bottomed and should improve from Q1 as higher-yield segments gain mix.","tone":"positive","evidence":"start improving from Q1"},
-        {"topic":"Funding cost","summary":"Borrowing cost may remain stable or improve 5–10 bps, subject to liquidity and geopolitics.","tone":"neutral","evidence":"5 bps to 10 bps improvement"}
+    "symbol": "PNBHOUSING",
+    "filed_at": "2026-04-25T16:24:41+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/PNBHOUSING_25042026162441_Earningscall_Transcript_SD.pdf",
+    "description": "Latest earnings-call transcript · static research prototype",
+    "analysis": {
+      "company_type": "bank_lender",
+      "call_period": "Q4 FY2026 / FY2026",
+      "next_quarter_outlook": [
+        {
+          "topic": "Retail growth",
+          "summary": "FY27 retail loan-book growth is targeted at 18%–20%, taking the total book beyond ₹1 lakh crore.",
+          "tone": "positive",
+          "evidence": "grow between 18% to 20%"
+        },
+        {
+          "topic": "Affordable housing",
+          "summary": "Affordable disbursements should grow about 50%; management expects Q4's rebound to persist.",
+          "tone": "positive",
+          "evidence": "grow almost 50% in Affordable segment"
+        },
+        {
+          "topic": "NIM and yields",
+          "summary": "Yields have likely bottomed and should improve from Q1 as higher-yield segments gain mix.",
+          "tone": "positive",
+          "evidence": "start improving from Q1"
+        },
+        {
+          "topic": "Funding cost",
+          "summary": "Borrowing cost may remain stable or improve 5–10 bps, subject to liquidity and geopolitics.",
+          "tone": "neutral",
+          "evidence": "5 bps to 10 bps improvement"
+        }
       ],
-      "analyst_focus":[
-        {"topic":"Growth, mix and disbursements","why_it_mattered":"Analysts tested whether Q4 momentum can sustain the FY27 target.","question_count":5},
-        {"topic":"NIM, yields and funding cost","why_it_mattered":"Pricing pressure and mix determine whether margins have upside.","question_count":4},
-        {"topic":"Corporate lending strategy","why_it_mattered":"Investors examined risk appetite, yields and planned corporate-book share.","question_count":3},
-        {"topic":"Affordable asset quality","why_it_mattered":"Delinquency stabilisation needed validation before accelerating growth.","question_count":2}
+      "analyst_focus": [
+        {
+          "topic": "Growth, mix and disbursements",
+          "why_it_mattered": "Analysts tested whether Q4 momentum can sustain the FY27 target.",
+          "question_count": 5
+        },
+        {
+          "topic": "NIM, yields and funding cost",
+          "why_it_mattered": "Pricing pressure and mix determine whether margins have upside.",
+          "question_count": 4
+        },
+        {
+          "topic": "Corporate lending strategy",
+          "why_it_mattered": "Investors examined risk appetite, yields and planned corporate-book share.",
+          "question_count": 3
+        },
+        {
+          "topic": "Affordable asset quality",
+          "why_it_mattered": "Delinquency stabilisation needed validation before accelerating growth.",
+          "question_count": 2
+        }
       ],
-      "congratulations":{"count":1,"analyst_turns":7,"index_pct":14.3},
-      "manufacturer":null,
-      "bank_lender":{
-        "credit_growth":"Retail loan book targeted to grow 18%–20% in FY27; total book targeted above ₹1 lakh crore.",
-        "credit_deposit_ratio":null,
-        "disbursements":"Affordable disbursements targeted to grow about 50%; corporate book capped near 3%.",
-        "nim_outlook":"FY27 NIM guidance 3.55%–3.65%; yields expected to improve from Q1 as mix shifts.",
-        "asset_quality":"GNPA improved to 0.93%; Affordable delinquencies are stabilising.",
-        "credit_cost_outlook":"Expected to remain benign, supported by written-off recoveries; FY27 ROA guided at 2.4%–2.5%."
+      "congratulations": {
+        "count": 1,
+        "analyst_turns": 7,
+        "index_pct": 14.3
       },
-      "key_risks":["Liquidity and geopolitics could limit funding-cost relief.","Faster Affordable growth raises execution risk.","FY27 absorbs full-year costs from 35 new branches.","Corporate lending requires disciplined underwriting."]
+      "manufacturer": null,
+      "bank_lender": {
+        "credit_growth": "Retail loan book targeted to grow 18%–20% in FY27; total book targeted above ₹1 lakh crore.",
+        "credit_deposit_ratio": null,
+        "disbursements": "Affordable disbursements targeted to grow about 50%; corporate book capped near 3%.",
+        "nim_outlook": "FY27 NIM guidance 3.55%–3.65%; yields expected to improve from Q1 as mix shifts.",
+        "asset_quality": "GNPA improved to 0.93%; Affordable delinquencies are stabilising.",
+        "credit_cost_outlook": "Expected to remain benign, supported by written-off recoveries; FY27 ROA guided at 2.4%–2.5%."
+      },
+      "key_risks": [
+        "Liquidity and geopolitics could limit funding-cost relief.",
+        "Faster Affordable growth raises execution risk.",
+        "FY27 absorbs full-year costs from 35 new branches.",
+        "Corporate lending requires disciplined underwriting."
+      ]
     }
   },
   "HEROMOTOCO": {
-    "symbol":"HEROMOTOCO",
-    "filed_at":"2026-08-11T18:13:00+05:30",
-    "source_url":"https://www.bseindia.com/xml-data/corpfiling/AttachLive/eb8bdc5a-ea95-4451-a0e9-ea059e8a42fa.pdf",
-    "description":"Latest earnings-call transcript · static research prototype",
-    "analysis":{
-      "company_type":"manufacturer",
-      "call_period":"Q1 FY2027",
-      "next_quarter_outlook":[
-        {"topic":"Q2 demand","summary":"Strong two-wheeler demand continued into Q2, with July industry retail growth at 28% YoY.","tone":"positive","evidence":"retail growth in July of 28%"},
-        {"topic":"Festive commuter demand","summary":"Management expects the 100cc segment to strengthen into the festive period.","tone":"positive","evidence":"leading into festive looking much stronger"},
-        {"topic":"Q2 input costs","summary":"Input inflation may rise modestly, but mix, savings and spending controls should offset it.","tone":"cautious","evidence":"marginal uptick in input cost inflation"},
-        {"topic":"Industry growth","summary":"Q2 should track Q1; management targets near-double-digit FY27 industry growth.","tone":"positive","evidence":"full year of approaching double digit"}
+    "symbol": "HEROMOTOCO",
+    "filed_at": "2026-08-11T18:13:00+05:30",
+    "source_url": "https://www.bseindia.com/xml-data/corpfiling/AttachLive/eb8bdc5a-ea95-4451-a0e9-ea059e8a42fa.pdf",
+    "description": "Latest earnings-call transcript · static research prototype",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q1 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Q2 demand",
+          "summary": "Strong two-wheeler demand continued into Q2, with July industry retail growth at 28% YoY.",
+          "tone": "positive",
+          "evidence": "retail growth in July of 28%"
+        },
+        {
+          "topic": "Festive commuter demand",
+          "summary": "Management expects the 100cc segment to strengthen into the festive period.",
+          "tone": "positive",
+          "evidence": "leading into festive looking much stronger"
+        },
+        {
+          "topic": "Q2 input costs",
+          "summary": "Input inflation may rise modestly, but mix, savings and spending controls should offset it.",
+          "tone": "cautious",
+          "evidence": "marginal uptick in input cost inflation"
+        },
+        {
+          "topic": "Industry growth",
+          "summary": "Q2 should track Q1; management targets near-double-digit FY27 industry growth.",
+          "tone": "positive",
+          "evidence": "full year of approaching double digit"
+        }
       ],
-      "analyst_focus":[
-        {"topic":"EV demand, capacity and profitability","why_it_mattered":"Analysts tested demand, rapid capacity expansion and the path to lower EV losses.","question_count":11},
-        {"topic":"Pricing and core-market demand","why_it_mattered":"The market worried that price increases could weaken entry-motorcycle demand and share.","question_count":7},
-        {"topic":"Margins and inflation","why_it_mattered":"Analysts questioned the timing of a return to the 14%–16% margin range.","question_count":3},
-        {"topic":"Volume outlook","why_it_mattered":"Questions focused on Q2, festive and H2 growth durability.","question_count":2}
+      "analyst_focus": [
+        {
+          "topic": "EV demand, capacity and profitability",
+          "why_it_mattered": "Analysts tested demand, rapid capacity expansion and the path to lower EV losses.",
+          "question_count": 11
+        },
+        {
+          "topic": "Pricing and core-market demand",
+          "why_it_mattered": "The market worried that price increases could weaken entry-motorcycle demand and share.",
+          "question_count": 7
+        },
+        {
+          "topic": "Margins and inflation",
+          "why_it_mattered": "Analysts questioned the timing of a return to the 14%–16% margin range.",
+          "question_count": 3
+        },
+        {
+          "topic": "Volume outlook",
+          "why_it_mattered": "Questions focused on Q2, festive and H2 growth durability.",
+          "question_count": 2
+        }
       ],
-      "congratulations":{"count":3,"analyst_turns":28,"index_pct":10.7},
-      "manufacturer":{
-        "revenue_growth":"Q1 revenue grew 36% YoY to ₹12,999 crore, helped by pricing and an 8% mix benefit.",
-        "volume_growth":"Total Q1 volume grew 23% YoY; ICE grew 21% and EV wholesale volume grew 151%.",
-        "order_inflow":null,
-        "demand_outlook":"Q1 industry retail grew 14%; July grew 28%. FY27 industry growth is expected near double digits.",
-        "margin_outlook":"Q2 inflation should rise marginally but mix, cost control and LEAP savings should offset it.",
-        "ebitda_margin":"Q1 EBITDA margin was 13.3%; ICE EBITDA margin was 15.9%."
+      "congratulations": {
+        "count": 3,
+        "analyst_turns": 28,
+        "index_pct": 10.7
       },
-      "bank_lender":null,
-      "key_risks":["Commodity, freight, FX and energy inflation could delay recovery.","Price increases may pressure entry-segment affordability.","EV expansion depends on demand while the business remains loss-making.","A strong base should slow H2 growth."]
+      "manufacturer": {
+        "revenue_growth": "Q1 revenue grew 36% YoY to ₹12,999 crore, helped by pricing and an 8% mix benefit.",
+        "volume_growth": "Total Q1 volume grew 23% YoY; ICE grew 21% and EV wholesale volume grew 151%.",
+        "order_inflow": null,
+        "demand_outlook": "Q1 industry retail grew 14%; July grew 28%. FY27 industry growth is expected near double digits.",
+        "margin_outlook": "Q2 inflation should rise marginally but mix, cost control and LEAP savings should offset it.",
+        "ebitda_margin": "Q1 EBITDA margin was 13.3%; ICE EBITDA margin was 15.9%."
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "Commodity, freight, FX and energy inflation could delay recovery.",
+        "Price increases may pressure entry-segment affordability.",
+        "EV expansion depends on demand while the business remains loss-making.",
+        "A strong base should slow H2 growth."
+      ]
+    }
+  },
+  "PGEL": {
+    "symbol": "PGEL",
+    "filed_at": "2026-10-28T17:02:00+05:30",
+    "source_url": "https://pgel.in/pdf/INVESTORCALLAUDIO_28.10.2026.mp3",
+    "description": "Q2 FY2027 earnings call · static research prototype",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Second-half execution",
+          "summary": "Management expects stronger December and March quarters, supported by customer orders visible through March-April.",
+          "tone": "positive",
+          "evidence": "December quarter and March quarter, we will see much better numbers for our company"
+        },
+        {
+          "topic": "Room-AC demand",
+          "summary": "A strong second-half order book supports full-year RAC volume growth of about 20%.",
+          "tone": "positive",
+          "evidence": "we have a very strong order book for the second half"
+        },
+        {
+          "topic": "Price pass-through",
+          "summary": "A further customer price increase is aligned for January to recover accumulated input-cost inflation.",
+          "tone": "neutral",
+          "evidence": "January quarter also, we are going to take a further price increase"
+        },
+        {
+          "topic": "Second-half margins",
+          "summary": "Seasonality, operating leverage and Q4 PLI recognition should lift H2 margins modestly above H1.",
+          "tone": "positive",
+          "evidence": "hope to have slightly better margin in the second half"
+        },
+        {
+          "topic": "Compressor project",
+          "summary": "Compressor trial production is expected by late November, followed by customer samples and approvals.",
+          "tone": "positive",
+          "evidence": "trial production will start in the month of November"
+        },
+        {
+          "topic": "Industry outlook",
+          "summary": "Customer feedback points to full-year room-AC industry growth above 15%, though secondary conversion remains uncertain.",
+          "tone": "positive",
+          "evidence": "industry itself is likely to clock more than 15% kind of a growth this year"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "RAC volumes and order visibility",
+          "why_it_mattered": "Analysts tested whether the H2 order book can deliver the guided 2.1–2.2 million units.",
+          "question_count": 6
+        },
+        {
+          "topic": "Margins and commodity pass-through",
+          "why_it_mattered": "The market focused on margin compression, customer price resets and recovery timing.",
+          "question_count": 6
+        },
+        {
+          "topic": "Working capital and interest cost",
+          "why_it_mattered": "Higher component prices and inventory requirements are absorbing cash and raising financing costs.",
+          "question_count": 4
+        },
+        {
+          "topic": "Electronics mix",
+          "why_it_mattered": "Analysts separated real volume growth from semiconductor and motherboard price inflation.",
+          "question_count": 4
+        },
+        {
+          "topic": "New projects and compressors",
+          "why_it_mattered": "Execution and customer approval of recent capex projects are central to FY27–FY28 profitability.",
+          "question_count": 3
+        },
+        {
+          "topic": "PLI and state incentives",
+          "why_it_mattered": "Recognition timing for roughly ₹70 crore annual PLI affects H2 earnings.",
+          "question_count": 2
+        }
+      ],
+      "congratulations": {
+        "count": 0,
+        "analyst_turns": 27,
+        "index_pct": 0
+      },
+      "manufacturer": {
+        "revenue_growth": "Q2 consolidated revenue was ₹934 crore, up 42.5% YoY; H1 revenue exceeded ₹2,950 crore.",
+        "volume_growth": "Q2 RAC volume was broadly flat YoY; FY27 RAC volume is guided at 2.1–2.2 million units versus 1.7 million last year.",
+        "order_inflow": "Management described a strong RAC order book with primary-sales visibility through March-April; order value was not disclosed.",
+        "demand_outlook": "December and March quarters should be stronger; room-AC industry growth is estimated above 15% for FY27.",
+        "margin_outlook": "H2 margins should improve modestly through seasonality, leverage, price resets and Q4 PLI recognition.",
+        "ebitda_margin": "Q2 EBITDA was ₹69.14 crore and EBITDA margin was 7.4%."
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "Further commodity and semiconductor inflation may require additional price resets.",
+        "High inventory values are increasing working-capital needs and interest expense.",
+        "Electronics growth is partly price-led and carries a lower margin.",
+        "Strong primary orders may not fully convert into secondary sales."
+      ]
+    }
+  },
+  "INDHOTEL": {
+    "symbol": "INDHOTEL",
+    "filed_at": "2026-10-28T15:32:00+05:30",
+    "source_url": "https://ir.ihcltata.com/financial-information/financial-results/",
+    "description": "Q2 FY2027 earnings-call transcript · static research prototype",
+    "analysis": {
+      "company_type": "other",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "FY27 revenue guidance",
+          "summary": "IHCL raised consolidated FY27 revenue-growth guidance by 300 basis points to 15%–17%.",
+          "tone": "positive",
+          "evidence": "revising our full year growth guidance upwards to 15%-17%"
+        },
+        {
+          "topic": "Hotel-segment growth",
+          "summary": "Hotel-segment revenue is expected to grow 17%–19% in FY27.",
+          "tone": "positive",
+          "evidence": "hotel segment revenue is expected to grow by 17%-19%"
+        },
+        {
+          "topic": "Hotel openings",
+          "summary": "IHCL remains on track for 50 openings in FY27, with about 30 planned during H2.",
+          "tone": "positive",
+          "evidence": "30 hotels expected to open in the second half"
+        },
+        {
+          "topic": "MICE and weddings",
+          "summary": "A stronger event and wedding calendar should support Q4 and extend into the following year.",
+          "tone": "positive",
+          "evidence": "much more wedding nights in H2, particularly Q4"
+        },
+        {
+          "topic": "International recovery",
+          "summary": "International operations should improve in H2 as renovation and other H1 disruptions recede.",
+          "tone": "positive",
+          "evidence": "positively inclined towards how H2 will play out for international"
+        },
+        {
+          "topic": "FY28 momentum",
+          "summary": "Management expects further improvement through openings, international recovery and Oriental Hotels merger benefits.",
+          "tone": "positive",
+          "evidence": "mathematically it is not possible that we do not do better than this year"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Growth guidance and H2 drivers",
+          "why_it_mattered": "Analysts tested assumptions behind the upgrade and the balance between occupancy, rates and openings.",
+          "question_count": 6
+        },
+        {
+          "topic": "Supply, RevPAR and occupancy",
+          "why_it_mattered": "Investors asked whether added room supply could weaken pricing in major and emerging markets.",
+          "question_count": 5
+        },
+        {
+          "topic": "International performance",
+          "why_it_mattered": "London, San Francisco and New York assets were examined for recovery timing and sustainable margins.",
+          "question_count": 4
+        },
+        {
+          "topic": "Management fees and openings",
+          "why_it_mattered": "The market questioned whether high-teens fee growth is conservative given the pipeline.",
+          "question_count": 3
+        },
+        {
+          "topic": "MICE, weddings and inbound tourism",
+          "why_it_mattered": "Analysts assessed event-demand durability and potential upside from international arrivals.",
+          "question_count": 3
+        },
+        {
+          "topic": "TajSATS and subsidiary margins",
+          "why_it_mattered": "Airline disruption and mix changes created questions about near-term profitability.",
+          "question_count": 3
+        }
+      ],
+      "congratulations": {
+        "count": 0,
+        "analyst_turns": 24,
+        "index_pct": 0
+      },
+      "manufacturer": null,
+      "bank_lender": null,
+      "key_risks": [
+        "West Asia tensions, fuel costs and airline-capacity reductions may constrain travel demand.",
+        "International recovery depends on normalization in London, San Francisco and New York.",
+        "TajSATS margins face airline disruption and lower-margin institutional catering.",
+        "Q4 faces a demanding prior-year comparison despite a supportive event calendar."
+      ]
+    }
+  },
+  "SONACOMS": {
+    "symbol": "SONACOMS",
+    "filed_at": "2026-10-29T00:00:00+05:30",
+    "source_url": "https://sonacomstar.com/investor/investor-presentations",
+    "description": "Q2 FY2027 earnings-call transcript · static research prototype",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "EV demand",
+          "summary": "Traction-motor and broader EV demand remain strong across Indian and global markets.",
+          "tone": "positive",
+          "evidence": "Demand for EVs continues to accelerate"
+        },
+        {
+          "topic": "New-technology adoption",
+          "summary": "Management sees substantial potential as customer variants and OEM conversations expand.",
+          "tone": "positive",
+          "evidence": "the future looks fairly bright... it has the potential to be massive"
+        },
+        {
+          "topic": "DENSO joint venture",
+          "summary": "The first DENSO JV is targeted to close by December, with possible slippage into January.",
+          "tone": "neutral",
+          "evidence": "targeting to close this by end of December"
+        },
+        {
+          "topic": "Margin stability",
+          "summary": "Management retained its 23%–25% medium-term range, provided material inflation does not worsen.",
+          "tone": "cautious",
+          "evidence": "we should be able to hold on to this margin"
+        },
+        {
+          "topic": "Railway ramp-up",
+          "summary": "Air springs, HVAC systems and electrical panels should ramp over coming quarters and years.",
+          "tone": "positive",
+          "evidence": "multiple products which have started or gone into serial production"
+        },
+        {
+          "topic": "Medium-term growth",
+          "summary": "Management remains confident in the approximately 25% medium-term CAGR implied by its ambition.",
+          "tone": "positive",
+          "evidence": "medium term, we should be able to stick to that CAGR"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Traction-motor growth and EV mix",
+          "why_it_mattered": "Analysts examined demand acceleration, concentration and the effect of EV mix on profitability.",
+          "question_count": 6
+        },
+        {
+          "topic": "Margins and inflation",
+          "why_it_mattered": "The market tested whether the 23%–25% range remains credible amid mix and inflation.",
+          "question_count": 4
+        },
+        {
+          "topic": "Order book and legacy growth",
+          "why_it_mattered": "Investors sought durability of legacy growth and conversion of the ₹251 billion order book.",
+          "question_count": 3
+        },
+        {
+          "topic": "Robotics and physical AI",
+          "why_it_mattered": "Analysts focused on actuator capability, commercialization milestones and adoption timing.",
+          "question_count": 3
+        },
+        {
+          "topic": "DENSO JVs and capital deployment",
+          "why_it_mattered": "Questions covered closing timelines, cash inflow and disciplined capital use.",
+          "question_count": 3
+        },
+        {
+          "topic": "Railway growth",
+          "why_it_mattered": "The market wanted visibility on new-product ramp-up and the medium-term runway.",
+          "question_count": 2
+        }
+      ],
+      "congratulations": {
+        "count": 1,
+        "analyst_turns": 22,
+        "index_pct": 4.55
+      },
+      "manufacturer": {
+        "revenue_growth": "Q2 revenue grew 35% YoY; H1 revenue grew 43%. BEV revenue grew 129% and exceeded half of automotive revenue.",
+        "volume_growth": null,
+        "order_inflow": "Q2 new orders were ₹36 billion; net order book closed at ₹251 billion, the second-highest level.",
+        "demand_outlook": "EV demand continues to accelerate, led by Indian electric two- and three-wheelers and global EV driveline demand.",
+        "margin_outlook": "Management retained its 23%–25% medium-term range; near-term visibility is constrained by mix and inflation.",
+        "ebitda_margin": "Q2 EBITDA was ₹356 crore and grew 23% YoY; management described the current margin level as around 23%."
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "A faster shift toward lower-margin traction motors may dilute the group margin percentage.",
+        "Input and freight inflation may outpace delayed customer pass-through.",
+        "Railway and robotics growth depends on timely commercialization and adoption.",
+        "DENSO JV closings may slip because of legal and counterparty schedules."
+      ]
+    }
+  },
+  "UNOMINDA": {
+    "symbol": "UNOMINDA",
+    "filed_at": "2026-08-10T15:37:00+05:30",
+    "source_url": "https://www.unominda.com/investor/analyst-call-transcripts",
+    "description": "Q1 FY2027 earnings-call transcript · static research prototype",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q1 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Industry growth",
+          "summary": "Management expects healthy automotive growth through FY27 and continued outperformance versus industry volumes.",
+          "tone": "positive",
+          "evidence": "We remain constructive on the outlook for the automotive industry."
+        },
+        {
+          "topic": "Margin recovery",
+          "summary": "Commodity recoveries and operating leverage should improve profitability from Q2 while sustaining full-year guidance.",
+          "tone": "positive",
+          "evidence": "We should be able to start bridging that gap from Q2 onwards."
+        },
+        {
+          "topic": "Sunroof ramp",
+          "summary": "Sunroof plant commissioning remains targeted for FY27-end, with revenue ramping through FY28–FY29.",
+          "tone": "positive",
+          "evidence": "The business will start from… end of FY27."
+        },
+        {
+          "topic": "Emerging technologies",
+          "summary": "EV systems, lighting, seating, infotainment and electronics provide a strong multi-year order pipeline.",
+          "tone": "positive",
+          "evidence": "Strong order pipeline across several emerging technology platforms."
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "EBITDA margin and commodity recovery",
+          "why_it_mattered": "Investors tested whether Q1 input-cost pressure was temporary and annual guidance remained achievable.",
+          "question_count": 4
+        },
+        {
+          "topic": "New-plant ramp and asset turns",
+          "why_it_mattered": "Large seating, alloy-wheel and sunroof investments must translate into timely, capital-efficient revenue.",
+          "question_count": 4
+        },
+        {
+          "topic": "Order pipeline and launch timing",
+          "why_it_mattered": "Analysts sought visibility on when secured programs begin contributing.",
+          "question_count": 3
+        },
+        {
+          "topic": "EV and technology partnerships",
+          "why_it_mattered": "China regulatory changes and localization influence execution in high-growth product categories.",
+          "question_count": 2
+        }
+      ],
+      "congratulations": {
+        "count": 0,
+        "analyst_turns": 7,
+        "index_pct": 0.0
+      },
+      "manufacturer": {
+        "revenue_growth": "Q1 revenue INR5,557 crore, up 26% YoY; management expects continued industry outperformance.",
+        "volume_growth": "Growth was driven by volume expansion and higher content across switches, lighting, wheels, seating and green mobility; no consolidated target disclosed.",
+        "order_inflow": "Sunroof order book exceeded INR500 crore, including INR130 crore panoramic-roof and INR40 crore roller-shade peak annual orders.",
+        "demand_outlook": "Constructive for automotive demand through FY27; market-share gains, content growth and localization support outperformance.",
+        "margin_outlook": "Annual EBITDA-margin guidance retained at 11% ±50 bps, with bias toward the higher end; recovery expected from Q2.",
+        "ebitda_margin": "10.3% in Q1 FY27; EBITDA INR572 crore, up 21% YoY."
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "Commodity, gas and wage inflation may delay margin recovery.",
+        "Commodity pass-through on absolute cost mathematically dilutes reported margins.",
+        "China regulatory changes may delay the Inovance technology partnership.",
+        "Large FY27 capex and multiple simultaneous launches create execution risk."
+      ]
+    }
+  },
+  "BHARATFORG": {
+    "symbol": "BHARATFORG",
+    "filed_at": "2026-08-17T00:00:00+05:30",
+    "source_url": "https://www.bharatforge.com/investors/reports/analyst-conference-calls",
+    "description": "Q1 FY2027 earnings-call transcript · static research prototype",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q1 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Operating recovery",
+          "summary": "Management expects Q2 to improve after temporary steel, energy and US-plant disruptions.",
+          "tone": "positive",
+          "evidence": "Going ahead, I think we will do even better."
+        },
+        {
+          "topic": "Segment demand",
+          "summary": "India, US and European CV demand remain strong; European PV demand is softer but not weak.",
+          "tone": "positive",
+          "evidence": "All the segments have a strong outlook."
+        },
+        {
+          "topic": "Defence ramp",
+          "summary": "The new defence facility enters serial production this year for ATAGS and CQB carbine deliveries.",
+          "tone": "positive",
+          "evidence": "Our new defense facility will enter serial production this year."
+        },
+        {
+          "topic": "Aerospace and power generation",
+          "summary": "New Baramati facilities should lift aerospace, large-engine and power-generation output from Q4 onward.",
+          "tone": "positive",
+          "evidence": "Once our ring mill in Baramati starts in Q4… increase in production."
+        },
+        {
+          "topic": "EV strategy",
+          "summary": "Management acknowledged weak EV execution but expects to announce initiatives within three to six months.",
+          "tone": "neutral",
+          "evidence": "Give us another three to six months."
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Capex, fundraise and returns",
+          "why_it_mattered": "Analysts sought returns and timing behind INR1,800 crore organic capex and the proposed INR2,500 crore raise.",
+          "question_count": 5
+        },
+        {
+          "topic": "US and European profitability",
+          "why_it_mattered": "Plant downtime, German restructuring and tariffs materially depressed overseas earnings.",
+          "question_count": 5
+        },
+        {
+          "topic": "Defence order execution",
+          "why_it_mattered": "Investors wanted delivery timing and visibility for ATAGS, carbines and export opportunities.",
+          "question_count": 4
+        },
+        {
+          "topic": "Non-auto growth",
+          "why_it_mattered": "Aerospace, power generation, semiconductors and data centers underpin the diversification thesis.",
+          "question_count": 4
+        },
+        {
+          "topic": "Automotive demand outlook",
+          "why_it_mattered": "Analysts tested domestic and global CV/PV demand after Q1 supply disruptions.",
+          "question_count": 3
+        }
+      ],
+      "congratulations": {
+        "count": 0,
+        "analyst_turns": 12,
+        "index_pct": 0.0
+      },
+      "manufacturer": {
+        "revenue_growth": "Management targets roughly 15% CAGR for India manufacturing over five years; India-linked businesses expected to grow 20%–25% in FY27.",
+        "volume_growth": "Temporary Q1 supply and US downtime constrained output; Baramati, defence and K Drive capacity should accelerate volumes.",
+        "order_inflow": "Business is tied up for new capex; semiconductor wins and long-term power-generation contracts were disclosed without a total order value.",
+        "demand_outlook": "Strong in India, US and European CV; European PV relatively softer. Defence, aerospace, power generation and data-center demand robust.",
+        "margin_outlook": "Margins should recover with US restart and customer recovery of energy and logistics costs; German restructuring targets structural losses.",
+        "ebitda_margin": "No consolidated Q1 figure stated; normalized targets include US steel near 12% and aluminum 15%–16%."
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "US aluminum tariffs may prevent targeted overseas margins.",
+        "German CDP restructuring carries execution costs and labor-settlement risk.",
+        "Capacity is being built ahead of demand, increasing utilization risk.",
+        "Defence exports depend partly on government financing and geopolitical support."
+      ]
+    }
+  },
+  "MOTHERSON": {
+    "symbol": "MOTHERSON",
+    "filed_at": "2026-08-14T00:00:00+05:30",
+    "source_url": "https://www.motherson.com/performance/samil-investors/corporate-announcements",
+    "description": "Q1 FY2027 earnings-call transcript · static research prototype",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q1 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Growth momentum",
+          "summary": "Record Q1 revenue and improving end markets support continued growth despite mixed global vehicle production.",
+          "tone": "positive",
+          "evidence": "Our highest-ever quarterly revenue in Q1 FY '27."
+        },
+        {
+          "topic": "Commodity recovery",
+          "summary": "Copper pass-through occurs with a three-to-six-month lag, supporting later-quarter recovery.",
+          "tone": "neutral",
+          "evidence": "Pass-through… has a lag of 3 to 6 months."
+        },
+        {
+          "topic": "Consumer electronics",
+          "summary": "A new facility is expected in H2 FY27, supporting a major multi-year capacity expansion.",
+          "tone": "positive",
+          "evidence": "Consumer electronics facility commissioning expected in H2 FY27."
+        },
+        {
+          "topic": "Aerospace",
+          "summary": "Aerospace growth remains strong with a rising order book and improved long-term visibility.",
+          "tone": "positive",
+          "evidence": "Aerospace revenue grew over 20%… order book up 17%."
+        },
+        {
+          "topic": "Chinese OEM opportunity",
+          "summary": "Existing China relationships position Motherson to supply Chinese OEMs as they expand internationally.",
+          "tone": "positive",
+          "evidence": "We're definitely getting the opportunity to supply."
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Wiring-harness margin resilience",
+          "why_it_mattered": "Analysts examined how margins improved despite copper, wages and currency pressure.",
+          "question_count": 3
+        },
+        {
+          "topic": "Copper and raw-material pass-through",
+          "why_it_mattered": "Recovery lags determine near-term margin timing and working-capital pressure.",
+          "question_count": 3
+        },
+        {
+          "topic": "Chinese OEM exposure",
+          "why_it_mattered": "Investors assessed market-share risk from Chinese automakers and Motherson's opportunity to supply them globally.",
+          "question_count": 2
+        },
+        {
+          "topic": "Emerging-business ramp",
+          "why_it_mattered": "Consumer electronics and aerospace are increasingly important growth and diversification drivers.",
+          "question_count": 3
+        },
+        {
+          "topic": "Capex and acquisitions",
+          "why_it_mattered": "Investors monitored leverage, integration and returns from a high investment program.",
+          "question_count": 2
+        }
+      ],
+      "congratulations": {
+        "count": 0,
+        "analyst_turns": 8,
+        "index_pct": 0.0
+      },
+      "manufacturer": {
+        "revenue_growth": "Q1 revenue INR35,244 crore, up 17% YoY and 3% QoQ; highest-ever quarterly revenue.",
+        "volume_growth": "No consolidated unit-volume figure; growth exceeded weak global light-vehicle production through content, acquisitions and diversification.",
+        "order_inflow": "Aerospace order book increased 17% from FY26-end; no consolidated automotive order-inflow value disclosed.",
+        "demand_outlook": "Diversified global footprint offsets softness; US recovery and Chinese OEM internationalization create opportunities.",
+        "margin_outlook": "EBITDA grew 26%, faster than revenue, with margin up 60 bps YoY; copper recovery lags three to six months.",
+        "ebitda_margin": "Approximately 8.8% in Q1 FY27: INR3,096 crore EBITDA on INR35,244 crore revenue."
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "Copper inflation and currency depreciation affect India before pass-through recovery.",
+        "Global light-vehicle production remains uneven across Europe and China.",
+        "Large capex and acquisitions increase integration and execution demands.",
+        "Chinese OEM expansion can pressure incumbent customers while creating supply opportunities."
+      ]
+    }
+  },
+  "TVSMOTOR": {
+    "symbol": "TVSMOTOR",
+    "company": "TVS Motor Company Limited",
+    "filed_at": "2026-07-28T14:26:00+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/TVSMOTOR_28072026141905_NSEBSEAnalystcallTranscript_sd.pdf",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q1 FY2026-27",
+      "next_quarter_outlook": [
+        {
+          "topic": "Q2 industry demand",
+          "summary": "Management expects at least double-digit two-wheeler industry growth, with Q2 momentum slightly better than Q1.",
+          "tone": "positive",
+          "evidence": "double-digit growth is minimum what we are expecting in the market"
+        },
+        {
+          "topic": "International business",
+          "summary": "Export growth should continue at the Q1 rate or improve as capacity expands across Africa, Asia and Latin America.",
+          "tone": "positive",
+          "evidence": "expecting the same growth rate to continue or slightly better growth rate"
+        },
+        {
+          "topic": "Electric vehicles",
+          "summary": "EV growth should continue in Q2, supported by broader adoption and incremental two- and three-wheeler capacity.",
+          "tone": "positive",
+          "evidence": "I'm expecting the growth to continue in Q2"
+        },
+        {
+          "topic": "Margins",
+          "summary": "Scale, mix and cost reduction should extend EBITDA improvement despite commodity and supply-chain pressure.",
+          "tone": "positive",
+          "evidence": "enable us to further improve our EBITDA journey"
+        },
+        {
+          "topic": "Capacity",
+          "summary": "Two-wheeler capacity should reach 8.3 million units by Q4; three-wheeler capacity is expanding to 0.42 million.",
+          "tone": "positive",
+          "evidence": "By fourth quarter, we will reach is 8.3 million capacity"
+        },
+        {
+          "topic": "Norton launches",
+          "summary": "Atlas should reach customers next quarter, while four new Norton models roll out across Europe, India and later the US.",
+          "tone": "positive",
+          "evidence": "you will see this product in the next quarter"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "EV adoption, capacity and profitability",
+          "why_it_mattered": "Analysts tested the durability and economics of rapid iQube and electric three-wheeler growth.",
+          "question_count": 3
+        },
+        {
+          "topic": "Capacity, supply and festive inventory",
+          "why_it_mattered": "Strong retail demand raised concern about whether production and dealer stocks can support the festive quarter.",
+          "question_count": 3
+        },
+        {
+          "topic": "Commodity costs, pricing and EBITDA",
+          "why_it_mattered": "The market wanted to know whether pricing and scale can offset approximately 4% input inflation.",
+          "question_count": 2
+        },
+        {
+          "topic": "Export growth",
+          "why_it_mattered": "Analysts examined the drivers and sustainability of strong Africa, Asia and Latin America growth.",
+          "question_count": 2
+        },
+        {
+          "topic": "Norton strategy and returns",
+          "why_it_mattered": "Questions focused on product positioning, distribution, investment and the path from brand building to volumes.",
+          "question_count": 2
+        },
+        {
+          "topic": "Scooter competition and market share",
+          "why_it_mattered": "Analysts tested why TVS gained share despite premium pricing and competitor discounting.",
+          "question_count": 1
+        }
+      ],
+      "congratulations": {
+        "count": 1,
+        "analyst_turns": 10,
+        "index_pct": 10.0
+      },
+      "manufacturer": {
+        "revenue_growth": "Q1 revenue was ₹13,896 crore, up 38% YoY.",
+        "volume_growth": "Sales rose 28% to 1.63 million units; domestic ICE two-wheelers grew 21%, exports 33%, EVs 86%, three-wheelers 48%.",
+        "order_inflow": null,
+        "demand_outlook": "Q2 industry growth expected at least double digit; domestic, export and EV momentum expected to continue or improve.",
+        "margin_outlook": "Scale, richer mix, cost reduction and selective Q2 price increases should support continued EBITDA improvement.",
+        "ebitda_margin": "Operating EBITDA margin was 12.8%, up 30 bps YoY."
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "Steel, aluminium, plastics and oil-linked input inflation may require further pricing.",
+        "Supply-chain constraints and commodity pressure will continue during Q2.",
+        "Monsoon progression and elevated food and energy prices could affect demand.",
+        "Norton requires sustained brand, distribution and product investment before meaningful volume scale."
+      ]
+    }
+  },
+  "EICHERMOT": {
+    "symbol": "EICHERMOT",
+    "company": "Eicher Motors Limited",
+    "filed_at": "2026-08-04",
+    "source_url": "https://eicher.in/content/dam/eicher-motors/investor/notifications/investor-and-analyst-meeting/transcript-of-conference-call-held-on-july-29-2026.pdf",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q1 FY2026-27",
+      "next_quarter_outlook": [
+        {
+          "topic": "Festive demand",
+          "summary": "Healthy inquiries, bookings and lean inventory support continued growth as production ramps for the festive quarter.",
+          "tone": "positive",
+          "evidence": "well on track to maintain our growth momentum"
+        },
+        {
+          "topic": "Royal Enfield capacity",
+          "summary": "Current annualised capacity has reached 1.5 million units and should rise toward 2 million through FY27-FY28.",
+          "tone": "positive",
+          "evidence": "the growth momentum is continuing"
+        },
+        {
+          "topic": "Commodity costs",
+          "summary": "Input inflation is beginning to soften, but management would not give forward commodity guidance.",
+          "tone": "cautious",
+          "evidence": "you see slightly it is softening"
+        },
+        {
+          "topic": "Premium motorcycles",
+          "summary": "Royal Enfield will resume marketing and product refreshes to lift 450cc and 650cc models in coming quarters.",
+          "tone": "positive",
+          "evidence": "experiential marketing around the Himalayan, which will also now start in the coming quarters"
+        },
+        {
+          "topic": "Flying Flea",
+          "summary": "Electric-motorcycle rollout will remain deliberate, expanding first to ten Bengaluru locations before entering six additional markets.",
+          "tone": "neutral",
+          "evidence": "We are taking a phased city-by-city approach"
+        },
+        {
+          "topic": "International business",
+          "summary": "Management expects continued international expansion, with market-specific products and deeper distribution.",
+          "tone": "positive",
+          "evidence": "we can continue to grow even the higher base of the last year"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Demand, festive readiness and channel inventory",
+          "why_it_mattered": "Analysts tested whether production and lean stocks can meet the next quarter's festive demand.",
+          "question_count": 3
+        },
+        {
+          "topic": "Capacity expansion",
+          "why_it_mattered": "The market sought timelines for Cheyyar modules and long-term Andhra Pradesh capacity.",
+          "question_count": 2
+        },
+        {
+          "topic": "Margins, commodities and pricing",
+          "why_it_mattered": "Questions focused on the 4%-4.5% input-cost hit and whether price and value engineering can recover it.",
+          "question_count": 2
+        },
+        {
+          "topic": "Premium models and Flying Flea",
+          "why_it_mattered": "Analysts examined demand, rollout pace and interventions for electric, 450cc and 650cc motorcycles.",
+          "question_count": 3
+        },
+        {
+          "topic": "International growth",
+          "why_it_mattered": "The market wanted visibility on demand and Royal Enfield's expansion in overseas markets.",
+          "question_count": 2
+        },
+        {
+          "topic": "VECV performance",
+          "why_it_mattered": "Analysts assessed commercial-vehicle demand, margins and the contribution of new segments.",
+          "question_count": 2
+        }
+      ],
+      "congratulations": {
+        "count": 2,
+        "analyst_turns": 6,
+        "index_pct": 33.3
+      },
+      "manufacturer": {
+        "revenue_growth": "Consolidated Q1 revenue reached ₹6,632 crore, up 32% YoY; VECV revenue was ₹6,610 crore versus ₹5,671 crore.",
+        "volume_growth": "Royal Enfield sales rose 27.4% to 332,940 units; VECV volumes grew 14.8% to 24,815 units.",
+        "order_inflow": null,
+        "demand_outlook": "Royal Enfield inquiry and booking growth remained ahead of volume growth; festive inventory rebuilding and product refreshes support momentum.",
+        "margin_outlook": "Commodity inflation remains a headwind but is softening; pricing, value engineering and cost controls provide partial mitigation.",
+        "ebitda_margin": "EML EBITDA was ₹1,591 crore; VECV EBITDA margin was 8.4% versus 9.2% YoY."
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "Aluminium, crude, steel, copper and precious-metal inflation pressured gross margins.",
+        "Supply-chain, LPG and labour disruptions may constrain production.",
+        "Dealer inventory was only 10-12 days entering the festive build.",
+        "Flying Flea adoption and wider rollout remain deliberately gradual and unproven."
+      ]
+    }
+  },
+  "BAJAJ-AUTO": {
+    "symbol": "BAJAJ-AUTO",
+    "company": "Bajaj Auto Limited",
+    "filed_at": "2026-07-27T16:43:00+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/lkwalimbe_bajajauto_co_in_27072026164331_Transcript_of_Earning_Conference_Call_Q1_FY27.pdf",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q1 FY2026-27",
+      "next_quarter_outlook": [
+        {
+          "topic": "Supply recovery",
+          "summary": "Q2 supply-chain easing should improve availability and support higher top-line growth.",
+          "tone": "positive",
+          "evidence": "The supply chain disruption should be easing off in Q2"
+        },
+        {
+          "topic": "Domestic motorcycles",
+          "summary": "A major Pulsar refresh and two new 125cc brands should support festive growth and share gains.",
+          "tone": "positive",
+          "evidence": "we would be in very, very good shape"
+        },
+        {
+          "topic": "Chetak and electric mobility",
+          "summary": "Capacity expansion should relieve unmet Chetak demand and support domestic and international growth.",
+          "tone": "positive",
+          "evidence": "Demand, however, continued to remain ahead of our ability to supply"
+        },
+        {
+          "topic": "Cost inflation",
+          "summary": "Q2 will carry a fuller impact from broad component, labour, logistics and energy inflation.",
+          "tone": "cautious",
+          "evidence": "the second quarter is likely to reflect its impact over the full period"
+        },
+        {
+          "topic": "Exports",
+          "summary": "Management will pursue premium LatAm growth and commercial-motorcycle share gains in Africa despite MENA weakness.",
+          "tone": "positive",
+          "evidence": "we continue to significantly outpace the industry growth by over 2x"
+        },
+        {
+          "topic": "KTM turnaround",
+          "summary": "Manufacturing and inventories have normalised, but restoring KTM to normative performance remains an ongoing turnaround.",
+          "tone": "neutral",
+          "evidence": "continue to execute the turnaround in a calibrated manner"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Domestic product launches and market share",
+          "why_it_mattered": "Analysts focused on whether the Pulsar overhaul and new 125cc brands can revive domestic growth.",
+          "question_count": 3
+        },
+        {
+          "topic": "Commodity inflation, pricing and margins",
+          "why_it_mattered": "The market tested how much unprecedented inflation can be offset without sacrificing competitiveness.",
+          "question_count": 2
+        },
+        {
+          "topic": "EV capacity and leadership",
+          "why_it_mattered": "Demand exceeds supply for Chetak, making capacity and supply-chain execution central to share gains.",
+          "question_count": 2
+        },
+        {
+          "topic": "KTM turnaround and consolidation",
+          "why_it_mattered": "Analysts wanted clarity on operational normalisation and the subsidiary's impact on consolidated performance.",
+          "question_count": 1
+        },
+        {
+          "topic": "Exports and premium brands",
+          "why_it_mattered": "Questions assessed export momentum and the expansion path for Triumph, KTM and commercial motorcycles.",
+          "question_count": 2
+        },
+        {
+          "topic": "Cash deployment",
+          "why_it_mattered": "Strong free cash flow prompted questions about future dividends, buybacks and desired cash balances.",
+          "question_count": 1
+        }
+      ],
+      "congratulations": {
+        "count": 3,
+        "analyst_turns": 6,
+        "index_pct": 50.0
+      },
+      "manufacturer": {
+        "revenue_growth": "Q1 revenue was approximately ₹17,244 crore, its highest quarterly level.",
+        "volume_growth": "Q1 volumes reached 1.4 million; all major businesses delivered double-digit growth, though disruptions impaired availability by 10%-15%.",
+        "order_inflow": null,
+        "demand_outlook": "Strong premium motorcycles, EVs and exports; Chetak demand exceeds supply, while MENA remains disrupted.",
+        "margin_outlook": "Pricing offset roughly half of 4.5% commodity inflation; Q2 faces broader cost pressure, mitigated by currency, scale and cost control.",
+        "ebitda_margin": "Q1 EBITDA margin was 20.9%, improving 110 bps YoY."
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "Q2 faces full-period inflation across components, electronics, labour, logistics and energy.",
+        "International logistics and West Asia disruption remain volatile.",
+        "Capacity and supply constraints are limiting Chetak, premium-bike and export availability.",
+        "KTM turnaround and Bajaj Mobility consolidation add execution and reporting complexity."
+      ]
     }
   }
 }
