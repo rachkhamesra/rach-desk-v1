@@ -22,7 +22,7 @@ Monday to Friday at 20:00 IST the workflow starts, restores the small cached his
 - NSE and BSE sometimes block GitHub's servers. If the run fails on downloads, run `python run.py` from cron on your own machine and push `site/` to a `gh-pages` branch; nothing else changes.
 
 ## Conference-call intelligence
-The nightly job looks back 150 days for NSE filings explicitly marked as transcripts, restricts them to the current F&O universe, and retains the latest call for each stock. It analyses at most 12 new or changed transcripts per run, newest first, then caches the structured output. Existing calls are never sent to the model again unless the exchange publishes a new transcript.
+The nightly job looks back 150 days for NSE filings explicitly marked as transcripts, restricts them to the current F&O universe, and retains the latest call for each stock. In the first 12-name batch it prioritises CUMMINSIND, ABB, PNB, PNBHOUSING and HEROMOTOCO, then fills the other seven slots with the newest transcripts. It caches the structured output, and existing calls are never sent to the model again unless the exchange publishes a new transcript.
 
 The STOCKS page shows the result below the charts: next-quarter outlook, the subjects receiving the most analyst questions, a congratulations index, short supporting excerpts, and sector-specific metrics. Manufacturers focus on revenue and volume growth, order inflow, demand, margin outlook and EBITDA margin. Banks and lenders focus on credit growth, credit–deposit ratio, disbursements, NIM, asset quality and credit costs. These are model-generated reading aids; the linked exchange transcript remains the source of record.
 
