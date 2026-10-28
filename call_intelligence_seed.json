@@ -1237,5 +1237,831 @@
         "KTM turnaround and Bajaj Mobility consolidation add execution and reporting complexity."
       ]
     }
+  },
+  "NAM-INDIA": {
+    "symbol": "NAM-INDIA",
+    "filed_at": "2026-10-27T15:45:59+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/RNLAM_27102026154539_SE_IntimationTranscript.pdf",
+    "description": "NSE filing · Q2 FY2027 earnings-call transcript · filed 27 Oct 2026",
+    "analysis": {
+      "company_type": "other",
+      "call_period": "Q2 FY2027 / H1 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Operating expenses",
+          "summary": "Management retained consolidated operating-expense growth guidance of 18–20% over the next six to eight quarters.",
+          "tone": "neutral",
+          "evidence": "we continue to maintain our guidance of 18% to 20% growth over the next 6 to 8 quarters"
+        },
+        {
+          "topic": "Employee costs",
+          "summary": "Core AMC employee costs should remain broadly stable, apart from hiring, training and team-strengthening investments.",
+          "tone": "neutral",
+          "evidence": "employee cost should range in the similar range, except for the new hires"
+        },
+        {
+          "topic": "AIF investment",
+          "summary": "Hiring in the AIF subsidiary is expected to add consolidated costs over the next three to six quarters.",
+          "tone": "neutral",
+          "evidence": "you may see incremental cost in our AIF subsidiary over the next 3 to 6 quarters"
+        },
+        {
+          "topic": "SIF launch",
+          "summary": "Nippon plans to launch two SIF strategies after receiving SEBI clearance; timing remains conditional on approval.",
+          "tone": "neutral",
+          "evidence": "Once we get that, of course, we'll be in the market to launch our ideas"
+        },
+        {
+          "topic": "Offshore products",
+          "summary": "Management is considering feeder and outbound strategies, but said the plans remain formative.",
+          "tone": "cautious",
+          "evidence": "We would be looking at a couple of ideas, maybe feeders into one or two"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Fee yields and telescopic pricing",
+          "why_it_mattered": "Analysts repeatedly tested why blended and equity yields fell despite a richer equity mix.",
+          "question_count": 8
+        },
+        {
+          "topic": "Flows, investor growth and channel mix",
+          "why_it_mattered": "Questions examined softer industry flows, unique-investor growth, redemptions and the stability of retail channels.",
+          "question_count": 7
+        },
+        {
+          "topic": "Operating costs and employee expenses",
+          "why_it_mattered": "Investors sought the trajectory for employee, ESOP and consolidated operating costs.",
+          "question_count": 5
+        },
+        {
+          "topic": "AT-1 bond settlement",
+          "why_it_mattered": "Analysts asked about the alleged non-compliance, settlement trigger and exceptional provision.",
+          "question_count": 4
+        },
+        {
+          "topic": "New products and offshore growth",
+          "why_it_mattered": "The market wanted timing and strategy for SIFs, offshore funds and the new mutual-fund PMS route.",
+          "question_count": 4
+        },
+        {
+          "topic": "ETF and commodity-fund flows",
+          "why_it_mattered": "Questions covered volume-share slippage and whether fund-of-fund restrictions affect ETF activity.",
+          "question_count": 3
+        }
+      ],
+      "congratulations": {
+        "count": 0,
+        "analyst_turns": 27,
+        "index_pct": 0.0
+      },
+      "manufacturer": null,
+      "bank_lender": null,
+      "key_risks": [
+        "Telescopic fee pricing is compressing yields as equity AUM grows.",
+        "Sharper market declines could lift redemptions and slow investor additions.",
+        "The Yes Bank AT-1 settlement awaits further communication from SEBI.",
+        "Rupee weakness and geopolitical uncertainty are suppressing offshore flows."
+      ]
+    }
+  },
+  "ULTRACEMCO": {
+    "symbol": "ULTRACEMCO",
+    "filed_at": "2026-10-27T14:24:21+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/ULTRACEMCO1_27102026142336_SE_Transcript.pdf",
+    "description": "NSE filing · Q2 FY2027 earnings-call transcript · filed 27 Oct 2026",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Q3 pricing benefit",
+          "summary": "Management expects Q3 to capture the full benefit of September and October cement price increases.",
+          "tone": "positive",
+          "evidence": "full benefit of these price increases to reflect in the Q3 earnings"
+        },
+        {
+          "topic": "Demand and volume growth",
+          "summary": "UltraTech expects to outgrow a strong industry as seasonal activity revives and new capacity becomes available.",
+          "tone": "positive",
+          "evidence": "we expect to grow stronger, supported by our capacity addition and market reach"
+        },
+        {
+          "topic": "Fuel costs",
+          "summary": "Management expects limited further near-term fuel-cost impact from current levels, while acknowledging West Asia uncertainty.",
+          "tone": "cautious",
+          "evidence": "not too much is what we are expecting going forward"
+        },
+        {
+          "topic": "Capacity expansion",
+          "summary": "The company remains on schedule to reach 240 million tonnes of cement capacity.",
+          "tone": "positive",
+          "evidence": "We are on track to reach 240 million"
+        },
+        {
+          "topic": "Ultravolt ramp-up",
+          "summary": "Power and control cable lines are scheduled to commission during H2 while the network shifts toward operating stability.",
+          "tone": "positive",
+          "evidence": "Remaining power and control cable lines will be commissioned through the second half"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Cement pricing and margin recovery",
+          "why_it_mattered": "Analysts tested whether recent price increases can offset cost inflation and restore profitability.",
+          "question_count": 10
+        },
+        {
+          "topic": "Fuel and input-cost inflation",
+          "why_it_mattered": "Questions focused on pet coke, coal, diesel and the timing of costs reaching the P&L.",
+          "question_count": 8
+        },
+        {
+          "topic": "Ultravolt scale-up and economics",
+          "why_it_mattered": "Investors sought product scope, capacity, capex, utilization, margins and distribution progress.",
+          "question_count": 10
+        },
+        {
+          "topic": "Demand and regional outlook",
+          "why_it_mattered": "The market examined rural weakness, South India momentum and the durability of housing and infrastructure demand.",
+          "question_count": 8
+        },
+        {
+          "topic": "Capital expenditure and capacity",
+          "why_it_mattered": "Analysts asked about the ₹10,000 crore FY27 capex plan and the next cement expansion phase.",
+          "question_count": 6
+        },
+        {
+          "topic": "Capital allocation and leverage",
+          "why_it_mattered": "Questions covered debt, dividends, interest expense and the UHG corporate guarantee.",
+          "question_count": 4
+        }
+      ],
+      "congratulations": {
+        "count": 4,
+        "analyst_turns": 46,
+        "index_pct": 8.7
+      },
+      "manufacturer": {
+        "revenue_growth": null,
+        "volume_growth": "Q2 cement volumes grew 13.8% YoY; North grew over 20% and South 15–20%, with capacity utilization at 71% versus 66%.",
+        "order_inflow": null,
+        "demand_outlook": "Management expects industry demand to remain strong through March 2029 and UltraTech to outgrow it; rural pockets may soften while urban housing, infrastructure and private capex stay strong.",
+        "margin_outlook": "Spot realization was about 5% above the Q2 average; Q3 should capture the price benefit and fixed-cost leverage, offset by fuel inflation.",
+        "ebitda_margin": null
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "West Asia disruption has lifted pet coke, diesel and freight-related costs.",
+        "Domestic coal availability is constrained as power producers receive priority.",
+        "Weak monsoons may pressure rural income and housing demand in drought-hit pockets.",
+        "Ultravolt is only weeks into launch, making utilization and margin timing uncertain."
+      ]
+    }
+  },
+  "SHRIRAMFIN": {
+    "symbol": "SHRIRAMFIN",
+    "filed_at": "2026-10-27T12:59:41+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/Mathew_27102026125931_BSENSE_Transcript_Earnings_Call_23102026.pdf",
+    "description": "NSE filing · Q2 FY2027 earnings-call transcript · filed 27 Oct 2026",
+    "analysis": {
+      "company_type": "bank_lender",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "AUM growth",
+          "summary": "Management now expects FY27 AUM growth of 15–17%, below its initial 18% view because it is cautious in drought-affected geographies.",
+          "tone": "cautious",
+          "evidence": "We will be anywhere growing anywhere between these two 15% to 17%"
+        },
+        {
+          "topic": "Near-term NIM",
+          "summary": "The elevated 9.52% NIM may persist for one or two quarters before capital deployment and funding costs drive normalization.",
+          "tone": "neutral",
+          "evidence": "It is likely to remain at this level maybe for another one quarter or two"
+        },
+        {
+          "topic": "Medium-term NIM",
+          "summary": "Management expects NIM to normalize toward about 9% in the medium term and 8.5% over the long term.",
+          "tone": "cautious",
+          "evidence": "in the medium term, it should come to around 9"
+        },
+        {
+          "topic": "Credit costs",
+          "summary": "Credit costs may stay 30–40 bps above the 2% long-term level for one or two quarters, then normalize.",
+          "tone": "cautious",
+          "evidence": "it should get normalized to overall expectation of 2%"
+        },
+        {
+          "topic": "Construction equipment",
+          "summary": "Management sees construction-equipment demand recovering as government infrastructure spending rises.",
+          "tone": "positive",
+          "evidence": "government spend is going up, and slowly the demand for construction equipment is coming back"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Asset quality and credit costs",
+          "why_it_mattered": "Most questions tested Stage 2/3 deterioration, slippages and whether seasonal stress will normalize.",
+          "question_count": 16
+        },
+        {
+          "topic": "NIM and funding costs",
+          "why_it_mattered": "Analysts examined excess-liquidity absorption, borrowing repricing and the path from 9.52% NIM.",
+          "question_count": 10
+        },
+        {
+          "topic": "Growth and disbursements",
+          "why_it_mattered": "Questions challenged the lower AUM guidance and the sharp acceleration in MSME and construction-equipment lending.",
+          "question_count": 8
+        },
+        {
+          "topic": "Gold-loan growth and servicing",
+          "why_it_mattered": "Investors focused on rapid growth, higher delinquency buckets, customer education, LTV and sourcing mix.",
+          "question_count": 8
+        },
+        {
+          "topic": "Operating costs and fee income",
+          "why_it_mattered": "The market asked about cost ratios, technology spend and possible insurance-commission changes.",
+          "question_count": 5
+        },
+        {
+          "topic": "Governance and controls",
+          "why_it_mattered": "One analyst sought details on an alleged unauthorized Kerala loan account; management deferred the answer offline.",
+          "question_count": 1
+        }
+      ],
+      "congratulations": {
+        "count": 1,
+        "analyst_turns": 50,
+        "index_pct": 2.0
+      },
+      "manufacturer": null,
+      "bank_lender": {
+        "credit_growth": "AUM grew 16.96% YoY and 4.85% QoQ to ₹3.29 lakh crore; management guides FY27 growth of 15–17% versus 18% initially.",
+        "credit_deposit_ratio": null,
+        "disbursements": "Q2 disbursements rose 25.71% YoY to ₹54,079 crore; gold-loan disbursements were ₹5,443 crore and MSME reach is expanding nationally.",
+        "nim_outlook": "Q2 NIM was 9.52%; management expects it near this level for one or two quarters, around 9% medium term and 8.5% long term.",
+        "asset_quality": "Gross Stage 3 was 4.65% and net Stage 3 2.31%; seasonal stress is concentrated in drought-affected geographies and some gold/MSME cohorts.",
+        "credit_cost_outlook": "Q2 credit cost was 2.03% of total assets and 2.3% of loans; management expects a temporary 30–40 bps increase over its 2% long-term level."
+      },
+      "key_risks": [
+        "Weak monsoons are pressuring borrower cash flows in parts of Maharashtra, Karnataka and Telangana.",
+        "Further rate increases could lift incremental borrowing costs and hasten NIM normalization.",
+        "Gold-loan customers are still adapting from bullet repayment to monthly EMI and interest servicing.",
+        "Management did not address the alleged unauthorized Kerala loan account on the call."
+      ]
+    }
+  },
+  "AUBANK": {
+    "symbol": "AUBANK",
+    "filed_at": "2026-10-28T19:37:31+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/SUMIT1_28102026192812_Investor_call_transcript_SE_Submission.pdf",
+    "description": "Official NSE filing: AU Small Finance Bank Q2 FY2027 / H1 FY2027 earnings-call transcript; call held October 24, 2026.",
+    "analysis": {
+      "company_type": "bank_lender",
+      "call_period": "Q2 FY2027 / H1 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Deposit growth",
+          "summary": "Management targets roughly 25% year-on-year deposit growth, while acknowledging market conditions can affect the outcome.",
+          "tone": "positive",
+          "evidence": "Our target is to grow in the range of 25%"
+        },
+        {
+          "topic": "NIM repricing",
+          "summary": "The recent repo increase should reprice the 30% floating-rate loan book over one quarter, supporting yields next quarter.",
+          "tone": "positive",
+          "evidence": "full impact will be visible next quarter"
+        },
+        {
+          "topic": "Credit cost",
+          "summary": "Management expects credit cost to remain within its roughly 90-basis-point FY27 guidance, but is watching Q3 macro stress.",
+          "tone": "cautious",
+          "evidence": "we would be within our guided range"
+        },
+        {
+          "topic": "Mortgage growth",
+          "summary": "The bank aims to rebuild its mortgage franchise toward roughly 20% growth by next year, led by distribution and southern-market rebuilding.",
+          "tone": "positive",
+          "evidence": "we should touch in the range of 20% by next year"
+        },
+        {
+          "topic": "Operating efficiency",
+          "summary": "Cost-to-assets should improve year on year for FY27 despite continued spending on branches, brand and technology.",
+          "tone": "positive",
+          "evidence": "cost to assets ratio to improve YoY on a full year basis"
+        },
+        {
+          "topic": "Fee income",
+          "summary": "Management expects the slow general-banking-fee line to normalize over the full year, helped by processing and transaction fees.",
+          "tone": "neutral",
+          "evidence": "we remain on track to deliver on a full year basis"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Asset quality, slippages and credit cost",
+          "why_it_mattered": "Analysts repeatedly tested drought exposure, seasonal slippages, collection efficiency, PCR and the resilience of FY27 credit-cost guidance.",
+          "question_count": 6
+        },
+        {
+          "topic": "Loan growth and portfolio mix",
+          "why_it_mattered": "Questions examined whether gold, mortgages, Wheels, affordable housing and commercial banking can sustain overall credit growth.",
+          "question_count": 6
+        },
+        {
+          "topic": "Deposit growth and funding strategy",
+          "why_it_mattered": "Investors challenged the durability and pricing of above-system deposit and CASA growth as system liquidity tightens.",
+          "question_count": 5
+        },
+        {
+          "topic": "NIM and rate sensitivity",
+          "why_it_mattered": "The fixed-rate loan mix, deposit competition and timing of repo-rate transmission determine near-term margin direction.",
+          "question_count": 3
+        },
+        {
+          "topic": "Fees, ROA and operating leverage",
+          "why_it_mattered": "Analysts asked whether insurance-fee pressure and heavy investment can be offset while protecting ROA.",
+          "question_count": 3
+        }
+      ],
+      "congratulations": {
+        "count": 4,
+        "analyst_turns": 19,
+        "index_pct": 21.1
+      },
+      "manufacturer": null,
+      "bank_lender": {
+        "credit_growth": "Loan portfolio grew 25% YoY and 7% QoQ; management targets overall growth around 2–2.5 times nominal GDP.",
+        "credit_deposit_ratio": null,
+        "disbursements": "Q2 disbursements rose 33% YoY; mortgage MBL/LAP disbursements increased 17% YoY.",
+        "nim_outlook": "Q2 NIM was 5.8%, down 9 bps QoQ. The 30% floating-rate book should reprice over one quarter, while tighter deposit liquidity may cap cost-of-funds gains.",
+        "asset_quality": "GNPA was 1.99%; slippage ratio was 2.6% versus 3.3% YoY. Inclusive-banking collection efficiency was 99.6%, with no deterioration reported through September.",
+        "credit_cost_outlook": "Q2 credit cost including guarantee premium was 0.8%; H1 was about 73–74 bps. FY27 guidance remains roughly 90 bps, versus 90–100 bps through-cycle."
+      },
+      "key_risks": [
+        "Drought, oil prices and other macro stress could surface in Q3 asset quality.",
+        "Deposit competition and rising short-term rates may cap funding-cost improvement.",
+        "Seventy percent of the loan book is fixed-rate and reprices only through new disbursements.",
+        "Insurance-fee regulation could create an ROA headwind."
+      ]
+    }
+  },
+  "INFY": {
+    "symbol": "INFY",
+    "filed_at": "2026-10-28T17:38:42+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/Infosys_28102026173824_SE_filing_Earnings_call_transcript.pdf",
+    "description": "Official NSE filing: Infosys Q2 FY2027 earnings conference-call transcript; call held October 23, 2026.",
+    "analysis": {
+      "company_type": "other",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Revenue guidance",
+          "summary": "Infosys revised FY27 constant-currency revenue growth guidance to 1%–2%, with the range spanning macro deterioration to improvement.",
+          "tone": "cautious",
+          "evidence": "our revenue growth guidance is 1% to 2% YoY in constant currency terms"
+        },
+        {
+          "topic": "Operating margin",
+          "summary": "FY27 operating-margin guidance remains 20%–22% despite second-half wage, acquisition, seasonality and deal-ramp headwinds.",
+          "tone": "neutral",
+          "evidence": "Our operating margin guidance is 20% to 22%"
+        },
+        {
+          "topic": "H2 seasonality",
+          "summary": "Furloughs and fewer working days are expected to weigh on the next two quarters.",
+          "tone": "cautious",
+          "evidence": "There will be furloughs that will impact the H2"
+        },
+        {
+          "topic": "Mega-deal transition",
+          "summary": "The net-new $2 billion-plus financial-services deal should begin transitioning late in Q4, with no material FY27 transition-margin impact expected.",
+          "tone": "positive",
+          "evidence": "Transition is expected to begin in the second half of Q4"
+        },
+        {
+          "topic": "AI revenue",
+          "summary": "Management expects the 10.5%-of-revenue AI business, which grew 29% sequentially, to keep scaling as capabilities and client work expand.",
+          "tone": "positive",
+          "evidence": "the more we will see that continuing"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "AI revenue, productivity and legacy deflation",
+          "why_it_mattered": "Analysts tested whether new AI revenue can outrun productivity-led erosion in legacy contracts and how much deflation remains.",
+          "question_count": 9
+        },
+        {
+          "topic": "Revenue guidance and growth recovery",
+          "why_it_mattered": "Investors sought the causes of the guidance cut and evidence that FY28 organic growth can recover.",
+          "question_count": 5
+        },
+        {
+          "topic": "Margins and cost levers",
+          "why_it_mattered": "Questions covered wage hikes, acquisitions, subcontractors, Project Maximus and the economics of AI work.",
+          "question_count": 5
+        },
+        {
+          "topic": "Pricing and competition",
+          "why_it_mattered": "The market focused on competitive pricing pressure and client demands to share AI productivity benefits.",
+          "question_count": 4
+        },
+        {
+          "topic": "Mega-deal conversion",
+          "why_it_mattered": "Analysts examined deal timing, transition mechanics, margins and whether strong TCV will convert into revenue.",
+          "question_count": 4
+        },
+        {
+          "topic": "Vertical demand divergence",
+          "why_it_mattered": "Questions contrasted strong financial-services demand with softness in Hi-Tech and Retail.",
+          "question_count": 2
+        }
+      ],
+      "congratulations": {
+        "count": 5,
+        "analyst_turns": 28,
+        "index_pct": 17.9
+      },
+      "manufacturer": null,
+      "bank_lender": null,
+      "key_risks": [
+        "Client spending remains cautious amid geopolitics, inflation and shifting technology priorities.",
+        "Competitive intensity and AI-productivity sharing are pressuring realizations.",
+        "Wage hikes, acquisition amortization, seasonality and deal ramps weigh on H2 margins.",
+        "Retail and Hi-Tech face discretionary-spend weakness and client ramp-downs."
+      ]
+    }
+  },
+  "SRF": {
+    "symbol": "SRF",
+    "filed_at": "2026-10-28T17:32:37+05:30",
+    "source_url": "https://www.srf.com/storage/files/earning-calls/1793166072.pdf",
+    "description": "Official SRF Q2 FY2027 / H1 FY2027 earnings-call transcript; call held October 22, 2026 and filed with NSE October 28, 2026.",
+    "analysis": {
+      "company_type": "manufacturer",
+      "call_period": "Q2 FY2027 / H1 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Chemicals growth",
+          "summary": "Management expects FY27 Chemicals revenue growth near the high end of its 15%–20% guidance.",
+          "tone": "positive",
+          "evidence": "expect to deliver towards the higher end of the stated guidance for FY27"
+        },
+        {
+          "topic": "Specialty Chemicals",
+          "summary": "Specialty Chemicals should deliver a stronger H2 as recovering volumes and customer registrations improve the revenue funnel.",
+          "tone": "positive",
+          "evidence": "we do see a good ramp in specialty from where we are at this point"
+        },
+        {
+          "topic": "Refrigerants",
+          "summary": "Refrigerant demand and pricing should remain broadly stable, aside from normal seasonality.",
+          "tone": "positive",
+          "evidence": "demand and pricing for refrigerants to remain broadly stable"
+        },
+        {
+          "topic": "HFC utilization",
+          "summary": "HFC plants are planned to run at maximum utilization through December and broadly through the following year.",
+          "tone": "positive",
+          "evidence": "our plan is to run absolutely flat out"
+        },
+        {
+          "topic": "QMoS commissioning",
+          "summary": "The first QMoS product remains due in Q4 FY27 and the second in Q1 FY28, followed by a 10–12-month ramp.",
+          "tone": "neutral",
+          "evidence": "Those timelines still hold"
+        },
+        {
+          "topic": "Margin recovery",
+          "summary": "Specialty volumes should improve efficiency, but management would not quantify H2 margin recovery because input and freight costs remain volatile.",
+          "tone": "cautious",
+          "evidence": "It is therefore a little tough and premature to call that out at this point"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Sunrise projects, capital allocation and scale-up",
+          "why_it_mattered": "Analysts sought commissioning, qualification, revenue and capital-allocation detail across QMoS, battery foil, semiconductors and pharma.",
+          "question_count": 10
+        },
+        {
+          "topic": "HFC and HFO capacity, demand and pricing",
+          "why_it_mattered": "Questions tested utilization, baseline-period capacity, geographic demand, HFO marketing and competitive positioning.",
+          "question_count": 7
+        },
+        {
+          "topic": "Margins, raw materials and freight",
+          "why_it_mattered": "Investors challenged whether pass-through and operating efficiency can offset elevated input and logistics costs.",
+          "question_count": 6
+        },
+        {
+          "topic": "Specialty Chemicals recovery",
+          "why_it_mattered": "Analysts looked for volume, pricing and customer-registration evidence behind the expected stronger second half.",
+          "question_count": 4
+        }
+      ],
+      "congratulations": {
+        "count": 4,
+        "analyst_turns": 26,
+        "index_pct": 15.4
+      },
+      "manufacturer": {
+        "revenue_growth": "Q2 consolidated revenue rose 35% YoY to ₹4,904 crore; H1 rose 33% to ₹9,937 crore. Chemicals Q2 revenue grew 25% to ₹2,079 crore.",
+        "volume_growth": "Higher HFC volumes supported Q2; Specialty volumes held versus Q1 and management expects a significant H2 revenue ramp from better volumes.",
+        "order_inflow": null,
+        "demand_outlook": "Refrigerant demand and pricing should stay broadly stable; select agrochemical demand is recovering, while Technical Textiles and other fabric businesses are expected to remain stable.",
+        "margin_outlook": "Q2 is broadly representative for refrigerants until input and freight costs ease; Specialty efficiency should improve with volume, but H2 margin conversion was not guided.",
+        "ebitda_margin": null
+      },
+      "bank_lender": null,
+      "key_risks": [
+        "Raw-material and freight inflation may not be fully passed through, especially in Specialty Chemicals.",
+        "Geopolitical and logistics disruption can shift refrigerant demand and increase shipping costs.",
+        "Specialty revenue recovery may not fully translate into EBIT or margin recovery.",
+        "New-product plants require customer qualification and typically 8–12 months to stabilize."
+      ]
+    }
+  },
+  "HINDPETRO": {
+    "symbol": "HINDPETRO",
+    "filed_at": "2026-10-27T21:53:57+05:30",
+    "source_url": "https://www.hindustanpetroleum.com/documents/pdf/Post-Earning-Concall-Transcript-Q2FY2627.pdf",
+    "description": "Official HPCL Q2 FY2027 earnings-call transcript; call held October 23, 2026 and filed with NSE October 27, 2026.",
+    "analysis": {
+      "company_type": "other",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Rajasthan refinery ramp-up",
+          "summary": "HPCL expects HRRL's refinery section to reach full run rate by end-Q3, around December.",
+          "tone": "positive",
+          "evidence": "by end of quarter 3, the refinery section will run at full steam"
+        },
+        {
+          "topic": "Rajasthan refinery margins",
+          "summary": "At prevailing prices and cracks, management anticipates HRRL GRM above $20 per barrel after December.",
+          "tone": "positive",
+          "evidence": "we anticipate at today's prices and cracks, etcetera, a 20-plus run post December"
+        },
+        {
+          "topic": "Petrochemicals commissioning",
+          "summary": "The cracker is expected to start during Q4, but material petrochemical benefits excluding propylene are expected from FY2028.",
+          "tone": "cautious",
+          "evidence": "somewhere in Q4, we are expecting to have the DFCU"
+        },
+        {
+          "topic": "Vizag residue upgrade",
+          "summary": "Management is targeting full RUF benefits around March, while allowing for possible slippage into April.",
+          "tone": "cautious",
+          "evidence": "hopeful of getting there in March or even before that"
+        },
+        {
+          "topic": "Chhara LNG terminal",
+          "summary": "HPCL expects five to six cargoes and 15%-20% utilization in H2, with a full turnaround targeted next year.",
+          "tone": "positive",
+          "evidence": "In H2, we are expecting 5 to 6 cargoes"
+        },
+        {
+          "topic": "Product self-sufficiency",
+          "summary": "Once Barmer stabilizes, internal and joint-venture refineries should cover about 95% of HPCL's product requirement.",
+          "tone": "positive",
+          "evidence": "we'll be able to get 95% of our requirement"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Crude sourcing, freight and inventory",
+          "why_it_mattered": "Investors tested whether volatile premiums, doubled freight costs and inventory timing could erode refining economics.",
+          "question_count": 6
+        },
+        {
+          "topic": "HRRL ramp-up, GRM and financing",
+          "why_it_mattered": "The speed of full utilization, margin realization and debt restructuring determines the new refinery's earnings contribution.",
+          "question_count": 6
+        },
+        {
+          "topic": "Refining margins and product self-sufficiency",
+          "why_it_mattered": "Analysts examined crack sustainability, refinery-level economics and reduced dependence on third-party product purchases.",
+          "question_count": 4
+        },
+        {
+          "topic": "Vizag RUF stabilization",
+          "why_it_mattered": "The first-of-its-kind unit is still below its targeted $2-$3 per barrel uplift and requires stable operation.",
+          "question_count": 2
+        },
+        {
+          "topic": "LPG under-recoveries",
+          "why_it_mattered": "Rising per-cylinder losses and the government receivable directly affect working capital and near-term profitability.",
+          "question_count": 2
+        },
+        {
+          "topic": "Joint-venture contribution",
+          "why_it_mattered": "Investors sought clarity on HMEL, MRPL and HRRL contributions to consolidated results.",
+          "question_count": 2
+        }
+      ],
+      "congratulations": {
+        "count": 6,
+        "analyst_turns": 35,
+        "index_pct": 17.1
+      },
+      "manufacturer": null,
+      "bank_lender": null,
+      "key_risks": [
+        "High and volatile crude prices, freight and sourcing premiums can rapidly reverse marketing and refining economics.",
+        "LPG under-recoveries increased to ₹327 per cylinder in November, while the government receivable buffer reached ₹18,049 crore.",
+        "Vizag RUF is a first-of-its-kind technology and may miss the March stabilization target.",
+        "HRRL margin expectations depend on prevailing cracks, successful unit commissioning and the switch to high-sulphur crude."
+      ]
+    }
+  },
+  "GODREJPROP": {
+    "symbol": "GODREJPROP",
+    "filed_at": "2026-10-27T17:12:28+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/GODREJPROP_27102026171202_SEIntimationTranscript.pdf",
+    "description": "Official NSE filing containing Godrej Properties' Q2 FY2027 earnings-call transcript for the October 23, 2026 call",
+    "analysis": {
+      "company_type": "other",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "H2 bookings",
+          "summary": "Management estimates H2 bookings of ₹22,500-₹25,000 crore and would pursue upside if demand permits.",
+          "tone": "positive",
+          "evidence": "INR22,500 crores to INR25,000 crores as our estimate"
+        },
+        {
+          "topic": "Q3 launch readiness",
+          "summary": "About 80% of Q3 launch approvals were secured before the quarter, supporting expectations for a large sales quarter.",
+          "tone": "positive",
+          "evidence": "for quarter 3, 80% of whatever we needed was secured"
+        },
+        {
+          "topic": "H2 cash generation",
+          "summary": "GPL targets ₹15,000 crore of collections and ₹7,000 crore of operating cash flow in H2, supporting positive free cash flow.",
+          "tone": "positive",
+          "evidence": "INR15,000 crores of cash collection and INR7,000 crores of operating cash flow"
+        },
+        {
+          "topic": "FY2028 returns",
+          "summary": "Management expects positive free cash flow and 20% reported ROE in FY2028 as project completions reach reported earnings.",
+          "tone": "positive",
+          "evidence": "both positive free cash flow and a 20% reported ROE"
+        },
+        {
+          "topic": "FY2028 presales growth",
+          "summary": "Management sees 10%-20% FY2028 presales growth as possible, conditional on launches, approvals and product-market fit.",
+          "tone": "positive",
+          "evidence": "10%, 15%, even 15%, 20% growth is possible"
+        },
+        {
+          "topic": "FY2027 deliveries",
+          "summary": "GPL remains on track to deliver 13.5 million square feet during FY2027.",
+          "tone": "positive",
+          "evidence": "remain on track for 13.5 million square feet of delivery"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "H2 launches, approvals and sales guidance",
+          "why_it_mattered": "A back-ended ₹32,000 crore launch pipeline is central to achieving and potentially exceeding annual bookings guidance.",
+          "question_count": 4
+        },
+        {
+          "topic": "Business development and market entry",
+          "why_it_mattered": "Analysts tested land competition, replacement inventory needs and expansion into Chennai and other micro-markets.",
+          "question_count": 3
+        },
+        {
+          "topic": "Demand, pricing and growth durability",
+          "why_it_mattered": "Macro uncertainty prompted questions about conversion, pricing power and whether double-digit presales growth can persist.",
+          "question_count": 3
+        },
+        {
+          "topic": "Cash flow, construction and delivery",
+          "why_it_mattered": "Investors examined whether faster construction and collections can fund growth while delivering positive free cash flow.",
+          "question_count": 2
+        },
+        {
+          "topic": "Sustenance sales mix",
+          "why_it_mattered": "Record sustenance sales offset launch slippage, raising questions about repeatability and the normalized launch mix.",
+          "question_count": 1
+        },
+        {
+          "topic": "Reported margin and JV one-offs",
+          "why_it_mattered": "Mahalunge consolidation and the Orris settlement distorted quarterly EBITDA and required normalization.",
+          "question_count": 1
+        }
+      ],
+      "congratulations": {
+        "count": 6,
+        "analyst_turns": 19,
+        "index_pct": 31.6
+      },
+      "manufacturer": null,
+      "bank_lender": null,
+      "key_risks": [
+        "Launch approvals or project slippage could undermine the back-ended H2 bookings plan.",
+        "NCR construction restrictions may reduce H2 construction potential even though launch approvals are unaffected.",
+        "FY2028 growth depends on timely launches, approvals and successful product-market fit amid macro uncertainty.",
+        "Project-completion accounting and JV exits can create volatile reported revenue, EBITDA and profit timing."
+      ]
+    }
+  },
+  "ETERNAL": {
+    "symbol": "ETERNAL",
+    "filed_at": "2026-10-27T16:52:27+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/ZOMATO_27102026165119_Transcript_of_the_earnings_conference_call_September_2026signed.pdf",
+    "description": "Official NSE filing containing Eternal's Q2 FY2027 earnings-call transcript for the October 21, 2026 call",
+    "analysis": {
+      "company_type": "other",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Food-delivery margins",
+          "summary": "Eternal plans to reinvest operating leverage into growth and keep food-delivery margins broadly flat for one to two years.",
+          "tone": "neutral",
+          "evidence": "over the next 1 or 2 years, we expect the margins to remain flattish"
+        },
+        {
+          "topic": "Blinkit store expansion",
+          "summary": "New-store expansion will focus on smaller cities, where management reports robust economics and strong paybacks.",
+          "tone": "positive",
+          "evidence": "bulk of the expansion of these new stores will be in smaller cities"
+        },
+        {
+          "topic": "Blinkit growth reacceleration",
+          "summary": "Management confirmed that Blinkit NOV growth should begin picking up in the December quarter as store additions accelerate.",
+          "tone": "positive",
+          "evidence": "as we accelerate store addition, which is starting OND"
+        },
+        {
+          "topic": "Blinkit margin trajectory",
+          "summary": "Accelerated store additions are not expected to reduce margins in the short term; longer-term margins should expand.",
+          "tone": "positive",
+          "evidence": "we don't expect that there should be a short-term margin reduction"
+        },
+        {
+          "topic": "FY2029 adjusted EBITDA",
+          "summary": "Management maintained its previously disclosed $1 billion adjusted EBITDA guidance for FY2029.",
+          "tone": "positive",
+          "evidence": "We maintain that guidance as of now"
+        },
+        {
+          "topic": "dark.ai launch",
+          "summary": "The privacy-focused AI application remains a few months from launch; monetization and scaling decisions will follow customer feedback.",
+          "tone": "cautious",
+          "evidence": "We are still a few months away from launch"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Blinkit expansion, growth and store economics",
+          "why_it_mattered": "Analysts tested whether rapid smaller-city expansion can sustain NOV, customer growth, payback and capital efficiency.",
+          "question_count": 9
+        },
+        {
+          "topic": "Quick-commerce margins and ROCE",
+          "why_it_mattered": "Investors examined contribution-margin pressure, indirect costs, operating leverage and the FY2029 adjusted EBITDA target.",
+          "question_count": 5
+        },
+        {
+          "topic": "dark.ai and new AI businesses",
+          "why_it_mattered": "Questions focused on launch timing, product architecture, monetization, investment needs and Eternal's right to win.",
+          "question_count": 5
+        },
+        {
+          "topic": "Assortment and e-commerce convergence",
+          "why_it_mattered": "Analysts assessed inventory breadth, category expansion, advertising monetization and the addressable user base.",
+          "question_count": 4
+        },
+        {
+          "topic": "Food-delivery competition and margins",
+          "why_it_mattered": "New entrants and heavier investment raised questions about growth acceleration and the decision to hold margins flat.",
+          "question_count": 4
+        },
+        {
+          "topic": "Agentic commerce",
+          "why_it_mattered": "Investors wanted to know how Eternal will handle AI-agent traffic while protecting direct customer relationships.",
+          "question_count": 3
+        }
+      ],
+      "congratulations": {
+        "count": 1,
+        "analyst_turns": 40,
+        "index_pct": 2.5
+      },
+      "manufacturer": null,
+      "bank_lender": null,
+      "key_risks": [
+        "Food-delivery competitive intensity increased, and continued growth investment is expected to keep margins broadly flat.",
+        "Aggressive Blinkit store additions could pressure contribution margins and execution if paybacks weaken.",
+        "Quick-commerce indirect costs include variable technology and dollar-linked server expenses that rise with scale.",
+        "dark.ai is a binary early-stage bet that may be discontinued or require additional hardware and compute investment."
+      ]
+    }
   }
 }

@@ -12,7 +12,11 @@ class CallIntelligenceTest(unittest.TestCase):
     def test_bundled_static_intelligence_contains_priority_and_requested_names(self):
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
         with open(path, encoding="utf-8") as f: seed = json.load(f)
-        requested = {"TVSMOTOR", "EICHERMOT", "PGEL", "INDHOTEL", "SONACOMS", "BAJAJ-AUTO", "UNOMINDA", "BHARATFORG", "MOTHERSON"}
+        requested = {
+            "TVSMOTOR", "EICHERMOT", "PGEL", "INDHOTEL", "SONACOMS", "BAJAJ-AUTO", "UNOMINDA",
+            "BHARATFORG", "MOTHERSON", "AUBANK", "INFY", "SRF", "HINDPETRO", "GODREJPROP",
+            "ETERNAL", "NAM-INDIA", "ULTRACEMCO", "SHRIRAMFIN",
+        }
         self.assertTrue(set(calls.PRIORITY_SYMBOLS).issubset(seed))
         self.assertTrue(requested.issubset(seed))
         self.assertTrue(all(x.get("analysis", {}).get("next_quarter_outlook") for x in seed.values()))
