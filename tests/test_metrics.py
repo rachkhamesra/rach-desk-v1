@@ -13,6 +13,12 @@ class CashAccumulationEpisodeTest(unittest.TestCase):
         self.assertEqual(confirmed.tolist(), [True, False, False])
         self.assertEqual(tracking.tolist(), [False, True, False])
 
+    def test_new_table_appearance_is_only_flagged_on_entry_day(self):
+        self.assertTrue(metrics.appeared_today([False, False, True]))
+        self.assertFalse(metrics.appeared_today([False, True, True]))
+        self.assertFalse(metrics.appeared_today([True, False]))
+        self.assertTrue(metrics.appeared_today([True, False, False, False, True]))
+
     def test_one_and_two_signal_days_are_counted(self):
         self.assertEqual(metrics.episode_state([False, True])["days"], 1)
         self.assertEqual(metrics.episode_state([True, True])["days"], 2)
