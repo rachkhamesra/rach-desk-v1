@@ -1,9 +1,18 @@
+/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
 import unittest
 
 import metrics
+import pandas as pd
 
 
 class CashAccumulationEpisodeTest(unittest.TestCase):
+    def test_tracking_and_confirmed_signals_are_exclusive(self):
+        base = pd.Series([True, True, False])
+        above = pd.Series([True, False, True])
+        confirmed, tracking = metrics.split_cash_signals(base, above)
+        self.assertEqual(confirmed.tolist(), [True, False, False])
+        self.assertEqual(tracking.tolist(), [False, True, False])
+
     def test_one_and_two_signal_days_are_counted(self):
         self.assertEqual(metrics.episode_state([False, True])["days"], 1)
         self.assertEqual(metrics.episode_state([True, True])["days"], 2)
