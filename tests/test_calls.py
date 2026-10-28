@@ -1,4 +1,3 @@
-/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
 import unittest
 from unittest.mock import patch
 
