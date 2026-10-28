@@ -84,6 +84,8 @@ def build(parsed, overrides=None, memberships=None):
     M["screen"] = pd.DataFrame(rows).sort_values("ratio", ascending=False).reset_index(drop=True)
 
     # ---------------- persistent delivery (last 5 sessions)
+    ret5 = C.pct_change(5, fill_method=None)
+    sig5 = ret5.rolling(SIGMA_WINDOW, min_periods=30).std().shift(1)
     rows = []
     for s in syms:
         r5 = RAT[s].iloc[T - 4:T + 1]
@@ -94,7 +96,8 @@ def build(parsed, overrides=None, memberships=None):
         d5 = doi[s].iloc[T - 4:T + 1].sum(min_count=5)
         hist5 = DQ[s].rolling(5).mean()
         rows.append(dict(sym=s, d125=d125, d150=d150, ratio=avg5 / base if base else np.nan, dq5=DQ[s].iloc[T - 4:T + 1].sum(),
-                         delivpct=dq_raw[s].iloc[T - 4:T + 1].sum() / tq_raw[s].iloc[T - 4:T + 1].sum() * 100, px5=(C[s].iloc[T] / C[s].iloc[T - 5] - 1) * 100,
+                         delivpct=dq_raw[s].iloc[T - 4:T + 1].sum() / tq_raw[s].iloc[T - 4:T + 1].sum() * 100, px5=ret5[s].iloc[T] * 100,
+                         px5_z=ret5[s].iloc[T] / sig5[s].iloc[T] if pd.notna(sig5[s].iloc[T]) and sig5[s].iloc[T] else np.nan,
                          oi=o, doi5=d5, doi_pct=d5 / o0 * 100 if pd.notna(o0) and o0 and pd.notna(d5) else np.nan,
                          d_over_doi=DQ[s].iloc[T - 4:T + 1].sum() / d5 if pd.notna(d5) and d5 != 0 else np.nan, pct=pctile(hist5, hist5.iloc[T])))
     pers = pd.DataFrame(rows)
@@ -124,12 +127,9 @@ def build(parsed, overrides=None, memberships=None):
             state = episode_state(flags[s].tolist(), cooldown=2)
             if not state or state["days"] < CASH_MIN_DAYS: continue
             i = state["last_hit"]; prior_oi = oi_adj[s].iloc[i - 1] if i else np.nan; delta = oi_change[s].iloc[i]
-            ma_pos = []
-            for n in active_cash_mas:
-                distance = dist[n][s].iloc[i]
-                if (track and distance <= 0) or (not track and distance > 0): ma_pos.append(f"{n} ({distance:+.1f}%)")
+            ma_distance = {f"ma{n}": dist[n][s].iloc[i] if n in active_cash_mas else np.nan for n in CASH_MAS}
             rows.append(dict(sym=s, days=state["days"], cooldown=state["cooldown"], new=appeared_today(flags[s].tolist(), min_days=CASH_MIN_DAYS), signal_date=dates[i],
-                             mas=" / ".join(ma_pos), ratio=RAT[s].iloc[i], px1d=ret1[s].iloc[i] * 100,
+                             ratio=RAT[s].iloc[i], px1d=ret1[s].iloc[i] * 100, **ma_distance,
                              oi=oi_adj[s].iloc[i], doi=delta, doi_pct=delta / prior_oi * 100 if pd.notna(prior_oi) and prior_oi else np.nan,
                              close=C[s].iloc[i]))
         out = pd.DataFrame(rows)

@@ -32,6 +32,10 @@ def mult(x, d=1):
     return f"{x:+.{d}f}×".replace("-", MINUS)
 
 
+def zscore(x, d=1):
+    return "–" if x is None or pd.isna(x) else f"{x:+.{d}f}σ".replace("-", MINUS)
+
+
 def heat(v, full):
     if v is None or pd.isna(v): return ""
     a = min(abs(v) / full, 1.0) * 0.78
@@ -88,35 +92,37 @@ def tab_persist(M, n=40, allowed=None):
     df = all_df.head(n).reset_index(drop=True); mx = df["ratio"].max() if len(df) else 1; rows = []
     for i, r in df.iterrows():
         rows.append(f'<tr><td class="mut">{i + 1}</td><td class="l">{stk(r.sym, M)}</td><td>{int(r.d125)} <span class="mut">/</span> {int(r.d150)}</td><td class="l">{bar(r.ratio, mx)}<span class="bv">{r.ratio:.2f}×</span></td>'
-                    f'<td>{fs(r.dq5)}</td><td>{r.delivpct:.1f}</td><td{heat(r.px5, 10)}>{pc(r.px5)}</td><td>{fs(r.oi)}</td><td{heat(r.doi_pct, 25)}>{fl(r.doi5)}</td><td{heat(r.doi_pct, 25)}>{pc(r.doi_pct)}</td>'
+                    f'<td>{fs(r.dq5)}</td><td>{r.delivpct:.1f}</td><td{heat(r.px5, 10)}>{pc(r.px5)}</td><td{heat(r.px5_z, 3)}>{zscore(r.px5_z)}</td><td>{fs(r.oi)}</td><td{heat(r.doi_pct, 25)}>{fl(r.doi5)}</td><td{heat(r.doi_pct, 25)}>{pc(r.doi_pct)}</td>'
                     f'<td>{mult(r.d_over_doi)}</td><td>{pct_badge(r.pct)}</td></tr>')
-    head = [("#", "mut"), ("STOCK", "l"), ("DAYS ≥1.25× / 1.5×", ""), ("5-DAY AVG ÷ 20D", "l"), ("5D DELIVERED", ""), ("DELIV %", ""), ("PX 5D", ""), ("SSF OI", ""), ("ΔOI 5D", ""), ("ΔOI %", ""), ("DELIV ÷ ΔOI", ""), (f"{M['hist_label']} PCT", "")]
+    head = [("#", "mut"), ("STOCK", "l"), ("DAYS ≥1.25× / 1.5×", ""), ("5-DAY AVG ÷ 20D", "l"), ("5D DELIVERED", ""), ("DELIV %", ""), ("PX 5D", ""), ("PX 5D Z", ""), ("SSF OI", ""), ("ΔOI 5D", ""), ("ΔOI %", ""), ("DELIV ÷ ΔOI", ""), (f"{M['hist_label']} PCT", "")]
     q = len(all_df); q15 = int((all_df["d150"] >= 3).sum())
     return (f'<h2>Persistent delivery <span class="sub">≥3 OF THE LAST 5 SESSIONS ABOVE 1.25× 20D</span></h2>'
             f'<p class="desc">{q} qualify ({q15} at 1.5×); sorted by 5-day average ÷ 20d (the 5-day mean of delivered shares over the mean of the 20 sessions before them). Price and OI change from {M["persist_from"]:%d %b}. '
-            f'{M["hist_label"]} pct ranks the 5-day average against the stock\'s own rolling 5-day averages.</p>' + table(head, rows))
+            f'PX 5D Z compares the five-session price move with the stock\'s own prior 60-session distribution of five-session moves. {M["hist_label"]} pct ranks the 5-day average against the stock\'s own rolling 5-day averages.</p>' + table(head, rows))
 
 
 def tab_cash_accumulation(M):
-    def block(df, ma_heading, empty_text):
+    def block(df, empty_text):
         rows = []
         for i, r in df.iterrows():
             state = f'<span class="setupstate active">ACTIVE</span>' if r.cooldown == 0 else f'<span class="setupstate cool">COOLDOWN {int(r.cooldown)}/2</span>'
             fresh = '<span class="newcash">NEW TODAY</span>' if r.new else ''
             rows.append(f'<tr class="{"cashnew" if r.new else ""}"><td class="mut">{i + 1}</td><td class="l">{stk(r.sym, M)} {fresh}</td><td>{state}</td><td><b>{int(r.days)}D</b></td>'
-                        f'<td>{r.signal_date:%d %b}</td><td>{r.mas}</td><td{heat(r.ratio - 1, 1.5)}>{r.ratio:.2f}×</td><td{heat(r.px1d, 5)}>{pc(r.px1d)}</td>'
-                        f'<td>{fs(r.oi)}</td><td{heat(r.doi_pct, 8)}>{fl(r.doi)}</td><td{heat(r.doi_pct, 8)}>{pc(r.doi_pct)}</td><td>{r.close:,.2f}</td></tr>')
-        head = [("#", "mut"), ("STOCK", "l"), ("STATUS", ""), ("SETUP DAYS", ""), ("LAST SIGNAL", ""), (ma_heading, ""),
-                ("DELIVERY ÷ 20D", ""), ("PX 1D", ""), ("SSF OI", ""), ("ΔOI", ""), ("ΔOI %", ""), ("CLOSE", "")]
+                        f'<td>{r.signal_date:%d %b}</td><td{heat(r.ratio - 1, 1.5)}>{r.ratio:.2f}×</td><td{heat(r.px1d, 5)}>{pc(r.px1d)}</td>'
+                        f'<td>{fs(r.oi)}</td><td{heat(r.doi_pct, 8)}>{fl(r.doi)}</td><td{heat(r.doi_pct, 8)}>{pc(r.doi_pct)}</td><td>{r.close:,.2f}</td>'
+                        f'<td{heat(r.ma50, 15)}>{pc(r.ma50)}</td><td{heat(r.ma100, 15)}>{pc(r.ma100)}</td><td{heat(r.ma200, 15)}>{pc(r.ma200)}</td></tr>')
+        head = [("#", "mut"), ("STOCK", "l"), ("STATUS", ""), ("SETUP DAYS", ""), ("LAST SIGNAL", ""),
+                ("DELIVERY ÷ 20D", ""), ("PX 1D", ""), ("SSF OI", ""), ("ΔOI", ""), ("ΔOI %", ""), ("CLOSE", ""),
+                ("50MA DIST", ""), ("100MA DIST", ""), ("200MA DIST", "")]
         return table(head, rows, "cashwatch") if rows else f'<div class="card rempty">{empty_text}</div>'
-    confirmed = block(M["cash_accumulation"], "ABOVE MA", "No F&amp;O stocks currently meet the confirmed setup or its two-session cooldown.")
-    tracking = block(M["cash_tracking"], "BELOW MA", "No below-MA F&amp;O tracking candidates currently qualify or remain in cooldown.")
+    confirmed = block(M["cash_accumulation"], "No F&amp;O stocks currently meet the confirmed setup or its two-session cooldown.")
+    tracking = block(M["cash_tracking"], "No below-MA F&amp;O tracking candidates currently qualify or remain in cooldown.")
     return ('<h2>Cash Accumulation Watch</h2><div class="subl">F&amp;O · PRICE STRENGTH + DELIVERY + FALLING OI</div>'
             f'<p class="desc">A qualifying day closes higher and above the {" / ".join(str(n) for n in M["cash_mas"])}-day averages, with delivered shares above the prior 20-session average and total SSF OI falling. '
             f'Both lists require at least {metrics.CASH_MIN_DAYS} setup days. Setup Days counts qualifying sessions in the current episode; a pause remains visible for two trading sessions and resumes the same episode if the signal returns.</p>'
             '<h3 class="cashsub">CONFIRMED · ABOVE ALL ACTIVE AVERAGES</h3>' + confirmed +
             '<h3 class="cashsub track">TRACKING LIST · SAME SIGNAL, BELOW AT LEAST ONE AVERAGE</h3>'
-            '<p class="desc">These names have positive price, above-average delivery and declining SSF OI, but still sit below one or more required averages. The Below MA column shows each unconfirmed average and the distance at the last signal.</p>' + tracking)
+            '<p class="desc">These names have positive price, above-average delivery and declining SSF OI, but still sit below one or more required averages. The final three columns show each name\'s distance from its 50-, 100- and 200-day moving averages at the last signal.</p>' + tracking)
 
 
 def tab_rel(M, allowed=None):
@@ -232,10 +238,14 @@ def tab_exchange(M):
                 f'{"".join(grid)}<polygon points="{area}" class="exarea"/><polyline points="{tp}" class="exto"/><polyline points="{pp}" class="expx"/>'
                 f'{note}{ticks}</svg></div>')
 
-    def bars(df, label, value, colour, current=False, month_axis=False):
+    def bars(df, label, value, colour, current=False, month_axis=False, comparison=None):
         w, h, l, top, bot = 560, 250, 40, 18, 52
         vals = pd.to_numeric(df[value], errors="coerce"); mx = max(float(vals.max()), 1)
         bw = (w - l - 12) / max(len(df), 1); out = []
+        for j in range(5):
+            val = mx * j / 4; y = h - bot - (h - top - bot) * j / 4
+            out.append(f'<line class="exbargrid" x1="{l}" x2="{w-8}" y1="{y:.1f}" y2="{y:.1f}"/>'
+                       f'<text x="{l-5}" y="{y+3:.1f}" text-anchor="end">{val:,.0f}</text>')
         for i, (_, r) in enumerate(df.iterrows()):
             bh = float(r[value]) / mx * (h - top - bot); x = l + i * bw + 2; y = h - bot - bh
             cls = colour + (" latest" if current and i == len(df)-1 else "")
@@ -247,9 +257,12 @@ def tab_exchange(M):
             for month in months.drop_duplicates():
                 idx = np.flatnonzero((months == month).to_numpy()); mid = l + (idx[0] + idx[-1] + 1) * bw / 2
                 out.append(f'<text class="monthtag" x="{mid:.1f}" y="{h-23}" text-anchor="middle">{month:%b}</text>')
-        return f'<svg class="exsvg" viewBox="0 0 {w} {h}"><line x1="{l}" y1="{h-bot}" x2="{w-8}" y2="{h-bot}"/>' + "".join(out) + f'<text x="6" y="18">₹{mx:,.0f}cr</text></svg>'
+        annotation = "" if comparison is None or pd.isna(comparison) else f'<text class="excompare {"up" if comparison >= 0 else "down"}" x="{w-12}" y="{top+10}" text-anchor="end">LATEST {comparison:+.0f}% VS YTD AVG</text>'
+        return f'<svg class="exsvg" viewBox="0 0 {w} {h}" role="img"><line x1="{l}" y1="{h-bot}" x2="{w-8}" y2="{h-bot}"/>' + "".join(out) + annotation + '</svg>'
 
     wd = X["same_weekday"].copy(); wd["label"] = wd.date.dt.strftime("%d %b %y")
+    wd_prior_avg = wd.iloc[:-1]["premium_turnover_cr"].mean() if len(wd) > 1 else np.nan
+    wd_comparison = (wd.iloc[-1]["premium_turnover_cr"] / wd_prior_avg - 1) * 100 if pd.notna(wd_prior_avg) and wd_prior_avg else np.nan
     monthly = X["monthly"].copy(); monthly["label"] = pd.to_datetime(monthly.month + "-01").dt.strftime("%b %y")
     comments = "".join(f'<li>{esc(x)}</li>' for x in X["commentary"])
     range_buttons = "".join(f'<button class="exrbtn{(" on" if key == "ytd" else "")}" data-xr="{key}">{label}</button>' for key, label, _ in ranges)
@@ -258,7 +271,7 @@ def tab_exchange(M):
             f'<div class="exheadline"><div><span>LATEST</span><b>₹{X["latest"]:,.0f} cr</b></div><div><span>AS OF</span><b>{X["asof"]:%d %b %Y}</b></div><div><span>DAY</span><b>{esc(X["weekday"])}</b></div></div>'
             f'<div class="exlayout"><div class="card excard exmain"><div class="ch"><span class="ct">5D ROLLING PREMIUM TURNOVER</span><span><i class="exkey to"></i>5D premium <i class="exkey px"></i>BSE price</span></div><div class="exranges">{range_buttons}</div>{hero_ranges}'
             f'<div class="excomment"><h3>DAILY READ</h3><ul>{comments}</ul><a href="{esc(X["source"])}" target="_blank" rel="noopener">BSE KEY STATISTICS ↗</a></div></div>'
-            f'<div class="exright"><div class="card excard"><div class="ch"><span class="ct">{esc(X["weekday"].upper())}S · YTD</span><span class="mut">{len(wd)} SESSIONS</span></div>{bars(wd,"label","premium_turnover_cr","exbar",True,True)}</div>'
+            f'<div class="exright"><div class="card excard"><div class="ch"><span class="ct">{esc(X["weekday"].upper())}S · YTD</span><span class="mut">{len(wd)} SESSIONS</span></div>{bars(wd,"label","premium_turnover_cr","exbar",True,True,wd_comparison)}</div>'
             f'<div class="card excard"><div class="ch"><span class="ct">AVERAGE DAILY PREMIUM TURNOVER</span><span class="mut">CURRENT MONTH IS PARTIAL</span></div>{bars(monthly,"label","mean","exbar month",True)}</div></div></div>'
             '<p class="desc">Premium turnover is the BSE-reported daily Options Premium Turnover. The current month updates incrementally; if BSE has not published a new session, the last available observation remains visible.</p>')
 
@@ -315,7 +328,7 @@ def render(M, asof_text):
     choices = [(k, label) for k, label in choices if M["memberships"].get(k)]
     def views(fn):
         return "".join(f'<div class="uview" data-u="{k}"{("" if k == "top1000" else " hidden")}>{fn(M, allowed=M["memberships"][k])}</div>' for k, _ in choices)
-    panels = [("stocks", "STOCKS", tab_stocks(M)), ("screen", "1-DAY SCREEN", views(tab_screen)), ("persist", "PERSISTENT DELIVERY", views(tab_persist)),
+    panels = [("stocks", "STOCKS", tab_stocks(M)), ("persist", "PERSISTENT DELIVERY", views(tab_persist)),
               ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)), ("results", "RESULTS CALENDAR", views(tab_results)),
               ("rel", "RELATIVE PERFORMANCE", views(tab_rel)), ("at", "AT A MOVING AVERAGE", views(tab_at)),
               ("exchange", "EXCHANGE TRACKER", tab_exchange(M))]
@@ -362,7 +375,7 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .exheadline{display:flex;gap:28px;margin:12px 0 14px}.exheadline div{display:flex;flex-direction:column}.exheadline span{font:700 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.exheadline b{font:700 17px var(--mono)}
 .excard{padding:12px 14px;margin-bottom:12px}.exsvg{width:100%;height:auto;display:block;background:linear-gradient(180deg,#13171c 0%,#101010 100%)}.exsvg text{fill:var(--mut);font:10px var(--mono)}.exsvg line{stroke:var(--line)}
 .exarea{fill:url(#turnoverFill)}.exto{fill:none;stroke:#68b4ff;stroke-width:2.7;filter:drop-shadow(0 0 3px rgba(90,169,255,.35))}.expx{fill:none;stroke:#f1ae39;stroke-width:2.7;filter:drop-shadow(0 0 3px rgba(232,169,58,.25))}.exgridline{stroke:#34383d!important;stroke-width:1}.exaxis{fill:#88bdf0!important}.exaxis.price{fill:#d8a74f!important}.exkey{display:inline-block;width:17px;border-top:2px solid;margin:0 5px 2px 12px}.exkey.to{border-color:#5aa9ff}.exkey.px{border-color:var(--am)}
-.exlayout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}.exmain,.exright{min-width:0}.exright{display:grid;gap:12px}.exranges{display:flex;gap:5px;padding:0 18px 10px;flex-wrap:wrap}.exrbtn{border:1px solid var(--line);background:transparent;color:var(--mut);font:800 9px var(--sans);letter-spacing:.08em;padding:6px 10px;cursor:pointer}.exrbtn:hover{color:var(--ink);border-color:var(--mut)}.exrbtn.on{background:var(--am);border-color:var(--am);color:#090909}.exbar{fill:#4e85d8}.exbar.month{fill:#607fc2}.exbar.latest{fill:var(--am)}.monthtag{fill:var(--ink)!important;font-weight:700}.excomment{margin-top:12px;padding:15px 16px;background:#101010;border-left:4px solid var(--am)}.excomment h3{margin:0 0 8px;font:800 10px var(--sans);letter-spacing:.11em}.excomment ul{margin:0 0 10px;padding-left:20px}.excomment li{margin:6px 0}.excomment a{font:700 9px var(--sans);letter-spacing:.08em;color:var(--am)}
+.exlayout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}.exmain,.exright{min-width:0}.exright{display:grid;gap:12px}.exranges{display:flex;gap:5px;padding:0 18px 10px;flex-wrap:wrap}.exrbtn{border:1px solid var(--line);background:transparent;color:var(--mut);font:800 9px var(--sans);letter-spacing:.08em;padding:6px 10px;cursor:pointer}.exrbtn:hover{color:var(--ink);border-color:var(--mut)}.exrbtn.on{background:var(--am);border-color:var(--am);color:#090909}.exbar{fill:#4e85d8;transition:opacity .12s}.exbar:hover{opacity:.72;stroke:#fff;stroke-width:1}.exbar.month{fill:#607fc2}.exbar.latest{fill:var(--am)}.exbargrid{stroke:#30343a!important;stroke-width:1}.excompare{fill:var(--ink)!important;font-weight:800;letter-spacing:.04em}.excompare.up{fill:var(--g)!important}.excompare.down{fill:var(--r)!important}.monthtag{fill:var(--ink)!important;font-weight:700}.excomment{margin-top:12px;padding:15px 16px;background:#101010;border-left:4px solid var(--am)}.excomment h3{margin:0 0 8px;font:800 10px var(--sans);letter-spacing:.11em}.excomment ul{margin:0 0 10px;padding-left:20px}.excomment li{margin:6px 0}.excomment a{font:700 9px var(--sans);letter-spacing:.08em;color:var(--am)}
 @media(max-width:950px){.exlayout{grid-template-columns:1fr}.exheadline{gap:16px;flex-wrap:wrap}}
 .segs{display:flex;gap:0;margin:0 0 16px;border:2px solid #f4f4f0;width:max-content;max-width:100%;overflow-x:auto}.seg{font:600 15px var(--sans);color:var(--ink);background:none;border:0;padding:12px 22px;cursor:pointer;white-space:nowrap}.seg.on{background:#f4f4f0;color:#0a0a0a}
 .hz{display:grid;grid-template-columns:1fr 1fr;gap:20px}.ch{display:flex;justify-content:space-between;padding:20px 18px 6px}.ct{font-size:22px;font-weight:700}.g{color:var(--g)}.r{color:var(--r)}

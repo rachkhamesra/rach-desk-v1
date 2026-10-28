@@ -8,11 +8,14 @@ import calls
 
 
 class CallIntelligenceTest(unittest.TestCase):
-    def test_bundled_prototype_contains_only_selected_five(self):
+    def test_bundled_static_intelligence_contains_priority_and_requested_names(self):
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
         with open(path, encoding="utf-8") as f: seed = json.load(f)
-        self.assertEqual(set(seed), set(calls.PRIORITY_SYMBOLS))
+        requested = {"TVSMOTOR", "EICHERMOT", "PGEL", "INDHOTEL", "SONACOMS", "BAJAJ-AUTO", "UNOMINDA", "BHARATFORG", "MOTHERSON"}
+        self.assertTrue(set(calls.PRIORITY_SYMBOLS).issubset(seed))
+        self.assertTrue(requested.issubset(seed))
         self.assertTrue(all(x.get("analysis", {}).get("next_quarter_outlook") for x in seed.values()))
+        self.assertTrue(all(x.get("analysis", {}).get("analyst_focus") for x in seed.values()))
 
     @patch("calls.results._get")
     def test_discover_keeps_latest_transcript_for_fo_only(self, get):
