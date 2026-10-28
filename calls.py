@@ -1,4 +1,3 @@
-/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
 """Latest F&O earnings-call transcripts and narrowly scoped call intelligence."""
 import hashlib
 import io
