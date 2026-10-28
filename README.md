@@ -1,4 +1,3 @@
-/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
 # Desk
 
 A searchable stock screen on GitHub Pages, rebuilt every weekday evening from NSE and BSE end-of-day files.

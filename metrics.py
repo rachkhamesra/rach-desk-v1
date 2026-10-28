@@ -1,4 +1,3 @@
-/Users/rachitkhamesra/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
 """Everything the pages show, computed from adjusted panels."""
 import numpy as np, pandas as pd
 import corp, panel
