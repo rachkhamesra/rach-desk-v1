@@ -18,6 +18,7 @@ import results
 MODEL = os.environ.get("CALLS_MODEL", "gpt-6-luna")
 MAX_NEW = int(os.environ.get("CALLS_MAX_NEW", "12"))
 LOOKBACK_DAYS = int(os.environ.get("CALLS_LOOKBACK_DAYS", "150"))
+PRIORITY_SYMBOLS = ("CUMMINSIND", "ABB", "PNB", "PNBHOUSING", "HEROMOTOCO")
 
 
 SCHEMA = {
@@ -158,6 +159,14 @@ def analyse(symbol, transcript, api_key):
     return json.loads(_response_text(r.json()))
 
 
+def select_pending(latest, cache, limit=MAX_NEW):
+    """Reserve the first slots for the user's priority names, then take newest calls."""
+    changed = {s: x for s, x in latest.items() if x["source_url"] != cache.get(s, {}).get("source_url")}
+    chosen = [changed.pop(s) for s in PRIORITY_SYMBOLS if s in changed]
+    newest = sorted(changed.values(), key=lambda x: x["filed_at"], reverse=True)
+    return (chosen + newest)[:limit]
+
+
 def load(root, asof, fo_symbols, log=print):
     """Refresh transcript intelligence without ever blocking the market build."""
     path = os.path.join(root, "call_intelligence.json")
@@ -170,14 +179,14 @@ def load(root, asof, fo_symbols, log=print):
         return cache
 
     api_key = os.environ.get("OPENAI_API_KEY", "").strip()
-    pending = [x for x in latest.values() if x["source_url"] != cache.get(x["symbol"], {}).get("source_url")]
-    pending.sort(key=lambda x: x["filed_at"], reverse=True)
+    all_pending = [x for x in latest.values() if x["source_url"] != cache.get(x["symbol"], {}).get("source_url")]
+    pending = select_pending(latest, cache)
     if pending and not api_key:
-        log(f"call intelligence: {len(pending)} transcript(s) pending; OPENAI_API_KEY is not configured")
+        log(f"call intelligence: {len(all_pending)} transcript(s) pending; OPENAI_API_KEY is not configured")
         return cache
 
     done = 0
-    for meta in pending[:MAX_NEW]:
+    for meta in pending:
         symbol = meta["symbol"]
         try:
             transcript = extract_pdf(meta["source_url"])
@@ -188,5 +197,5 @@ def load(root, asof, fo_symbols, log=print):
             log(f"call intelligence: analysed {symbol} ({len(transcript):,} characters)")
         except Exception as e:
             log(f"call intelligence: {symbol} failed ({e})")
-    if done: log(f"call intelligence: {done} new transcript(s) cached; {max(0, len(pending) - MAX_NEW)} remain queued")
+    if done: log(f"call intelligence: {done} new transcript(s) cached; {max(0, len(all_pending) - len(pending))} remain queued")
     return cache
