@@ -21,6 +21,8 @@ def test_build_uses_same_weekday_and_monthly_average():
     assert "5D ROLLING PREMIUM TURNOVER" in html
     assert "3M" in html and "6M" in html and "1YR" in html and "2YR" in html
     assert f"{out['weekday'].upper()}S · YTD" in html
+    assert html.count('class="exgridline"') == 25
+    assert html.index('class="excomment"') < html.index('class="exright"')
     assert "AVERAGE DAILY PREMIUM TURNOVER" in html
 
 
