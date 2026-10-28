@@ -169,7 +169,9 @@ def select_pending(latest, cache, limit=MAX_NEW):
 def load(root, asof, fo_symbols, log=print):
     """Refresh transcript intelligence without ever blocking the market build."""
     path = os.path.join(root, "call_intelligence.json")
-    cache = _load_json(path, {})
+    bundled = _load_json(os.path.join(os.path.dirname(__file__), "call_intelligence_seed.json"), {})
+    cache = {**_load_json(path, {}), **bundled}
+    if bundled: log(f"call intelligence: {len(bundled)} bundled transcript analyses loaded")
     try:
         latest = discover(asof, fo_symbols)
         log(f"call transcripts: {len(latest)} latest F&O filings found")

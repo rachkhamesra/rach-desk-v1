@@ -9,7 +9,7 @@ Main screen: search a ticker, see its adjusted price with moving averages, deliv
 2. Settings, Pages, Source: **GitHub Actions**.
 3. Actions tab, run **Daily desk** once ("Run workflow"). The first run downloads about 14 months of files (a few minutes). After that it runs by itself.
 
-To enable the F&O conference-call summaries, create an OpenAI API key and add it at **Settings → Secrets and variables → Actions → New repository secret** with the name `OPENAI_API_KEY`. The dashboard still builds normally when the secret is absent; it simply shows no call analysis.
+The first five F&O conference-call summaries are bundled as static research, so they work without an API key. A future automated refresh can be enabled by adding an OpenAI API key at **Settings → Secrets and variables → Actions → New repository secret** with the name `OPENAI_API_KEY`; the current prototype does not require it.
 
 The page is at `https://<you>.github.io/<repo>/`. Locally: `pip install -r requirements.txt`, then `python run.py` (writes `site/index.html`). `--asof 2026-10-23` rebuilds for an earlier date; `--days 1100` pulls about three years.
 
@@ -21,7 +21,7 @@ Monday to Friday at 20:00 IST the workflow starts, restores the small cached his
 - NSE and BSE sometimes block GitHub's servers. If the run fails on downloads, run `python run.py` from cron on your own machine and push `site/` to a `gh-pages` branch; nothing else changes.
 
 ## Conference-call intelligence
-The nightly job looks back 150 days for NSE filings explicitly marked as transcripts, restricts them to the current F&O universe, and retains the latest call for each stock. In the first 12-name batch it prioritises CUMMINSIND, ABB, PNB, PNBHOUSING and HEROMOTOCO, then fills the other seven slots with the newest transcripts. It caches the structured output, and existing calls are never sent to the model again unless the exchange publishes a new transcript.
+The initial prototype bundles the latest transcript analysis for CUMMINSIND, ABB, PNB, PNBHOUSING and HEROMOTOCO directly in the repository. It therefore renders as ordinary website text without a model call at build time. The optional nightly automation can later look back 150 days for new NSE transcript filings and refresh only changed calls.
 
 The STOCKS page shows the result below the charts: next-quarter outlook, the subjects receiving the most analyst questions, a congratulations index, short supporting excerpts, and sector-specific metrics. Manufacturers focus on revenue and volume growth, order inflow, demand, margin outlook and EBITDA margin. Banks and lenders focus on credit growth, credit–deposit ratio, disbursements, NIM, asset quality and credit costs. These are model-generated reading aids; the linked exchange transcript remains the source of record.
 

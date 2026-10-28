@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch
+import json, os
 
 import pandas as pd
 
@@ -7,6 +8,12 @@ import calls
 
 
 class CallIntelligenceTest(unittest.TestCase):
+    def test_bundled_prototype_contains_only_selected_five(self):
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
+        with open(path, encoding="utf-8") as f: seed = json.load(f)
+        self.assertEqual(set(seed), set(calls.PRIORITY_SYMBOLS))
+        self.assertTrue(all(x.get("analysis", {}).get("next_quarter_outlook") for x in seed.values()))
+
     @patch("calls.results._get")
     def test_discover_keeps_latest_transcript_for_fo_only(self, get):
         get.return_value = [
