@@ -35,7 +35,13 @@ jobs:
             data/call_intelligence.json
           key: desk-data-${{ github.run_id }}
           restore-keys: desk-data-
-      - run: python run.py --wait-minutes 120
+      - name: Build latest available market session
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            python run.py --wait-minutes 120
+          else
+            python run.py --wait-minutes 0
+          fi
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CALLS_MODEL: gpt-6-luna
