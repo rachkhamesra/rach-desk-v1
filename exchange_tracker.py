@@ -97,7 +97,8 @@ def build(history, prices):
     h["price"] = h["date"].map(price)
     h["weekday"] = h["date"].dt.day_name()
     last = h.iloc[-1]; weekday = last.weekday
-    same = h[h["weekday"] == weekday].tail(13).copy()
+    year_start = pd.Timestamp(last.date).replace(month=1, day=1)
+    same = h[(h["weekday"] == weekday) & (h["date"] >= year_start)].copy()
     prior_same = same.iloc[:-1]["premium_turnover_cr"]
     weekday_median = prior_same.median() if len(prior_same) else np.nan
 
@@ -120,7 +121,7 @@ def build(history, prices):
         "asof": last.date,
         "latest": float(last.premium_turnover_cr),
         "weekday": weekday,
-        "series": h[["date", "premium_turnover_cr", "roll5", "price"]].tail(420),
+        "series": h[["date", "premium_turnover_cr", "roll5", "price"]],
         "same_weekday": same[["date", "premium_turnover_cr"]],
         "monthly": monthly.tail(24),
         "commentary": c,
