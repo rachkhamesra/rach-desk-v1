@@ -3,7 +3,7 @@
 import argparse, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import nse, metrics, webpage, results, universes, calls, exchange_tracker
+import nse, metrics, webpage, results, universes, calls, exchange_tracker, mcx_tracker
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -32,6 +32,11 @@ def main():
     M["exchange_tracker"] = exchange_tracker.build(exchange_history, exchange_prices)
     if M["exchange_tracker"].get("available"):
         print(f"Exchange Tracker refreshed through {M['exchange_tracker']['asof']:%d %b %Y}")
+    mcx_history, mcx_expiries, mcx_status = mcx_tracker.load(a.root, end)
+    mcx_prices = M["C"]["MCX"] if "MCX" in M["C"] else pd.Series(dtype=float)
+    M["mcx_tracker"] = mcx_tracker.build(mcx_history, mcx_prices, mcx_expiries, end, mcx_status)
+    if M["mcx_tracker"].get("available"):
+        print(f"MCX Tracker refreshed through {M['mcx_tracker']['asof']:%d %b %Y}")
     os.makedirs(a.out, exist_ok=True)
     page = webpage.render(M, f"AS OF {M['dates'][-1]:%a %d %b %Y}".upper() + warn)
     M["events"].to_csv(os.path.join(a.out, "corporate_actions.csv"), index=False)       # audit log only, not shown in the UI

@@ -1,6 +1,7 @@
 """BSE exchange-activity history and the derived dashboard snapshot."""
 from __future__ import annotations
 
+import io
 import os
 import time
 from urllib.parse import urlencode
@@ -12,6 +13,7 @@ import requests
 
 API = "https://api.bseindia.com/BseIndiaAPI/api/Mkt_Keystat_turnover_deri_daily_par_beta/w"
 CACHE = "bse_premium_turnover.csv"
+BHAVCOPY = "https://www.bseindia.com/download/BhavCopy/Derivative/BhavCopy_BSE_FO_0_0_0_{date}_F_0000.CSV"
 HEADERS = {
     "accept": "application/json, text/plain, */*",
     "accept-language": "en-US,en;q=0.9",
@@ -53,6 +55,31 @@ def fetch_month(month, session=None, attempts=3):
     raise RuntimeError(f"BSE premium-turnover download failed for {month:%b %Y}: {error}")
 
 
+def fetch_day_bhavcopy(date, session=None):
+    """Derive exact options premium turnover from BSE's official UDiFF bhavcopy.
+
+    BSE's option transfer value is strike notional plus premium. Subtracting
+    strike × traded quantity reproduces the Key Statistics premium turnover.
+    """
+    date = pd.Timestamp(date); session = session or requests.Session()
+    response = session.get(BHAVCOPY.format(date=f"{date:%Y%m%d}"), headers=HEADERS, timeout=45)
+    response.raise_for_status()
+    frame = pd.read_csv(io.BytesIO(response.content))
+    required = {"FinInstrmTp", "TtlTrfVal", "StrkPric", "TtlTradgVol"}
+    if not required.issubset(frame.columns):
+        raise ValueError("BSE derivative bhavcopy unavailable or format changed")
+    options = frame[frame.FinInstrmTp.astype(str).isin(["IDO", "STO"])].copy()
+    if options.empty:
+        raise ValueError("BSE derivative bhavcopy contains no options")
+    transfer = pd.to_numeric(options.TtlTrfVal, errors="coerce")
+    strike = pd.to_numeric(options.StrkPric, errors="coerce")
+    quantity = pd.to_numeric(options.TtlTradgVol, errors="coerce")
+    premium_cr = (transfer - strike * quantity).sum(min_count=1) / 1e7
+    if pd.isna(premium_cr) or premium_cr < 0:
+        raise ValueError("BSE bhavcopy produced an invalid premium turnover")
+    return pd.DataFrame({"date": [date.normalize()], "premium_turnover_cr": [premium_cr]})
+
+
 def load(root, end, refresh=True):
     """Read the cache, backfill missing months from Jan-2025, and refresh the current month."""
     path = os.path.join(root, CACHE)
@@ -68,19 +95,32 @@ def load(root, end, refresh=True):
     end = pd.Timestamp(end).normalize(); have = set(cached["date"].dt.to_period("M"))
     wanted = list(_month_starts(end)); current = end.to_period("M")
     todo = [m for m in wanted if m.to_period("M") not in have or m.to_period("M") == current]
-    additions = []
+    additions = []; errors = []
     with requests.Session() as session:
         for month in todo:
             try:
                 additions.append(fetch_month(month, session=session))
             except Exception as exc:
-                print(f"warning: {exc}; retaining cached BSE exchange data")
+                errors.append(str(exc))
+                print(f"warning: {exc}; trying official BSE derivative bhavcopy")
+        # The Key Statistics API blocks some cloud runners. The daily UDiFF
+        # bhavcopy is a second official source and reproduces the same value.
+        latest = cached.date.max() if len(cached) else end - pd.Timedelta(days=7)
+        for date in pd.bdate_range(latest + pd.Timedelta(days=1), end):
+            try:
+                additions.append(fetch_day_bhavcopy(date, session=session))
+            except Exception:
+                pass
     if additions:
         cached = pd.concat([cached] + additions, ignore_index=True)
         cached = cached.dropna().drop_duplicates("date", keep="last").sort_values("date")
         os.makedirs(root, exist_ok=True)
         cached.to_csv(path, index=False, date_format="%Y-%m-%d")
-    return cached[cached["date"] <= end].sort_values("date").reset_index(drop=True)
+    out = cached[cached["date"] <= end].sort_values("date").reset_index(drop=True)
+    out.attrs["update_status"] = (f"Official BSE bhavcopy refreshed through {out.date.max():%d %b %Y}" if len(out) and out.date.max() >= end
+                                  else f"Latest verified BSE session: {out.date.max():%d %b %Y}" if len(out)
+                                  else "BSE premium turnover unavailable")
+    return out
 
 
 def _change(now, before):
@@ -126,4 +166,7 @@ def build(history, prices):
         "monthly": monthly.tail(24),
         "commentary": c,
         "source": "https://www.bseindia.com/markets/keystatics/keystat_turnover_deri",
+        "source_label": "BSE KEY STATISTICS",
+        "price_label": "BSE price",
+        "update_status": history.attrs.get("update_status", ""),
     }

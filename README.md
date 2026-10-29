@@ -2,7 +2,7 @@
 
 A searchable stock screen on GitHub Pages, rebuilt every weekday evening from NSE and BSE end-of-day files.
 
-Main screen: search a ticker, see its adjusted price with moving averages, delivered-share bars (green = up on above-average delivery, red = down on above-average delivery, faded green/red = ordinary days, grey = a move under 0.5 standard deviations), its relative strength against the Nifty, and the futures open-interest build-up. Other tabs: 1-day delivery screen, persistent delivery, results calendar, relative performance, stocks at a moving average, and Exchange Tracker.
+Main screen: search a ticker, see its adjusted price with moving averages, delivered-share bars (green = up on above-average delivery, red = down on above-average delivery, faded green/red = ordinary days, grey = a move under 0.5 standard deviations), its relative strength against the Nifty, and the futures open-interest build-up. Other tabs combine delivery, relative strength and moving-average proximity into one Signal Confluence view, track cash accumulation and conference calls, and monitor BSE and MCX options-premium turnover.
 
 ## Set up (once)
 1. Create a GitHub repo and push this folder.
@@ -25,8 +25,13 @@ The repository bundles the latest researched transcript analysis directly in `ca
 
 The STOCKS page shows the result below the charts: next-quarter outlook, the subjects receiving the most analyst questions, a congratulations index, short supporting excerpts, and sector-specific metrics. Manufacturers focus on revenue and volume growth, order inflow, demand, margin outlook and EBITDA margin. Banks and lenders focus on credit growth, credit–deposit ratio, disbursements, NIM, asset quality and credit costs. These are model-generated reading aids; the linked exchange transcript remains the source of record.
 
-## Exchange Tracker
-The BSE tracker reads the official Equity Derivatives Key Statistics history from January 2025 onward. It stores daily Options Premium Turnover in ₹ crore, refreshes only the current month after the initial backfill, and keeps the last valid cache if BSE temporarily rejects a request. The page plots the five-session rolling premium turnover against BSE Ltd's adjusted share price, compares the newest observation with prior occurrences of the same weekday, shows monthly average daily premium turnover, and writes a short factual summary from those calculations.
+## Signal Confluence
+The former Persistent Delivery, Relative Performance and At a Moving Average tabs are combined into three mutually exclusive tables: Delivery + Relative Strength + MA, Delivery + Relative Strength, and Delivery + MA. Persistent delivery requires at least three of the last five sessions at 1.25× or more of the prior 20-session average; relative strength requires a top-30 rank on at least one tracked horizon; MA proximity means within 0.5σ of an active moving average.
+
+## Exchange Trackers
+The BSE tracker stores daily Options Premium Turnover in ₹ crore from January 2025 onward. It first reads BSE Equity Derivatives Key Statistics and, when that endpoint rejects a cloud runner, derives the identical options-premium value from BSE's official daily UDiFF derivatives file. The page plots the five-session rolling premium turnover against BSE Ltd's adjusted share price, compares the newest observation with all prior occurrences of the same weekday in the year, shows monthly average daily premium turnover, and writes a short factual summary from those calculations.
+
+The MCX tracker starts with the official date-wise OPTFUT Premium Value reports supplied through 28 October 2026 and retains FUTCOM Total Value for later use. It attempts an incremental refresh from MCX Historical Data, retains the last verified report if MCX blocks automated retrieval, and labels that state visibly rather than presenting stale data as current. Its Daily Read also retrieves upcoming MCX options expiries from Groww's public commodity calendar.
 
 ## Corporate actions (automatic)
 NSE and BSE do not adjust the previous close, so a split or bonus looks like a crash. A one-day jump is treated as a corporate action when
@@ -35,8 +40,8 @@ NSE and BSE do not adjust the previous close, so a split or bonus looks like a c
 
 Otherwise it is a real move and is left alone. Prices before the date are multiplied by the factor and delivered shares and open interest divided by it, so charts, averages and the 20-day baseline stay on one share basis. Each adjustment shows as a green dashed line on the stock's chart, and `site/corporate_actions.csv` is an audit log. On the 14 events in the first year: 13 adjusted (KOTAKBANK 5:1 split, LICI and PIDILITIND bonuses, ANGELONE 10:1, the VEDL demerger, among them) and POLICYBZR's -36% crash left alone. Nothing needs maintaining by hand; `corp_actions.csv` exists only as an override if you ever disagree with a call (symbol,date,action,ratio,note).
 
-## Results calendar and pre-result activity
-The results tab reads NSE's board-meeting filings for scheduled dates and its corporate-announcement filings for the actual declaration timestamp. It excludes press releases, call transcripts and newspaper notices. The feeds are cached and merged on each run, so temporary NSE downtime leaves the most recent calendar in place and does not stop the rest of the desk from publishing.
+## Results dates and pre-result activity
+The nightly run scans NSE's all-equity board-meeting filings for scheduled dates and its corporate-announcement filings for the actual declaration timestamp. There is no separate calendar tab: upcoming results appear as dated badges beside the stock on the main Stocks page. The scanner excludes press releases, call transcripts and newspaper notices. The feeds are cached and merged on each run, so temporary NSE downtime leaves the most recent dates in place and does not stop the rest of the desk from publishing.
 
 For each result it examines the three completed trading sessions before the declaration date. `PRE-RESULT ACTIVITY` means that, on at least one of those sessions, delivered shares were above the prior 20-session average and the absolute price move was greater than 0.8 times the stock's prior-60-session daily-return standard deviation. Both baselines are shifted, so the signal uses no future data.
 

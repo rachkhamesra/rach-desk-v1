@@ -55,7 +55,7 @@ def stk(s, M):
     result = ""
     if upcoming:
         event = min(upcoming, key=lambda r: r["event_date"])
-        result = f' <span class="resultmark" title="Upcoming result: {event["event_date"]:%d %b %Y}">R</span>'
+        result = f' <span class="resultmark" title="Upcoming result: {event["event_date"]:%d %b %Y}">RESULT {event["event_date"]:%d %b}</span>'
     return f'<a class="stk" data-s="{esc(s)}">{esc(s)}</a>{result}{w}'
 
 
@@ -99,6 +99,29 @@ def tab_persist(M, n=40, allowed=None):
     return (f'<h2>Persistent delivery <span class="sub">≥3 OF THE LAST 5 SESSIONS ABOVE 1.25× 20D</span></h2>'
             f'<p class="desc">{q} qualify ({q15} at 1.5×); sorted by 5-day average ÷ 20d (the 5-day mean of delivered shares over the mean of the 20 sessions before them). Price and OI change from {M["persist_from"]:%d %b}. '
             f'PX 5D Z compares the five-session price move with the stock\'s own prior 60-session distribution of five-session moves. {M["hist_label"]} pct ranks the 5-day average against the stock\'s own rolling 5-day averages.</p>' + table(head, rows))
+
+
+def tab_signal_confluence(M, allowed=None):
+    allowed = set(allowed or M["syms"])
+
+    def block(frame, title, subtitle):
+        frame = frame[frame.sym.isin(allowed)].head(35).reset_index(drop=True)
+        rows = []
+        for i, r in frame.iterrows():
+            ma = "–" if pd.isna(r.ma) else f'{int(r.ma)}D · {pc(r.ma_dist)}' + (' · crossed' if r.ma_cross else '')
+            rs = "–" if not r.rs_horizons else f'{esc(r.rs_horizons)} · best {pc(r.rs_best)}'
+            rows.append(f'<tr><td class="mut">{i+1}</td><td class="l">{stk(r.sym, M)}</td>'
+                        f'<td>{int(r.d125)}/5</td><td>{r.ratio:.2f}×</td><td>{pc(r.px5)}</td><td>{zscore(r.px5_z)}</td>'
+                        f'<td class="l">{rs}</td><td class="l">{ma}</td></tr>')
+        head = [("#", "mut"), ("STOCK", "l"), ("DELIVERY DAYS", ""), ("5D ÷ 20D", ""), ("PX 5D", ""), ("PX Z", ""), ("RELATIVE STRENGTH", "l"), ("NEAREST MA", "l")]
+        content = table(head, rows, "signals") if rows else '<div class="card rempty">No stocks currently qualify for this tier.</div>'
+        return f'<h3 class="signalsub">{esc(title)}</h3><p class="desc">{esc(subtitle)}</p>{content}'
+
+    return ('<h2>Signal Confluence</h2><div class="subl">PERSISTENT DELIVERY · RELATIVE STRENGTH · MOVING-AVERAGE PROXIMITY</div>'
+            '<p class="desc">Persistent delivery requires at least three of the last five sessions at 1.25× or more of the prior 20-day average. Relative strength means a top-30 rank versus Nifty on at least one tracked horizon. MA proximity means within 0.5σ of an active moving average. The tiers are mutually exclusive.</p>'
+            + block(M["signal_all_three"], "1 · DELIVERY + RELATIVE STRENGTH + MA", "Strongest confluence: all three conditions are present.")
+            + block(M["signal_delivery_rs"], "2 · DELIVERY + RELATIVE STRENGTH", "Persistent accumulation with market outperformance, but not currently close to a moving average.")
+            + block(M["signal_delivery_ma"], "3 · DELIVERY + MA", "Persistent delivery near a moving average without a current top-30 relative-strength rank; monitoring tier."))
 
 
 def tab_cash_accumulation(M):
@@ -206,11 +229,12 @@ def _line_points(values, width, height, left=44, top=18, right=18, bottom=30):
     return points, lo, hi
 
 
-def tab_exchange(M):
-    X = M.get("exchange_tracker", {})
+def tab_turnover_tracker(X, title, subtitle):
     if not X.get("available"):
-        return ('<h2>Exchange Tracker</h2><div class="subl">BSE OPTIONS ACTIVITY</div>'
-                f'<div class="card rempty">{esc(X.get("commentary", ["BSE data is not available yet."])[0])}</div>')
+        return (f'<h2>{esc(title)}</h2><div class="subl">{esc(subtitle)}</div>'
+                f'<div class="card rempty">{esc(X.get("commentary", ["Turnover data is not available yet."])[0])}</div>')
+    price_label = X.get("price_label", "share price")
+    source_label = X.get("source_label", "SOURCE")
     series = X["series"].dropna(subset=["roll5"]).reset_index(drop=True)
     end = pd.Timestamp(X["asof"])
     ranges = [("ytd", "YTD", end.replace(month=1, day=1)), ("6m", "6M", end - pd.DateOffset(months=6)),
@@ -234,8 +258,8 @@ def tab_exchange(M):
             grid.append(f'<line class="exgridline" x1="{x0}" x2="{xb}" y1="{y:.1f}" y2="{y:.1f}"/>'
                         f'<text class="exaxis" x="{x0-6}" y="{y+3:.1f}" text-anchor="end">₹{turnover:,.0f}cr</text>'
                         + ("" if pd.isna(price) else f'<text class="exaxis price" x="{W-8}" y="{y+3:.1f}" text-anchor="end">₹{price:,.0f}</text>'))
-        note = "" if s.price.notna().all() else '<text x="50" y="44">BSE price begins with available desk history</text>'
-        return (f'<div class="exrange" data-xr="{key}"{("" if key == "ytd" else " hidden")}><svg class="exsvg hero" viewBox="0 0 {W} {H}" role="img" aria-label="BSE premium turnover and BSE share price">'
+        note = "" if s.price.notna().all() else f'<text x="50" y="44">{esc(price_label)} begins with available desk history</text>'
+        return (f'<div class="exrange" data-xr="{key}"{("" if key == "ytd" else " hidden")}><svg class="exsvg hero" viewBox="0 0 {W} {H}" role="img" aria-label="Premium turnover and {esc(price_label)}">'
                 '<defs><linearGradient id="turnoverFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5aa9ff" stop-opacity=".34"/><stop offset="1" stop-color="#5aa9ff" stop-opacity=".025"/></linearGradient></defs>'
                 f'{"".join(grid)}<polygon points="{area}" class="exarea"/><polyline points="{tp}" class="exto"/><polyline points="{pp}" class="expx"/>'
                 f'{note}{ticks}</svg></div>')
@@ -264,7 +288,7 @@ def tab_exchange(M):
             months = pd.to_datetime(df["date"]).dt.to_period("M")
             for month in months.drop_duplicates():
                 idx = np.flatnonzero((months == month).to_numpy()); mid = l + (idx[0] + idx[-1] + 1) * bw / 2
-                out.append(f'<text class="monthtag" x="{mid:.1f}" y="{h-23}" text-anchor="middle">{month:%b}</text>')
+                out.append(f'<text class="monthtag" x="{mid:.1f}" y="{h-23}" text-anchor="middle">{month.strftime("%b")}</text>')
         annotation = "" if comparison is None or pd.isna(comparison) else f'<text class="excompare {"up" if comparison >= 0 else "down"}" x="{w-12}" y="{top+10}" text-anchor="end">LATEST {comparison:+.0f}% VS YTD AVG</text>'
         return f'<svg class="exsvg" viewBox="0 0 {w} {h}" role="img"><line x1="{l}" y1="{h-bot}" x2="{w-8}" y2="{h-bot}"/>' + "".join(out) + annotation + '</svg>'
 
@@ -275,14 +299,24 @@ def tab_exchange(M):
     comments = "".join(f'<li>{esc(x)}</li>' for x in X["commentary"])
     range_buttons = "".join(f'<button class="exrbtn{(" on" if key == "ytd" else "")}" data-xr="{key}">{label}</button>' for key, label, _ in ranges)
     hero_ranges = "".join(hero(start, key) for key, _, start in ranges)
-    return (f'<h2>Exchange Tracker</h2><div class="subl">BSE OPTIONS PREMIUM TURNOVER · ₹ CRORE</div>'
+    status = X.get("update_status", "")
+    status_html = f'<div class="exstatus">{esc(status)}</div>' if status else ''
+    return (f'<h2>{esc(title)}</h2><div class="subl">{esc(subtitle)}</div>'
             f'<div class="exheadline"><div><span>LATEST</span><b>₹{X["latest"]:,.0f} cr</b></div><div><span>AS OF</span><b>{X["asof"]:%d %b %Y}</b></div><div><span>DAY</span><b>{esc(X["weekday"])}</b></div></div>'
-            f'<div class="card excomment"><h3>DAILY READ</h3><ul>{comments}</ul><a href="{esc(X["source"])}" target="_blank" rel="noopener">BSE KEY STATISTICS ↗</a></div>'
-            f'<div class="exlayout"><div class="card excard exmain"><div class="ch"><span class="ct">5D ROLLING PREMIUM TURNOVER</span><span><i class="exkey to"></i>5D premium <i class="exkey px"></i>BSE price</span></div>{hero_ranges}</div>'
+            f'{status_html}<div class="card excomment"><h3>DAILY READ</h3><ul>{comments}</ul><a href="{esc(X["source"])}" target="_blank" rel="noopener">{esc(source_label)} ↗</a></div>'
+            f'<div class="exlayout"><div class="card excard exmain"><div class="ch"><span class="ct">5D ROLLING PREMIUM TURNOVER</span><span><i class="exkey to"></i>5D premium <i class="exkey px"></i>{esc(price_label)}</span></div>{hero_ranges}</div>'
             f'<div class="card excard"><div class="ch"><span class="ct">{esc(X["weekday"].upper())}S · YTD</span><span class="mut">{len(wd)} SESSIONS</span></div>{bars(wd,"label","premium_turnover_cr","exbar",True,True,wd_comparison)}</div>'
             f'<div class="card excard"><div class="ch"><span class="ct">AVERAGE DAILY PREMIUM TURNOVER</span><span class="mut">CURRENT MONTH IS PARTIAL</span></div>{bars(monthly,"label","mean","exbar month",True)}</div>'
             f'<div class="exranges exrangesbelow">{range_buttons}</div></div>'
-            '<p class="desc">Premium turnover is the BSE-reported daily Options Premium Turnover. The current month updates incrementally; if BSE has not published a new session, the last available observation remains visible.</p>')
+            '<p class="desc">Premium turnover is the exchange-reported daily options premium value. The current month updates incrementally; if a new session is unavailable, the last verified observation remains visible with its exact date and refresh status.</p>')
+
+
+def tab_exchange(M):
+    return tab_turnover_tracker(M.get("exchange_tracker", {}), "Exchange Tracker", "BSE OPTIONS PREMIUM TURNOVER · ₹ CRORE")
+
+
+def tab_mcx(M):
+    return tab_turnover_tracker(M.get("mcx_tracker", {}), "MCX Exchange Tracker", "MCX OPTFUT PREMIUM TURNOVER · ₹ CRORE")
 
 
 def tab_call_library(M):
@@ -374,11 +408,11 @@ def render(M, asof_text):
     choices = [(k, label) for k, label in choices if M["memberships"].get(k)]
     def views(fn):
         return "".join(f'<div class="uview" data-u="{k}"{("" if k == "top1000" else " hidden")}>{fn(M, allowed=M["memberships"][k])}</div>' for k, _ in choices)
-    panels = [("stocks", "STOCKS", tab_stocks(M)), ("persist", "PERSISTENT DELIVERY", views(tab_persist)),
-              ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)), ("results", "RESULTS CALENDAR", views(tab_results)),
-              ("rel", "RELATIVE PERFORMANCE", views(tab_rel)), ("at", "AT A MOVING AVERAGE", views(tab_at)),
+    panels = [("stocks", "STOCKS", tab_stocks(M)), ("signals", "SIGNAL CONFLUENCE", views(tab_signal_confluence)),
+              ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)),
               ("calls", "CALL LIBRARY", tab_call_library(M)),
-              ("exchange", "EXCHANGE TRACKER", tab_exchange(M))]
+              ("exchange", "EXCHANGE TRACKER", tab_exchange(M)),
+              ("mcx", "MCX TRACKER", tab_mcx(M))]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}" data-t="{k}">{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
     opts = "".join(f'<option value="{k}">{label}</option>' for k, label in choices)
@@ -419,7 +453,9 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .setupstate{display:inline-block;padding:4px 7px;font:800 9px var(--sans);letter-spacing:.07em;white-space:nowrap}.setupstate.active{background:var(--g);color:#06160d}.setupstate.cool{border:1px solid var(--am);color:#ffd17a}.cashwatch td b{color:var(--g)}
 .cashsub{margin:18px 0 7px;font:800 11px var(--sans);letter-spacing:.1em}.cashsub.track{color:#ffd17a;margin-top:26px}
 .cashwatch tr.cashnew td{background:rgba(232,169,58,.08)}.cashwatch tr.cashnew td:first-child{box-shadow:inset 4px 0 var(--am)}.newcash{display:inline-block;margin-left:5px;padding:3px 5px;background:var(--am);color:#090909;font:800 8px var(--sans);letter-spacing:.06em;vertical-align:1px}
+.signalsub{margin:22px 0 3px;font:800 12px var(--sans);letter-spacing:.08em}.signals td{padding-top:7px;padding-bottom:7px}.signals td:nth-child(7),.signals td:nth-child(8){font-size:11px}
 .exheadline{display:flex;gap:28px;margin:12px 0 14px}.exheadline div{display:flex;flex-direction:column}.exheadline span{font:700 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.exheadline b{font:700 17px var(--mono)}
+.exstatus{display:inline-block;margin:0 0 9px;padding:5px 8px;border:1px solid #3c3c38;color:#b6b6af;font:700 9px var(--mono);letter-spacing:.04em}
 .excard{padding:0;margin-bottom:12px;overflow:hidden}.excard .ch{display:flex;justify-content:flex-start;align-items:center;gap:18px;min-height:42px;padding:10px 12px 8px;background:#101010;border-bottom:1px solid var(--line);overflow:hidden}.excard .ch>*{white-space:nowrap}.excard .ct{flex:0 0 auto;font-size:13px;line-height:1;font-weight:800;letter-spacing:.035em}.excard .ch>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:10px}.exsvg{width:100%;height:auto;display:block;background:linear-gradient(180deg,#13171c 0%,#101010 100%)}.exsvg text{fill:var(--mut);font:10px var(--mono)}.exsvg line{stroke:var(--line)}
 .exarea{fill:url(#turnoverFill)}.exto{fill:none;stroke:#68b4ff;stroke-width:2.7;filter:drop-shadow(0 0 3px rgba(90,169,255,.35))}.expx{fill:none;stroke:#f1ae39;stroke-width:2.7;filter:drop-shadow(0 0 3px rgba(232,169,58,.25))}.exgridline{stroke:#34383d!important;stroke-width:1}.exaxis{fill:#88bdf0!important}.exaxis.price{fill:#d8a74f!important}.exkey{display:inline-block;width:17px;border-top:2px solid;margin:0 5px 2px 12px}.exkey.to{border-color:#5aa9ff}.exkey.px{border-color:var(--am)}
 .exlayout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}.exlayout>*{min-width:0}.exlayout>.excard{height:100%;margin-bottom:0}.exranges{display:flex;gap:5px;padding:0 18px 10px;flex-wrap:wrap}.exrangesbelow{grid-column:1;padding:0;align-self:start}.exrbtn{border:1px solid var(--line);background:transparent;color:var(--mut);font:800 9px var(--sans);letter-spacing:.08em;padding:6px 10px;cursor:pointer}.exrbtn:hover{color:var(--ink);border-color:var(--mut)}.exrbtn.on{background:var(--am);border-color:var(--am);color:#090909}.exbar{fill:#4e85d8;transition:opacity .12s}.exbar:hover,.exbar:focus{opacity:.72;stroke:#fff;stroke-width:1;outline:none}.exbar.month{fill:#607fc2}.exbar.latest{fill:var(--am)}.exbargrid{stroke:#30343a!important;stroke-width:1}.excompare{fill:var(--ink)!important;font-weight:800;letter-spacing:.04em}.excompare.up{fill:var(--g)!important}.excompare.down{fill:var(--r)!important}.monthtag{fill:var(--ink)!important;font-weight:700}.exbarhover{display:none;fill:var(--ink)!important;font-weight:800;paint-order:stroke;stroke:#101010;stroke-width:4px;stroke-linejoin:round;pointer-events:none}.exbaritem:hover .exbarhover,.exbaritem:focus-within .exbarhover{display:block}.excomment{margin:0 0 12px;padding:15px 16px;background:#101010;border-left:4px solid var(--am)}.excomment h3{margin:0 0 8px;font:800 10px var(--sans);letter-spacing:.11em}.excomment ul{margin:0 0 10px;padding-left:20px}.excomment li{margin:6px 0}.excomment a{font:700 9px var(--sans);letter-spacing:.08em;color:var(--am)}
@@ -475,13 +511,14 @@ function fmt(x){if(x==null)return'–';const a=Math.abs(x);return a>=1e7?(x/1e7)
 function fL(x){return x==null?'–':(x>=0?'+':'−')+Math.abs(x/1e5).toLocaleString(undefined,{maximumFractionDigits:1,minimumFractionDigits:1})+' L'}
 function pc(x,d=1){return x==null?'–':(x>=0?'+':'−')+Math.abs(x).toFixed(d)+'%'}
 function cls(x){return x==null?'':x>=0?'g':'r'}
+function resultLabel(r){if(!r)return'';const d=new Date(r.date+'T00:00:00');return 'RESULT '+d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}).toUpperCase()}
 function escH(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function callPanel(S){const el=document.getElementById('callintel'),c=S.call;if(!c||!c.analysis){el.innerHTML='<div class="callnone">CALL INTELLIGENCE · No bundled transcript analysis for this stock yet.</div>';return}const a=c.analysis,o=a.next_quarter_outlook||[],f=a.analyst_focus||[],cg=a.congratulations||{},sector=a.company_type==='manufacturer'?a.manufacturer:a.company_type==='bank_lender'?a.bank_lender:null;const labels={revenue_growth:'Revenue growth',volume_growth:'Volume growth',order_inflow:'Order inflow',demand_outlook:'Demand outlook',margin_outlook:'Margin outlook',ebitda_margin:'EBITDA margin',credit_growth:'Credit growth',credit_deposit_ratio:'Credit–deposit ratio',disbursements:'Disbursements',nim_outlook:'NIM outlook',asset_quality:'Asset quality',credit_cost_outlook:'Credit cost outlook'};const actuals=sector?Object.entries(sector).filter(([,v])=>v).map(([k,v])=>`<div class="metric"><b>${escH(labels[k]||k)}</b>${escH(v)}</div>`).join(''):'';const risks=(a.key_risks||[]).map(v=>`<div class="metric"><b>RISK / WATCHPOINT</b>${escH(v)}</div>`).join('');el.innerHTML=`<div class="callhead"><div><h3>CALL INTELLIGENCE · ${escH(a.call_period||'LATEST CALL')}</h3><div class="callmeta">${escH(a.company_type.replace('_',' ').toUpperCase())} · filed ${escH((c.filed_at||'').slice(0,10))}</div></div><a href="${escH(c.source_url)}" target="_blank" rel="noopener">OPEN TRANSCRIPT ↗</a></div><div class="callpanels"><div class="callsection outlookpanel"><h4>NEXT QUARTER OUTLOOK</h4>${o.length?o.map(x=>`<div class="outlook ${escH(x.tone)}"><b>${escH(x.topic)}</b>${escH(x.summary)}<span class="evidence">“${escH(x.evidence)}”</span></div>`).join(''):'<div class="inone">No explicit next-quarter guidance found.</div>'}</div><div class="callsection focuspanel"><h4>WHAT ANALYSTS CARED ABOUT</h4>${f.length?f.map(x=>`<div class="focus"><div><b>${escH(x.topic)}</b><small>${escH(x.why_it_mattered)}</small></div><span class="qcount">${x.question_count}Q</span></div>`).join(''):'<div class="inone">No analyst-question themes extracted.</div>'}<div class="congrats"><strong>${Number(cg.index_pct||0).toFixed(0)}%</strong><div>CONGRATULATIONS INDEX<br><span>${cg.count||0} congratulatory turns / ${cg.analyst_turns||0} analyst turns</span></div></div></div><div class="callsection actualspanel"><h4>KEY ACTUALS &amp; GUIDANCE</h4><div class="metricgrid">${actuals||'<div class="inone">No sector actuals extracted.</div>'}${risks}</div><div class="aicaveat">Static research from the linked transcript. Check the source before relying on a statement.</div></div></div>`}
 /* ---------- ticker list ---------- */
 function list(){const q=document.getElementById('q').value.trim().toUpperCase(),so=document.getElementById('sort').value;
  const key={az:s=>s,ratio:s=>-(D.stocks[s].sm.ratio??-1e9),px:s=>-(D.stocks[s].sm.px??-1e9),rs:s=>-(D.stocks[s].sm.rel[1][0]??-1e9)}[so];
  const a=SY.filter(s=>!q||s.includes(q)).sort((x,y)=>{const a=key(x),b=key(y);return a<b?-1:a>b?1:0});
- document.getElementById('list').innerHTML=a.map(s=>{const m=D.stocks[s].sm,r=D.stocks[s].result?'<span class="resultmark" title="Upcoming result">R</span>':'';return `<div class="li${s===cur?' on':''}" data-s="${s}" tabindex="-1"><b>${s} ${r}</b><span class="${cls(m.px)}">${pc(m.px)}</span><span class="mut">${m.ratio==null?'–':m.ratio.toFixed(1)+'×'}</span></div>`}).join('')||'<div class="li mut">No match</div>'}
+ document.getElementById('list').innerHTML=a.map(s=>{const m=D.stocks[s].sm,r=D.stocks[s].result?`<span class="resultmark" title="Upcoming result">${resultLabel(D.stocks[s].result)}</span>`:'';return `<div class="li${s===cur?' on':''}" data-s="${s}" tabindex="-1"><b>${s} ${r}</b><span class="${cls(m.px)}">${pc(m.px)}</span><span class="mut">${m.ratio==null?'–':m.ratio.toFixed(1)+'×'}</span></div>`}).join('')||'<div class="li mut">No match</div>'}
 document.getElementById('q').oninput=list;document.getElementById('sort').onchange=list;
 document.getElementById('q').onkeydown=e=>{if(e.key==='Enter'){const f=document.querySelector('#list .li[data-s]');if(f)pick(f.dataset.s)}};
 document.getElementById('list').onclick=e=>{const li=e.target.closest('.li[data-s]');if(li)pick(li.dataset.s)};
@@ -558,7 +595,7 @@ function draw(){
  const RH=sm?74:92,rsf=S.c.map((v,i)=>v!=null&&D.nifty[i]!=null?v/D.nifty[i]:null),rsm=sma(rsf,50);let base=null;for(let i=v0;i<n;i++)if(rsf[i]!=null){base=rsf[i];break}let rg='';if(base){const rb=v=>v/base*100;let rlo=1e18,rhi=-1e18;for(let i=v0;i<n;i++)for(const v of [rsf[i],rsm[i]])if(v!=null){rlo=Math.min(rlo,rb(v));rhi=Math.max(rhi,rb(v))}const rp=(rhi-rlo)*.08||1;rlo-=rp;rhi+=rp;let yr;[yr,rg]=frame(rlo,rhi,RH,'RELATIVE STRENGTH VS NIFTY · ORANGE = 50D AVG',v=>v.toFixed(0));rg+=line(rsm,yr,'#f5a623',1.3,null,rb)+line(rsf,yr,'#fff',1.7,null,rb)}setsvg('rsch',RH,rg);
  const OH=sm?78:98,dl=new Array(n).fill(null);let omax=0;for(let i=1;i<n;i++){if(S.oi[i]!=null&&S.oi[i-1]!=null)dl[i]=S.oi[i]-S.oi[i-1];if(i>=v0)omax=Math.max(omax,S.oi[i]||0)}let [yo,og]=frame(0,omax*1.05||1,OH,'TOTAL SSF OPEN INTEREST · COLOUR = PRICE/OI BEHAVIOUR',fmt);if(omax){for(let i=v0;i<n;i++){const oi=S.oi[i];if(oi==null)continue;const up=i>0&&S.c[i]!=null&&S.c[i-1]!=null&&S.c[i]>=S.c[i-1],od=dl[i],col=od==null?'#555':od>=0?(up?G:R):(up?'#5aa9ff':'#e8a93a'),h=OH-18-yo(oi);og+=`<rect x="${(xs(i)-bw/2).toFixed(1)}" y="${yo(oi).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(.5,h).toFixed(1)}" fill="${col}"/>`}}else og+=`<text x="${L+4}" y="${OH/2}" fill="#555" font-size="${fs}" font-family="monospace">not in F&amp;O for this period</text>`;setsvg('oich',OH,og);
  const m=S.sm,last=S.c[n-1],lastOI=S.oi[n-1],dOI=dl[n-1],dOIPct=dOI!=null&&S.oi[n-2]?dOI/S.oi[n-2]*100:null,up=S.c[n-1]>=S.c[n-2],bu=dOI==null?'–':dOI>=0?(up?'Long Buildup':'Cash Selling'):(up?'Cash Buying':'Long Unwind'),buc=dOI==null?'':bu==='Long Buildup'?'g':bu==='Cash Selling'?'r':'';
- const rs=D.hz.map((h,k)=>{const r=m.rel[k];return `<div><span>${h[0].toUpperCase()}</span><b class="${cls(r[0])}">${pc(r[0])}</b> <i class="mut" style="font-style:normal">#${r[1]??'–'}/${SY.length}</i></div>`}).join(''),rbadge=S.result?`<span class="resultmark" title="Upcoming result">R</span>`:'';
+ const rs=D.hz.map((h,k)=>{const r=m.rel[k];return `<div><span>${h[0].toUpperCase()}</span><b class="${cls(r[0])}">${pc(r[0])}</b> <i class="mut" style="font-style:normal">#${r[1]??'–'}/${SY.length}</i></div>`}).join(''),rbadge=S.result?`<span class="resultmark" title="Upcoming result">${resultLabel(S.result)}</span>`:'';
  document.getElementById('sh').innerHTML=`<div class="hd1"><b>${cur}</b>${rbadge}<span class="px">${last==null?'–':last.toFixed(2)}</span><span class="${cls(m.px)}">${pc(m.px,2)}</span></div><div class="chips2"><div><span>DELIVERED</span>${fmt(m.dq)}</div><div><span>÷ 20D AVG</span>${m.ratio==null?'–':m.ratio.toFixed(2)+'×'}</div><div><span>DELIV %</span>${m.dp==null?'–':m.dp.toFixed(1)}</div><div><span>BSE %</span>${m.bse==null?'–':m.bse.toFixed(0)}</div><div><span>SSF OI</span>${fmt(lastOI)}</div><div><span>ΔOI 1D</span><b class="${cls(dOIPct)}">${pc(dOIPct)}</b></div><div><span>OI SIGNAL</span><b class="${buc}">${bu}</b></div></div><div class="rsrow">${rs}</div>`;
  const events=[];for(let i=Math.max(1,n-5);i<n;i++){const move=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null,op=dl[i]!=null&&S.oi[i-1]?dl[i]/S.oi[i-1]*100:null,aboveAvg=(S.rat[i]??0)>1,cashbuy=aboveAvg&&move>0&&op<0,cashsell=aboveAvg&&move<0&&op>0;if(cashbuy){events.push({i,kind:'cash',tone:'cashbuy',txt:`${S.rat[i].toFixed(2)}× delivery · ${pc(op)} OI`});continue}if(cashsell){events.push({i,kind:'cashsell',tone:'cashsell',txt:`${S.rat[i].toFixed(2)}× delivery · ${pc(op)} OI`});continue}if((S.rat[i]??0)>=1.5)events.push({i,kind:'del',txt:`${S.rat[i].toFixed(2)}× delivery · ${pc(move)}`});if(op!=null&&Math.abs(op)>=3){const pu=move>=0,label=dl[i]>=0?(pu?'Long Buildup':'Cash Selling'):(pu?'Cash Buying':'Long Unwind');events.push({i,kind:'oi',txt:`${label} · ${pc(op)} OI`})}}events.sort((a,b)=>b.i-a.i);let ih='<div class="ititle">RECENT ACTIVITY · 5 SESSIONS</div>';if(S.result)ih+=`<div class="resultbox"><b>UPCOMING RESULT</b>${S.result.date} · ${S.result.status}</div>`;ih+=events.length?events.map(e=>`<div class="ievent${e.tone?' '+e.tone:''}"><span class="idate">${D.dates[e.i].slice(5)}</span><span class="itag ${e.kind}">${e.kind==='del'?'DELIVERY':e.kind==='cash'?'CASH BUYING':e.kind==='cashsell'?'CASH SELLING':'OI'}</span>${e.txt}</div>`).join(''):'<div class="inone">No above-average delivery cash-buying/cash-selling signal, delivery ≥1.5× average, or daily OI move ≥3% in the last 5 sessions.</div>';ih+='<div class="mahere"><div class="ititle">AT A MOVING AVERAGE</div>'+(S.at&&S.at.length?S.at.map(a=>`<div class="mahit"><b>${a.ma}-DAY MA</b>${a.crossed?'<span class="cross">CROSSED TODAY</span>':''}<br><span class="${a.new?'fresh':''}">${a.above?'above':'below'} by ${Math.abs(a.dist).toFixed(2)}% · ${Math.abs(a.dist/a.sigma).toFixed(2)}σ${a.new?' · new today':''}</span></div>`).join(''):'<div class="inone">Not currently within 0.5σ of an active moving average.</div>')+'</div>';document.getElementById('insights').innerHTML=ih;
  callPanel(S);
