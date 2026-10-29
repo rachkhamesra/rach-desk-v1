@@ -2,6 +2,9 @@ name: Daily desk
 
 on:
   schedule:
+    # 8:00 PM IST, Monday-Friday: Exchange Tracker data should be available by then.
+    - cron: "30 14 * * 1-5"
+    # 9:00 PM IST, Monday-Friday: automatic second check for late publications.
     - cron: "30 15 * * 1-5"
   workflow_dispatch: {}
 
@@ -36,13 +39,10 @@ jobs:
             data/bse_premium_turnover.csv
           key: desk-data-${{ github.run_id }}
           restore-keys: desk-data-
-      - name: Build latest available market session
-        run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            python run.py --wait-minutes 120
-          else
-            python run.py --wait-minutes 0
-          fi
+      - name: Build latest published market session
+        # Never hold a runner open for an unpublished date. A later scheduled run
+        # will pick it up while this run still refreshes Exchange Tracker and deploys.
+        run: python run.py --wait-minutes 0
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CALLS_MODEL: gpt-6-luna
