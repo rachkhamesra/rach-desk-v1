@@ -44,7 +44,7 @@ class GuidanceTests(unittest.TestCase):
 
     def test_exact_seed_changes_use_only_latest_transcript(self):
         seed = json.loads(Path("call_intelligence_seed.json").read_text())
-        expected = {"ETERNAL": 0, "SHRIRAMFIN": 1, "INFY": 1, "PNB": 1, "PGEL": 0, "INDHOTEL": 1}
+        expected = {"ETERNAL": 1, "SHRIRAMFIN": 1, "INFY": 1, "PNB": 1, "PGEL": 0, "INDHOTEL": 1}
         for symbol, count in expected.items():
             entry = seed[symbol]
             changes = guidance.validated_changes(entry["analysis"], entry["source_url"])

@@ -25,7 +25,7 @@ SCHEMA = {
     "type": "object",
     "additionalProperties": False,
     "properties": {
-        "analysis_profile": {"type": "string", "enum": ["forward_only_v1"]},
+        "analysis_profile": {"type": "string", "enum": ["forward_only_v1", "forward_plus_actuals_v1"]},
         "company_type": {"type": "string", "enum": ["manufacturer", "bank_lender", "other"]},
         "call_period": {"type": "string"},
         "next_quarter_outlook": {"type": "array", "items": {"$ref": "#/$defs/outlook"}},
