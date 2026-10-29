@@ -30,6 +30,8 @@ def main():
     exchange_history = exchange_tracker.load(a.root, end)
     exchange_prices = M["C"]["BSE"] if "BSE" in M["C"] else pd.Series(dtype=float)
     M["exchange_tracker"] = exchange_tracker.build(exchange_history, exchange_prices)
+    if M["exchange_tracker"].get("available"):
+        print(f"Exchange Tracker refreshed through {M['exchange_tracker']['asof']:%d %b %Y}")
     os.makedirs(a.out, exist_ok=True)
     page = webpage.render(M, f"AS OF {M['dates'][-1]:%a %d %b %Y}".upper() + warn)
     M["events"].to_csv(os.path.join(a.out, "corporate_actions.csv"), index=False)       # audit log only, not shown in the UI
