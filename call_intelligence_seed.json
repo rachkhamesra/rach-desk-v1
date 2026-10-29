@@ -900,5 +900,90 @@
       ],
       "material_guidance_changes": []
     }
+  },
+  "SWIGGY": {
+    "symbol": "SWIGGY",
+    "filed_at": "2026-10-29T15:38:16+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/SWIGGY_29102026153805_SE_Intimation_-_Earnings_call_Transcript_signed.pdf",
+    "description": "NSE-filed Q2 FY2027 earnings-call transcript; verified exchange attachment.",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "other",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Current-quarter Instamart growth and profitability",
+          "summary": "Instamart is guided to double-digit sequential growth in the current quarter while operating within a 0 to -100 bps contribution-margin range and delivering about 100 bps adjusted-EBITDA improvement.",
+          "tone": "positive",
+          "evidence": "\"and our guidance for the current quarter is also to be able to deliver double- digit growth on a sequential basis. We will obviously operate within those tight guardrails.\" ... \"but what we have guided is for 100 basis points improvement in Adjusted EBITDA in the current quarter.\"",
+          "speaker": "Rahul Bothra",
+          "role": "Chief Financial Officer",
+          "location": "PDF page 7; transcript page 6"
+        },
+        {
+          "topic": "Inventory-model transition",
+          "summary": "The inventory-model transition begins in the middle of the current quarter and is expected to complete over the following two to three quarters.",
+          "tone": "neutral",
+          "evidence": "\"So we will start the process in the middle of current quarter, and it is expected to fully transition over the next two to three quarters.\"",
+          "speaker": "Rahul Bothra",
+          "role": "Chief Financial Officer",
+          "location": "PDF page 7; transcript page 6"
+        },
+        {
+          "topic": "Food-delivery growth and margin",
+          "summary": "Management maintains 18%–20% growth for the core food business and a 5% GOV steady-state margin, without near-term dilution to respond to competitors.",
+          "tone": "positive",
+          "evidence": "\"On the core business, both the top line growth of 18-20% as well as the steady state margin of 5% GOV margin stays protected without us having to go through any dilutive route in the near term.\"",
+          "speaker": "Rahul Bothra",
+          "role": "Chief Financial Officer",
+          "location": "PDF page 13; transcript page 12"
+        },
+        {
+          "topic": "Toing scale decision",
+          "summary": "Management wants another one or two quarters to validate Toing; investment should remain range-bound while revenue grows and the team tests retention, acquisition costs and steady-state economics.",
+          "tone": "cautious",
+          "evidence": "\"I think we have asked for maybe another quarter or two. With enough green shoots we are seeing to be able to also call out that this investment is showing the frequency growth that we are hoping for, the category extension in terms of new user acquisition to the platform.\" ... \"As we have said even in the shareholders’ letter, we expect the investments will be range bound.\"",
+          "speaker": "Rahul Bothra and Rohit Kapoor",
+          "role": "Chief Financial Officer; Chief Executive Officer, Food Marketplace",
+          "location": "PDF pages 5 and 11; transcript pages 4 and 10"
+        },
+        {
+          "topic": "Dark-store expansion strategy",
+          "summary": "Swiggy does not plan near-term geographic expansion; it will add stores when local capacity maxes out, implying roughly 5%–7% of the network may require additions each quarter if current growth persists.",
+          "tone": "neutral",
+          "evidence": "\"Wherever there is going to be growth and which is maxing out of capacity, we are adding stores. So, you will continue to see us expanding the number of stores even in the current quarter as the growth continues in those hyper local zip codes.\" ... \"Every quarter, the pace of expansion, as you see if you are adding 5-7% stores, that's the number that are maxing out on capacity, if the pace of growth continues at this level.\"",
+          "speaker": "Rahul Bothra",
+          "role": "Chief Financial Officer",
+          "location": "PDF pages 8–9; transcript pages 7–8"
+        },
+        {
+          "topic": "Instamart scale and profitability milestone",
+          "summary": "Management says Instamart must reach roughly twice its current size while improving contribution, with adjusted-EBITDA profitability the next major milestone.",
+          "tone": "cautious",
+          "evidence": "\"The next milestone for us is to get to that profitability at an Adjusted EBITDA level and demonstrate that.\" ... \"As we mentioned, we need to get to roughly 2x the current size. We need to improve the contribution.\"",
+          "speaker": "Sriharsha Majety",
+          "role": "Managing Director and Group Chief Executive Officer",
+          "location": "PDF pages 14 and 16; transcript pages 13 and 15"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Can Instamart accelerate growth while losses improve?",
+          "why_it_mattered": "Analysts repeatedly challenged the relationship between double-digit growth, contribution margin, adjusted-EBITDA improvement, store productivity, pricing intervention and the pace of dark-store additions.",
+          "question_count": null
+        },
+        {
+          "topic": "Will Toing create a new market without diluting food economics?",
+          "why_it_mattered": "Analysts asked about cannibalization, the 25%–30% combined growth ambition, investment losses, unit economics, scale criteria and the timeline for deciding whether to expand Toing.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "Quick-commerce competition remains intense and management says it is too early to declare that conditions have eased.",
+        "Toing remains an experiment whose scalability depends on retention, acquisition cost and steady-state unit economics.",
+        "Instamart's path to adjusted-EBITDA profitability requires substantially greater scale and continued store-productivity improvement."
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
