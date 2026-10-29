@@ -631,5 +631,89 @@
       ],
       "material_guidance_changes": []
     }
+  },
+  "JSWSTEEL": {
+    "symbol": "JSWSTEEL",
+    "filed_at": "2026-10-29T17:19:39+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/jessydenny_29102026171858_analysts_transcript.pdf",
+    "description": "NSE filing labelled as a transcript, but the one-page attachment contains only a covering letter and company-site links.",
+    "transcript_status": "missing",
+    "status_detail": "NSE's attachment is only a one-page covering letter; no transcript pages were enclosed, so no forward-looking analysis was inferred."
+  },
+  "KEI": {
+    "symbol": "KEI",
+    "filed_at": "2026-10-29T17:15:25+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/KEI_29102026171507_SignedTranscriptsIntimation.pdf",
+    "description": "NSE-filed Q2 FY2027 earnings-call transcript; verified exchange attachment.",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "manufacturer",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Q3 Sanand revenue ramp",
+          "summary": "Management targets Sanand monthly revenue of roughly ₹250–300 crore in Q3 as utilization rises.",
+          "tone": "positive",
+          "evidence": "\"For Sanand, as of now until last month, it's reached INR200 crores per monthly bill. Within this quarter, we are targeting INR150 crores to INR200 crores per month, and third quarter will be close to INR 250 crores to INR 300 crores on that type of thing in the monthly basis.\"",
+          "speaker": "Rajeev Gupta",
+          "role": "Chief Financial Officer",
+          "location": "PDF page 15; transcript page 14"
+        },
+        {
+          "topic": "Export acceleration",
+          "summary": "Management expects exports to grow substantially in coming quarters; the ₹991 crore export order book is expected to turn over within three to four months.",
+          "tone": "positive",
+          "evidence": "\"We have very good order book position from overseas market, particularly United States. We are quite hopeful that in coming quarters, exports will grow substantially.\" ... \"Sir every month order comes and every month order is sold. So order book will be there, but it will be sold within 3 to 4 months.\"",
+          "speaker": "Anil Gupta and Rajeev Gupta",
+          "role": "Chairman and Managing Director; Chief Financial Officer",
+          "location": "PDF pages 3 and 13; transcript pages 2 and 12"
+        },
+        {
+          "topic": "FY27 growth and margin",
+          "summary": "KEI maintains FY27 value growth above 25% and EBITDA margin close to 11%, explicitly rejecting the idea of a guidance cut.",
+          "tone": "positive",
+          "evidence": "\"So our guidance is still maintaining that we will be growing at a 25%-plus growth rate and our EBITDA margin will be close to 11%.\"",
+          "speaker": "Rajeev Gupta",
+          "role": "Chief Financial Officer",
+          "location": "PDF page 6; transcript page 5"
+        },
+        {
+          "topic": "Inventory normalization",
+          "summary": "Management expects elevated inventory from the Sanand ramp to normalize to its earlier holding level by March 2027.",
+          "tone": "positive",
+          "evidence": "\"So it is by the end of the year, it will get normalized to the earlier level. The holding level will remain same by the March '27.\"",
+          "speaker": "Rajeev Gupta",
+          "role": "Chief Financial Officer",
+          "location": "PDF page 12; transcript page 11"
+        },
+        {
+          "topic": "Margin progression after FY27",
+          "summary": "Management expects another roughly 50 basis points of margin improvement next year as Sanand commissioning matures.",
+          "tone": "positive",
+          "evidence": "\"And we are guiding also for future once the Sanand get commissioned fully. So in the next year, another 0.5% margin will get improved.\"",
+          "speaker": "Rajeev Gupta",
+          "role": "Chief Financial Officer",
+          "location": "PDF page 19; transcript page 18"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Growth and margin guidance",
+          "why_it_mattered": "Analysts repeatedly tested whether 25%-plus growth and the 11%–12% margin path had been reduced after the Q2 margin movement.",
+          "question_count": null
+        },
+        {
+          "topic": "Sanand ramp and capital intensity",
+          "why_it_mattered": "Questions focused on Q3 utilization, inventory normalization, future capacity, capex and the timing of EHV revenue.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "Sanand utilization is ramping more slowly than a mature plant and has temporarily raised inventory.",
+        "Export growth remains exposed to geopolitical conditions despite a strong order book.",
+        "Copper-price volatility can change reported value growth and working-capital needs even when demand remains firm."
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
