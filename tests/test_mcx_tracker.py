@@ -16,7 +16,16 @@ def test_mcx_build_adds_upcoming_expiries_and_charts():
     assert out["available"]
     assert any("Gold Mini options expiry today" in x for x in out["commentary"])
     assert any("Crude Oil options expiry in 15D" in x for x in out["commentary"])
+    bucket = mcx_tracker.month_week(ref.day)
+    assert out["comparison_title"].startswith(f"WEEK {bucket}")
+    assert out["comparison_count_label"] == "MONTHS"
+    assert len(out["comparison"]) > 1
+    assert any(f"Week {bucket}" in x and "prior" in x for x in out["commentary"])
     html = webpage.tab_mcx({"mcx_tracker": out})
     assert "MCX Exchange Tracker" in html
     assert "MCX OPTFUT PREMIUM TURNOVER" in html
     assert "verified" in html
+
+
+def test_mcx_month_week_boundaries():
+    assert [mcx_tracker.month_week(day) for day in (1, 8, 9, 16, 17, 24, 25, 31)] == [1, 1, 2, 2, 3, 3, 4, 4]

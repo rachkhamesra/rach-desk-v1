@@ -29,6 +29,14 @@ def test_build_uses_same_weekday_and_monthly_average():
     assert "AVERAGE DAILY PREMIUM TURNOVER" in html
 
 
+def test_exchange_tracker_hub_contains_bse_and_mcx_subtabs():
+    empty = {"available": False, "commentary": ["not available"]}
+    html = webpage.tab_exchange({"exchange_tracker": empty, "mcx_tracker": empty})
+    assert 'data-exchange="bse"' in html
+    assert 'data-exchange="mcx"' in html
+    assert html.count('class="exchangegroup"') == 2
+
+
 def test_build_handles_empty_history():
     out = exchange_tracker.build(pd.DataFrame(), pd.Series(dtype=float))
     assert not out["available"]
