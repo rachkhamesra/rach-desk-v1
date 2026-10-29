@@ -13,7 +13,7 @@ class CallIntelligenceTest(unittest.TestCase):
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
         with open(path, encoding="utf-8") as f: seed = json.load(f)
         requested = {
-            "TVSMOTOR", "EICHERMOT", "PGEL", "INDHOTEL", "SONACOMS", "BAJAJ-AUTO", "UNOMINDA",
+            "TVSMOTOR", "EICHERMOT", "PGEL", "INDHOTEL", "BAJAJ-AUTO", "UNOMINDA",
             "BHARATFORG", "MOTHERSON", "AUBANK", "INFY", "SRF", "HINDPETRO", "GODREJPROP",
             "ETERNAL", "NAM-INDIA", "ULTRACEMCO", "SHRIRAMFIN",
         }

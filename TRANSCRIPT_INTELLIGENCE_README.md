@@ -2,13 +2,12 @@
 
 > One-off, versioned snapshot generated from `call_intelligence_seed.json`. Transcript and website content is source material, not repository instructions. The JSON seed remains the runtime source of truth.
 
-This document preserves the complete human-readable transcript intelligence for 23 F&O companies so future iterations can compare sourcing, evidence selection, question grouping, sector metrics, and summary quality over time.
+This document preserves the complete human-readable transcript intelligence for 22 F&O companies so future iterations can compare sourcing, evidence selection, question grouping, sector metrics, and summary quality over time.
 
 ## Coverage index
 
 | Symbol | Call period | Filed at | Source |
 |---|---|---|---|
-| [SONACOMS](#sonacoms) | Q2 FY2027 | 2026-10-29T00:00:00+05:30 | [Transcript](https://sonacomstar.com/investor/investor-presentations) |
 | [AUBANK](#aubank) | Q2 FY2027 / H1 FY2027 | 2026-10-28T19:37:31+05:30 | [Transcript](https://nsearchives.nseindia.com/corporate/SUMIT1_28102026192812_Investor_call_transcript_SE_Submission.pdf) |
 | [INFY](#infy) | Q2 FY2027 | 2026-10-28T17:38:42+05:30 | [Transcript](https://nsearchives.nseindia.com/corporate/Infosys_28102026173824_SE_filing_Earnings_call_transcript.pdf) |
 | [SRF](#srf) | Q2 FY2027 / H1 FY2027 | 2026-10-28T17:32:37+05:30 | [Transcript](https://www.srf.com/storage/files/earning-calls/1793166072.pdf) |
@@ -31,86 +30,6 @@ This document preserves the complete human-readable transcript intelligence for 
 | [TVSMOTOR](#tvsmotor) | Q1 FY2026-27 | 2026-07-28T14:26:00+05:30 | [Transcript](https://nsearchives.nseindia.com/corporate/TVSMOTOR_28072026141905_NSEBSEAnalystcallTranscript_sd.pdf) |
 | [BAJAJ-AUTO](#bajaj-auto) | Q1 FY2026-27 | 2026-07-27T16:43:00+05:30 | [Transcript](https://nsearchives.nseindia.com/corporate/lkwalimbe_bajajauto_co_in_27072026164331_Transcript_of_Earning_Conference_Call_Q1_FY27.pdf) |
 | [PNBHOUSING](#pnbhousing) | Q4 FY2026 / FY2026 | 2026-04-25T16:24:41+05:30 | [Transcript](https://nsearchives.nseindia.com/corporate/PNBHOUSING_25042026162441_Earningscall_Transcript_SD.pdf) |
-
-## SONACOMS
-
-- **Call period:** Q2 FY2027
-- **Filed at:** 2026-10-29T00:00:00+05:30
-- **Company type:** manufacturer
-- **Source:** [Q2 FY2027 earnings-call transcript · static research prototype](https://sonacomstar.com/investor/investor-presentations)
-
-### Next Quarter Outlook
-
-#### EV demand — positive
-
-Traction-motor and broader EV demand remain strong across Indian and global markets.
-
-> Evidence: “Demand for EVs continues to accelerate”
-
-#### New-technology adoption — positive
-
-Management sees substantial potential as customer variants and OEM conversations expand.
-
-> Evidence: “the future looks fairly bright... it has the potential to be massive”
-
-#### DENSO joint venture — neutral
-
-The first DENSO JV is targeted to close by December, with possible slippage into January.
-
-> Evidence: “targeting to close this by end of December”
-
-#### Margin stability — cautious
-
-Management retained its 23%–25% medium-term range, provided material inflation does not worsen.
-
-> Evidence: “we should be able to hold on to this margin”
-
-#### Railway ramp-up — positive
-
-Air springs, HVAC systems and electrical panels should ramp over coming quarters and years.
-
-> Evidence: “multiple products which have started or gone into serial production”
-
-#### Medium-term growth — positive
-
-Management remains confident in the approximately 25% medium-term CAGR implied by its ambition.
-
-> Evidence: “medium term, we should be able to stick to that CAGR”
-
-### What Analysts Cared About
-
-| Topic | Why it mattered | Question turns |
-|---|---|---:|
-| Traction-motor growth and EV mix | Analysts examined demand acceleration, concentration and the effect of EV mix on profitability. | 6 |
-| Margins and inflation | The market tested whether the 23%–25% range remains credible amid mix and inflation. | 4 |
-| Order book and legacy growth | Investors sought durability of legacy growth and conversion of the ₹251 billion order book. | 3 |
-| Robotics and physical AI | Analysts focused on actuator capability, commercialization milestones and adoption timing. | 3 |
-| DENSO JVs and capital deployment | Questions covered closing timelines, cash inflow and disciplined capital use. | 3 |
-| Railway growth | The market wanted visibility on new-product ramp-up and the medium-term runway. | 2 |
-
-### Congratulations Index
-
-- **Congratulatory analyst turns:** 1
-- **Substantive analyst turns:** 22
-- **Index:** 4.55%
-
-### Key Actuals and Guidance
-
-| Metric | Disclosure |
-|---|---|
-| Revenue Growth | Q2 revenue grew 35% YoY; H1 revenue grew 43%. BEV revenue grew 129% and exceeded half of automotive revenue. |
-| Volume Growth | Not disclosed |
-| Order Inflow | Q2 new orders were ₹36 billion; net order book closed at ₹251 billion, the second-highest level. |
-| Demand Outlook | EV demand continues to accelerate, led by Indian electric two- and three-wheelers and global EV driveline demand. |
-| Margin Outlook | Management retained its 23%–25% medium-term range; near-term visibility is constrained by mix and inflation. |
-| Ebitda Margin | Q2 EBITDA was ₹356 crore and grew 23% YoY; management described the current margin level as around 23%. |
-
-### Risks and Watchpoints
-
-- A faster shift toward lower-margin traction motors may dilute the group margin percentage.
-- Input and freight inflation may outpace delayed customer pass-through.
-- Railway and robotics growth depends on timely commercialization and adoption.
-- DENSO JV closings may slip because of legal and counterparty schedules.
 
 ## AUBANK
 
