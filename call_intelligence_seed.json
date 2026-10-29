@@ -5,26 +5,27 @@
     "source_url": "https://nsearchives.nseindia.com/corporate/ZOMATO_27102026165119_Transcript_of_the_earnings_conference_call_September_2026signed.pdf",
     "description": "NSE-filed actual Q2 FY2027 conference-call transcript, opened and verified on 29 October 2026.",
     "analysis": {
+      "analysis_profile": "forward_plus_actuals_v1",
       "company_type": "other",
       "call_period": "Q2 FY2027",
       "next_quarter_outlook": [
         {
-          "topic": "Food-delivery margins",
-          "summary": "Management expects broadly flat food-delivery margins over the next one to two years while reinvesting in growth.",
-          "tone": "neutral",
-          "evidence": "\"Directionally, we want to maintain margins broadly and reinvest in growth as much as it makes sense to continue to drive the growth upwards. That's what the operating principle is. It's hard to project or comment on margin trajectory every quarter but broadly, over the next 1 or 2 years, we expect the margins to remain flattish.\"",
+          "topic": "FY28 dark-store expansion upgrade",
+          "summary": "Management confirms a more aggressive store-addition target with a higher FY28 run-rate than FY27; most new stores will be in smaller cities where paybacks are performing well.",
+          "tone": "positive",
+          "evidence": "\"On the quick commerce business, the new store addition targets that you've laid out are more aggressive than they have been in the past and imply a higher run rate of store additions in FY28 versus FY27.\" ... \"That's right, Garima. Directionally, we've also mentioned in the letter that the bulk of the expansion of these new stores will be in smaller cities. We do expect that to be the focus from here on, and we are seeing great outcomes in terms of payback on these stores in these markets that we've expanded into in the last few quarters.\"",
           "speaker": "Akshant Goyal",
           "role": "Chief Financial Officer",
-          "location": "Transcript page 2 (PDF page 3)"
+          "location": "Transcript pages 2–3 (PDF pages 3–4); analyst question followed by management confirmation"
         },
         {
-          "topic": "Blinkit expansion",
-          "summary": "Store expansion will focus on smaller cities, where management reports favourable paybacks.",
+          "topic": "Blinkit growth acceleration from December",
+          "summary": "Management explicitly says Blinkit NOV growth should accelerate year-on-year beginning in the December quarter.",
           "tone": "positive",
-          "evidence": "\"That's right, Garima. Directionally, we've also mentioned in the letter that the bulk of the expansion of these new stores will be in smaller cities. We do expect that to be the focus from here on, and we are seeing great outcomes in terms of payback on these stores in these markets that we've expanded into in the last few quarters.\"",
+          "evidence": "\"And just to push on that, you're talking about NOV growth pickup starting the December quarter on a YoY basis?\" ... \"That's right.\"",
           "speaker": "Akshant Goyal",
           "role": "Chief Financial Officer",
-          "location": "Transcript page 3 (PDF page 4)"
+          "location": "Transcript page 7 (PDF page 8); analyst clarification confirmed by management"
         },
         {
           "topic": "Blinkit margins",
@@ -34,36 +35,86 @@
           "speaker": "Akshant Goyal",
           "role": "Chief Financial Officer",
           "location": "Transcript page 7 (PDF page 8)"
+        },
+        {
+          "topic": "Blinkit store productivity",
+          "summary": "Management still sees steady-state NOV per store rising toward about ₹11 lakh per day from ₹9 lakh, though rapid store additions may make the quarterly path uneven.",
+          "tone": "positive",
+          "evidence": "\"Basis what we know today, yes, we think NOV per day should go up. We gave guidance last time that in steady state it could get to about INR 11 lakh per day per store. We are at INR 9 lakh today. We do think it will go up directionally over time, but there could be some quarters where the growth in the number of stores is lumpy, and therefore it may not be linearly upwards.\"",
+          "speaker": "Akshant Goyal",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 12 (PDF page 13)"
+        },
+        {
+          "topic": "Food-delivery reinvestment",
+          "summary": "Food-delivery margins are expected to stay broadly flat for one to two years as operating leverage is reinvested to expand the market and absolute adjusted EBITDA.",
+          "tone": "neutral",
+          "evidence": "\"Directionally, we want to maintain margins broadly and reinvest in growth as much as it makes sense to continue to drive the growth upwards. That's what the operating principle is. It's hard to project or comment on margin trajectory every quarter but broadly, over the next 1 or 2 years, we expect the margins to remain flattish.\"",
+          "speaker": "Akshant Goyal",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 2 (PDF page 3)"
+        },
+        {
+          "topic": "dark.ai launch and economics",
+          "summary": "dark.ai is a few months from launch; the base case is a high-gross-margin, largely self-funded business that could reach profitability relatively quickly, while the next 12 months should reveal whether it becomes meaningful.",
+          "tone": "positive",
+          "evidence": "\"As a base case, we think this could be a high gross margin business, which could fund itself largely and get to profitability pretty soon. That's the outlook right now. It's very early.\" ... \"We expect the next 12 months to tell us whether any of this will become meaningful.\"",
+          "speaker": "Akshant Goyal",
+          "role": "Chief Financial Officer",
+          "location": "Transcript pages 3 and 8 (PDF pages 4 and 9)"
         }
       ],
       "analyst_focus": [
         {
-          "topic": "Quick-commerce expansion and economics",
-          "why_it_mattered": "Analysts tested the faster store-expansion plan, smaller-city economics and paybacks.",
+          "topic": "How aggressive can Blinkit expansion become without hurting returns?",
+          "why_it_mattered": "Analysts repeatedly asked about the upgraded FY28 store plan, smaller-city paybacks, capex per store, competitive visibility, NOV per store and whether accelerated additions would pressure margins.",
           "question_count": null
         },
         {
-          "topic": "Food-delivery competition",
-          "why_it_mattered": "Analysts asked whether competitive investment would cap food-delivery margins.",
+          "topic": "Where will growth and margins settle across food delivery and Blinkit?",
+          "why_it_mattered": "Analysts pressed on December-quarter Blinkit NOV acceleration, the FY29 adjusted-EBITDA target, food-delivery growth, reinvestment and the durability of margin expansion.",
           "question_count": null
         }
       ],
-      "congratulations": {
-        "count": null,
-        "analyst_turns": null,
-        "index_pct": null
-      },
-      "manufacturer": null,
-      "bank_lender": null,
       "key_risks": [
-        "Growth reinvestment is expected to keep food-delivery margins broadly flat for one to two years.",
-        "Blinkit margin expectations are forward-looking; faster additions may produce uneven store-throughput trends."
+        "A faster dark-store rollout can make store productivity and cash deployment uneven across quarters.",
+        "Food-delivery operating leverage is being reinvested, keeping percentage margins broadly flat for one to two years.",
+        "dark.ai is explicitly a zero-to-one bet that management may discontinue if product-market fit does not emerge."
       ],
-      "material_guidance_changes": [],
+      "material_guidance_changes": [
+        {
+          "direction": "upgrade",
+          "topic": "FY28 Blinkit store additions",
+          "old_guidance": null,
+          "new_guidance": null,
+          "magnitude": "More aggressive target with a higher FY28 addition run-rate than FY27",
+          "materiality": 3,
+          "explicit_statement": "Management confirms the analyst's characterization that the new target is more aggressive and says most expansion will be in smaller cities.",
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "Garima Mishra and Akshant Goyal",
+            "role": "Analyst; Chief Financial Officer",
+            "location": "Transcript pages 2–3 (PDF pages 3–4)",
+            "quote": "\"Garima Mishra: On the quick commerce business, the new store addition targets that you've laid out are more aggressive than they have been in the past and imply a higher run rate of store additions in FY28 versus FY27. What is giving you this confidence? ... Akshant Goyal: That's right, Garima. Directionally, we've also mentioned in the letter that the bulk of the expansion of these new stores will be in smaller cities.\"",
+            "source_url": "https://nsearchives.nseindia.com/corporate/ZOMATO_27102026165119_Transcript_of_the_earnings_conference_call_September_2026signed.pdf",
+            "filing_date": "2026-10-27",
+            "call_period": "Q2 FY2027"
+          }
+        }
+      ],
       "key_actuals": [
         {
-          "metric": "Blinkit NOV per day per store",
-          "value": "₹9 lakh currently; management described about ₹11 lakh in steady state, with a potentially uneven path."
+          "metric": "Blinkit growth",
+          "value": "NOV grew 79% year-on-year; current NOV per dark store is about ₹9 lakh per day."
+        },
+        {
+          "metric": "Food-delivery growth",
+          "value": "Management described five consecutive quarters of growth acceleration; it did not provide H2 guidance on the call."
+        },
+        {
+          "metric": "Blinkit network",
+          "value": "Dark-store count was up roughly 50% year-on-year, while orders and NOV per store continued to grow."
         }
       ]
     }
