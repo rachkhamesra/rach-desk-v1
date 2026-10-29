@@ -9,18 +9,15 @@ import webpage
 
 
 class CallIntelligenceTest(unittest.TestCase):
-    def test_bundled_static_intelligence_contains_priority_and_requested_names(self):
+    def test_bundled_static_intelligence_contains_exact_requested_scope(self):
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
         with open(path, encoding="utf-8") as f: seed = json.load(f)
-        requested = {
-            "TVSMOTOR", "EICHERMOT", "PGEL", "INDHOTEL", "BAJAJ-AUTO", "UNOMINDA",
-            "BHARATFORG", "MOTHERSON", "AUBANK", "INFY", "SRF", "HINDPETRO", "GODREJPROP",
-            "ETERNAL", "NAM-INDIA", "ULTRACEMCO", "SHRIRAMFIN",
-        }
-        self.assertTrue(set(calls.PRIORITY_SYMBOLS).issubset(seed))
-        self.assertTrue(requested.issubset(seed))
+        requested = {"ETERNAL", "SHRIRAMFIN", "INFY", "PNB", "PGEL", "INDHOTEL"}
+        self.assertEqual(set(seed), requested)
+        self.assertEqual(set(calls.PUBLISHED_SYMBOLS), requested)
         self.assertTrue(all(x.get("analysis", {}).get("next_quarter_outlook") for x in seed.values()))
         self.assertTrue(all(x.get("analysis", {}).get("analyst_focus") for x in seed.values()))
+        self.assertEqual(seed["PGEL"]["analysis"]["call_period"], "Q1 FY2027")
 
     def test_call_library_reuses_stored_summary_fields(self):
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
@@ -32,6 +29,9 @@ class CallIntelligenceTest(unittest.TestCase):
         self.assertIn("IMPORTANT TAKEAWAYS", html)
         self.assertIn("CONGRATULATIONS", html)
         self.assertIn("transcript", html)
+        self.assertIn("6 STATIC TRANSCRIPT SUMMARIES AVAILABLE", html)
+        self.assertNotIn("AUBANK", html)
+        self.assertNotIn("GODREJPROP", html)
 
     @patch("calls.results._get")
     def test_discover_keeps_latest_transcript_for_fo_only(self, get):
