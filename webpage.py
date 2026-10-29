@@ -124,6 +124,55 @@ def tab_signal_confluence(M, allowed=None):
             + block(M["signal_delivery_ma"], "3 · DELIVERY + MA", "Persistent delivery near a moving average without a current top-30 relative-strength rank; monitoring tier."))
 
 
+def tab_52w_highs(M):
+    def points(values, lo=None, hi=None, width=420, height=132, left=8, right=8, top=8, bottom=8):
+        values = pd.Series(values).astype(float)
+        valid = values.dropna()
+        if valid.empty: return ""
+        if lo is None or hi is None:
+            lo, hi = valid.min(), valid.max(); pad = (hi - lo) * .07 or max(abs(hi) * .02, 1)
+            lo, hi = lo - pad, hi + pad
+        xs = np.linspace(left, width - right, len(values))
+        out, pen = [], False
+        for x, value in zip(xs, values):
+            if pd.isna(value): pen = False; continue
+            y = top + (1 - (value - lo) / (hi - lo)) * (height - top - bottom)
+            out.append(("L" if pen else "M") + f"{x:.1f},{y:.1f}"); pen = True
+        return " ".join(out)
+
+    def card(row):
+        s = row.sym; start = max(0, M["T"] - 251); close = M["C"][s].iloc[start:M["T"] + 1]
+        dq = M["DQ"][s].iloc[start:M["T"] + 1]; ratio = M["RAT"][s].iloc[start:M["T"] + 1]
+        mas = [(n, close.rolling(n, min_periods=n).mean()) for n in (50, 100, 200)]
+        plotted = pd.concat([close] + [series for _, series in mas]); lo, hi = plotted.min(), plotted.max()
+        pad = (hi - lo) * .07 or max(abs(hi) * .02, 1); lo, hi = lo - pad, hi + pad
+        price_paths = ''.join(f'<path class="h52ma ma{n}" d="{points(series, lo, hi)}"/>' for n, series in mas)
+        width, y0, bar_h = 420, 150, 52
+        max_dq = dq.max(skipna=True) or 1; bw = max(.7, width / max(1, len(dq)) * .72)
+        bars = []
+        for i, (value, hot) in enumerate(zip(dq, ratio >= 1.25)):
+            if pd.isna(value): continue
+            h = value / max_dq * bar_h; x = i * width / max(1, len(dq) - 1) - bw / 2
+            bars.append(f'<rect class="h52bar{(" hot" if bool(hot) else "")}" x="{x:.1f}" y="{y0 + bar_h - h:.1f}" width="{bw:.1f}" height="{max(.7,h):.1f}"/>')
+        result = stk(s, M)
+        return (f'<article class="h52card"><div class="h52head"><h3>{result}</h3><b class="{("g" if row.px1d >= 0 else "r")}">{pc(row.px1d)} on the day</b></div>'
+                f'<svg class="h52svg" viewBox="0 0 420 210" role="img" aria-label="One-year price and delivered-share chart for {esc(s)}">'
+                f'<path class="h52price" d="{points(close, lo, hi)}"/>{price_paths}<line x1="0" x2="420" y1="202" y2="202"/> {"".join(bars)}</svg>'
+                f'<div class="h52meta"><span>HIGH <b>{row.day_high:,.2f}</b></span><span>CLOSE <b>{row.close:,.2f}</b></span><span>FROM HIGH <b>{pc(row.close_from_high)}</b></span><span>DELIVERY <b>{row.ratio:.2f}×</b></span></div>'
+                '<div class="h52legend"><i></i> PRICE <i class="m50"></i> 50D <i class="m100"></i> 100D <i class="m200"></i> 200D · bars = delivered shares</div></article>')
+
+    def group(is_fo):
+        frame = M["high52"]
+        frame = frame[frame.fo == is_fo].sort_values(["ratio", "px1d"], ascending=False)
+        if frame.empty: return '<div class="card rempty">No stocks in this group reached a fresh 52-week intraday high today.</div>'
+        return '<div class="h52grid">' + ''.join(card(r) for r in frame.itertuples()) + '</div>'
+
+    return ('<h2>Fresh 52-Week Highs</h2><div class="subl">TODAY’S INTRADAY HIGH REACHED OR EXCEEDED THE PRIOR 252-SESSION HIGH</div>'
+            '<p class="desc">Three compact one-year charts per row. Delivery bars are highlighted when they are at least 1.25× the prior 20-session average. Click a ticker to open its full Stocks chart.</p>'
+            '<div class="h52tabs"><button class="h52tab on" data-h52="fo">F&amp;O</button><button class="h52tab" data-h52="nonfo">NON F&amp;O</button></div>'
+            f'<div class="h52group" data-h52-group="fo">{group(True)}</div><div class="h52group" data-h52-group="nonfo" hidden>{group(False)}</div>')
+
+
 def tab_cash_accumulation(M):
     def block(df, empty_text):
         rows = []
@@ -408,7 +457,7 @@ def render(M, asof_text):
     choices = [(k, label) for k, label in choices if M["memberships"].get(k)]
     def views(fn):
         return "".join(f'<div class="uview" data-u="{k}"{("" if k == "top1000" else " hidden")}>{fn(M, allowed=M["memberships"][k])}</div>' for k, _ in choices)
-    panels = [("stocks", "STOCKS", tab_stocks(M)), ("signals", "SIGNAL CONFLUENCE", views(tab_signal_confluence)),
+    panels = [("stocks", "STOCKS", tab_stocks(M)), ("high52", "52W HIGHS", tab_52w_highs(M)), ("signals", "SIGNAL CONFLUENCE", views(tab_signal_confluence)),
               ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)),
               ("calls", "CALL LIBRARY", tab_call_library(M)),
               ("exchange", "EXCHANGE TRACKER", tab_exchange(M)),
@@ -454,6 +503,7 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .cashsub{margin:18px 0 7px;font:800 11px var(--sans);letter-spacing:.1em}.cashsub.track{color:#ffd17a;margin-top:26px}
 .cashwatch tr.cashnew td{background:rgba(232,169,58,.08)}.cashwatch tr.cashnew td:first-child{box-shadow:inset 4px 0 var(--am)}.newcash{display:inline-block;margin-left:5px;padding:3px 5px;background:var(--am);color:#090909;font:800 8px var(--sans);letter-spacing:.06em;vertical-align:1px}
 .signalsub{margin:22px 0 3px;font:800 12px var(--sans);letter-spacing:.08em}.signals td{padding-top:7px;padding-bottom:7px}.signals td:nth-child(7),.signals td:nth-child(8){font-size:11px}
+.h52tabs{display:flex;width:max-content;border:1px solid #444;margin:13px 0 12px}.h52tab{border:0;background:#111;color:var(--mut);padding:8px 17px;font:800 10px var(--sans);letter-spacing:.08em;cursor:pointer}.h52tab.on{background:#f4f4f0;color:#090909}.h52grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.h52card{min-width:0;background:var(--panel);border-top:3px solid var(--g);padding:10px}.h52head{display:flex;justify-content:space-between;gap:8px;align-items:center}.h52head h3{margin:0;font-size:16px}.h52head>b{font:700 10px var(--mono);white-space:nowrap}.h52svg{display:block;width:100%;height:auto;margin-top:5px;background:#111}.h52svg line{stroke:#333}.h52price,.h52ma{fill:none;stroke-linecap:round;stroke-linejoin:round}.h52price{stroke:#f4f4f0;stroke-width:2}.h52ma{stroke-width:1.2;opacity:.9}.h52ma.ma50{stroke:#f5a623}.h52ma.ma100{stroke:#b58cff}.h52ma.ma200{stroke:#ffd84d}.h52bar{fill:#546477;opacity:.56}.h52bar.hot{fill:#5aa9ff;opacity:.95}.h52meta{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;border-top:1px solid #2b2b2b;padding-top:7px}.h52meta span{font:700 8px var(--sans);letter-spacing:.06em;color:var(--mut)}.h52meta b{display:block;color:var(--ink);font:700 10px var(--mono);margin-top:2px}.h52legend{margin-top:7px;color:var(--mut);font:8px var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.h52legend i{display:inline-block;width:13px;border-top:2px solid #f4f4f0;margin:0 3px 2px 5px}.h52legend i.m50{border-color:#f5a623}.h52legend i.m100{border-color:#b58cff}.h52legend i.m200{border-color:#ffd84d}
 .exheadline{display:flex;gap:28px;margin:12px 0 14px}.exheadline div{display:flex;flex-direction:column}.exheadline span{font:700 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.exheadline b{font:700 17px var(--mono)}
 .exstatus{display:inline-block;margin:0 0 9px;padding:5px 8px;border:1px solid #3c3c38;color:#b6b6af;font:700 9px var(--mono);letter-spacing:.04em}
 .excard{padding:0;margin-bottom:12px;overflow:hidden}.excard .ch{display:flex;justify-content:flex-start;align-items:center;gap:18px;min-height:42px;padding:10px 12px 8px;background:#101010;border-bottom:1px solid var(--line);overflow:hidden}.excard .ch>*{white-space:nowrap}.excard .ct{flex:0 0 auto;font-size:13px;line-height:1;font-weight:800;letter-spacing:.035em}.excard .ch>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:10px}.exsvg{width:100%;height:auto;display:block;background:linear-gradient(180deg,#13171c 0%,#101010 100%)}.exsvg text{fill:var(--mut);font:10px var(--mono)}.exsvg line{stroke:var(--line)}
@@ -489,7 +539,7 @@ table.ca td.note{white-space:normal;min-width:340px;max-width:560px;color:#b9b9b
 #ro{min-height:22px;font:11px var(--mono);color:#cfcfc8;padding:5px 4px}
 #lg{display:flex;flex-wrap:wrap;gap:6px 18px;font:12px var(--mono);color:var(--mut);padding:2px 4px 10px}#lg i{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px}#lg u{display:inline-block;width:18px;border-top:2px solid;margin-right:5px;vertical-align:middle}
 footer{max-width:1280px;margin:0 auto;padding:0 22px 40px;color:var(--mut);font-size:13px}
-@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.chartgrid,.callpanels,.calllibrary{grid-template-columns:1fr}#insights{position:static;max-height:none}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}
+@media (max-width:1000px){.h52grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.chartgrid,.callpanels,.calllibrary{grid-template-columns:1fr}#insights{position:static;max-height:none}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}@media (max-width:620px){.h52grid{grid-template-columns:1fr}.h52meta{grid-template-columns:1fr 1fr}}
 """
 
 JS = r"""
@@ -500,6 +550,7 @@ let cur=null,rng=252,thr=1.25,universe='top1000',SY=D.universes[universe]||ALL,s
 try{const saved=JSON.parse(localStorage.getItem('desk-mas'));if(Array.isArray(saved))selectedMas=new Set(saved.map(Number))}catch(e){}
 function tab(t){const b=document.querySelector('.tab[data-t="'+t+'"]');if(b)b.click()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+b.dataset.t);if(b.dataset.t==='stocks'){draw()}});
+document.querySelectorAll('.h52tab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.h52tab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.h52group').forEach(x=>x.hidden=x.dataset.h52Group!==b.dataset.h52)});
 document.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{const v=b.closest('.uview')||document;v.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
 document.querySelectorAll('.seg[data-r]').forEach(b=>b.onclick=()=>{rng=+b.dataset.r;document.querySelectorAll('.seg[data-r]').forEach(x=>x.classList.toggle('on',x===b));draw()});
 document.querySelectorAll('.exrbtn').forEach(b=>b.onclick=()=>{const v=b.closest('.exlayout');v.querySelectorAll('.exrbtn').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.exrange').forEach(x=>x.hidden=x.dataset.xr!==b.dataset.xr)});
