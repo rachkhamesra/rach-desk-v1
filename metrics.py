@@ -175,4 +175,34 @@ def build(parsed, overrides=None, memberships=None):
             items.append(dict(sym=s, above=d_now >= 0, crossed=bool(crossed), new=bool(new), dist=d_now, k=k, sigma=sg))
         at[n] = sorted(items, key=lambda x: x["k"])
     M["at"] = at; M["sigma"] = sig.iloc[T]
+
+    # ---------------- delivery / relative-strength / moving-average confluence
+    # Relative strength means a top-30 rank on at least one configured horizon.
+    # The three tables are mutually exclusive strength tiers.
+    nearest_ma = {}
+    for n, items in at.items():
+        for item in items:
+            hit = dict(ma=n, dist=item["dist"], k=item["k"], crossed=item["crossed"], new=item["new"])
+            if item["sym"] not in nearest_ma or hit["k"] < nearest_ma[item["sym"]]["k"]:
+                nearest_ma[item["sym"]] = hit
+    rows = []
+    for _, r in M["persist"].iterrows():
+        s = r.sym
+        horizons = [name for name, _ in HORIZONS if pd.notna(M["relrank"][name].get(s)) and M["relrank"][name].get(s) <= LIST_N]
+        values = [(name, M["relT"][name].get(s)) for name in horizons]
+        strongest = max(values, key=lambda x: x[1]) if values else ("", np.nan)
+        ma_hit = nearest_ma.get(s)
+        rows.append(dict(sym=s, d125=r.d125, d150=r.d150, ratio=r.ratio, px5=r.px5, px5_z=r.px5_z,
+                         rs_count=len(horizons), rs_horizons=", ".join(horizons), rs_best=strongest[1],
+                         ma=np.nan if ma_hit is None else ma_hit["ma"], ma_dist=np.nan if ma_hit is None else ma_hit["dist"],
+                         ma_sigma=np.nan if ma_hit is None else ma_hit["k"], ma_cross=False if ma_hit is None else ma_hit["crossed"]))
+    confluence = pd.DataFrame(rows)
+    if len(confluence):
+        has_rs, has_ma = confluence.rs_count > 0, confluence.ma.notna()
+        M["signal_all_three"] = confluence[has_rs & has_ma].sort_values(["rs_count", "ratio"], ascending=False).reset_index(drop=True)
+        M["signal_delivery_rs"] = confluence[has_rs & ~has_ma].sort_values(["rs_count", "ratio"], ascending=False).reset_index(drop=True)
+        M["signal_delivery_ma"] = confluence[~has_rs & has_ma].sort_values(["ma_sigma", "ratio"], ascending=[True, False]).reset_index(drop=True)
+    else:
+        empty = pd.DataFrame(columns=["sym", "d125", "d150", "ratio", "px5", "px5_z", "rs_count", "rs_horizons", "rs_best", "ma", "ma_dist", "ma_sigma", "ma_cross"])
+        M["signal_all_three"] = M["signal_delivery_rs"] = M["signal_delivery_ma"] = empty
     return M

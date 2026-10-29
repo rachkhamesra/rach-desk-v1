@@ -1,4 +1,5 @@
 import pandas as pd
+from types import SimpleNamespace
 
 import exchange_tracker
 import webpage
@@ -24,10 +25,24 @@ def test_build_uses_same_weekday_and_monthly_average():
     assert html.count('class="exgridline"') == 25
     assert html.count('class="exbargrid"') == 10
     assert "VS YTD AVG" in html
-    assert html.index('class="excomment"') < html.index('class="exright"')
+    assert html.index('excomment') < html.index('exlayout')
     assert "AVERAGE DAILY PREMIUM TURNOVER" in html
 
 
 def test_build_handles_empty_history():
     out = exchange_tracker.build(pd.DataFrame(), pd.Series(dtype=float))
     assert not out["available"]
+
+
+def test_bhavcopy_fallback_reproduces_options_premium_turnover():
+    csv = ("FinInstrmTp,TtlTrfVal,StrkPric,TtlTradgVol\n"
+           "IDO,74500000,74000,1000\n"
+           "STO,5250000,5000,1000\n"
+           "IDF,99999999,0,1\n")
+
+    class Session:
+        def get(self, *args, **kwargs):
+            return SimpleNamespace(content=csv.encode(), raise_for_status=lambda: None)
+
+    out = exchange_tracker.fetch_day_bhavcopy("2026-10-29", Session())
+    assert out.iloc[0].premium_turnover_cr == 0.075
