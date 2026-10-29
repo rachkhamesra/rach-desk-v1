@@ -556,5 +556,80 @@
       ],
       "material_guidance_changes": []
     }
+  },
+  "CGPOWER": {
+    "symbol": "CGPOWER",
+    "filed_at": "2026-10-29T19:39:55+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/CGPOWER_29102026193918_Transcript_InvestorCall_BoardMeeting_Q2_2026_27.pdf",
+    "description": "NSE filing labelled as a transcript, but the one-page attachment contains only a covering letter and a company-site link.",
+    "transcript_status": "missing",
+    "status_detail": "NSE's attachment is only a one-page covering letter; no transcript pages were enclosed, so no forward-looking analysis was inferred."
+  },
+  "TATACONSUM": {
+    "symbol": "TATACONSUM",
+    "filed_at": "2026-10-29T18:38:26+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/Sukhvinder_29102026183741_TCPL_SE_Intimation_EarningsCallTranscript_26102026v1.pdf",
+    "description": "NSE-filed Q2 FY2027 earnings-call transcript; verified exchange attachment.",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "other",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Q3 India pricing and margins",
+          "summary": "Tea value growth is expected to move ahead of volume from Q3, while calibrated pricing in tea and salt should begin supporting India margins.",
+          "tone": "positive",
+          "evidence": "\"And as we've continued taking graduated price increases, we expect the equation to start turning value greater than volume starting this quarter.\" ... \"India for the quarter, there was a bit of a contraction of the margin, largely on account of the inflationary pressures that we are seeing on tea and salt. Having said that, of course, we have taken calibrated pricing, which should start from quarter 3.\"",
+          "speaker": "Sunil D'Souza and Ashish Goenka",
+          "role": "Managing Director and CEO; Group Chief Financial Officer",
+          "location": "PDF page 5; transcript page 4"
+        },
+        {
+          "topic": "H2 consolidated margin expansion",
+          "summary": "Management expects year-on-year margin expansion to continue through H2, supported by tea seasonality, salt price increases and the peak season for Capital Foods.",
+          "tone": "positive",
+          "evidence": "\"For Capital Foods, Q3, Q4, our peak festival and offtake season. So, from every angle, we remain quite confident of continuing to deliver margin expansion quarter -on-quarter versus -- when I say quarter -on-quarter, it is -- you would have to take seasonality into account, so it is versus the same quarter last year. So despite the fact that we delivered higher margins in H2 versus H1 last year, we remain confident of continuing to deliver that this year as well.\"",
+          "speaker": "Sunil D'Souza",
+          "role": "Managing Director and CEO",
+          "location": "PDF page 8; transcript page 7"
+        },
+        {
+          "topic": "Capital Foods and Organic India growth",
+          "summary": "Management expects a small Q3 catch-up from delayed shipments and maintains 25%–30% growth expectations for Capital Foods and Organic India.",
+          "tone": "positive",
+          "evidence": "\"There will be some uplift because as we catch up that gap, there will be some uplift coming into this quarter. But overall, I would continue to expect 25% to 30% growth that we had guided for Capital Foods and Organic India going forward.\"",
+          "speaker": "Sunil D'Souza",
+          "role": "Managing Director and CEO",
+          "location": "PDF page 9; transcript page 8"
+        },
+        {
+          "topic": "Tea volume recovery",
+          "summary": "Management expects tea volumes to return to low- to mid-single-digit growth as pricing corrections, seasonality and new launches take effect.",
+          "tone": "positive",
+          "evidence": "\"I would say we'll get back to, I would say, low single digits to mid -single-digit volume growth. I shouldn't -- because we are entering -- remember, we've taken the pricing corrections. We are entering season. And by the way, we've had a flurry of launches as well.\"",
+          "speaker": "Sunil D'Souza",
+          "role": "Managing Director and CEO",
+          "location": "PDF page 12; transcript page 11"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "H2 margin recovery",
+          "why_it_mattered": "Analysts repeatedly tested when tea, salt and Capital Foods pricing would offset inflation and restore consolidated margin expansion.",
+          "question_count": null
+        },
+        {
+          "topic": "Growth-business durability",
+          "why_it_mattered": "Questions focused on whether 25%–30% growth can persist across Capital Foods, Organic India, Sampann and ready-to-drink products.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "Tea and salt inflation may take time to pass fully through the P&L.",
+        "International growth remains exposed to weather and shipping disruption.",
+        "The Q3 catch-up from delayed shipments is described as minor rather than a major demand uplift."
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
