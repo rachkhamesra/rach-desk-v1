@@ -715,5 +715,139 @@
       ],
       "material_guidance_changes": []
     }
+  },
+  "SBICARD": {
+    "symbol": "SBICARD",
+    "filed_at": "2026-10-29T16:55:54+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/SBICPSL_29102026165052_SEfilingtranscriptoct2026.pdf",
+    "description": "NSE-filed Q2 FY2027 earnings-call transcript; verified exchange attachment.",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "bank_lender",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Q3 spends and receivables",
+          "summary": "Festive spending and recent card acquisition should lift spends and receivables from Q3; management expects full-year retail-spend growth in the mid- to high teens.",
+          "tone": "positive",
+          "evidence": "\"The guidance we had given was that in the second half, the receivables will grow. We are already witnessing it. And as regards to the spend, we will stick to that in the retail spend category. We continue to see good traction. Festivities have just started, and we are expecting the spend growth to be somewhere from the mid-teens to the high teens for the entire year.\"",
+          "speaker": "Salila Pande",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "PDF page 7; transcript page 6"
+        },
+        {
+          "topic": "NIM stability",
+          "summary": "Management expects NIM to remain range-bound and aims to offset rising funding costs through borrowing optimization and a larger EMI mix.",
+          "tone": "cautious",
+          "evidence": "\"With cost of funds expected to increase over the next few quarters, we expect NIM to be range bound. We will continue to optimize our borrowing mix to minimize the impact of increase in cost of funds and continue building a bigger EMI-based portfolio to keep the NIM stable.\"",
+          "speaker": "Salila Pande",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "PDF page 5; transcript page 4"
+        },
+        {
+          "topic": "FY27 credit costs",
+          "summary": "Gross credit cost is expected around 6% for FY27, with management comfortable in a 5.5%–6% range and seeing little scope for further reduction.",
+          "tone": "neutral",
+          "evidence": "\"So as we grow the assets, there will be certain seasonality’s also. So we are comfortable between 5.5% to 6%, and we don't expect the credit costs to moderate much beyond that.\"",
+          "speaker": "Salila Pande",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "PDF page 9; transcript page 8"
+        },
+        {
+          "topic": "FY27 operating efficiency",
+          "summary": "Management expects the cost-to-income ratio to remain between 57% and 59% for the year.",
+          "tone": "neutral",
+          "evidence": "\"We expect cost to income to remain around 57% to 59% for the year.\"",
+          "speaker": "Salila Pande",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "PDF page 5; transcript page 4"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "When will spend growth convert into receivables?",
+          "why_it_mattered": "Analysts asked whether Q3 festive spending can push retail-spend growth into the mid-teens and create a clear second-half inflection in receivables.",
+          "question_count": null
+        },
+        {
+          "topic": "Can NIM and credit costs hold as rates rise?",
+          "why_it_mattered": "Analysts tested the NIM sensitivity to another roughly 50 bps of rate increases, the required EMI-mix shift and whether credit costs have bottomed.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "Funding costs are expected to rise over the next few quarters and asset repricing occurs with a lag.",
+        "Credit costs are near management's preferred floor, limiting further earnings benefit from normalization.",
+        "Geopolitical stress could affect inflation, rates and borrower asset quality."
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "SHREECEM": {
+    "symbol": "SHREECEM",
+    "filed_at": "2026-10-29T16:16:35+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/SHREECEM_29102026161540_NSE_BSE_Transcript_291026.pdf",
+    "description": "NSE-filed Q2 FY2027 earnings-call transcript; verified exchange attachment.",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "manufacturer",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "H2 volume growth",
+          "summary": "If industry demand grows around 7% in the next two quarters, Shree expects to grow slightly faster; full-year India volume is targeted at 40–41 million tonnes.",
+          "tone": "positive",
+          "evidence": "\"So if demand growth is around 7% in the next 2 quarters, we should grow a little better than that. At this moment, any forecast beyond that is difficult to give, but we remain confident that we should be able to deliver slightly better numbers than the industry growth.\" ... \"Rashi, as we said, we should be between 40 million to 41 million tons.\"",
+          "speaker": "Neeraj Akhoury",
+          "role": "Managing Director",
+          "location": "PDF pages 6 and 7; transcript pages 5 and 6"
+        },
+        {
+          "topic": "Q3 costs and pricing",
+          "summary": "Management expects Q3 costs to be similar to Q2 while better October pricing and premiumization should support realization above Q2.",
+          "tone": "neutral",
+          "evidence": "\"Having said that, my sense is that quarter 3 cost should not be very different than what we have seen in quarter 2.\" ... \"But with the internal actions that we have taken, especially on the premium percentages, I feel we should be able to deliver a better price than what we saw in Q2.\"",
+          "speaker": "Neeraj Akhoury",
+          "role": "Managing Director",
+          "location": "PDF page 6; transcript page 5"
+        },
+        {
+          "topic": "Q3 fuel cost",
+          "summary": "Landed fuel cost is expected at roughly ₹2.15–₹2.20 per kilocalorie in Q3, above Q2's ₹2.09.",
+          "tone": "cautious",
+          "evidence": "\"And for the forthcoming quarter, we have given a guidance of INR2.15 to INR2.20 based on our order pipeline.\"",
+          "speaker": "Subhash Jajoo",
+          "role": "Chief Finance Officer",
+          "location": "PDF page 16; transcript page 15"
+        },
+        {
+          "topic": "Q3–Q4 operating performance",
+          "summary": "Management expects Q3 and Q4 performance to be similar to or better than Q2 as demand and cost initiatives take effect.",
+          "tone": "positive",
+          "evidence": "\"And what I see in quarter 3 and quarter 4 with the demand and with the kind of work that we have done on the cost, we should be able to come up with a reasonably better, if not similar numbers on performance as we did in quarter 2.\"",
+          "speaker": "Neeraj Akhoury",
+          "role": "Managing Director",
+          "location": "PDF page 17; transcript page 16"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Will H2 volume growth remain above the industry?",
+          "why_it_mattered": "Analysts asked whether first-half double-digit growth can persist despite a weak monsoon and whether the 40–41 million-tonne FY27 target remains achievable.",
+          "question_count": null
+        },
+        {
+          "topic": "Can pricing offset Q3 fuel inflation?",
+          "why_it_mattered": "Analysts focused on the Q3 fuel-cost rise, October price increases, premium-product mix and whether EBITDA per tonne can recover.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "A weak monsoon may restrain rural cement demand in the near term.",
+        "Q3 landed fuel cost is expected above Q2 and pricing remains dependent on market demand and supply.",
+        "Middle East conflict creates uncertainty for UAE demand and operating conditions."
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
