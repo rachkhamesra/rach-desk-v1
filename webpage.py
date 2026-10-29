@@ -278,9 +278,10 @@ def _line_points(values, width, height, left=44, top=18, right=18, bottom=30):
     return points, lo, hi
 
 
-def tab_turnover_tracker(X, title, subtitle):
+def tab_turnover_tracker(X, title, subtitle, heading=True):
+    heading_html = f'<h2>{esc(title)}</h2>' if heading else ''
     if not X.get("available"):
-        return (f'<h2>{esc(title)}</h2><div class="subl">{esc(subtitle)}</div>'
+        return (f'{heading_html}<div class="subl">{esc(subtitle)}</div>'
                 f'<div class="card rempty">{esc(X.get("commentary", ["Turnover data is not available yet."])[0])}</div>')
     price_label = X.get("price_label", "share price")
     source_label = X.get("source_label", "SOURCE")
@@ -338,30 +339,38 @@ def tab_turnover_tracker(X, title, subtitle):
             for month in months.drop_duplicates():
                 idx = np.flatnonzero((months == month).to_numpy()); mid = l + (idx[0] + idx[-1] + 1) * bw / 2
                 out.append(f'<text class="monthtag" x="{mid:.1f}" y="{h-23}" text-anchor="middle">{month.strftime("%b")}</text>')
-        annotation = "" if comparison is None or pd.isna(comparison) else f'<text class="excompare {"up" if comparison >= 0 else "down"}" x="{w-12}" y="{top+10}" text-anchor="end">LATEST {comparison:+.0f}% VS YTD AVG</text>'
+        annotation_text = X.get("comparison_annotation", "VS YTD AVG")
+        annotation = "" if comparison is None or pd.isna(comparison) else f'<text class="excompare {"up" if comparison >= 0 else "down"}" x="{w-12}" y="{top+10}" text-anchor="end">LATEST {comparison:+.0f}% {esc(annotation_text)}</text>'
         return f'<svg class="exsvg" viewBox="0 0 {w} {h}" role="img"><line x1="{l}" y1="{h-bot}" x2="{w-8}" y2="{h-bot}"/>' + "".join(out) + annotation + '</svg>'
 
-    wd = X["same_weekday"].copy(); wd["label"] = wd.date.dt.strftime("%d %b %y")
-    wd_prior_avg = wd.iloc[:-1]["premium_turnover_cr"].mean() if len(wd) > 1 else np.nan
-    wd_comparison = (wd.iloc[-1]["premium_turnover_cr"] / wd_prior_avg - 1) * 100 if pd.notna(wd_prior_avg) and wd_prior_avg else np.nan
+    comparison = X.get("comparison", X.get("same_weekday", pd.DataFrame())).copy()
+    comparison["date"] = pd.to_datetime(comparison["date"])
+    comparison["label"] = comparison.date.dt.strftime("%b %y" if not X.get("comparison_month_axis", True) else "%d %b %y")
+    comparison_prior_avg = comparison.iloc[:-1]["premium_turnover_cr"].mean() if len(comparison) > 1 else np.nan
+    comparison_change = ((comparison.iloc[-1]["premium_turnover_cr"] / comparison_prior_avg - 1) * 100
+                         if len(comparison) and pd.notna(comparison_prior_avg) and comparison_prior_avg else np.nan)
     monthly = X["monthly"].copy(); monthly["label"] = pd.to_datetime(monthly.month + "-01").dt.strftime("%b %y")
     comments = "".join(f'<li>{esc(x)}</li>' for x in X["commentary"])
     range_buttons = "".join(f'<button class="exrbtn{(" on" if key == "ytd" else "")}" data-xr="{key}">{label}</button>' for key, label, _ in ranges)
     hero_ranges = "".join(hero(start, key) for key, _, start in ranges)
     status = X.get("update_status", "")
     status_html = f'<div class="exstatus">{esc(status)}</div>' if status else ''
-    return (f'<h2>{esc(title)}</h2><div class="subl">{esc(subtitle)}</div>'
+    return (f'{heading_html}<div class="subl">{esc(subtitle)}</div>'
             f'<div class="exheadline"><div><span>LATEST</span><b>₹{X["latest"]:,.0f} cr</b></div><div><span>AS OF</span><b>{X["asof"]:%d %b %Y}</b></div><div><span>DAY</span><b>{esc(X["weekday"])}</b></div></div>'
             f'{status_html}<div class="card excomment"><h3>DAILY READ</h3><ul>{comments}</ul><a href="{esc(X["source"])}" target="_blank" rel="noopener">{esc(source_label)} ↗</a></div>'
             f'<div class="exlayout"><div class="card excard exmain"><div class="ch"><span class="ct">5D ROLLING PREMIUM TURNOVER</span><span><i class="exkey to"></i>5D premium <i class="exkey px"></i>{esc(price_label)}</span></div>{hero_ranges}</div>'
-            f'<div class="card excard"><div class="ch"><span class="ct">{esc(X["weekday"].upper())}S · YTD</span><span class="mut">{len(wd)} SESSIONS</span></div>{bars(wd,"label","premium_turnover_cr","exbar",True,True,wd_comparison)}</div>'
+            f'<div class="card excard"><div class="ch"><span class="ct">{esc(X.get("comparison_title", X["weekday"].upper() + "S · YTD"))}</span><span class="mut">{len(comparison)} {esc(X.get("comparison_count_label", "SESSIONS"))}</span></div>{bars(comparison,"label","premium_turnover_cr","exbar",True,X.get("comparison_month_axis", True),comparison_change)}</div>'
             f'<div class="card excard"><div class="ch"><span class="ct">AVERAGE DAILY PREMIUM TURNOVER</span><span class="mut">CURRENT MONTH IS PARTIAL</span></div>{bars(monthly,"label","mean","exbar month",True)}</div>'
             f'<div class="exranges exrangesbelow">{range_buttons}</div></div>'
             '<p class="desc">Premium turnover is the exchange-reported daily options premium value. The current month updates incrementally; if a new session is unavailable, the last verified observation remains visible with its exact date and refresh status.</p>')
 
 
 def tab_exchange(M):
-    return tab_turnover_tracker(M.get("exchange_tracker", {}), "Exchange Tracker", "BSE OPTIONS PREMIUM TURNOVER · ₹ CRORE")
+    bse = tab_turnover_tracker(M.get("exchange_tracker", {}), "BSE", "BSE OPTIONS PREMIUM TURNOVER · ₹ CRORE", heading=False)
+    mcx = tab_turnover_tracker(M.get("mcx_tracker", {}), "MCX", "MCX OPTFUT PREMIUM TURNOVER · ₹ CRORE", heading=False)
+    return ('<h2>Exchange Tracker</h2><div class="subl">OPTIONS PREMIUM TURNOVER</div>'
+            '<div class="exswitch"><button class="exswitchbtn on" data-exchange="bse">BSE</button><button class="exswitchbtn" data-exchange="mcx">MCX</button></div>'
+            f'<div class="exchangegroup" data-exchange-group="bse">{bse}</div><div class="exchangegroup" data-exchange-group="mcx" hidden>{mcx}</div>')
 
 
 def tab_mcx(M):
@@ -460,8 +469,7 @@ def render(M, asof_text):
     panels = [("stocks", "STOCKS", tab_stocks(M)), ("high52", "52W HIGHS", tab_52w_highs(M)), ("signals", "SIGNAL CONFLUENCE", views(tab_signal_confluence)),
               ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)),
               ("calls", "CALL LIBRARY", tab_call_library(M)),
-              ("exchange", "EXCHANGE TRACKER", tab_exchange(M)),
-              ("mcx", "MCX TRACKER", tab_mcx(M))]
+              ("exchange", "EXCHANGE TRACKER", tab_exchange(M))]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}" data-t="{k}">{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
     opts = "".join(f'<option value="{k}">{label}</option>' for k, label in choices)
@@ -506,6 +514,7 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .h52tabs{display:flex;width:max-content;border:1px solid #444;margin:13px 0 12px}.h52tab{border:0;background:#111;color:var(--mut);padding:8px 17px;font:800 10px var(--sans);letter-spacing:.08em;cursor:pointer}.h52tab.on{background:#f4f4f0;color:#090909}.h52grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.h52card{min-width:0;background:var(--panel);border-top:3px solid var(--g);padding:10px}.h52head{display:flex;justify-content:space-between;gap:8px;align-items:center}.h52head h3{margin:0;font-size:16px}.h52head>b{font:700 10px var(--mono);white-space:nowrap}.h52svg{display:block;width:100%;height:auto;margin-top:5px;background:#111}.h52svg line{stroke:#333}.h52price,.h52ma{fill:none;stroke-linecap:round;stroke-linejoin:round}.h52price{stroke:#f4f4f0;stroke-width:2}.h52ma{stroke-width:1.2;opacity:.9}.h52ma.ma50{stroke:#f5a623}.h52ma.ma100{stroke:#b58cff}.h52ma.ma200{stroke:#ffd84d}.h52bar{fill:#546477;opacity:.56}.h52bar.hot{fill:#5aa9ff;opacity:.95}.h52meta{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;border-top:1px solid #2b2b2b;padding-top:7px}.h52meta span{font:700 8px var(--sans);letter-spacing:.06em;color:var(--mut)}.h52meta b{display:block;color:var(--ink);font:700 10px var(--mono);margin-top:2px}.h52legend{margin-top:7px;color:var(--mut);font:8px var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.h52legend i{display:inline-block;width:13px;border-top:2px solid #f4f4f0;margin:0 3px 2px 5px}.h52legend i.m50{border-color:#f5a623}.h52legend i.m100{border-color:#b58cff}.h52legend i.m200{border-color:#ffd84d}
 .exheadline{display:flex;gap:28px;margin:12px 0 14px}.exheadline div{display:flex;flex-direction:column}.exheadline span{font:700 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.exheadline b{font:700 17px var(--mono)}
 .exstatus{display:inline-block;margin:0 0 9px;padding:5px 8px;border:1px solid #3c3c38;color:#b6b6af;font:700 9px var(--mono);letter-spacing:.04em}
+.exswitch{display:flex;width:max-content;border:1px solid #444;margin:13px 0 12px}.exswitchbtn{border:0;background:#111;color:var(--mut);padding:8px 20px;font:800 10px var(--sans);letter-spacing:.08em;cursor:pointer}.exswitchbtn.on{background:#f4f4f0;color:#090909}
 .excard{padding:0;margin-bottom:12px;overflow:hidden}.excard .ch{display:flex;justify-content:flex-start;align-items:center;gap:18px;min-height:42px;padding:10px 12px 8px;background:#101010;border-bottom:1px solid var(--line);overflow:hidden}.excard .ch>*{white-space:nowrap}.excard .ct{flex:0 0 auto;font-size:13px;line-height:1;font-weight:800;letter-spacing:.035em}.excard .ch>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:10px}.exsvg{width:100%;height:auto;display:block;background:linear-gradient(180deg,#13171c 0%,#101010 100%)}.exsvg text{fill:var(--mut);font:10px var(--mono)}.exsvg line{stroke:var(--line)}
 .exarea{fill:url(#turnoverFill)}.exto{fill:none;stroke:#68b4ff;stroke-width:2.7;filter:drop-shadow(0 0 3px rgba(90,169,255,.35))}.expx{fill:none;stroke:#f1ae39;stroke-width:2.7;filter:drop-shadow(0 0 3px rgba(232,169,58,.25))}.exgridline{stroke:#34383d!important;stroke-width:1}.exaxis{fill:#88bdf0!important}.exaxis.price{fill:#d8a74f!important}.exkey{display:inline-block;width:17px;border-top:2px solid;margin:0 5px 2px 12px}.exkey.to{border-color:#5aa9ff}.exkey.px{border-color:var(--am)}
 .exlayout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}.exlayout>*{min-width:0}.exlayout>.excard{height:100%;margin-bottom:0}.exranges{display:flex;gap:5px;padding:0 18px 10px;flex-wrap:wrap}.exrangesbelow{grid-column:1;padding:0;align-self:start}.exrbtn{border:1px solid var(--line);background:transparent;color:var(--mut);font:800 9px var(--sans);letter-spacing:.08em;padding:6px 10px;cursor:pointer}.exrbtn:hover{color:var(--ink);border-color:var(--mut)}.exrbtn.on{background:var(--am);border-color:var(--am);color:#090909}.exbar{fill:#4e85d8;transition:opacity .12s}.exbar:hover,.exbar:focus{opacity:.72;stroke:#fff;stroke-width:1;outline:none}.exbar.month{fill:#607fc2}.exbar.latest{fill:var(--am)}.exbargrid{stroke:#30343a!important;stroke-width:1}.excompare{fill:var(--ink)!important;font-weight:800;letter-spacing:.04em}.excompare.up{fill:var(--g)!important}.excompare.down{fill:var(--r)!important}.monthtag{fill:var(--ink)!important;font-weight:700}.exbarhover{display:none;fill:var(--ink)!important;font-weight:800;paint-order:stroke;stroke:#101010;stroke-width:4px;stroke-linejoin:round;pointer-events:none}.exbaritem:hover .exbarhover,.exbaritem:focus-within .exbarhover{display:block}.excomment{margin:0 0 12px;padding:15px 16px;background:#101010;border-left:4px solid var(--am)}.excomment h3{margin:0 0 8px;font:800 10px var(--sans);letter-spacing:.11em}.excomment ul{margin:0 0 10px;padding-left:20px}.excomment li{margin:6px 0}.excomment a{font:700 9px var(--sans);letter-spacing:.08em;color:var(--am)}
@@ -551,6 +560,7 @@ try{const saved=JSON.parse(localStorage.getItem('desk-mas'));if(Array.isArray(sa
 function tab(t){const b=document.querySelector('.tab[data-t="'+t+'"]');if(b)b.click()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+b.dataset.t);if(b.dataset.t==='stocks'){draw()}});
 document.querySelectorAll('.h52tab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.h52tab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.h52group').forEach(x=>x.hidden=x.dataset.h52Group!==b.dataset.h52)});
+document.querySelectorAll('.exswitchbtn').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.exswitchbtn').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.exchangegroup').forEach(x=>x.hidden=x.dataset.exchangeGroup!==b.dataset.exchange)});
 document.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{const v=b.closest('.uview')||document;v.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
 document.querySelectorAll('.seg[data-r]').forEach(b=>b.onclick=()=>{rng=+b.dataset.r;document.querySelectorAll('.seg[data-r]').forEach(x=>x.classList.toggle('on',x===b));draw()});
 document.querySelectorAll('.exrbtn').forEach(b=>b.onclick=()=>{const v=b.closest('.exlayout');v.querySelectorAll('.exrbtn').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.exrange').forEach(x=>x.hidden=x.dataset.xr!==b.dataset.xr)});

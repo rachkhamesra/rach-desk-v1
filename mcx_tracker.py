@@ -117,6 +117,12 @@ def _change(now, before):
     return (now / before - 1) * 100 if pd.notna(now) and pd.notna(before) and before else np.nan
 
 
+def month_week(day):
+    """User-defined monthly buckets: 1–8, 9–16, 17–24 and 25–month-end."""
+    day = int(day)
+    return 1 if day <= 8 else 2 if day <= 16 else 3 if day <= 24 else 4
+
+
 def build(history, prices, expiries=None, asof=None, update_status=""):
     if history is None or history.empty:
         return {"available": False, "commentary": ["MCX premium-turnover history is not available yet."], "update_status": update_status}
@@ -125,18 +131,24 @@ def build(history, prices, expiries=None, asof=None, update_status=""):
     h = h.dropna(subset=["premium_turnover_cr"])
     h["roll5"] = h.premium_turnover_cr.rolling(5, min_periods=3).mean()
     price = pd.Series(prices).copy(); price.index = pd.to_datetime(price.index).normalize()
-    h["price"] = h.date.map(price); h["weekday"] = h.date.dt.day_name()
-    last = h.iloc[-1]; weekday = last.weekday; year_start = pd.Timestamp(last.date).replace(month=1, day=1)
-    same = h[(h.weekday == weekday) & (h.date >= year_start)].copy()
-    prior_same = same.iloc[:-1].premium_turnover_cr; weekday_median = prior_same.median() if len(prior_same) else np.nan
+    h["price"] = h.date.map(price); h["weekday"] = h.date.dt.day_name(); h["month_week"] = h.date.dt.day.map(month_week)
+    last = h.iloc[-1]; weekday = last.weekday; bucket = month_week(last.date.day)
+    bucket_ranges = {1: "1–8", 2: "9–16", 3: "17–24", 4: "25–MONTH END"}
+    same_bucket = h[h.month_week == bucket].copy()
+    comparison = (same_bucket.assign(month=same_bucket.date.dt.to_period("M"))
+                   .groupby("month").premium_turnover_cr.agg(premium_turnover_cr="mean", count="count").reset_index())
+    comparison["date"] = comparison.month.dt.to_timestamp()
+    current_bucket = comparison.iloc[-1].premium_turnover_cr
+    prior_bucket = comparison.iloc[:-1].premium_turnover_cr
+    prior_bucket_avg = prior_bucket.mean() if len(prior_bucket) else np.nan
     monthly = h.assign(month=h.date.dt.to_period("M")).groupby("month").premium_turnover_cr.agg(mean="mean", count="count").reset_index()
     monthly["month"] = monthly.month.astype(str); now = monthly.iloc[-1]; prev = monthly.iloc[-2] if len(monthly) > 1 else None
     roll_now = last.roll5; roll_prev = h.roll5.iloc[-6] if len(h) >= 6 else np.nan
     comments = []
     if pd.notna(roll_now):
         comments.append(f"The 5-session average is ₹{roll_now:,.0f} cr, {_change(roll_now, roll_prev):+.0f}% versus five sessions ago." if pd.notna(roll_prev) else f"The 5-session average is ₹{roll_now:,.0f} cr.")
-    if pd.notna(weekday_median):
-        comments.append(f"The latest {weekday} premium turnover of ₹{last.premium_turnover_cr:,.0f} cr is {_change(last.premium_turnover_cr, weekday_median):+.0f}% versus the median of the prior {len(prior_same)} {weekday}s.")
+    if pd.notna(prior_bucket_avg):
+        comments.append(f"Week {bucket} ({bucket_ranges[bucket]}) is averaging ₹{current_bucket:,.0f} cr per session so far, {_change(current_bucket, prior_bucket_avg):+.0f}% versus the average Week {bucket} across the prior {len(prior_bucket)} months.")
     if prev is not None:
         comments.append(f"{pd.Timestamp(now['month'] + '-01'):%B} is running at ₹{now['mean']:,.0f} cr per session ({int(now['count'])} sessions), {_change(now['mean'], prev['mean']):+.0f}% versus {pd.Timestamp(prev['month'] + '-01'):%B}.")
     ref = pd.Timestamp(asof or last.date).normalize()
@@ -147,6 +159,11 @@ def build(history, prices, expiries=None, asof=None, update_status=""):
             when = "today" if days == 0 else f"in {days}D"
             comments.append(f"{', '.join(group.name.tolist())} options expiry {when} ({pd.Timestamp(date):%d %b}).")
     return {"available": True, "asof": last.date, "latest": float(last.premium_turnover_cr), "weekday": weekday,
-            "series": h[["date", "premium_turnover_cr", "roll5", "price"]], "same_weekday": same[["date", "premium_turnover_cr"]],
+            "series": h[["date", "premium_turnover_cr", "roll5", "price"]],
+            "comparison": comparison[["date", "premium_turnover_cr", "count"]],
+            "comparison_title": f"WEEK {bucket} · {bucket_ranges[bucket]} · BY MONTH",
+            "comparison_count_label": "MONTHS",
+            "comparison_annotation": "VS PRIOR BUCKET AVG",
+            "comparison_month_axis": False,
             "monthly": monthly.tail(24), "commentary": comments, "source": HISTORY_PAGE, "source_label": "MCX HISTORICAL DATA",
             "price_label": "MCX price", "update_status": update_status}
