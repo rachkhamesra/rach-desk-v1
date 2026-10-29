@@ -481,5 +481,80 @@
         }
       ]
     }
+  },
+  "DRREDDY": {
+    "symbol": "DRREDDY",
+    "filed_at": "2026-10-29T22:55:37+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/DRREDDY_29102026225525_SE_Intimation_Transcript_of_earning_call_recordings_signed.pdf",
+    "description": "NSE filing labelled as a transcript, but the one-page attachment contains only a covering letter and an unresolved company-site link.",
+    "transcript_status": "missing",
+    "status_detail": "NSE's attachment is only a one-page covering letter; no transcript pages were enclosed, so no forward-looking analysis was inferred."
+  },
+  "APLAPOLLO": {
+    "symbol": "APLAPOLLO",
+    "filed_at": "2026-10-29T20:20:54+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/APLAPOLLO_29102026202018_Covering_Letter.pdf",
+    "description": "NSE-filed Q2 FY2027 earnings-call transcript; verified exchange attachment.",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "manufacturer",
+      "call_period": "Q2 FY2027",
+      "next_quarter_outlook": [
+        {
+          "topic": "Q3 branded-product volume",
+          "summary": "Management says Q3 has started well, expects more than double-digit growth this quarter and in H2, and targets 175,000 tonnes of roofing-product volume in Q3.",
+          "tone": "positive",
+          "evidence": "\"As you saw in Q2, performance in Q3 has also been good so far. We are not seeing any decline anywhere. We are also looking at more than double -digit growth in this quarter and in the second half. As for roofing products, some of our lines got off to a good start in July. So, I think we are targeting roofing product volumes of 175,000 this quarter.\"",
+          "speaker": "Sanjay Gupta",
+          "role": "Chairman and Managing Director",
+          "location": "PDF page 9; transcript page 8"
+        },
+        {
+          "topic": "Q3 EBITDA per tonne",
+          "summary": "Management expects Q3 EBITDA per tonne to exceed ₹6,000 and describes Q3 as better than Q2.",
+          "tone": "positive",
+          "evidence": "\"Q3 is much better than this.\" ... \"Q3 will come above 6,000.\"",
+          "speaker": "Sanjay Gupta",
+          "role": "Chairman and Managing Director",
+          "location": "PDF page 10; transcript page 9"
+        },
+        {
+          "topic": "Steel availability and December volume",
+          "summary": "Management expects steel-plant shutdowns to keep November difficult, followed by normalization from December and a 400,000-tonne monthly volume run-rate.",
+          "tone": "cautious",
+          "evidence": "\"If you look at the market, there is a shortage of steel. I do not even have much steel for the loan business. I do not have much steel to adjust with because all the steel plants have had many shutdowns. November is also bad. From December, all the plants will be back on track, and we will achieve strong volumes of 4 lakh tons per month.\"",
+          "speaker": "Sanjay Gupta",
+          "role": "Chairman and Managing Director",
+          "location": "PDF page 14; transcript page 13"
+        },
+        {
+          "topic": "FY27 EBITDA growth",
+          "summary": "The company retains 20% absolute EBITDA growth guidance for FY27; a recovery in UAE operations could create upside in H2.",
+          "tone": "positive",
+          "evidence": "\"we believe this is sustainable now, as we enter in the second half because the contribution is coming from brand APL Apollo products and roofing category again which are high value-added products. And if the UAE operations recover in the second half on stable geopolitical situation, we may do better than our expected 20% EBITDA growth which we are guiding for FY 2027.\"",
+          "speaker": "Anubhav Gupta",
+          "role": "Chief Strategy Officer",
+          "location": "PDF page 4; transcript page 3"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Q3 volume and margin durability",
+          "why_it_mattered": "Analysts tested whether H2 volume growth can recover and whether EBITDA per tonne above ₹6,000 can repeat in Q3.",
+          "question_count": null
+        },
+        {
+          "topic": "UAE recovery and capacity utilization",
+          "why_it_mattered": "Questions focused on when disrupted UAE operations could return and how quickly new capacity could translate into volume and EBITDA.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "November steel availability remains constrained by mill shutdowns.",
+        "UAE recovery and export-container normalization depend on geopolitical and logistics conditions outside management's control.",
+        "A rebound in lower-margin SG Premium volumes could reduce EBITDA per tonne even while lifting absolute EBITDA."
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
