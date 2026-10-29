@@ -48,7 +48,7 @@ def build(parsed, overrides=None, memberships=None):
     requested = list(dict.fromkeys(memberships.get("top1000", []) + sum((memberships.get(k, []) for k in ("nifty500", "smallcap250", "nifty250", "nifty100", "fo")), [])))
     syms = panel.universe(parsed, requested); N = len(dates); T = N - 1
     W = lambda part, col: panel.wide(parsed, dates, syms, part, col)
-    close_raw, isin, lot = W("cm", "close"), W("cm", "isin"), W("fo", "lot")
+    close_raw, high_raw, isin, lot = W("cm", "close"), W("cm", "high"), W("cm", "isin"), W("fo", "lot")
     nse_dq, nse_tq = W("deliv", "dq"), W("deliv", "tq")
     bse_dq = panel.wide(parsed, dates, syms, "bse", "dq").fillna(0); bse_vol = panel.wide(parsed, dates, syms, "bse", "vol").fillna(0)
     dq_raw, tq_raw = nse_dq + bse_dq, nse_tq + bse_vol                      # NSE + BSE, in shares, as on the reference page
@@ -58,10 +58,10 @@ def build(parsed, overrides=None, memberships=None):
     turn = W("deliv", "turn_cr")
     ev = corp.find_events(close_raw.ffill(limit=5), isin, lot, turn, overrides)
     F = corp.factors(pd.DatetimeIndex(dates), syms, ev)
-    C = (close_raw * F).ffill(limit=5); DQ = dq_raw / F; TQ = tq_raw / F
+    C = (close_raw * F).ffill(limit=5); H = high_raw * F; DQ = dq_raw / F; TQ = tq_raw / F
     allowed = set(syms)
     memberships = {k: [s for s in v if s in allowed] for k, v in memberships.items()}
-    M = dict(bse_share=bse_share, dates=dates, syms=syms, memberships=memberships, N=N, T=T, events=ev, C=C, DQ=DQ, TQ=TQ, oi=oi, doi=doi, nifty=nifty, close_raw=close_raw, dq_raw=dq_raw, tq_raw=tq_raw)
+    M = dict(bse_share=bse_share, dates=dates, syms=syms, memberships=memberships, N=N, T=T, events=ev, C=C, H=H, DQ=DQ, TQ=TQ, oi=oi, doi=doi, nifty=nifty, close_raw=close_raw, dq_raw=dq_raw, tq_raw=tq_raw)
     M["unresolved"] = set()
 
     ret1 = C.pct_change(fill_method=None); sig_prev = ret1.rolling(60, min_periods=30).std().shift(1)
@@ -70,6 +70,19 @@ def build(parsed, overrides=None, memberships=None):
     M["dcode"] = pd.DataFrame(np.where(ret1.isna(), np.nan, np.where(small, 0.0, np.sign(ret1))), index=ret1.index, columns=ret1.columns)
     A20 = DQ.shift(1).rolling(20, min_periods=15).mean(); RAT = DQ / A20; M["RAT"] = RAT
     ret1 = C.pct_change(fill_method=None)
+
+    # ---------------- fresh 52-week highs (intraday high versus prior 252 sessions)
+    # Use adjusted exchange highs so splits/bonuses do not create false breakouts.
+    prior_52w = H.shift(1).rolling(252, min_periods=252).max()
+    fo_set = set(memberships.get("fo", [])); highs = []
+    for s in memberships.get("top1000", syms):
+        today, prior = H[s].iloc[T], prior_52w[s].iloc[T]
+        if pd.isna(today) or pd.isna(prior) or today < prior * (1 - 1e-10): continue
+        close = C[s].iloc[T]
+        highs.append(dict(sym=s, fo=s in fo_set, day_high=today, prior_high=prior, close=close,
+                          close_from_high=(close / today - 1) * 100 if pd.notna(close) and today else np.nan,
+                          px1d=ret1[s].iloc[T] * 100, ratio=RAT[s].iloc[T]))
+    M["high52"] = pd.DataFrame(highs, columns=["sym", "fo", "day_high", "prior_high", "close", "close_from_high", "px1d", "ratio"])
 
     # ---------------- 1-day screen
     rows = []
