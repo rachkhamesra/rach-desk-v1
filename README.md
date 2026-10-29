@@ -13,9 +13,9 @@ The bundled F&O conference-call summaries work without an API key. A future auto
 
 The page is at `https://<you>.github.io/<repo>/`. Locally: `pip install -r requirements.txt`, then `python run.py` (writes `site/index.html`). `--asof 2026-10-23` rebuilds for an earlier date; `--days 1100` pulls about three years.
 
-## What happens each night
-Monday to Friday at 20:00 IST the workflow starts, restores the small cached history (about 77 MB), and asks NSE and BSE for every trading day it does not yet have, so a normal night downloads one day of files (NSE delivery, NSE prices and ISIN, NSE F&O, NSE index, BSE delivery plus BSE prices for the ISIN map). It then rebuilds the page and deploys it.
-- If the files are not out yet it waits, for up to two hours. If BSE's delivery file is late it keeps waiting rather than publish a day with NSE-only delivery (which would be wrong by 8% to 89% depending on the stock). If anything is still missing after two hours the run fails and **the previous page stays up**.
+## What happens automatically
+Monday to Friday at 06:00 IST the workflow refreshes MCX's prior-session report and redeploys the site. At 20:00 IST it restores the small cached history (about 77 MB) and asks NSE and BSE for every trading day it does not yet have, so a normal evening downloads one day of files (NSE delivery, NSE prices and ISIN, NSE F&O, NSE index, BSE delivery plus BSE prices for the ISIN map). A second automatic check runs at 21:00 IST for late publications. Every run rebuilds and deploys the page; the user's computer does not need to be on.
+- If the newest NSE/BSE files are not out yet, the run immediately keeps the last complete market session rather than publishing partial data. The later scheduled run checks again automatically.
 - On an exchange holiday NSE serves the previous day's file; the job notices and rebuilds on the last real session.
 - GitHub can start scheduled jobs a few minutes late. In a public repo GitHub switches scheduled workflows off after 60 days without any repository activity; re-enable them in the Actions tab, or keep the repo private.
 - NSE and BSE sometimes block GitHub's servers. If the run fails on downloads, run `python run.py` from cron on your own machine and push `site/` to a `gh-pages` branch; nothing else changes.
