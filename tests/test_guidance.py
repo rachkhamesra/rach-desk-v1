@@ -67,7 +67,7 @@ class GuidanceTests(unittest.TestCase):
 
     @patch("calls.discover", side_effect=RuntimeError("offline"))
     @patch("calls._load_json")
-    def test_cache_is_filtered_to_six_symbols(self, load, discover):
+    def test_cache_is_filtered_to_published_symbols(self, load, discover):
         allowed = {symbol: {"analysis": {"material_guidance_changes": []}} for symbol in calls.PUBLISHED_SYMBOLS}
         load.side_effect = [dict(allowed, AUBANK={"analysis": {}}), allowed]
         got = calls.load("/unused", "2026-10-29", [], log=lambda _: None)
