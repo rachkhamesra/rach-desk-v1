@@ -12,13 +12,14 @@ class CallIntelligenceTest(unittest.TestCase):
     def test_bundled_static_intelligence_contains_exact_requested_scope(self):
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
         with open(path, encoding="utf-8") as f: seed = json.load(f)
-        requested = {"ETERNAL", "SHRIRAMFIN", "INFY", "PNB", "PGEL", "INDHOTEL", "DRREDDY", "APLAPOLLO"}
+        requested = {"ETERNAL", "SHRIRAMFIN", "INFY", "PNB", "PGEL", "INDHOTEL", "DRREDDY", "APLAPOLLO", "CGPOWER", "TATACONSUM"}
         self.assertEqual(set(seed), requested)
         self.assertEqual(set(calls.PUBLISHED_SYMBOLS), requested)
         analysed = [x for x in seed.values() if x.get("analysis")]
         self.assertTrue(all(x["analysis"].get("next_quarter_outlook") for x in analysed))
         self.assertTrue(all(x["analysis"].get("analyst_focus") for x in analysed))
         self.assertEqual(seed["DRREDDY"]["transcript_status"], "missing")
+        self.assertEqual(seed["CGPOWER"]["transcript_status"], "missing")
         self.assertEqual(seed["APLAPOLLO"]["analysis"]["analysis_profile"], "forward_only_v1")
         self.assertEqual(len(seed["APLAPOLLO"]["analysis"]["analyst_focus"]), 2)
         self.assertNotIn("congratulations", seed["APLAPOLLO"]["analysis"])
@@ -35,8 +36,8 @@ class CallIntelligenceTest(unittest.TestCase):
         self.assertIn("IMPORTANT TAKEAWAYS", html)
         self.assertIn("CONGRATULATIONS", html)
         self.assertIn("transcript", html)
-        self.assertIn("7 STATIC TRANSCRIPT SUMMARIES", html)
-        self.assertIn("1 MISSING TRANSCRIPT", html)
+        self.assertIn("8 STATIC TRANSCRIPT SUMMARIES", html)
+        self.assertIn("2 MISSING TRANSCRIPT", html)
         self.assertIn("FORWARD RISKS &amp; WATCHPOINTS", html)
         self.assertNotIn("AUBANK", html)
         self.assertNotIn("GODREJPROP", html)
