@@ -1949,5 +1949,464 @@
         }
       ]
     }
+  },
+  "OBEROIRLTY": {
+    "symbol": "OBEROIRLTY",
+    "company_name": "Oberoi Realty Limited",
+    "filed_at": "2026-10-23T17:41:14+05:30",
+    "source_url": "https://d3dy70zhjs5mi1.cloudfront.net/s3fs-public/2026-10/Earnings_Conference_Call_0.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/OBEROIRLTY_23102026174029_Concall_Transcript_Q2_26_27.pdf",
+    "transcript_source_type": "company_website_transcript_linked_from_nse_covering_letter",
+    "description": "Company-website transcript linked from the NSE covering letter (user-approved source exception).",
+    "transcript_status": "available",
+    "call_date": "2026-10-19",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "real estate developer",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "all_material_themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "H2 launch pipeline likely to slip by a quarter here and there",
+          "summary": "Planned launches (Aurelius at Peddar Road, Thane Tower A, Jardin, Forestville tower, Alibaug, Mulund and Sky City commercial, Ralli Wolf in Mulund) are expected to shift out modestly.",
+          "tone": "cautious",
+          "evidence": "\"we had a bunch of projects that we were originally wanting to launch. So probably they'll just slide over a quarter here and there.\"",
+          "speaker": "Vikas Oberoi",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 3 (PDF page 3)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Ritz-Carlton hotel commissioning around Q1 next year",
+          "summary": "Roughly 6-9 months to go for the hotel, adding to the annuity portfolio in early FY28.",
+          "tone": "neutral",
+          "evidence": "\"Ritz-Carlton, the hotel, when should we expect the commissioning? ... So maybe first quarter next year? Another 6 to 9 months to go.\"",
+          "speaker": "Murtaza (Kotak Securities); Vikas Oberoi",
+          "role": "Analyst; Chairman and Managing Director",
+          "location": "Transcript page 4 (PDF page 4)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Three Sixty North collections spill into the December quarter",
+          "summary": "Only about 10% of the 20% due within 90 days was collected in Q2 because the launch was in early July; the balance should be collected next quarter, supporting operating cash flow.",
+          "tone": "positive",
+          "evidence": "\"So technically, your 90 days will end in the first week of October. So that's why it will spill over into the next quarter.\"",
+          "speaker": "Saumil Daru",
+          "role": "Director, Finance",
+          "location": "Transcript page 5 (PDF page 5)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Thane prices to rise on input cost increases",
+          "summary": "Inventory is ample and sales velocity is improving as buildings top up, but management plans price increases in Thane.",
+          "tone": "positive",
+          "evidence": "\"Thane, very clearly, we have enough inventory and you will see a price increase in Thane also in a bit because there is an input cost increase.\"",
+          "speaker": "Vikas Oberoi",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 8 (PDF page 8)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Gurugram Phase 2 awaits approvals; launch not to be rushed",
+          "summary": "Management says construction is unrestricted despite litigation, Phase 1 is sold out (over INR 8,000 cr of sales), and Phase 2 will start once approvals arrive and the experience centre is ready, which also supports higher pricing.",
+          "tone": "neutral",
+          "evidence": "\"second phase we are waiting for some additional approvals on the second phase. And as soon as that comes, we hopefully will be able to start with that.\"",
+          "speaker": "Vikas Oberoi",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 3 (PDF page 3)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Adarsh Nagar launch delayed by pending clearances",
+          "summary": "Design is ready but approvals are taking longer than expected, so a launch this year is not assured.",
+          "tone": "cautious",
+          "evidence": "\"Like really -- like knocking the door, but it is taking a little longer than what we thought.\"",
+          "speaker": "Vikas Oberoi",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 4 (PDF page 4)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Construction outflow about INR 1,000 cr for FY27",
+          "summary": "Full-year construction cash outflow on ongoing projects is guided at roughly INR 1,000 cr, a small number against Q2's strong NCR collections.",
+          "tone": "neutral",
+          "evidence": "\"For the whole year, it will be in the region of about Rs. 1,000-odd crores.\"",
+          "speaker": "Saumil Daru",
+          "role": "Director, Finance",
+          "location": "Transcript page 7 (PDF page 7)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Mulund Ralli Wolf launch price still being debated; Q4 launch not confirmed",
+          "summary": "Analyst floated INR 38,000-40,000 per sq ft and a Q4 launch; management did not commit to either.",
+          "tone": "neutral",
+          "evidence": "\"We are internally debating, as we speak, what should the price there be.\"",
+          "speaker": "Vikas Oberoi",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 9 (PDF page 9)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Annuity asset spend spread over about four years (Thane, Borivali office)",
+          "summary": "Mall, hotel, club and school at Thane and a 8-10 lakh sq ft Borivali asset will be funded gradually over four years.",
+          "tone": "neutral",
+          "evidence": "\"Obviously, all of these costs are going to get spread over about 4 years.\"",
+          "speaker": "Saumil Daru",
+          "role": "Director, Finance",
+          "location": "Transcript page 7 (PDF page 7)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Borivali hotel targeted for around end of next calendar year; Thane about four years away",
+          "summary": "Annuity growth is back-ended: Borivali hotel is under interiors; Thane has not started.",
+          "tone": "neutral",
+          "evidence": "\"Borivali, the target is like end of next Calendar Year, I would say, end of next Calendar year, next Diwali and around. And Thane, we are yet to start work there. So that is a good four years away.\"",
+          "speaker": "Vikas Oberoi",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 6 (PDF page 6)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "RLDA project: sell-versus-lease decision still open",
+          "summary": "Approvals are in process for an office, small hotel and retail development; management has not decided between selling strata and leasing.",
+          "tone": "neutral",
+          "evidence": "\"we haven't really decided whether we will be selling and leasing or only leasing.\"",
+          "speaker": "Vikas Oberoi",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 5 (PDF page 5)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "NCR expansion: open to land for residential and annuity assets across NCR",
+          "summary": "After Gurugram, management says it will buy land or do JDAs in Noida, Gurugram and Delhi, including malls and offices; it will not disclose pending deals.",
+          "tone": "positive",
+          "evidence": "\"So we are open to buying land for malls or offices even any other annuity assets in NCR.\"",
+          "speaker": "Vikas Oberoi",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 9 (PDF page 9)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Further Gurugram sales contribution not guided",
+          "summary": "Management says remaining Gurugram inventory could achieve meaningful sales but explicitly declines forward-looking statements, so FY28 NCR contribution remains unquantified.",
+          "tone": "neutral",
+          "evidence": "\"Frankly, even if you open our booking and sell the rest of the inventory, we'll easily achieve that. But like I said, we frankly don't give any forward-looking statements.\"",
+          "speaker": "Vikas Oberoi",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 5 (PDF page 5)"
+        },
+        {
+          "horizon": "long_term",
+          "topic": "Three Sixty brand in other cities (e.g. south India) possible but undated",
+          "summary": "Landowners are offering parcels for Three Sixty-style projects; no commitment on timing.",
+          "tone": "neutral",
+          "evidence": "\"No, you never -- you can never count that out ever, but I can't give you a guarantee of when.\"",
+          "speaker": "Vikas Oberoi",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 9 (PDF page 9)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "What do the Gurugram litigation and Phase 2 timing mean for NCR?",
+          "why_it_mattered": "Three Sixty North was a very large launch (INR 8,000+ cr of sales); analysts needed to know if construction or Phase 2 is at risk and how much of FY28 sales NCR can contribute. Answer: no construction restriction, Phase 2 awaits approvals, no forward guidance.",
+          "question_count": null
+        },
+        {
+          "topic": "Which H2 launches will actually happen?",
+          "why_it_mattered": "Pre-sales visibility depends on Peddar Road, Thane, Forestville, Mulund and Adarsh Nagar launches; management said several would slip by a quarter and Adarsh Nagar approvals are delayed.",
+          "question_count": null
+        },
+        {
+          "topic": "How do collections and cash margin convert from the NCR launch?",
+          "why_it_mattered": "Cash margin hit roughly 80% in Q2 on Three Sixty North collections with no revenue recognition; analysts reconciled the INR 835 cr collected against the 20%-in-90-days milestone and asked for steady-state margins. Management said the balance spills into Q3.",
+          "question_count": null
+        },
+        {
+          "topic": "When do annuity and hotel assets commission?",
+          "why_it_mattered": "Annuity growth drives long-term valuation; analysts asked about Ritz-Carlton (Q1 next year), Borivali (end of next calendar year), Thane (about four years), I-Ven Worli (construction started) and RLDA (strategy undecided).",
+          "question_count": null
+        },
+        {
+          "topic": "How is the NCR business development pipeline building?",
+          "why_it_mattered": "With MMR visibility for two to three years, analysts asked which NCR markets and asset types are open and when new large deals close; management declined to disclose negotiations.",
+          "question_count": null
+        },
+        {
+          "topic": "Is luxury demand softening, given sales velocity and pricing at Three Sixty West?",
+          "why_it_mattered": "Karan Khanna noted 3 units in YTD FY27 versus 10 in FY26 despite sharp price rises; management said it is project- and floor-specific, not a market signal.",
+          "question_count": null
+        },
+        {
+          "topic": "What will Mulund Ralli Wolf be priced at and when does it launch?",
+          "why_it_mattered": "Eternia is up 22% YoY to about INR 36,500 per sq ft; the next launch price and timing are a Q4 pricing catalyst; not decided.",
+          "question_count": null
+        },
+        {
+          "topic": "What is the FY27 construction outflow and annuity capex phasing?",
+          "why_it_mattered": "Funding needs for ongoing projects (about INR 1,000 cr this year) and annuity assets (spread over four years) frame free cash flow.",
+          "question_count": null
+        },
+        {
+          "topic": "Why did the balance sheet expand on both sides?",
+          "why_it_mattered": "Fair-value accounting of area-based land consideration added to inventory and provisions in the launch quarter; nothing operational.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "Gurugram matter is sub judice and Phase 2 depends on additional approvals; management declined to comment on litigation.",
+        "Several launches (Adarsh Nagar, Peddar Road, Thane, Forestville, Ralli Wolf) face approval or timing slippage.",
+        "Management explicitly gives no forward-looking statements on Gurugram or NCR contribution to FY28 sales.",
+        "Three Sixty West volumes fell to 3 units YTD versus 10 in FY26, raising questions about luxury demand at higher prices.",
+        "Input cost increases in Thane and long gestation of hotels and annuity assets (Thane about four years) delay returns."
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "FEDERALBNK": {
+    "symbol": "FEDERALBNK",
+    "company_name": "The Federal Bank Limited",
+    "filed_at": "2026-10-16T19:59:30+05:30",
+    "source_url": "https://www.federal.bank.in/documents/10180/0/Earnings+Call+Transcript_Q2FY27.pdf/527958cc-0d06-64e5-a169-bd1a69116f75?t=1792159944025",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/FEDERALBNK_16102026195845_Analyst_Call_Transcript_Q2FY27_Exchange_Intimation_S.pdf",
+    "transcript_source_type": "company_website_transcript_linked_from_nse_covering_letter",
+    "description": "Company-website transcript linked from the NSE covering letter (user-approved source exception).",
+    "transcript_status": "available",
+    "call_date": "2026-10-16",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "bank",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "all_material_themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Lending yields bottomed last quarter",
+          "summary": "Adjusting for FCNR effects, lending yields were flat to slightly higher QoQ, and management treats Q1 FY27 as the trough of the yield cycle.",
+          "tone": "positive",
+          "evidence": "\"So, we have already seen the bottom of that cycle last quarter, I would say.\"",
+          "speaker": "KVS Manian",
+          "role": "MD and CEO",
+          "location": "Transcript page 8 (PDF page 8)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "October repo hike: external-benchmark loans reprice before deposits; deposit competition to rise when liquidity normalises",
+          "summary": "The 25 bp hike on 7 October helps near-term margin because the repo-linked book resets quickly while deposits reprice only at maturity, but liquidity normalisation will intensify deposit competition.",
+          "tone": "positive",
+          "evidence": "\"loan book will reprice ahead of deposits, which will reprice as they mature. We also expect competition for deposits to intensify once the liquidity situation normalizes.\"",
+          "speaker": "Venkatraman V",
+          "role": "Executive Director",
+          "location": "Transcript page 4 (PDF page 4)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Gold-loan yields can rise with rates, capped by PSU competition",
+          "summary": "Gold loans are roughly one-year products that reprice on maturity, so management expects to raise pricing as rates rise, but PSU banks charging under 9% limit how far.",
+          "tone": "neutral",
+          "evidence": "\"if yields would go up, do you see scope to increase the price? ... Of course, of course. Why would we not?\"",
+          "speaker": "Jai Prakash Mundhra (ICICI Securities); KVS Manian",
+          "role": "Analyst; MD and CEO",
+          "location": "Transcript page 9 (PDF page 9)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Staff-cost picture to be clearer within about a quarter",
+          "summary": "Employee cost is rising on hiring and branch openings and carries an actuarial/retirement-cost component that can partly write back as rates rise; an estimate is expected in the next quarter or so.",
+          "tone": "neutral",
+          "evidence": "\"But I think we will be in a better position over the next quarter or so to be able to estimate this better.\"",
+          "speaker": "KVS Manian",
+          "role": "MD and CEO",
+          "location": "Transcript page 9 (PDF page 9)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Loan growth guidance of mid-teens maintained despite ~18% ex-leverage growth",
+          "summary": "Even with underlying growth around 18% excluding externally leveraged FCNR loans, management does not raise the mid-teens growth guidance.",
+          "tone": "neutral",
+          "evidence": "\"is there any revision in growth guidance? ... We continue to maintain what we had guided: mid-teens as the growth-rate guidance. We continue to maintain that guidance.\"",
+          "speaker": "Chintan Joshi (Autonomous); KVS Manian",
+          "role": "Analyst; MD and CEO",
+          "location": "Transcript page 6 (PDF page 6)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "NIM guidance: 5-6 bps improvement per quarter on average, not linear",
+          "summary": "Management restates the year's NIM guidance after a flat-to-down-one-bp Q2 (3.32%) and says it is still striving for it.",
+          "tone": "neutral",
+          "evidence": "\"Broadly, I would say for the year we gave a broad guidance that it will be 5–6 basis points per quarter improvement, and we had said that it will not be linear; it will vary from quarter to quarter, but on an average, we should get that. We are still striving to get that number.\"",
+          "speaker": "KVS Manian",
+          "role": "MD and CEO",
+          "location": "Transcript page 8 (PDF page 8)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Cost-to-income to be held in a narrow range; no cost benefits to be baked in",
+          "summary": "CFO cites about 52% and the CEO a base of about 54%; both say to assume cost-to-income stays around current levels while the bank invests in branches, people, technology and a new sales channel.",
+          "tone": "neutral",
+          "evidence": "\"We will continue to operate in the range of 52% on the C/I ratio, as explained in the past as well.\"",
+          "speaker": "Venkatraman V",
+          "role": "Executive Director",
+          "location": "Transcript page 4 (PDF page 4)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "ROA guidance: 3-4 bps improvement a quarter on average",
+          "summary": "After a 10 bp jump in Q2 to 1.32%, management sticks with the guided improvement rate and the 1.5% ROA question is answered only with that guidance.",
+          "tone": "neutral",
+          "evidence": "\"We have given you guidance on the ROA in the past: three to four basis points per quarter is the improvement we want to strive for.\"",
+          "speaker": "KVS Manian",
+          "role": "MD and CEO",
+          "location": "Transcript page 12 (PDF page 12)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "CASA guidance unchanged",
+          "summary": "After CASA grew 6.4% QoQ and 22.6% YoY, the CFO says the CASA guidance is unchanged.",
+          "tone": "neutral",
+          "evidence": "\"CASA grew 6.4% QoQ, and there is no change to our guidance on CASA.\"",
+          "speaker": "Venkatraman V",
+          "role": "Executive Director",
+          "location": "Transcript page 4 (PDF page 4)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Modelling note: ESOP fair-value accounting adds INR 32.7 cr to employee cost",
+          "summary": "From April 2026 all ESOPs move to fair-value accounting, cutting PAT by INR 24.5 cr; management calls it a one-time policy change that analysts should model in.",
+          "tone": "neutral",
+          "evidence": "\"So, when you are modelling employee cost and profitability, please keep this accounting change in mind.\"",
+          "speaker": "Venkatraman V",
+          "role": "Executive Director",
+          "location": "Transcript page 4 (PDF page 4)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Asset-quality watch: El Nino, geopolitics, rates and inflation; no impact yet",
+          "summary": "Management has deliberately held back on agriculture and microfinance and sees no portfolio impact so far.",
+          "tone": "neutral",
+          "evidence": "\"we continue to watch the outcomes of El Niño, geopolitics, interest-rate scenario, inflation — all of that. Just now, we do not see any impact on our portfolio.\"",
+          "speaker": "KVS Manian",
+          "role": "MD and CEO",
+          "location": "Transcript page 5 (PDF page 5)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Rate cycle seen as supportive; constructive on remaining quarters",
+          "summary": "CEO expects the rising rate cycle to help the NIM trajectory and remains constructive for the rest of FY27.",
+          "tone": "positive",
+          "evidence": "\"The evolving interest rate cycle should provide an additional supportive factor as we move forward.\"",
+          "speaker": "KVS Manian",
+          "role": "MD and CEO",
+          "location": "Transcript page 2 (PDF page 2)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Opex investment phase continues; do not bake in benefits",
+          "summary": "Cost-to-assets above 2.3% is part of a deliberate couple-of-years investment phase.",
+          "tone": "cautious",
+          "evidence": "\"we have maintained that: do not bake in benefits on our OPEX, and that guidance remains as of now.\"",
+          "speaker": "KVS Manian",
+          "role": "MD and CEO",
+          "location": "Transcript page 7 (PDF page 7)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "ECL transition impact unchanged at under 2% of net worth",
+          "summary": "The expected-credit-loss transition impact is not changed by the rise in G-Sec yields.",
+          "tone": "neutral",
+          "evidence": "\"last quarter you had mentioned that the impact is less than 2% of net worth. ... Yes. We talked about the expected credit-loss impact, and that does not change with this.\"",
+          "speaker": "Jai Prakash Mundhra (ICICI Securities); KVS Manian",
+          "role": "Analyst; MD and CEO",
+          "location": "Transcript page 9 (PDF page 9)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Inorganic growth only if accretive; no comment on the MFI/merger rumours",
+          "summary": "CEO sets accretion as the first test for any deal and declined to discuss specific transactions or segments.",
+          "tone": "neutral",
+          "evidence": "\"Therefore, the first principle is that it should be accretive.\"",
+          "speaker": "KVS Manian",
+          "role": "MD and CEO",
+          "location": "Transcript page 6 (PDF page 6)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Wealth business for NRI franchise remains a committed priority",
+          "summary": "The bank intends to monetise its deep NRI deposit base through wealth products and keeps CASA initiatives ongoing.",
+          "tone": "positive",
+          "evidence": "\"our NRI franchise needs to be holistically covered, and one of the items there was building our wealth business. We remain committed to doing that.\"",
+          "speaker": "KVS Manian",
+          "role": "MD and CEO",
+          "location": "Transcript page 11 (PDF page 11)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "How much did FCNR(B) lift deposits and hurt NIM, and where is the money deployed?",
+          "why_it_mattered": "Federal participated in the special FCNR/NRE window with lower leverage than peers; analysts tried to compute NIM ex-FCNR and deployment, and the CEO said NIM was affected but would not quantify.",
+          "question_count": null
+        },
+        {
+          "topic": "Are there acquisition plans (MFI or other), and would they dilute quality?",
+          "why_it_mattered": "Press rumours about an MFI deal worried investors given steep credit cycles in microfinance; four analysts raised it and the CEO would only describe principles (accretive, capability or scale).",
+          "question_count": null
+        },
+        {
+          "topic": "Is loan growth sustainable and will guidance be raised?",
+          "why_it_mattered": "Growth ex-leverage was about 18% against mid-teens guidance, with strong gold, personal, commercial and card growth.",
+          "question_count": null
+        },
+        {
+          "topic": "Is opex growth consistent with the cost-to-income guidance?",
+          "why_it_mattered": "Opex looked high even after ESOP adjustment, with cost-to-assets above 2.3% on branch and hiring spend; analysts asked if the investment phase is temporary.",
+          "question_count": null
+        },
+        {
+          "topic": "How structural is the record fee income?",
+          "why_it_mattered": "Fee income rose 22% QoQ to INR 1,167 cr; analysts asked about FCNR-linked fees, base effects after two weak quarters and trading income repeating.",
+          "question_count": null
+        },
+        {
+          "topic": "Have lending yields bottomed and how will margins move after the rate hike?",
+          "why_it_mattered": "Yields had been drifting down; analysts wanted to know whether margins improve after the 25 bps hike and whether the 5-6 bps per quarter guidance still holds.",
+          "question_count": null
+        },
+        {
+          "topic": "Gold-loan pricing, LTV and competition",
+          "why_it_mattered": "Gold loans grew 37% YoY with LTV up from about 55% to 60-61% and a new income-generating gold loan product; analysts probed repricing and PSU competition.",
+          "question_count": null
+        },
+        {
+          "topic": "Is asset quality exposed to inflation and El Nino?",
+          "why_it_mattered": "With CPI rising to 5.54% and policy turning to calibrated tightening, analysts asked if high-yield segments show stress; none yet.",
+          "question_count": null
+        },
+        {
+          "topic": "How big is the ECL transition hit?",
+          "why_it_mattered": "G-Sec yields hardened about 40 bps; analysts asked if the under-2%-of-net-worth impact changes.",
+          "question_count": null
+        },
+        {
+          "topic": "What is the path to a 1.5% ROA and what are risk-adjusted margins?",
+          "why_it_mattered": "With asset quality strong and cost investments continuing, ROA upside depends on NIM and fees; management referred to the 3-4 bps per quarter guidance.",
+          "question_count": null
+        },
+        {
+          "topic": "NRI franchise monetisation and CASA initiatives",
+          "why_it_mattered": "NRI deposits are a core franchise; analysts asked if product depth (wealth) is being built and what drove CASA success over six to eight quarters.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "Competition for deposits is expected to intensify once system liquidity normalises.",
+        "Opex investment phase (branches, people, technology) keeps cost-to-assets elevated and management says not to assume cost benefits.",
+        "Gold-loan growth is exposed to PSU price competition below 9% and an LTV that has risen to about 60%.",
+        "M&A speculation (including MFI) creates strategy and integration uncertainty that management declined to address.",
+        "Inflation, El Nino, geopolitics and rate moves could affect asset quality; management is watchful though no impact is visible yet.",
+        "NIM improvement is guided as non-linear, and the quarterly margin was flat after FCNR(B) effects."
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
