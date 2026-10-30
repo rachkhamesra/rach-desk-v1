@@ -12,7 +12,7 @@ class CallIntelligenceTest(unittest.TestCase):
     def test_bundled_static_intelligence_contains_exact_requested_scope(self):
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
         with open(path, encoding="utf-8") as f: seed = json.load(f)
-        requested = {"ETERNAL", "SHRIRAMFIN", "INFY", "PNB", "PGEL", "INDHOTEL", "DRREDDY", "APLAPOLLO", "CGPOWER", "TATACONSUM", "JSWSTEEL", "KEI", "SBICARD", "SHREECEM", "SWIGGY", "MAHABANK", "SAGILITY", "AXISBANK", "TORNTPHARM", "OBEROIRLTY", "FEDERALBNK", "RBLBANK", "AUBANK", "GODREJPROP", "NAM-INDIA", "ULTRACEMCO", "LTF"}
+        requested = {"ETERNAL", "SHRIRAMFIN", "INFY", "PNB", "PGEL", "INDHOTEL", "DRREDDY", "APLAPOLLO", "CGPOWER", "TATACONSUM", "JSWSTEEL", "KEI", "SBICARD", "SHREECEM", "SWIGGY", "MAHABANK", "SAGILITY", "AXISBANK", "TORNTPHARM", "OBEROIRLTY", "FEDERALBNK", "RBLBANK", "AUBANK", "GODREJPROP", "NAM-INDIA", "ULTRACEMCO", "LTF", "VMM", "ADANIGREEN", "CROMPTON", "HAVELLS", "HDFCBANK"}
         self.assertEqual(set(seed), requested)
         self.assertEqual(set(calls.PUBLISHED_SYMBOLS), requested)
         analysed = [x for x in seed.values() if x.get("analysis")]
@@ -26,11 +26,11 @@ class CallIntelligenceTest(unittest.TestCase):
         self.assertNotIn("congratulations", seed["APLAPOLLO"]["analysis"])
         self.assertNotIn("key_actuals", seed["APLAPOLLO"]["analysis"])
         self.assertEqual(seed["PGEL"]["analysis"]["call_period"], "Q1 FY2027")
-        refreshed = {"MAHABANK", "SAGILITY", "AXISBANK", "TORNTPHARM", "OBEROIRLTY", "FEDERALBNK", "RBLBANK", "AUBANK", "GODREJPROP", "NAM-INDIA", "ULTRACEMCO", "LTF"}
+        refreshed = {"MAHABANK", "SAGILITY", "AXISBANK", "TORNTPHARM", "OBEROIRLTY", "FEDERALBNK", "RBLBANK", "AUBANK", "GODREJPROP", "NAM-INDIA", "ULTRACEMCO", "LTF", "VMM", "ADANIGREEN", "CROMPTON", "HAVELLS", "HDFCBANK"}
         self.assertTrue(all(len(seed[s]["analysis"]["next_quarter_outlook"]) == 6 for s in refreshed))
         self.assertTrue(all(len(seed[s]["analysis"]["analyst_focus"]) == 4 for s in refreshed))
         self.assertTrue(all(seed[s]["analysis"]["analyst_focus_scope"] == "top_themes_by_question_count" for s in refreshed))
-        batch_02 = {"AUBANK", "GODREJPROP", "NAM-INDIA", "ULTRACEMCO", "LTF"}
+        batch_02 = {"AUBANK", "GODREJPROP", "NAM-INDIA", "ULTRACEMCO", "LTF", "VMM", "ADANIGREEN", "CROMPTON", "HAVELLS", "HDFCBANK"}
         self.assertTrue(all(len(seed[s]["analysis"]["next_quarter_outlook"]) == 6 for s in batch_02))
         self.assertTrue(all(len(seed[s]["analysis"]["analyst_focus"]) == 4 for s in batch_02))
         self.assertTrue(all(seed[s]["analysis"]["analyst_focus_scope"] == "top_themes_by_question_count" for s in batch_02))
@@ -45,7 +45,7 @@ class CallIntelligenceTest(unittest.TestCase):
         self.assertIn("IMPORTANT TAKEAWAYS", html)
         self.assertIn("CONGRATULATIONS", html)
         self.assertIn("transcript", html)
-        self.assertIn("24 STATIC TRANSCRIPT SUMMARIES", html)
+        self.assertIn("29 STATIC TRANSCRIPT SUMMARIES", html)
         self.assertIn("Does drought/El Nino in Maharashtra threaten asset quality?", html)
         self.assertIn("3 MISSING TRANSCRIPT", html)
         self.assertIn("FORWARD RISKS &amp; WATCHPOINTS", html)
