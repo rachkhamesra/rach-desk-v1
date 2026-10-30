@@ -18,7 +18,7 @@ MODEL = os.environ.get("CALLS_MODEL", "gpt-6-luna")
 MAX_NEW = int(os.environ.get("CALLS_MAX_NEW", "12"))
 LOOKBACK_DAYS = int(os.environ.get("CALLS_LOOKBACK_DAYS", "150"))
 PRIORITY_SYMBOLS = ("CUMMINSIND", "ABB", "PNB", "PNBHOUSING", "HEROMOTOCO")
-PUBLISHED_SYMBOLS = ("ETERNAL", "SHRIRAMFIN", "INFY", "PNB", "PGEL", "INDHOTEL", "DRREDDY", "APLAPOLLO", "CGPOWER", "TATACONSUM", "JSWSTEEL", "KEI", "SBICARD", "SHREECEM", "SWIGGY")
+PUBLISHED_SYMBOLS = ("ETERNAL", "SHRIRAMFIN", "INFY", "PNB", "PGEL", "INDHOTEL", "DRREDDY", "APLAPOLLO", "CGPOWER", "TATACONSUM", "JSWSTEEL", "KEI", "SBICARD", "SHREECEM", "SWIGGY", "MAHABANK", "SAGILITY")
 
 
 SCHEMA = {
@@ -38,6 +38,7 @@ SCHEMA = {
         "outlook": {
             "type": "object", "additionalProperties": False,
             "properties": {
+                "horizon": {"type": "string", "enum": ["next_quarter", "current_year", "medium_term", "long_term"]},
                 "topic": {"type": "string"}, "summary": {"type": "string"},
                 "tone": {"type": "string", "enum": ["positive", "neutral", "cautious", "negative"]},
                 "evidence": {"type": "string"},

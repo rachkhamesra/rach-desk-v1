@@ -985,5 +985,434 @@
       ],
       "material_guidance_changes": []
     }
+  },
+  "MAHABANK": {
+    "symbol": "MAHABANK",
+    "company_name": "Bank of Maharashtra",
+    "filed_at": "2026-10-29T11:11:22+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/MAHABANK_29102026111103_Letter_to_SE_Concall_Transcript_29102026.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/MAHABANK_29102026111103_Letter_to_SE_Concall_Transcript_29102026.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-26",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "bank",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "all_material_themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Funding cost: avoiding high-cost bulk deposits; FCNR(B) fixed at 6.51%",
+          "summary": "Asked whether cost of deposits will rise next quarter, management points to fixed-rate FCNR(B)/OFCB and refinance funding and de-emphasises bulk deposits, implying contained funding costs.",
+          "tone": "neutral",
+          "evidence": "\"from next quarter's perspective, sir, should we expect the cost of deposits to inch up or stay at similar levels? ... So FCNR (B) is actually fixed 6.51%.\"",
+          "speaker": "Parth (360 ONE Capital); Nidhu Saxena",
+          "role": "Analyst; MD & CEO",
+          "location": "Transcript page 8 (PDF page 9)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Credit growth to stay above 18% guidance despite IBU window closing",
+          "summary": "Management says the FCNR(B)-funded IBU boost will not repeat, but domestic growth (23% ex-IBU) leaves a cushion above the 18% credit guidance.",
+          "tone": "positive",
+          "evidence": "\"So going forward, yes, this window is not there. But coming on the domestic side, I have the guidance number of 18%, and we are -- other than IBU, we have grown 23%.\"",
+          "speaker": "Nidhu Saxena",
+          "role": "MD & CEO",
+          "location": "Transcript page 5 (PDF page 6)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Loan pipeline: INR23,000 cr in pipeline, ~INR10,000 cr to be disbursed by March 2027",
+          "summary": "Visible disbursement pipeline concentrated in infra power, roads (HAM), renewables and metals.",
+          "tone": "positive",
+          "evidence": "\"In terms of credit pipeline that I'm holding, currently, we have INR23,000 crores of proposals in pipeline. And up to March '27, we have estimated INR10,000 crores out of this will be getting disbursed.\"",
+          "speaker": "Nidhu Saxena",
+          "role": "MD & CEO",
+          "location": "Transcript page 5 (PDF page 6)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Branch expansion continues: ~200 new branches a year",
+          "summary": "New branches feed retail and MSME business on both loans and deposits.",
+          "tone": "positive",
+          "evidence": "\"200 branches annually we are opening\"",
+          "speaker": "Nidhu Saxena",
+          "role": "MD & CEO",
+          "location": "Transcript page 5 (PDF page 6)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Maharashtra loan-waiver receipts: ~INR1,500 cr still due, state deadline 31 March 2027",
+          "summary": "About half of the eligible INR2,700 cr government receivable is in; the balance depends on state processes outside the bank's control, but the SLBC date is FY-end.",
+          "tone": "neutral",
+          "evidence": "\"is there any time line from government that let us say the rest should come in this financial year or it could actually spill to next financial year or it can be even after that also? ... So 31st March 2027 is what they have indicated in the SLBC, sir.\"",
+          "speaker": "Jai Prakash Mundhra (ICICI Securities); Nidhu Saxena",
+          "role": "Analyst; MD & CEO",
+          "location": "Transcript page 17 (PDF page 18)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Drought restructuring: farmer application window runs to February; limited expected take-up",
+          "summary": "Special SLBC framework allows agri restructuring without downgrade; management expects only 10-15% take-up needing about 5% provisioning, so low P&L impact.",
+          "tone": "neutral",
+          "evidence": "\"But as far as applying by the farmer, it is up to February. ... past experience is that is generally 10% to 15% turned to be -- avail this kind of restructuring. So that is not much because our past experience is like that 10% to 15% cover and that required 5% provisioning. So it will not impact much.\"",
+          "speaker": "Bank management (SLBC head, name not given in transcript)",
+          "role": "Bank executive",
+          "location": "Transcript pages 18-19 (PDF pages 19-20)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "El Nino watch: no stress visible yet, gold-loan-led agri growth",
+          "summary": "Agri growth is mostly secured gold loans; management says it is monitoring El Nino but anticipates no stress build-up.",
+          "tone": "neutral",
+          "evidence": "\"There is no anticipated stress that will build through the El Nino. But we are monitoring the situation closely.\"",
+          "speaker": "Nidhu Saxena",
+          "role": "MD & CEO",
+          "location": "Transcript page 6 (PDF page 7)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "NIM held above guidance via profitability-linked branch reviews and repricing",
+          "summary": "Management attributes NIM above guidance to branch-level profitability reviews and MCLR-linked repricing of several thousand crores of finely priced state PSU facilities; some NIM help came from one-offs.",
+          "tone": "positive",
+          "evidence": "\"the real change is what -- which is helping us maintain this kind of NIM above our guidance is our focus on not only growing but growing profitably.\"",
+          "speaker": "Nidhu Saxena",
+          "role": "MD & CEO",
+          "location": "Transcript page 14 (PDF page 15)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "ECL transition: INR2,500 cr total over 4 years, INR750 cr already provided",
+          "summary": "Bank says FY27-28 ECL requirement is already covered and expects no difficulty with further provisioning; total estimate could even fall.",
+          "tone": "positive",
+          "evidence": "\"Our total assessment was that INR2,500 crores is our ECL provisioning to be done in 4 years. ... Going forward, we see no challenge in making the provisions.\"",
+          "speaker": "Nidhu Saxena",
+          "role": "MD & CEO",
+          "location": "Transcript pages 4-5 (PDF pages 5-6)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Write-off recovery target INR1,300-1,500 cr a year for 4-5 years",
+          "summary": "Recoveries from a INR21,500 cr written-off book are being treated as a recurring above-the-line profit contributor, supported by two Board-approved settlement schemes.",
+          "tone": "positive",
+          "evidence": "\"We have targeted annually for the next 4 to 5 years to recover something like 1,300 crores to INR1,500 crores annually.\"",
+          "speaker": "Nidhu Saxena",
+          "role": "MD & CEO",
+          "location": "Transcript page 8 (PDF page 9)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Sector tilt: bullish on infra, roads, renewables, data centres; risk shared with NaBFID",
+          "summary": "Bank is marking infra-linked sectors as growth areas and joining large national-importance projects alongside term lenders to manage risk and win escrow and liability business.",
+          "tone": "positive",
+          "evidence": "\"And we are also marking these sectors as bullish for us to grow.\"",
+          "speaker": "Nidhu Saxena",
+          "role": "MD & CEO",
+          "location": "Transcript page 11 (PDF page 12)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Cost-to-income may rise as headcount builds for branch and IBU growth",
+          "summary": "Management explicitly accepts a higher cost-to-income ratio to staff growth, with headcount up from 13,000 to 17,500 in two years.",
+          "tone": "cautious",
+          "evidence": "\"And I have not been worried about if the cost to income has to go up, it's fine because we need good people, good talent and the right number to take this growth.\"",
+          "speaker": "Nidhu Saxena",
+          "role": "MD & CEO",
+          "location": "Transcript page 12 (PDF page 13)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Is the bank ECL-ready, and how much more provisioning is coming?",
+          "why_it_mattered": "Standard-asset provisions jumped from INR158 cr to INR603 cr while NPA provisions and COVID buffers fell, so analysts wanted the full ECL cost and buffer picture; later questions probed total surplus provisions (INR1,600-1,800 cr).",
+          "question_count": null
+        },
+        {
+          "topic": "Will credit growth hold once the FCNR(B)-funded IBU lending window is gone?",
+          "why_it_mattered": "Half-year growth already exceeded full-year guidance and about INR18,000 cr of large credit came through GIFT City IBU, so the sustainable run-rate is the key forecast input.",
+          "question_count": null
+        },
+        {
+          "topic": "How big and how repeatable are write-off and loan-waiver recoveries?",
+          "why_it_mattered": "Recoveries of INR737 cr in the quarter flattered profit; five analysts pressed on the Maharashtra waiver breakup, timing of the remaining INR1,500 cr, and the recurring recovery target.",
+          "question_count": null
+        },
+        {
+          "topic": "Does drought/El Nino in Maharashtra threaten asset quality?",
+          "why_it_mattered": "The bank is Maharashtra-heavy and agri growth is gold-loan led, so analysts asked about SLBC restructuring terms, farmer deadlines, take-up and quantum.",
+          "question_count": null
+        },
+        {
+          "topic": "Why did the yield on advances jump about 30 bps when mix shifted toward lower-yield IBU loans?",
+          "why_it_mattered": "Analysts suspected one-offs (waiver interest, tax-refund interest) and wanted to know how much of the 3.97% NIM is sustainable; the IBU yield was not disclosed on the call.",
+          "question_count": null
+        },
+        {
+          "topic": "What is happening to cost of deposits and funding mix?",
+          "why_it_mattered": "CoD rose sequentially; analysts asked whether the next quarter would see more pressure from FCNR(B) and how the bank is using refinance, infra bonds and foreign MTN funding.",
+          "question_count": null
+        },
+        {
+          "topic": "What is the gold loan book mix and pricing?",
+          "why_it_mattered": "Retail gold loans fell quarter on quarter while agri gold loans nearly tripled to INR18,600 cr; analysts asked about reclassification to priority buckets, pricing tiers and totals (INR33,000 cr).",
+          "question_count": null
+        },
+        {
+          "topic": "Where will corporate and infra growth come from, and who shares the risk?",
+          "why_it_mattered": "Analysts probed new-economy lending (data centres, EV, GPU financing), co-lending with NaBFID, ticket sizes and the talent needed to support it.",
+          "question_count": null
+        },
+        {
+          "topic": "Rate sensitivity and stress data (EBLR share, SMA 1/2, ECLGS)",
+          "why_it_mattered": "Questions on the 47% EBLR share, below-INR5 cr SMA balances (INR4,500 cr in September vs INR4,100 cr in June) and ECLGS composition (INR4,493 cr) tested forward asset-quality and repricing risk.",
+          "question_count": null
+        },
+        {
+          "topic": "Cyber and digital preparedness",
+          "why_it_mattered": "With DPDP Act compliance coming, analysts asked about extra security budget; management cited an INR985 cr IT budget but deferred a full answer offline.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "Remaining ~INR1,500 cr of Maharashtra loan-waiver receipts depend on state processes outside the bank's control.",
+        "Part of the quarter's NIM and yield uplift came from one-offs (waiver interest, tax-refund interest); the IBU yield was not disclosed.",
+        "Drought or El Nino stress could build in the agri book; SLBC restructuring is available without downgrade but would add provisions.",
+        "Cost-to-income may rise because management is intentionally building headcount for branch and IBU growth.",
+        "IBU FCNR(B) swap window is no longer open, so the IBU-driven loan growth is not repeatable."
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "SAGILITY": {
+    "symbol": "SAGILITY",
+    "company_name": "Sagility Limited",
+    "filed_at": "2026-10-29T10:05:47+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/SAGILITY_29102026100454_IntimationEarningscalltranscriptQ2FY27signed.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/SAGILITY_29102026100454_IntimationEarningscalltranscriptQ2FY27signed.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-22",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "other",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "all_material_themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Q3-Q4 are the seasonally strong quarters as AEP and open enrolment volumes start",
+          "summary": "First half is the lower half of the annual cycle; open-enrolment and AEP revenue is concentrated in Q3 and Q4, so sequential acceleration is expected from the current quarter.",
+          "tone": "positive",
+          "evidence": "\"The first half is typically the lower half of our annual revenue cycle, with AEP and open enrolment revenues concentrated in Q3 and Q4.\"",
+          "speaker": "Srinivas Rathnam Mattapalli",
+          "role": "EVP and Group CFO",
+          "location": "Transcript page 7 (PDF page 8)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "AEP/open-enrolment revenue expected slightly lower than last year (about 100 bps of revenue)",
+          "summary": "Open-enrolment was about 6% of revenue last year; management now sees it roughly 100 bps lower, i.e. flat to marginally lower in absolute revenue, but says it may change over coming weeks and flex capacity is available.",
+          "tone": "cautious",
+          "evidence": "\"We think it may be lower by 100 basis points or so.\"",
+          "speaker": "Ramesh Gopalan",
+          "role": "MD and Group CEO",
+          "location": "Transcript page 12 (PDF page 13)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "AEP revenue in absolute terms roughly flat to marginally lower year on year",
+          "summary": "Follow-up from Jefferies pins the OE revenue outlook as flattish, 'marginally lower than flattish' per the CFO.",
+          "tone": "cautious",
+          "evidence": "\"Marginally lower than flattish, I would say, at this point of time.\"",
+          "speaker": "Srinivas Rathnam Mattapalli",
+          "role": "EVP and Group CFO",
+          "location": "Transcript page 17 (PDF page 18)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Interim dividend of 15 paise to be paid in Q3",
+          "summary": "Board-approved interim dividend of INR 0.15 per share, payable next quarter.",
+          "tone": "positive",
+          "evidence": "\"the board has approved an interim dividend of INR 0.15 or 15 paise per share to be paid in Q3.\"",
+          "speaker": "Ramesh Gopalan",
+          "role": "MD and Group CEO",
+          "location": "Transcript page 4 (PDF page 5)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 organic revenue guidance maintained at low double-digit constant-currency growth",
+          "summary": "Despite a softer AEP, management keeps the FY27 organic constant-currency growth guidance; Chirok and CareSeed are on top of this organic figure.",
+          "tone": "neutral",
+          "evidence": "\"We expect OE and AEP revenue to be slightly lower than last year. But in spite of this, we are continuing with our guidance of low double-digit organic revenue growth in constant currency for FY '27.\"",
+          "speaker": "Ramesh Gopalan",
+          "role": "MD and Group CEO",
+          "location": "Transcript page 9 (PDF page 10)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 adjusted EBITDA margin guidance raised to 25-26%",
+          "summary": "Upgrade from 24-25% after the highest adjusted EBITDA margin in six quarters, achieved despite Karnataka and Telangana minimum wage increases.",
+          "tone": "positive",
+          "evidence": "\"we are raising our FY '27 adjusted EBITDA margin guidance from our earlier 24% to 25% to a new 25% to 26%.\"",
+          "speaker": "Ramesh Gopalan",
+          "role": "MD and Group CEO",
+          "location": "Transcript page 10 (PDF page 11)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Margin raise rests on efficiencies and an assumption of stable FX",
+          "summary": "CFO ties the upgrade to operating efficiency, favourable geo mix and FX staying at broadly current levels, so a currency reversal is a swing factor.",
+          "tone": "neutral",
+          "evidence": "\"we do feel that the full-year we'll be able to continue to leverage those efficiencies, and we expect the FX also to be remain at broadly the same levels. And that gives us a confidence to be able to raise our guidance to the 25% to 26%.\"",
+          "speaker": "Srinivas Rathnam Mattapalli",
+          "role": "EVP and Group CFO",
+          "location": "Transcript page 11 (PDF page 12)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Minimum-wage impact fully in guidance; any rollback would be upside",
+          "summary": "Karnataka and Telangana wage revisions are fully baked in; if the stay or change on implementation reduces the burden, margin guidance has potential upside.",
+          "tone": "positive",
+          "evidence": "\"if there is some change in what has been called out, I mean, there could be a potential upside of those numbers. But at this point, we have fully baked in those numbers.\"",
+          "speaker": "Srinivas Rathnam Mattapalli",
+          "role": "EVP and Group CFO",
+          "location": "Transcript page 18 (PDF page 19)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Full repayment of outstanding debt targeted in FY27",
+          "summary": "Debt repayment will cut finance costs and further strengthen a balance sheet already at net cash of INR 1,127 million.",
+          "tone": "positive",
+          "evidence": "\"We continue to remain on track to repay our outstanding debt fully during FY27\"",
+          "speaker": "Srinivas Rathnam Mattapalli",
+          "role": "EVP and Group CFO",
+          "location": "Transcript page 9 (PDF page 10)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Chirok and CareSeed sit on top of organic guidance; Chirok guidance to come by end FY27",
+          "summary": "Reported guidance excludes acquisitions; management intends to give more guidance on Chirok towards the end of FY27 after a closing just a day before the call.",
+          "tone": "neutral",
+          "evidence": "\"No, that's organic growth. But, yes, Chirok and CareSeed will be on top of that.\"",
+          "speaker": "Ramesh Gopalan",
+          "role": "MD and Group CEO",
+          "location": "Transcript page 17 (PDF page 18)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Payment-integrity win ramps gradually; Big Ten plan, over $10 million ACV",
+          "summary": "Contingency-based payment-integrity revenue builds over time, so revenue from the large win is back-ended rather than immediate.",
+          "tone": "positive",
+          "evidence": "\"In payment integrity deals, which are contingency-based linked to payment recovery, revenue will build progressively over time.\"",
+          "speaker": "Ramesh Gopalan",
+          "role": "MD and Group CEO",
+          "location": "Transcript page 3 (PDF page 4)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Provider segment to be pushed to a higher share of revenue, but no explicit target",
+          "summary": "Chirok plus a dedicated provider go-to-market team aim to lift provider growth from today's roughly 10% revenue share; management declines to give a 2-3 year target.",
+          "tone": "positive",
+          "evidence": "\"we want to accelerate the growth in our provider segment, and we want it to be a higher percentage of our total revenue.\"",
+          "speaker": "Ramesh Gopalan",
+          "role": "MD and Group CEO",
+          "location": "Transcript page 19 (PDF page 20)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Margin range stays 24-26% structurally; AI gains mostly passed to clients",
+          "summary": "Management does not see a structural step-up; AI productivity is largely passed through, with a marginal margin increase possible only if some benefit is retained.",
+          "tone": "neutral",
+          "evidence": "\"I think it will still continue to be in the 24% to 26% range, but over a period of time, it could marginally increase if we manage to retain the benefits of AI.\"",
+          "speaker": "Ramesh Gopalan",
+          "role": "MD and Group CEO",
+          "location": "Transcript page 13 (PDF page 14)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Clients will keep demanding more cost take-out because of AI",
+          "summary": "Pricing and productivity pressure from payer clients persists even as their medical costs ease.",
+          "tone": "cautious",
+          "evidence": "\"those pressures will always be there because now with the availability of AI and other transformational opportunities, clients are expecting service providers like us to take out more costs from the work that we do.\"",
+          "speaker": "Ramesh Gopalan",
+          "role": "MD and Group CEO",
+          "location": "Transcript page 16 (PDF page 17)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "How big can Chirok get, and is its growth and margin real?",
+          "why_it_mattered": "Eight of ten analysts touched Chirok (INR/$13 million TTM revenue, 35.8% adjusted margin, 750 staff). They probed revenue history, revenue per head versus peers, what is adjusted in EBITDA, AI risk to mid-cycle coding, and payback; management gave no medium-term revenue guidance yet.",
+          "question_count": null
+        },
+        {
+          "topic": "Can the provider segment finally grow faster than payer?",
+          "why_it_mattered": "Provider is stuck near 10% of revenue and organic growth there has lagged; analysts asked for targets, investment needs, margin impact and payer-provider conflict, and got no explicit target.",
+          "question_count": null
+        },
+        {
+          "topic": "Is the margin upgrade structural or a one-year benefit?",
+          "why_it_mattered": "The EBITDA margin guidance moved up a notch; analysts asked which levers (efficiency, FX, geo mix) drove it and whether AI pass-through will erode it over 2-3 years.",
+          "question_count": null
+        },
+        {
+          "topic": "How much will open enrolment and AEP disappoint this year?",
+          "why_it_mattered": "The second half carries the seasonal revenue peak; analysts translated the 100 bps share decline into flat year-on-year OE revenue.",
+          "question_count": null
+        },
+        {
+          "topic": "Minimum wages and delivery-centre footprint",
+          "why_it_mattered": "Karnataka and Telangana wage hikes hit margins; analysts asked whether a stay creates upside and why the delivery-centre count and lease assets fell (answer: site consolidation and counting change).",
+          "question_count": null
+        },
+        {
+          "topic": "Will easing payer medical costs reduce cost pressure on vendors?",
+          "why_it_mattered": "Payer margins improved in H1 2026; analysts asked if that gives Sagility pricing relief, and management said cost take-out pressure persists.",
+          "question_count": null
+        },
+        {
+          "topic": "What is in the $40 million ACV and what M&A comes next?",
+          "why_it_mattered": "Analysts sought payer versus provider mix, deal duration and margins, and remaining capability gaps for further acquisitions; the segment split was not available.",
+          "question_count": null
+        },
+        {
+          "topic": "What does the low double-digit guidance include?",
+          "why_it_mattered": "Clarified that guidance is organic only, with CareSeed and Chirok additive.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "Open enrolment and AEP revenue is expected flat to slightly lower year on year, pressuring the seasonal peak.",
+        "Margin upgrade assumes FX stays at current levels and efficiency gains persist.",
+        "AI-driven productivity gains are largely passed through to clients, capping structural margin upside and keeping client cost pressure high.",
+        "Provider organic revenue has been weak (discrete project taper at one client) and Chirok was acquired only a day before the call, so integration and AI disruption of coding are open risks.",
+        "Karnataka and Telangana minimum-wage increases are in guidance; a reversal is upside but the current impact is a cost headwind."
+      ],
+      "material_guidance_changes": [
+        {
+          "direction": "upgrade",
+          "topic": "FY27 adjusted EBITDA margin",
+          "old_guidance": "24% to 25%",
+          "new_guidance": "25% to 26%",
+          "magnitude": "Both ends of the range raised by 100 bps",
+          "materiality": 3,
+          "explicit_statement": "Management states it is raising FY27 adjusted EBITDA margin guidance from 24-25% to 25-26%.",
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "Ramesh Gopalan",
+            "role": "MD and Group CEO",
+            "location": "Transcript page 10 (PDF page 11)",
+            "quote": "\"we are raising our FY '27 adjusted EBITDA margin guidance from our earlier 24% to 25% to a new 25% to 26%.\"",
+            "source_url": "https://nsearchives.nseindia.com/corporate/SAGILITY_29102026100454_IntimationEarningscalltranscriptQ2FY27signed.pdf",
+            "filing_date": "2026-10-29",
+            "call_period": "Q2 FY2027"
+          }
+        }
+      ]
+    }
   }
 }
