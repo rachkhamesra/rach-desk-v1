@@ -3605,5 +3605,590 @@
         }
       ]
     }
+  },
+  "BAJFINANCE": {
+    "symbol": "BAJFINANCE",
+    "company_name": "Bajaj Finance Limited",
+    "filed_at": "2026-10-23T14:53:17+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/BAJFINANCE_23102026145254_BFL_Investor_Call_outcome_Transcript_for_filing.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/BAJFINANCE_23102026145254_BFL_Investor_Call_outcome_Transcript_for_filing.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-19",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "NBFC (diversified lender)",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Two more repo hikes baked in, to about 6%; NIM to moderate marginally in Q3-Q4",
+          "summary": "Cascading cost-of-funds impact in H2 is expected to be partly offset by interest-rate hedges done earlier.",
+          "tone": "cautious",
+          "evidence": "\"we are baking in two more increases in the current year that would take us to 6% kind of rates. You would see marginal moderation on NIM.\"",
+          "speaker": "Rajeev Jain",
+          "role": "Vice Chairman and Managing Director",
+          "location": "Transcript page 11 (PDF page 12), reply to Kunal Shah"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Credit cost for the rest of the year in the same corridor as H1",
+          "summary": "H1 loan losses were at the low end of guidance even after overlays.",
+          "tone": "neutral",
+          "evidence": "\"Rest of the year, we should look at it in the same corridor, is what I would just say to you.\"",
+          "speaker": "Rajeev Jain",
+          "role": "Vice Chairman and Managing Director",
+          "location": "Transcript page 13 (PDF page 14), reply to Viral"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 AUM growth of 26-27% expected",
+          "summary": "Growth guidance has been lifted to the high-20s after 26.5% in Q2 and a NET AUM add of about INR38,000-39,000 crore a quarter.",
+          "tone": "positive",
+          "evidence": "\"I would say probably between 26%, 27% growth we should deliver now on a full year basis.\"",
+          "speaker": "Rajeev Jain",
+          "role": "Vice Chairman and Managing Director",
+          "location": "Transcript page 11 (PDF page 12), reply to Kunal Shah"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "60-62 million new loans and 18-20 million new customers in FY27",
+          "summary": "Volume targets reiterated despite festive-timing noise.",
+          "tone": "positive",
+          "evidence": "\"We are well on track to deliver between 60 million to 62 million new loans in FY27.\"",
+          "speaker": "Rajeev Jain",
+          "role": "Vice Chairman and Managing Director",
+          "location": "Transcript page 3 (PDF page 4), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "INR11,700 crore QIP plus INR5,800 crore promoter warrants, subject to shareholder approval",
+          "summary": "Raise intended for growth and a lower leverage corridor of 5-5.5x; part may come from BHFL dilution within three years.",
+          "tone": "neutral",
+          "evidence": "\"11,700 crores of QIP and preferential warrants by Bajaj Finserv to the tune of 5,800 crores\"",
+          "speaker": "Rajeev Jain",
+          "role": "Vice Chairman and Managing Director",
+          "location": "Transcript page 4 (PDF page 5), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Medium-term AUM growth guidance of 23-25% and profit growth 20-25%",
+          "summary": "Long-term compounding unchanged; individual years can vary between 23% and 27%.",
+          "tone": "positive",
+          "evidence": "\"I'm not changing, I must say to you, the longer-term growth guidance of 23% to 25%.\"",
+          "speaker": "Rajeev Jain",
+          "role": "Vice Chairman and Managing Director",
+          "location": "Transcript page 14 (PDF page 15), reply to Avinash Singh"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Growth guidance (26-27% for FY27) and medium-term 23-25%",
+          "why_it_mattered": "AUM growth of 26.5% and capital raise prompted guidance questions.",
+          "question_count": 6,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "Macro and management overlays and provisioning philosophy",
+          "why_it_mattered": "INR337 crore overlay booked in Q2 and total buffers of several hundred crore.",
+          "question_count": 4,
+          "analysts_asking": 2
+        },
+        {
+          "topic": "NIM outlook with repo hikes and cost of funds",
+          "why_it_mattered": "NIM fell 10-12 bps in Q2; expected marginal further compression.",
+          "question_count": 4,
+          "analysts_asking": 2
+        },
+        {
+          "topic": "Asset quality: MSME GNPA, overall GNPA uptick, consumer leverage and 3PL exposure",
+          "why_it_mattered": "GNPA rose 10 bps; management attributes it to day-count and denominator effects.",
+          "question_count": 1,
+          "analysts_asking": 1
+        }
+      ],
+      "key_risks": [
+        "Regulatory changes on revolving credit lines and insurance distribution",
+        "Gold loan Stage 2 and competition with short-tenor products",
+        "Weak monsoon and drought in parts of Maharashtra",
+        "Rising repo rates compressing NIM",
+        "Consumer over-leverage (2PL/3PL borrowers)"
+      ],
+      "material_guidance_changes": [
+        {
+          "direction": "upgrade",
+          "topic": "FY27 AUM growth",
+          "old_guidance": "Previous guidance not restated on the call; medium-term 23-25%",
+          "new_guidance": "Between 26% and 27% for FY27",
+          "magnitude": "About 1-4 points above the medium-term corridor",
+          "materiality": 3,
+          "explicit_statement": "Management says it should now deliver 26-27% growth on a full-year basis, above the 23-25% long-term corridor.",
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "Rajeev Jain",
+            "role": "Vice Chairman and Managing Director",
+            "location": "Transcript page 11 (PDF page 12)",
+            "quote": "\"I would say probably between 26%, 27% growth we should deliver now on a full year basis.\"",
+            "source_url": "https://nsearchives.nseindia.com/corporate/BAJFINANCE_23102026145254_BFL_Investor_Call_outcome_Transcript_for_filing.pdf",
+            "filing_date": "2026-10-23",
+            "call_period": "Q2 FY2027"
+          }
+        },
+        {
+          "direction": "downgrade",
+          "topic": "FY27 NIM compression",
+          "old_guidance": "10-15 bps compression for FY27",
+          "new_guidance": "10-15 bps compression plus a marginal additional headwind from further repo hikes",
+          "magnitude": "Marginally worse than prior guide",
+          "materiality": 2,
+          "explicit_statement": "CFO says to carry a marginal headwind to the 10-15 bps compression guided at the start of the year.",
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "Sandeep Jain",
+            "role": "Chief Operating Officer and CFO",
+            "location": "Transcript page 12 (PDF page 13)",
+            "quote": "\"I had given a guidance of 10 to 15 basis point compression in the current year. I would say carry a marginal headwind to that number\"",
+            "source_url": "https://nsearchives.nseindia.com/corporate/BAJFINANCE_23102026145254_BFL_Investor_Call_outcome_Transcript_for_filing.pdf",
+            "filing_date": "2026-10-23",
+            "call_period": "Q2 FY2027"
+          }
+        }
+      ]
+    }
+  },
+  "DLF": {
+    "symbol": "DLF",
+    "company_name": "DLF Limited",
+    "filed_at": "2026-10-22T18:39:26+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/DLF_22102026183910_Letter.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/DLF_22102026183910_Letter.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-17",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "real estate developer and rental platform",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts not reliably measurable for this transcript; themes ranked by judgment",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Mumbai launch in Q3 and a Gurgaon launch to follow",
+          "summary": "Launch pipeline gated by approvals; two projects are on the anvil.",
+          "tone": "positive",
+          "evidence": "\"We are gearing up for both this Mumbai launch for Q3\"",
+          "speaker": "Aakash Ohri",
+          "role": "Managing Director and Chief Business Officer",
+          "location": "Transcript page 7 (PDF page 8), reply to Pritesh Sheth"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Dahlias Experience Centre expected by December with continued price escalation",
+          "summary": "Super-luxury project already up about 10% in price; sales pickup expected in Q3 and Q4 after the centre opens.",
+          "tone": "positive",
+          "evidence": "\"we hope, if everything goes well, it'll be by December.\"",
+          "speaker": "Aakash Ohri",
+          "role": "Managing Director and Chief Business Officer",
+          "location": "Transcript page 4 (PDF page 5), reply to Puneet"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Q3 construction outflows may be hit by Chhath labour migration and GRAP restrictions",
+          "summary": "Seasonal and pollution-related disruption could slow construction; completion timelines unaffected give or take a quarter.",
+          "tone": "cautious",
+          "evidence": "\"Q3 may still have some challenges on the construction outflow\"",
+          "speaker": "Ashok Tyagi",
+          "role": "Managing Director",
+          "location": "Transcript page 6 (PDF page 7), reply to Abhinav Sinha"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Sector 61 Noida land transaction to conclude by Q4; 36 contiguous acres",
+          "summary": "A fresh 7.48-acre collaboration adds to 28.5 acres from IREO, expanding project potential; launch only after the land is finalised.",
+          "tone": "positive",
+          "evidence": "\"hopefully by Q4, we should be able to conclude this entire transaction.\"",
+          "speaker": "Ashok Tyagi",
+          "role": "Managing Director",
+          "location": "Transcript page 7 (PDF page 8), reply to Pritesh Sheth"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Revenue inflection from FY27-28 as projects complete under completed-contract accounting",
+          "summary": "About INR75,000 crore of launched projects will be recognised over the next two to five years; the current revenue trough is a passing phase.",
+          "tone": "positive",
+          "evidence": "\"the inflection point you will see in FY'27-'28\"",
+          "speaker": "Badal Bagri",
+          "role": "Group Chief Financial Officer",
+          "location": "Transcript page 10 (PDF page 11), reply to Shrenik Jain"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "DLF rental exit run-rate of about INR750 crore annually; DCCDL exit rental about INR6,800 crore",
+          "summary": "Rental income expected to scale significantly as new assets stabilise (DLF portfolio quarterly run-rate INR175-180 crore at full potential).",
+          "tone": "positive",
+          "evidence": "\"So, on an annualized basis, close to INR 750 crores annual.\"",
+          "speaker": "Badal Bagri",
+          "role": "Group Chief Financial Officer",
+          "location": "Transcript page 5 (PDF page 6), reply to Abhinav Sinha"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Aureva and Dahlias sales, pricing and the timing of sales recognition",
+          "why_it_mattered": "Aureva sold out; Dahlias price escalation and the Experience Centre drive super-luxury pre-sales.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Launch pipeline for Q3 and Q4 (Mumbai, Gurgaon, luxury-plus project)",
+          "why_it_mattered": "Pre-sales guidance relies on launches given Q1 was quiet.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Commissioning schedule for residential and DCCDL rental assets",
+          "why_it_mattered": "Completions drive revenue recognition and rental growth in FY28-FY30.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Rental income exit run-rates (DLF and DCCDL)",
+          "why_it_mattered": "Annuity growth is a key valuation driver.",
+          "question_count": null,
+          "analysts_asking": null
+        }
+      ],
+      "key_risks": [
+        "Delhi-NCR pollution restrictions and labour migration delaying construction",
+        "Revenue recognition lag under completed-contract accounting",
+        "Dependence on timely approvals for launches",
+        "Concentration of pre-sales in super-luxury products",
+        "Non-consolidation of Cyber City revenue"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "IRFC": {
+    "symbol": "IRFC",
+    "company_name": "Indian Railway Finance Corporation Limited",
+    "filed_at": "2026-10-22T17:03:06+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/IRFC_22102026165348_AnnouncementunderRegulation30EarningsCallTranscriptQ2FY202627.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/IRFC_22102026165348_AnnouncementunderRegulation30EarningsCallTranscriptQ2FY202627.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-16",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "government NBFC (infrastructure finance)",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Non-railway disbursements (metros, ports, renewables, thermal, roads) ready for Q3 or early Q4",
+          "summary": "A pipeline of non-IR loans is largely ready, supporting H2-weighted disbursement.",
+          "tone": "positive",
+          "evidence": "\"These are all in pipeline and are, almost ready to be disbursed in Q3 or early Q4.\"",
+          "speaker": "Manoj Kumar Dubey",
+          "role": "Chairman, Managing Director and CEO",
+          "location": "Transcript page 4 (PDF page 5), reply to Sucrit Patil"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 disbursements to exceed last year's INR35,000 crore (all non-IR)",
+          "summary": "Disbursement guidance remains intact, driven by non-railway lending.",
+          "tone": "positive",
+          "evidence": "\"in FY27 also, we will surpass disbursement that we did last FY, and that guidance remains intact.\"",
+          "speaker": "Manoj Kumar Dubey",
+          "role": "Chairman, Managing Director and CEO",
+          "location": "Transcript page 4 (PDF page 5), reply to Sucrit Patil"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "AUM target of about INR5 lakh crore intact for end-FY27",
+          "summary": "Slight shortfall of INR1,000-2,000 crore is possible; AUM stood at INR4.85 lakh crore at FY26-end.",
+          "tone": "positive",
+          "evidence": "\"we stand by the target of reaching near about INR5,00,000 crores\"",
+          "speaker": "Manoj Kumar Dubey",
+          "role": "Chairman, Managing Director and CEO",
+          "location": "Transcript page 6 (PDF page 7), reply to Priyam Shah"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "H2 results expected to replicate H1; WACC held near 6.55% despite hardening rates",
+          "summary": "Cost-plus model and low borrowing cost protect margins even as TONAR and repo rates rise.",
+          "tone": "positive",
+          "evidence": "\"the numbers that we have shown in H1 will be kind of replica of what is going to be in H2.\"",
+          "speaker": "Manoj Kumar Dubey",
+          "role": "Chairman, Managing Director and CEO",
+          "location": "Transcript page 11 (PDF page 12), closing remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "From FY28, disbursements of about INR50,000 crore a year for ten years",
+          "summary": "IRFC expects first right on funding of railway projects, aggregating multilateral and domestic lenders.",
+          "tone": "positive",
+          "evidence": "\"you'll find that this kind of disbursement, maybe in tune of 50,000 crores plus minus\"",
+          "speaker": "Manoj Kumar Dubey",
+          "role": "Chairman, Managing Director and CEO",
+          "location": "Transcript page 5 (PDF page 6), reply to Sucrit Patil"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Portfolio mix of 60% pure railways and 40% diversified by 2030; PAT growth of about 10% a year even with flat AUM",
+          "summary": "Replacement of 35 bps railway assets with 100 bps-plus non-IR assets lifts profit without balance-sheet growth.",
+          "tone": "positive",
+          "evidence": "\"you can rest be assured that my PAT will be growing nearly to 10% not for a year or 2, as long we continue with this mode.\"",
+          "speaker": "Manoj Kumar Dubey",
+          "role": "Chairman, Managing Director and CEO",
+          "location": "Transcript page 6 (PDF page 7), reply to Priyam Shah"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Execution priorities and funding model for the railway capex pipeline",
+          "why_it_mattered": "Mega-projects (DFC, high-speed rail) will need more funding than IRFC alone can supply.",
+          "question_count": 15,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Pricing and rate pass-through in non-railway loans",
+          "why_it_mattered": "Rising TONAR and repo rates raise cost of yen and rupee borrowing.",
+          "question_count": 8,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "Asset growth targets and AUM guidance (INR5 lakh crore)",
+          "why_it_mattered": "AUM target had been missed earlier; analysts asked about internal 3-4 year targets.",
+          "question_count": 7,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "Prepayment risk",
+          "why_it_mattered": "REC and PFC have faced prepayments; IRFC says it has none.",
+          "question_count": 4,
+          "analysts_asking": 2
+        }
+      ],
+      "key_risks": [
+        "Dependence on railway ecosystem and government capex",
+        "Rising yen TONAR and domestic rates affecting borrowing costs",
+        "Execution of new business appraisal with a rapidly expanded team",
+        "Slower AUM growth as railway repayments run off",
+        "Provisioning requirements on new non-sovereign assets"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "UJJIVANSFB": {
+    "symbol": "UJJIVANSFB",
+    "company_name": "Ujjivan Small Finance Bank Limited",
+    "filed_at": "2026-10-22T16:59:00+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/UJJIVANBANK_22102026165850_110_Intimation_Transcript_Investor_Call_Q2FY27.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/UJJIVANBANK_22102026165850_110_Intimation_Transcript_Investor_Call_Q2FY27.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-16",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "small finance bank",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts not reliably measurable for this transcript; themes ranked by judgment",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Net interest margin to ease to about 8.35% in H2",
+          "summary": "25 bps repo hike lifts funding cost about 10 bps; mix shift to secured assets is offset by planned DA.",
+          "tone": "neutral",
+          "evidence": "\"we feel the margin would come down to around 8.35% for the second half of the year\"",
+          "speaker": "Balakrishna Kamath",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 5 (PDF page 6), reply to Shreepal Doshi"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Cost of funds up about 10 bps in Q3 with calibrated deposit-rate changes",
+          "summary": "Retail TD and SA rate revisions will be incremental and not yet taken.",
+          "tone": "negative",
+          "evidence": "\"We have a calibrated rate revision we'll do as we go along. As of now, we have not done anything\"",
+          "speaker": "Hitendra Jha",
+          "role": "Head, Retail Liabilities, TASC and TPP",
+          "location": "Transcript page 10 (PDF page 11), reply to Rajiv Mehta"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Micro banking growth 12-14% for FY27",
+          "summary": "Growth guidance intact; H1 growth was about 6.5%, so H2 is stronger.",
+          "tone": "neutral",
+          "evidence": "\"overall, our guidance is 12% to 14%\"",
+          "speaker": "Vibhas Chandra",
+          "role": "Head, Micro Banking and Gold Loan",
+          "location": "Transcript page 9 (PDF page 10), reply to Sarvesh Gupta"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Credit cost in H2 similar to H1",
+          "summary": "No step-up in credit cost; collection efficiency steady at 99.7%.",
+          "tone": "positive",
+          "evidence": "\"credit cost in H2 is similar to the credit cost in H1\"",
+          "speaker": "Ashish Goel",
+          "role": "Chief Credit Officer",
+          "location": "Transcript page 14 (PDF page 15), reply to Sonal Minhas"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "CASA ratio about 2 points below 30% by year-end",
+          "summary": "CASA mix pressure from outflows; management says it is not systemic.",
+          "tone": "negative",
+          "evidence": "\"30% will be difficult. I don't want to give any number, but yes, slightly lower, let's say, 2% lower than that.\"",
+          "speaker": "Hitendra Jha",
+          "role": "Head, Retail Liabilities, TASC and TPP",
+          "location": "Transcript page 11 (PDF page 13), reply to Ashlesh Sonje"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Insurance commission draft norms could hit Q4 third-party-product income",
+          "summary": "Roughly half of insurance income is credit life; a Q4 rollout would add stress.",
+          "tone": "negative",
+          "evidence": "\"We do not immediately see this coming in Q4. If it comes in Q4, yes, this will be some stress.\"",
+          "speaker": "Hitendra Jha",
+          "role": "Head, Retail Liabilities, TASC and TPP",
+          "location": "Transcript page 11 (PDF page 13), reply to Ashlesh Sonje"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Margins and repo-hike pass-through",
+          "why_it_mattered": "Analysts wanted H2 and FY28 NIM after the 25 bps repo hike and the shift to secured assets.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Credit cost and PAR trend",
+          "why_it_mattered": "Questions on whether 90-100 bps credit cost guidance implies a buffer, and why PAR is inching up in group loans.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Insurance commission draft norms",
+          "why_it_mattered": "Draft IRDAI rules could cut credit-life income and change branch economics.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Capital raise and funding growth",
+          "why_it_mattered": "Timing of the remaining INR2,000 crore raise and deposit mobilisation with CASA under pressure.",
+          "question_count": null,
+          "analysts_asking": null
+        }
+      ],
+      "key_risks": [
+        "Rate-hike pass-through lifting funding cost faster than asset repricing",
+        "Draft IRDAI insurance commission norms",
+        "CASA outflows and bulk deposit dependence",
+        "Drought in Karnataka and Maharashtra",
+        "Leadership transition with an interim CEO"
+      ],
+      "material_guidance_changes": [
+        {
+          "direction": "upgrade",
+          "topic": "FY27 opex to average total assets",
+          "old_guidance": "6.4%",
+          "new_guidance": "about 6.2%",
+          "magnitude": "20 bps lower",
+          "materiality": "medium",
+          "explicit_statement": true,
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "Balakrishna Kamath",
+            "role": "Chief Financial Officer",
+            "location": "Transcript page 11 (PDF page 12), reply to Rajiv Mehta",
+            "quote": "\"we feel it may end up at 6.2%. So there could be a saving of 0.2 opex to ATA ratio\"",
+            "source_url": "https://nsearchives.nseindia.com/corporate/UJJIVANBANK_22102026165850_110_Intimation_Transcript_Investor_Call_Q2FY27.pdf",
+            "filing_date": "2026-10-22",
+            "call_period": "Q2 FY2027"
+          }
+        }
+      ]
+    }
+  },
+  "JIOFIN": {
+    "symbol": "JIOFIN",
+    "company_name": "Jio Financial Services Limited",
+    "filed_at": "2026-10-22T15:38:34+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/JIOFINANCIAL_22102026153806_Transcript_of_Presentation_on_Unaudited_Financial_Results_Q2_2026-27.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/JIOFINANCIAL_22102026153806_Transcript_of_Presentation_on_Unaudited_Financial_Results_Q2_2026-27.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-15",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "core investment company (NBFC holding)",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts not reliably measurable for this transcript; themes ranked by judgment",
+      "next_quarter_outlook": [
+        {
+          "horizon": "current_year",
+          "topic": "Bank of America's 49.9% stake in Jio Credit, about INR18,000 crore of growth capital",
+          "summary": "Subject to regulatory approvals; the capital funds Jio Credit lending expansion.",
+          "tone": "positive",
+          "evidence": "\"is expected to bring around Rs. 18,000 crore in\"",
+          "speaker": "Hitesh Sethia",
+          "role": "MD and CEO",
+          "location": "Transcript page 5 (PDF page 6), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "About INR9,500 crore initial Bank of America investment into Jio Credit",
+          "summary": "The initial tranche would strengthen the balance sheet for expansion once approved.",
+          "tone": "positive",
+          "evidence": "\"approximately Rs. 9,500 crore of initial investment from Bank of America into Jio Credit will further fortify our balance sheet\"",
+          "speaker": "Annapoorna Venkataramanan",
+          "role": "Group Executive and CFO",
+          "location": "Transcript page 18 (PDF page 19), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "IRDAI draft insurance-distribution rules may reshape the industry",
+          "summary": "Management expects consolidation and will recalibrate strategy after final rules.",
+          "tone": "neutral",
+          "evidence": "\"will recalibrate our business strategy as appropriate based on the final regulations\"",
+          "speaker": "Annapoorna Venkataramanan",
+          "role": "Group Executive and CFO",
+          "location": "Transcript page 14 (PDF page 15), prepared remarks"
+        },
+        {
+          "horizon": "long_term",
+          "topic": "Moat in financial services is owning the customer's decision-making process",
+          "summary": "Strategy of the JioFinance app is to build engagement with AI-driven features.",
+          "tone": "positive",
+          "evidence": "\"the moat in financial services is going to be owning the\"",
+          "speaker": "Ganesh A R",
+          "role": "Group Executive and CTO",
+          "location": "Transcript page 10 (PDF page 11), prepared remarks"
+        }
+      ],
+      "analyst_focus": [],
+      "key_risks": [
+        "Bank of America stake and capital inflow depend on regulatory approvals",
+        "IRDAI draft distribution regulations",
+        "Rapid Jio Credit book growth funded by external debt markets"
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
