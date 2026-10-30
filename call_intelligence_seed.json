@@ -2993,5 +2993,617 @@
       ],
       "material_guidance_changes": []
     }
+  },
+  "YESBANK": {
+    "symbol": "YESBANK",
+    "company_name": "YES Bank Limited",
+    "filed_at": "2026-10-23T21:45:45+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/YESBANK_23102026214522_SE_Intimation_signed_23102026.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/YESBANK_23102026214522_SE_Intimation_signed_23102026.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-19",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "private sector bank",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Q3 NIM expected in a similar range to Q2, with FCNR drag offset by tailwinds",
+          "summary": "Full-quarter impact of FCNR(B) liquidity weighs, but repo repricing and RIDF run-off are expected to neutralise it.",
+          "tone": "neutral",
+          "evidence": "\"Q3, our expectation is that we should be in the similar range on margins that we've seen compared to Q2\"",
+          "speaker": "Niranjan Banodkar",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 13 (PDF page 14), reply to Jayant Kharote"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "NIM to have an upward bias in Q4",
+          "summary": "Deployment of FCNR funds, the repo hike and RIDF reduction build into March.",
+          "tone": "positive",
+          "evidence": "\"But as we move to Q4, our expectation is that we should have a positive bias on the margins.\"",
+          "speaker": "Niranjan Banodkar",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 13 (PDF page 14), reply to Jayant Kharote"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "AT-1 reinstatement: coupon, timing and manner under assessment; disclosures to follow",
+          "summary": "No decision on coupons or reinstatement yet; the market is told to await further disclosure.",
+          "tone": "cautious",
+          "evidence": "\"the manner and the timing of reinstatement of the bonds as well as payment of the coupon is also under assessment.\"",
+          "speaker": "Niranjan Banodkar",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 8 (PDF page 9), reply to Jai Prakash Mundhra"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Slippages to improve only slightly from here",
+          "summary": "Retail slippage ratio is near normalised; limited further downside to credit cost.",
+          "tone": "neutral",
+          "evidence": "\"we might see some basis points of improvement, but not a whole lot from here on.\"",
+          "speaker": "Niranjan Banodkar",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 11 (PDF page 12), reply to Mayank Bukrediwala"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Capital action under evaluation; CET-1 at about 11.4% pro forma 'not ideal'",
+          "summary": "Management signals a capital raise or other capital action is on the table even if not urgent.",
+          "tone": "cautious",
+          "evidence": "\"clearly 11%, 11.5% of CET-1 is not ideal.\"",
+          "speaker": "Niranjan Banodkar",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 12 (PDF page 13), reply to Mayank Bukrediwala"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 ROA guidance of about 1% (H1 at 90 bps) depends partly on non-core items",
+          "summary": "Management remains confident of core ROA improvement but does not firmly reaffirm the full-year 1%.",
+          "tone": "neutral",
+          "evidence": "\"We are clocking at a 90 basis points for H1.\"",
+          "speaker": "Niranjan Banodkar",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 13 (PDF page 14), reply to Jayant Kharote"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "NIM trajectory in Q3 and Q4: FCNR drag, RIDF run-off, repo hike pass-through",
+          "why_it_mattered": "NIM fell to 2.6% in Q2; outlook for H2 recovery.",
+          "question_count": 8,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Capital raise timing and growth capacity without raising equity",
+          "why_it_mattered": "Analysts asked whether a raise is imminent and how much growth is possible.",
+          "question_count": 5,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Supreme Court AT-1 judgment: capital impact (about 240 bps CET-1), accounting and legal options",
+          "why_it_mattered": "Reinstating INR8,415 crore of written-down AT-1 reduces pro forma CET-1 to about 11.4%.",
+          "question_count": 7,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "AT-1 coupons and implications for dividends and credit ratings",
+          "why_it_mattered": "Future coupon policy influences dividend capacity, sentiment and rating outcomes.",
+          "question_count": 5,
+          "analysts_asking": 4
+        }
+      ],
+      "key_risks": [
+        "AT-1 reinstatement lowering CET-1 to about 11.4% and possible capital raise",
+        "Uncertainty over AT-1 coupons and legal remedies",
+        "Margin pressure from FCNR(B) funds sitting undeployed",
+        "Competitive deposit pricing",
+        "Dependence on non-core gains (security receipts) to reach 1% ROA"
+      ],
+      "material_guidance_changes": [
+        {
+          "direction": "downgrade",
+          "topic": "CET-1 capital position after the AT-1 judgment",
+          "old_guidance": "Comfortable operating CET-1 of 13.5-14%",
+          "new_guidance": "Pro forma CET-1 of about 11.4% (approximately 240 bps lower); capital actions including a raise under evaluation",
+          "magnitude": "About 240 bps lower CET-1; Tier 1 overall about 13.7% unchanged",
+          "materiality": 5,
+          "explicit_statement": "CFO says 11-11.5% CET-1 is not ideal and capital actions will be evaluated, following the Supreme Court ruling reinstating AT-1 bonds.",
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "Niranjan Banodkar",
+            "role": "Chief Financial Officer",
+            "location": "Transcript page 12 (PDF page 13)",
+            "quote": "\"clearly 11%, 11.5% of CET-1 is not ideal.\"",
+            "source_url": "https://nsearchives.nseindia.com/corporate/YESBANK_23102026214522_SE_Intimation_signed_23102026.pdf",
+            "filing_date": "2026-10-23",
+            "call_period": "Q2 FY2027"
+          }
+        }
+      ]
+    }
+  },
+  "PERSISTENT": {
+    "symbol": "PERSISTENT",
+    "company_name": "Persistent Systems Limited",
+    "filed_at": "2026-10-23T20:43:45+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/PERSISTENTUSER1_23102026204328_PSLTranscriptSubmissionOctober2026Sd.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/PERSISTENTUSER1_23102026204328_PSLTranscriptSubmissionOctober2026Sd.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-15",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "IT services / product engineering",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts not reliably measurable for this transcript; themes ranked by judgment",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Nagarro deal closure expected in Q4 CY26 or Q1 CY27; approvals in 4-8 weeks",
+          "summary": "Pending are RBI and FDI approvals in Austria and Spain; after closure a squeeze-out and 5-6 months of integration follow.",
+          "tone": "positive",
+          "evidence": "\"We expect the deal closure by Q4-CY26 or Q1-CY27.\"",
+          "speaker": "Sandeep Kalra",
+          "role": "Executive Director and CEO",
+          "location": "Transcript page 6 (PDF page 7), prepared remarks"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "90 bps margin drag from the large deal to persist before easing",
+          "summary": "Amortisation of third-party licences stays in the base for the next two to three quarters and gradually falls with scale and FinOps optimisation.",
+          "tone": "neutral",
+          "evidence": "\"that as we optimize some of the cost as well as increase our revenue also increases, this will gradually come down.\"",
+          "speaker": "Vinit Teredesai",
+          "role": "Executive Director and CFO",
+          "location": "Transcript page 15 (PDF page 16), reply to Vibhor Singhal"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Healthcare and life sciences expected to resume growth",
+          "summary": "Customer-specific dynamics are described as baked in; pipeline is good.",
+          "tone": "positive",
+          "evidence": "\"There are some dynamics which were there with respect to a couple of customers. They are more or less baked in. You should see the growth coming in.\"",
+          "speaker": "Sandeep Kalra",
+          "role": "Executive Director and CEO",
+          "location": "Transcript page 23 (PDF page 24), reply to Prateek Maheshwari"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "USD1.25 billion Nagarro financing: USD450 million equity (QIP/FCCB) and the balance debt, replacing EUR1.4 billion bridge loan",
+          "summary": "Shareholders have approved the funding mix; an equity raise is likely before or around closure; net cost of debt guided at 5-6%.",
+          "tone": "neutral",
+          "evidence": "\"we will be raising USD 1.25 billion in terms of both debt and equity.\"",
+          "speaker": "Sandeep Kalra",
+          "role": "Executive Director and CEO",
+          "location": "Transcript page 6 (PDF page 7), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Margin aspiration of 16-17% EBIT, not guidance",
+          "summary": "After a 15% print in Q2, wage hike behind and optimisation under way, management aims for the 16-17% band but declines to commit to a timeline.",
+          "tone": "neutral",
+          "evidence": "\"We want to be in that bracket.\"",
+          "speaker": "Sandeep Kalra",
+          "role": "Executive Director and CEO",
+          "location": "Transcript page 18 (PDF page 19), reply to Kumar Rakesh"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Pipeline healthy; trailing-twelve-month TCV up 36% and ACV up 22%",
+          "summary": "Q2 bookings were softer partly from macro-driven decision delays but TTM trends remain strong.",
+          "tone": "positive",
+          "evidence": "\"If I look at that TTM year on year, the trailing 12 months, the TCV growth is 36.3%.\"",
+          "speaker": "Sandeep Kalra",
+          "role": "Executive Director and CEO",
+          "location": "Transcript page 22 (PDF page 23), reply to Suraj Malu"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Nagarro acquisition: timeline, approvals, financing, cost of debt, synergies and one-off costs",
+          "why_it_mattered": "Large transformational deal; USD1.25 billion funding and EPS dilution from costs.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "EBIT margin path and 16-17% aspiration",
+          "why_it_mattered": "Margin slipped to 15%; analysts asked about recovery post wage hike.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Large USD650 million software-reinvention deal: margin impact, commercials and contingencies",
+          "why_it_mattered": "Drove a 90 bps EBIT drag and higher licence/intangible spend.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Deal bookings (TCV/ACV) softness versus prior quarter",
+          "why_it_mattered": "Quarter bookings were lower than last quarter's record due to timing and macro delays.",
+          "question_count": null,
+          "analysts_asking": null
+        }
+      ],
+      "key_risks": [
+        "Nagarro integration and financing risk, including EPS dilution",
+        "Macro-driven decision delays and Middle East dynamics",
+        "Margin dilution from licence amortisation in the large deal",
+        "Concentration in high-tech and large clients",
+        "AI disruption of services pricing"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "ICICIBANK": {
+    "symbol": "ICICIBANK",
+    "company_name": "ICICI Bank Limited",
+    "filed_at": "2026-10-23T18:00:27+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/ICICI2022_23102026175603_NSEBSE23102026.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/ICICI2022_23102026175603_NSEBSE23102026.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-17",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "private sector bank",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Q3 NIM to moderate further as FCNR(B) fully flows through averages, partly offset by the rate hike",
+          "summary": "Overseas book (about 1% margin) and the larger term-deposit base mathematically weigh on Q3 average margins.",
+          "tone": "cautious",
+          "evidence": "\"So, the full impact of this on the average balance sheet will come in Q3, and we will see a further moderation in margins, offset a little bit by the rate hike, which has already taken place.\"",
+          "speaker": "Anindya Banerjee",
+          "role": "Group Chief Financial Officer",
+          "location": "Analyst call, transcript page 15 (PDF page 34), reply to Nitin Aggarwal"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "NIM expected to recover from Q4 even without further rate hikes",
+          "summary": "As FCNR leverage is deployed and the mix effect reverses, margins should rise in Q4.",
+          "tone": "positive",
+          "evidence": "\"But then from Q4, I would expect margins to come back in a healthy way\"",
+          "speaker": "Anindya Banerjee",
+          "role": "Group Chief Financial Officer",
+          "location": "Analyst call, transcript page 15 (PDF page 34), reply to Nitin Aggarwal"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Excess FCNR liquidity to be deployed over the next two quarters, the seasonally strong credit period",
+          "summary": "Current excess liquidity is parked in non-HQLA short-term assets; loan deployment is expected in Q3-Q4.",
+          "tone": "positive",
+          "evidence": "\"we are carrying some amount of excess liquidity currently, and I would expect that to be kind of deployed over the next two quarters\"",
+          "speaker": "Anindya Banerjee",
+          "role": "Group Chief Financial Officer",
+          "location": "Analyst call, transcript page 17 (PDF page 36), reply to Kunal Shah"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Normalised credit cost up to about 50 bps of advances",
+          "summary": "Reported provisions (0.20%) benefited from a chunky recovery; adjusted for FCNR-related general provisions and KCC seasonality, credit cost is guided higher.",
+          "tone": "cautious",
+          "evidence": "\"Adjusted for all this, we would continue to believe that the credit cost would be upto 50 basis points.\"",
+          "speaker": "Anindya Banerjee",
+          "role": "Group Chief Financial Officer",
+          "location": "Analyst call, transcript page 12 (PDF page 31), reply to Mahrukh Adajania"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "House view of two more repo hikes; repo could reach 6%",
+          "summary": "Repo-linked loans (57% of domestic book) reprice faster than deposits, which supports margins.",
+          "tone": "positive",
+          "evidence": "\"Our house view is that there will probably be two more rate hikes.\"",
+          "speaker": "Sandeep Batra",
+          "role": "Executive Director",
+          "location": "Media call, transcript page 10 (PDF page 11), reply to Hamsini Karthik"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "No growth targets; open to retail and corporate growth that meets risk-return thresholds",
+          "summary": "Management refuses to guide loan or deposit growth after a 30% YoY loan print.",
+          "tone": "neutral",
+          "evidence": "\"We really do not have any particular target in terms of loan or deposit growth per se.\"",
+          "speaker": "Sandeep Batra",
+          "role": "Executive Director",
+          "location": "Media call, transcript page 5 (PDF page 6), reply to Ritu Singh"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "FCNR(B) mobilisation (USD18 billion): leverage, cost, deployment and strategy",
+          "why_it_mattered": "Largest raise among peers; landed cost about 6.5% including hedging; excess liquidity to be deployed.",
+          "question_count": 8,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "NIM compression from FCNR(B) and expected recovery path",
+          "why_it_mattered": "NIM fell to 4.18% from 4.28% (ex tax refund); analysts asked when the bottom is.",
+          "question_count": 5,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Sustainability of corporate loan growth (30.6%) and shift from bond markets",
+          "why_it_mattered": "Corporate and business banking growth far outpaced retail; questions on pricing discipline and returns.",
+          "question_count": 5,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "Credit cost normalisation, one-off recoveries and agri provisions",
+          "why_it_mattered": "Provisions were just 0.2% of advances; analysts probed a rebound and the INR1,283 crore agri provision.",
+          "question_count": 4,
+          "analysts_asking": 3
+        }
+      ],
+      "key_risks": [
+        "Further NIM compression in Q3 from FCNR(B)",
+        "Reversal of one-off recoveries lifting credit cost to about 50 bps",
+        "Rising G-sec yields hurting treasury",
+        "Agri stress from weak monsoon",
+        "Regulatory changes in insurance distribution and FX hedging"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "HDFCLIFE": {
+    "symbol": "HDFCLIFE",
+    "company_name": "HDFC Life Insurance Company Limited",
+    "filed_at": "2026-10-23T15:36:23+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/HDFCLIFE2_23102026153545_SE_Transcript.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/HDFCLIFE2_23102026153545_SE_Transcript.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-15",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "life insurance",
+      "call_period": "H1 FY2027 (Q2)",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "HDFC Bank channel to continue reasonable growth; counter share to improve steadily",
+          "summary": "Bank-channel momentum, helped by competitive rates and granular engagement, is expected to persist.",
+          "tone": "positive",
+          "evidence": "\"we do believe that we should continue to see reasonable growth in the HDFC Bank channel.\"",
+          "speaker": "Vineet Arora",
+          "role": "Executive Director and Chief Business Officer",
+          "location": "Transcript page 5 (PDF page 6), reply to Prayesh Jain"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "VNB growth targeted in line with APE or slightly ahead",
+          "summary": "Management prioritises VNB growth over margin; margin benefits of scale will be reinvested.",
+          "tone": "neutral",
+          "evidence": "\"we will continue with the objective of delivering VNB growth in line with APE or slightly ahead of it.\"",
+          "speaker": "Niraj Shah",
+          "role": "Executive Director and CFO",
+          "location": "Transcript page 6 (PDF page 7), reply to Prayesh Jain"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Persistency recovery expected by the end of the year",
+          "summary": "13th-month persistency at 83% is hurt by unit-linked renewals and one non-par cohort; recovery is promised but not quantified.",
+          "tone": "cautious",
+          "evidence": "\"We are working closely with our distribution partners and expect some recovery by the end of the year.\"",
+          "speaker": "Vibha Padalkar",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 3 (PDF page 4), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "IRDAI distribution rules unlikely before 1 April; January start seen as improbable",
+          "summary": "Timeline: draft feedback, final regulation, then a runway; earliest effective date is April 2027.",
+          "tone": "neutral",
+          "evidence": "\"Our personal view is that 1st January does not seem to be a likely date. The earliest possible date could be a 1st April.\"",
+          "speaker": "Vineet Arora",
+          "role": "Executive Director and Chief Business Officer",
+          "location": "Transcript page 15 (PDF page 16), reply to Shobhit Sharma"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Expense of management ratio can reach 15% mathematically if commissions are cut as proposed",
+          "summary": "Expense ratio is about 21% with over half being commissions; the draft would let the company meet an EoM target without difficulty.",
+          "tone": "positive",
+          "evidence": "\"If you do the math, 15% is something that we will achieve just mathematically.\"",
+          "speaker": "Niraj Shah",
+          "role": "Executive Director and CFO",
+          "location": "Transcript page 9 (PDF page 10), reply to Manas Agrawal"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Risk-based capital timeline hoped for next year",
+          "summary": "A move to RBC would ease solvency consumption by long-term products.",
+          "tone": "positive",
+          "evidence": "\"But we hope that by next year or so there will be some discussion and some timeline on the movement to RBC\"",
+          "speaker": "Eshwari Murugan",
+          "role": "Appointed Actuary and Chief Actuary",
+          "location": "Transcript page 8 (PDF page 9), reply to Nidhesh Jain"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "VNB margin outlook and reinvestment of scale benefits",
+          "why_it_mattered": "New business margin 24.7%; analysts asked about margin expansion versus growth.",
+          "question_count": 9,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "IRDAI distribution consultation paper: credit life, EoM, commission caps and channel behaviour",
+          "why_it_mattered": "Draft proposes steep commission cuts, especially for credit-linked and motor insurance.",
+          "question_count": 7,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "HDFC Bank channel revival and counter share under the new CEO",
+          "why_it_mattered": "The bank accounts for about 48% of APE; growth had been slow before recovering.",
+          "question_count": 7,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Retail protection growth after GST exemption and base effect",
+          "why_it_mattered": "Growth could moderate sharply in H2.",
+          "question_count": 6,
+          "analysts_asking": 4
+        }
+      ],
+      "key_risks": [
+        "IRDAI commission caps reshaping distribution economics",
+        "Persistency weakness in unit-linked renewals",
+        "High capital consumption under current solvency rules",
+        "Equity and yield volatility reducing embedded value",
+        "GST demand litigation and contingent liabilities"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "HINDZINC": {
+    "symbol": "HINDZINC",
+    "company_name": "Hindustan Zinc Limited",
+    "filed_at": "2026-10-23T15:35:20+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/HINDZINCNSE_23102026153438_SEIntimation23102026.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/HINDZINCNSE_23102026153438_SEIntimation23102026.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-19",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "zinc, lead and silver miner",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Q3 and Q4 hedges in place: 40 kt and 36 kt of zinc, 8 tonnes of silver in Q3",
+          "summary": "Hedged zinc prices of $3,476 (Q3) and $3,698 (Q4) per tonne and silver at $68 per ounce cap upside but lock in margins.",
+          "tone": "neutral",
+          "evidence": "\"for the quarter three, we have a 40 KT of zinc which is hedged, and 36 KT of zinc for quarter four hedged\"",
+          "speaker": "Amit Gupta",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 6 (PDF page 7), reply to Pallav Agarwal"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 zinc cost of production guidance cut to $825-850 per ton",
+          "summary": "Major guidance improvement from $975-1,000 following Q2 COP of $703/t and strong by-product credits.",
+          "tone": "positive",
+          "evidence": "\"we are revising our COP guidance to $825 to $850 for the full year.\"",
+          "speaker": "Amarendu Prakash",
+          "role": "Chief Executive Officer",
+          "location": "Transcript page 3 (PDF page 4), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Silver production guidance of 680 tonnes reiterated",
+          "summary": "H1 saleable plus concentrate-embedded silver was about 340 tonnes, so H2 is on track.",
+          "tone": "positive",
+          "evidence": "\"we are confident we will be able to deliver our guidance of 680.\"",
+          "speaker": "Amit Gupta",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 8 (PDF page 9), reply to Shweta Dikshit"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 capex of about INR5,000 crore with heavier spending in Q3 and Q4",
+          "summary": "Q2 capex was INR1,200 crore sustaining and INR700 crore growth; expansion work accelerates in H2.",
+          "tone": "neutral",
+          "evidence": "\"the whole-year outlook is in the range of INR5,000 crores only.\"",
+          "speaker": "Amit Gupta",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 7 (PDF page 8), reply to Kartikeya Pandey"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "250 KTPA integrated zinc expansion on track; engineering and procurement almost complete",
+          "summary": "Mine development is under way; capacity doubling aspiration (2x growth) is retained.",
+          "tone": "positive",
+          "evidence": "\"Engineering and procurement for the 250 KTPA integrated zinc expansion is almost complete, and mine development is underway.\"",
+          "speaker": "Amarendu Prakash",
+          "role": "Chief Executive Officer",
+          "location": "Transcript page 3 (PDF page 4), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Silver output of 730-750 tonnes in FY28 hoped for, subject to debottlenecking",
+          "summary": "A potential step-up from the 680 tonne FY27 guide; numbers to be finalised later.",
+          "tone": "positive",
+          "evidence": "\"We can hope to do that. We have some of the debottlenecking projects in the pipeline.\"",
+          "speaker": "Amarendu Prakash",
+          "role": "Chief Executive Officer",
+          "location": "Transcript page 8 (PDF page 9), reply to Shweta Dikshit"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Cost of production guidance and sulfuric acid by-product credit",
+          "why_it_mattered": "COP of $703/t was far below the original $975-1,000 guide.",
+          "question_count": 2,
+          "analysts_asking": 2
+        },
+        {
+          "topic": "Hedging position and price exposure",
+          "why_it_mattered": "Record profits depend on high zinc and silver prices; analysts sought hedge quantities and rates.",
+          "question_count": 1,
+          "analysts_asking": 1
+        },
+        {
+          "topic": "Capex split between sustaining and growth",
+          "why_it_mattered": "Understanding spending pace for the 250 KTPA expansion.",
+          "question_count": 1,
+          "analysts_asking": 1
+        },
+        {
+          "topic": "Critical mineral blocks and exploration timeline",
+          "why_it_mattered": "New growth option beyond zinc and silver.",
+          "question_count": 1,
+          "analysts_asking": 1
+        }
+      ],
+      "key_risks": [
+        "Zinc and silver price volatility and hedge opportunity cost",
+        "Geopolitical energy and trade disruptions raising costs",
+        "Sulfuric acid by-product prices being auction-based and volatile",
+        "Execution of the 250 KTPA expansion",
+        "Dependence on silver for profitability"
+      ],
+      "material_guidance_changes": [
+        {
+          "direction": "upgrade",
+          "topic": "FY27 zinc cost of production (excluding royalty)",
+          "old_guidance": "$975-1,000 per ton",
+          "new_guidance": "$825-850 per ton",
+          "magnitude": "About $150 per ton lower at the midpoint (roughly 15%)",
+          "materiality": 4,
+          "explicit_statement": "CEO states the company is revising COP guidance to $825-850 for the full year after Q2 COP of $703/t.",
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "Amarendu Prakash",
+            "role": "Chief Executive Officer",
+            "location": "Transcript page 3 (PDF page 4)",
+            "quote": "\"we are revising our COP guidance to $825 to $850 for the full year.\"",
+            "source_url": "https://nsearchives.nseindia.com/corporate/HINDZINCNSE_23102026153438_SEIntimation23102026.pdf",
+            "filing_date": "2026-10-23",
+            "call_period": "Q2 FY2027"
+          }
+        }
+      ]
+    }
   }
 }
