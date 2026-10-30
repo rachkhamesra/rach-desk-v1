@@ -26,6 +26,10 @@ class CallIntelligenceTest(unittest.TestCase):
         self.assertNotIn("congratulations", seed["APLAPOLLO"]["analysis"])
         self.assertNotIn("key_actuals", seed["APLAPOLLO"]["analysis"])
         self.assertEqual(seed["PGEL"]["analysis"]["call_period"], "Q1 FY2027")
+        refreshed = {"MAHABANK", "SAGILITY", "AXISBANK", "TORNTPHARM", "OBEROIRLTY", "FEDERALBNK", "RBLBANK"}
+        self.assertTrue(all(len(seed[s]["analysis"]["next_quarter_outlook"]) == 6 for s in refreshed))
+        self.assertTrue(all(len(seed[s]["analysis"]["analyst_focus"]) == 4 for s in refreshed))
+        self.assertTrue(all(seed[s]["analysis"]["analyst_focus_scope"] == "top_themes_by_question_count" for s in refreshed))
 
     def test_call_library_reuses_stored_summary_fields(self):
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
@@ -38,7 +42,7 @@ class CallIntelligenceTest(unittest.TestCase):
         self.assertIn("CONGRATULATIONS", html)
         self.assertIn("transcript", html)
         self.assertIn("19 STATIC TRANSCRIPT SUMMARIES", html)
-        self.assertIn("Cyber and digital preparedness", html)
+        self.assertIn("Does drought/El Nino in Maharashtra threaten asset quality?", html)
         self.assertIn("3 MISSING TRANSCRIPT", html)
         self.assertIn("FORWARD RISKS &amp; WATCHPOINTS", html)
         self.assertNotIn("AUBANK", html)

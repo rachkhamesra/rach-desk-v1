@@ -1000,7 +1000,8 @@
       "analysis_profile": "forward_only_v1",
       "company_type": "bank",
       "call_period": "Q2 FY2027",
-      "analyst_focus_scope": "all_material_themes",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
       "next_quarter_outlook": [
         {
           "horizon": "next_quarter",
@@ -1034,46 +1035,6 @@
         },
         {
           "horizon": "current_year",
-          "topic": "Branch expansion continues: ~200 new branches a year",
-          "summary": "New branches feed retail and MSME business on both loans and deposits.",
-          "tone": "positive",
-          "evidence": "\"200 branches annually we are opening\"",
-          "speaker": "Nidhu Saxena",
-          "role": "MD & CEO",
-          "location": "Transcript page 5 (PDF page 6)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Maharashtra loan-waiver receipts: ~INR1,500 cr still due, state deadline 31 March 2027",
-          "summary": "About half of the eligible INR2,700 cr government receivable is in; the balance depends on state processes outside the bank's control, but the SLBC date is FY-end.",
-          "tone": "neutral",
-          "evidence": "\"is there any time line from government that let us say the rest should come in this financial year or it could actually spill to next financial year or it can be even after that also? ... So 31st March 2027 is what they have indicated in the SLBC, sir.\"",
-          "speaker": "Jai Prakash Mundhra (ICICI Securities); Nidhu Saxena",
-          "role": "Analyst; MD & CEO",
-          "location": "Transcript page 17 (PDF page 18)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Drought restructuring: farmer application window runs to February; limited expected take-up",
-          "summary": "Special SLBC framework allows agri restructuring without downgrade; management expects only 10-15% take-up needing about 5% provisioning, so low P&L impact.",
-          "tone": "neutral",
-          "evidence": "\"But as far as applying by the farmer, it is up to February. ... past experience is that is generally 10% to 15% turned to be -- avail this kind of restructuring. So that is not much because our past experience is like that 10% to 15% cover and that required 5% provisioning. So it will not impact much.\"",
-          "speaker": "Bank management (SLBC head, name not given in transcript)",
-          "role": "Bank executive",
-          "location": "Transcript pages 18-19 (PDF pages 19-20)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "El Nino watch: no stress visible yet, gold-loan-led agri growth",
-          "summary": "Agri growth is mostly secured gold loans; management says it is monitoring El Nino but anticipates no stress build-up.",
-          "tone": "neutral",
-          "evidence": "\"There is no anticipated stress that will build through the El Nino. But we are monitoring the situation closely.\"",
-          "speaker": "Nidhu Saxena",
-          "role": "MD & CEO",
-          "location": "Transcript page 6 (PDF page 7)"
-        },
-        {
-          "horizon": "current_year",
           "topic": "NIM held above guidance via profitability-linked branch reviews and repricing",
           "summary": "Management attributes NIM above guidance to branch-level profitability reviews and MCLR-linked repricing of several thousand crores of finely priced state PSU facilities; some NIM help came from one-offs.",
           "tone": "positive",
@@ -1101,78 +1062,32 @@
           "speaker": "Nidhu Saxena",
           "role": "MD & CEO",
           "location": "Transcript page 8 (PDF page 9)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Sector tilt: bullish on infra, roads, renewables, data centres; risk shared with NaBFID",
-          "summary": "Bank is marking infra-linked sectors as growth areas and joining large national-importance projects alongside term lenders to manage risk and win escrow and liability business.",
-          "tone": "positive",
-          "evidence": "\"And we are also marking these sectors as bullish for us to grow.\"",
-          "speaker": "Nidhu Saxena",
-          "role": "MD & CEO",
-          "location": "Transcript page 11 (PDF page 12)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Cost-to-income may rise as headcount builds for branch and IBU growth",
-          "summary": "Management explicitly accepts a higher cost-to-income ratio to staff growth, with headcount up from 13,000 to 17,500 in two years.",
-          "tone": "cautious",
-          "evidence": "\"And I have not been worried about if the cost to income has to go up, it's fine because we need good people, good talent and the right number to take this growth.\"",
-          "speaker": "Nidhu Saxena",
-          "role": "MD & CEO",
-          "location": "Transcript page 12 (PDF page 13)"
         }
       ],
       "analyst_focus": [
         {
-          "topic": "Is the bank ECL-ready, and how much more provisioning is coming?",
-          "why_it_mattered": "Standard-asset provisions jumped from INR158 cr to INR603 cr while NPA provisions and COVID buffers fell, so analysts wanted the full ECL cost and buffer picture; later questions probed total surplus provisions (INR1,600-1,800 cr).",
-          "question_count": null
-        },
-        {
           "topic": "Will credit growth hold once the FCNR(B)-funded IBU lending window is gone?",
           "why_it_mattered": "Half-year growth already exceeded full-year guidance and about INR18,000 cr of large credit came through GIFT City IBU, so the sustainable run-rate is the key forecast input.",
-          "question_count": null
+          "question_count": 8,
+          "analysts_asking": 5
         },
         {
           "topic": "How big and how repeatable are write-off and loan-waiver recoveries?",
           "why_it_mattered": "Recoveries of INR737 cr in the quarter flattered profit; five analysts pressed on the Maharashtra waiver breakup, timing of the remaining INR1,500 cr, and the recurring recovery target.",
-          "question_count": null
+          "question_count": 6,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Is the bank ECL-ready, and how much more provisioning is coming?",
+          "why_it_mattered": "Standard-asset provisions jumped from INR158 cr to INR603 cr while NPA provisions and COVID buffers fell, so analysts wanted the full ECL cost and buffer picture; later questions probed total surplus provisions (INR1,600-1,800 cr).",
+          "question_count": 6,
+          "analysts_asking": 3
         },
         {
           "topic": "Does drought/El Nino in Maharashtra threaten asset quality?",
           "why_it_mattered": "The bank is Maharashtra-heavy and agri growth is gold-loan led, so analysts asked about SLBC restructuring terms, farmer deadlines, take-up and quantum.",
-          "question_count": null
-        },
-        {
-          "topic": "Why did the yield on advances jump about 30 bps when mix shifted toward lower-yield IBU loans?",
-          "why_it_mattered": "Analysts suspected one-offs (waiver interest, tax-refund interest) and wanted to know how much of the 3.97% NIM is sustainable; the IBU yield was not disclosed on the call.",
-          "question_count": null
-        },
-        {
-          "topic": "What is happening to cost of deposits and funding mix?",
-          "why_it_mattered": "CoD rose sequentially; analysts asked whether the next quarter would see more pressure from FCNR(B) and how the bank is using refinance, infra bonds and foreign MTN funding.",
-          "question_count": null
-        },
-        {
-          "topic": "What is the gold loan book mix and pricing?",
-          "why_it_mattered": "Retail gold loans fell quarter on quarter while agri gold loans nearly tripled to INR18,600 cr; analysts asked about reclassification to priority buckets, pricing tiers and totals (INR33,000 cr).",
-          "question_count": null
-        },
-        {
-          "topic": "Where will corporate and infra growth come from, and who shares the risk?",
-          "why_it_mattered": "Analysts probed new-economy lending (data centres, EV, GPU financing), co-lending with NaBFID, ticket sizes and the talent needed to support it.",
-          "question_count": null
-        },
-        {
-          "topic": "Rate sensitivity and stress data (EBLR share, SMA 1/2, ECLGS)",
-          "why_it_mattered": "Questions on the 47% EBLR share, below-INR5 cr SMA balances (INR4,500 cr in September vs INR4,100 cr in June) and ECLGS composition (INR4,493 cr) tested forward asset-quality and repricing risk.",
-          "question_count": null
-        },
-        {
-          "topic": "Cyber and digital preparedness",
-          "why_it_mattered": "With DPDP Act compliance coming, analysts asked about extra security budget; management cited an INR985 cr IT budget but deferred a full answer offline.",
-          "question_count": null
+          "question_count": 4,
+          "analysts_asking": 3
         }
       ],
       "key_risks": [
@@ -1199,18 +1114,9 @@
       "analysis_profile": "forward_only_v1",
       "company_type": "other",
       "call_period": "Q2 FY2027",
-      "analyst_focus_scope": "all_material_themes",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
       "next_quarter_outlook": [
-        {
-          "horizon": "next_quarter",
-          "topic": "Q3-Q4 are the seasonally strong quarters as AEP and open enrolment volumes start",
-          "summary": "First half is the lower half of the annual cycle; open-enrolment and AEP revenue is concentrated in Q3 and Q4, so sequential acceleration is expected from the current quarter.",
-          "tone": "positive",
-          "evidence": "\"The first half is typically the lower half of our annual revenue cycle, with AEP and open enrolment revenues concentrated in Q3 and Q4.\"",
-          "speaker": "Srinivas Rathnam Mattapalli",
-          "role": "EVP and Group CFO",
-          "location": "Transcript page 7 (PDF page 8)"
-        },
         {
           "horizon": "next_quarter",
           "topic": "AEP/open-enrolment revenue expected slightly lower than last year (about 100 bps of revenue)",
@@ -1220,36 +1126,6 @@
           "speaker": "Ramesh Gopalan",
           "role": "MD and Group CEO",
           "location": "Transcript page 12 (PDF page 13)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "AEP revenue in absolute terms roughly flat to marginally lower year on year",
-          "summary": "Follow-up from Jefferies pins the OE revenue outlook as flattish, 'marginally lower than flattish' per the CFO.",
-          "tone": "cautious",
-          "evidence": "\"Marginally lower than flattish, I would say, at this point of time.\"",
-          "speaker": "Srinivas Rathnam Mattapalli",
-          "role": "EVP and Group CFO",
-          "location": "Transcript page 17 (PDF page 18)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "Interim dividend of 15 paise to be paid in Q3",
-          "summary": "Board-approved interim dividend of INR 0.15 per share, payable next quarter.",
-          "tone": "positive",
-          "evidence": "\"the board has approved an interim dividend of INR 0.15 or 15 paise per share to be paid in Q3.\"",
-          "speaker": "Ramesh Gopalan",
-          "role": "MD and Group CEO",
-          "location": "Transcript page 4 (PDF page 5)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "FY27 organic revenue guidance maintained at low double-digit constant-currency growth",
-          "summary": "Despite a softer AEP, management keeps the FY27 organic constant-currency growth guidance; Chirok and CareSeed are on top of this organic figure.",
-          "tone": "neutral",
-          "evidence": "\"We expect OE and AEP revenue to be slightly lower than last year. But in spite of this, we are continuing with our guidance of low double-digit organic revenue growth in constant currency for FY '27.\"",
-          "speaker": "Ramesh Gopalan",
-          "role": "MD and Group CEO",
-          "location": "Transcript page 9 (PDF page 10)"
         },
         {
           "horizon": "current_year",
@@ -1263,23 +1139,13 @@
         },
         {
           "horizon": "current_year",
-          "topic": "Margin raise rests on efficiencies and an assumption of stable FX",
-          "summary": "CFO ties the upgrade to operating efficiency, favourable geo mix and FX staying at broadly current levels, so a currency reversal is a swing factor.",
+          "topic": "FY27 organic revenue guidance maintained at low double-digit constant-currency growth",
+          "summary": "Despite a softer AEP, management keeps the FY27 organic constant-currency growth guidance; Chirok and CareSeed are on top of this organic figure.",
           "tone": "neutral",
-          "evidence": "\"we do feel that the full-year we'll be able to continue to leverage those efficiencies, and we expect the FX also to be remain at broadly the same levels. And that gives us a confidence to be able to raise our guidance to the 25% to 26%.\"",
-          "speaker": "Srinivas Rathnam Mattapalli",
-          "role": "EVP and Group CFO",
-          "location": "Transcript page 11 (PDF page 12)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Minimum-wage impact fully in guidance; any rollback would be upside",
-          "summary": "Karnataka and Telangana wage revisions are fully baked in; if the stay or change on implementation reduces the burden, margin guidance has potential upside.",
-          "tone": "positive",
-          "evidence": "\"if there is some change in what has been called out, I mean, there could be a potential upside of those numbers. But at this point, we have fully baked in those numbers.\"",
-          "speaker": "Srinivas Rathnam Mattapalli",
-          "role": "EVP and Group CFO",
-          "location": "Transcript page 18 (PDF page 19)"
+          "evidence": "\"We expect OE and AEP revenue to be slightly lower than last year. But in spite of this, we are continuing with our guidance of low double-digit organic revenue growth in constant currency for FY '27.\"",
+          "speaker": "Ramesh Gopalan",
+          "role": "MD and Group CEO",
+          "location": "Transcript page 9 (PDF page 10)"
         },
         {
           "horizon": "current_year",
@@ -1310,78 +1176,32 @@
           "speaker": "Ramesh Gopalan",
           "role": "MD and Group CEO",
           "location": "Transcript page 3 (PDF page 4)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Provider segment to be pushed to a higher share of revenue, but no explicit target",
-          "summary": "Chirok plus a dedicated provider go-to-market team aim to lift provider growth from today's roughly 10% revenue share; management declines to give a 2-3 year target.",
-          "tone": "positive",
-          "evidence": "\"we want to accelerate the growth in our provider segment, and we want it to be a higher percentage of our total revenue.\"",
-          "speaker": "Ramesh Gopalan",
-          "role": "MD and Group CEO",
-          "location": "Transcript page 19 (PDF page 20)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Margin range stays 24-26% structurally; AI gains mostly passed to clients",
-          "summary": "Management does not see a structural step-up; AI productivity is largely passed through, with a marginal margin increase possible only if some benefit is retained.",
-          "tone": "neutral",
-          "evidence": "\"I think it will still continue to be in the 24% to 26% range, but over a period of time, it could marginally increase if we manage to retain the benefits of AI.\"",
-          "speaker": "Ramesh Gopalan",
-          "role": "MD and Group CEO",
-          "location": "Transcript page 13 (PDF page 14)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Clients will keep demanding more cost take-out because of AI",
-          "summary": "Pricing and productivity pressure from payer clients persists even as their medical costs ease.",
-          "tone": "cautious",
-          "evidence": "\"those pressures will always be there because now with the availability of AI and other transformational opportunities, clients are expecting service providers like us to take out more costs from the work that we do.\"",
-          "speaker": "Ramesh Gopalan",
-          "role": "MD and Group CEO",
-          "location": "Transcript page 16 (PDF page 17)"
         }
       ],
       "analyst_focus": [
         {
-          "topic": "How big can Chirok get, and is its growth and margin real?",
-          "why_it_mattered": "Eight of ten analysts touched Chirok (INR/$13 million TTM revenue, 35.8% adjusted margin, 750 staff). They probed revenue history, revenue per head versus peers, what is adjusted in EBITDA, AI risk to mid-cycle coding, and payback; management gave no medium-term revenue guidance yet.",
-          "question_count": null
+          "topic": "Is the margin upgrade structural or a one-year benefit?",
+          "why_it_mattered": "The EBITDA margin guidance moved up a notch; analysts asked which levers (efficiency, FX, geo mix) drove it and whether AI pass-through will erode it over 2-3 years.",
+          "question_count": 9,
+          "analysts_asking": 5
         },
         {
           "topic": "Can the provider segment finally grow faster than payer?",
           "why_it_mattered": "Provider is stuck near 10% of revenue and organic growth there has lagged; analysts asked for targets, investment needs, margin impact and payer-provider conflict, and got no explicit target.",
-          "question_count": null
-        },
-        {
-          "topic": "Is the margin upgrade structural or a one-year benefit?",
-          "why_it_mattered": "The EBITDA margin guidance moved up a notch; analysts asked which levers (efficiency, FX, geo mix) drove it and whether AI pass-through will erode it over 2-3 years.",
-          "question_count": null
-        },
-        {
-          "topic": "How much will open enrolment and AEP disappoint this year?",
-          "why_it_mattered": "The second half carries the seasonal revenue peak; analysts translated the 100 bps share decline into flat year-on-year OE revenue.",
-          "question_count": null
-        },
-        {
-          "topic": "Minimum wages and delivery-centre footprint",
-          "why_it_mattered": "Karnataka and Telangana wage hikes hit margins; analysts asked whether a stay creates upside and why the delivery-centre count and lease assets fell (answer: site consolidation and counting change).",
-          "question_count": null
-        },
-        {
-          "topic": "Will easing payer medical costs reduce cost pressure on vendors?",
-          "why_it_mattered": "Payer margins improved in H1 2026; analysts asked if that gives Sagility pricing relief, and management said cost take-out pressure persists.",
-          "question_count": null
+          "question_count": 7,
+          "analysts_asking": 5
         },
         {
           "topic": "What is in the $40 million ACV and what M&A comes next?",
           "why_it_mattered": "Analysts sought payer versus provider mix, deal duration and margins, and remaining capability gaps for further acquisitions; the segment split was not available.",
-          "question_count": null
+          "question_count": 6,
+          "analysts_asking": 4
         },
         {
-          "topic": "What does the low double-digit guidance include?",
-          "why_it_mattered": "Clarified that guidance is organic only, with CareSeed and Chirok additive.",
-          "question_count": null
+          "topic": "How big can Chirok get, and is its growth and margin real?",
+          "why_it_mattered": "Eight of ten analysts touched Chirok (INR/$13 million TTM revenue, 35.8% adjusted margin, 750 staff). They probed revenue history, revenue per head versus peers, what is adjusted in EBITDA, AI risk to mid-cycle coding, and payback; management gave no medium-term revenue guidance yet.",
+          "question_count": 4,
+          "analysts_asking": 3
         }
       ],
       "key_risks": [
@@ -1429,7 +1249,8 @@
       "analysis_profile": "forward_only_v1",
       "company_type": "bank",
       "call_period": "Q2 FY2027",
-      "analyst_focus_scope": "all_material_themes",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
       "next_quarter_outlook": [
         {
           "horizon": "next_quarter",
@@ -1440,36 +1261,6 @@
           "speaker": "Rajeev Mantri",
           "role": "Group Head and CFO",
           "location": "Transcript page 10 (PDF page 10)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "Q3 and Q4 to show NIM benefit from balance-sheet optimisation",
-          "summary": "Redeploying FCNR(B) funds into loans and retiring higher-cost liabilities is expected to lift NIM over the next two quarters.",
-          "tone": "positive",
-          "evidence": "\"I think in Q3 and Q4, you should be able to see some sort of a benefit coming through due to the optimization exercise that we'll be doing.\"",
-          "speaker": "Rajeev Mantri",
-          "role": "Group Head and CFO",
-          "location": "Transcript page 10 (PDF page 10)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "Sequential NIM improvement intended, but no firm timeline",
-          "summary": "Management wants NIM to move up each quarter via asset mix, liability mix and rate hikes, with some headwinds, and declines to call a time frame.",
-          "tone": "neutral",
-          "evidence": "\"But sequentially, we should be able to show an improvement going forward.\"",
-          "speaker": "Rajeev Mantri",
-          "role": "Group Head and CFO",
-          "location": "Transcript page 14 (PDF page 14)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "Card fee weakness partly a festive-timing shift into October",
-          "summary": "Year-on-year fee growth was weak because the festive spend month moved from September last year to October this year, implying some catch-up in Q3.",
-          "tone": "neutral",
-          "evidence": "\"last year, September was when the festive month had started. This year, that has shifted to October. So, there is a bit of a temporal difference on account of that.\"",
-          "speaker": "Subrat Mohanty",
-          "role": "Executive Director",
-          "location": "Transcript page 13 (PDF page 13)"
         },
         {
           "horizon": "current_year",
@@ -1493,16 +1284,6 @@
         },
         {
           "horizon": "current_year",
-          "topic": "Bancassurance: draft IRDA commission rules likely 6-9 months away",
-          "summary": "The bank expects regulation to take time, possibly with a glide path, and plans to mitigate through volumes, product mix and other fee sources; it will not quantify the impact.",
-          "tone": "cautious",
-          "evidence": "\"So, I think we might get about 6 to 9 months before that comes through. So, we'll try and mitigate the impact during that point of time.\"",
-          "speaker": "Subrat Mohanty",
-          "role": "Executive Director",
-          "location": "Transcript page 13 (PDF page 13)"
-        },
-        {
-          "horizon": "current_year",
           "topic": "FCNR(B) liquidity not fully deployed, leaving growth runway",
           "summary": "Part of the incremental FCNR(B) liability is still unused for asset growth while LCR is held in a 115-120% band, so loan growth can run ahead of deposit raising in coming quarters.",
           "tone": "positive",
@@ -1513,43 +1294,13 @@
         },
         {
           "horizon": "current_year",
-          "topic": "Labour-code costs may recur if new guidelines arrive",
-          "summary": "The Q2 one-offs included labour-code provisions on outsourced staff and ESIC; management says known items are covered but the area is evolving.",
+          "topic": "Bancassurance: draft IRDA commission rules likely 6-9 months away",
+          "summary": "The bank expects regulation to take time, possibly with a glide path, and plans to mitigate through volumes, product mix and other fee sources; it will not quantify the impact.",
           "tone": "cautious",
-          "evidence": "\"So far, based on what we have been aware of, we have already taken those into accounts. But this is an area where, you know, some new guidelines, etcetera, whenever they come, we will have to deal with that.\"",
-          "speaker": "Rajeev Mantri",
-          "role": "Group Head and CFO",
-          "location": "Transcript page 12 (PDF page 12)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Second-half posture: watchful on geopolitics, inflation, tariffs and weather",
-          "summary": "CEO flags West Asia tensions, commodity prices and weather risks while expressing confidence in sustainable and profitable growth.",
-          "tone": "neutral",
-          "evidence": "\"As we enter second half of the year, we continue to remain watchful and closely monitor the evolving external environment.\"",
-          "speaker": "Amitabh Chaudhry",
-          "role": "MD and CEO",
-          "location": "Transcript page 5 (PDF page 5)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Through-cycle NIM target of 3.8% unchanged, no timeline given",
-          "summary": "Management will not say how long it takes to get to 3.8% from 3.36% (3.47% ex-FCNR).",
-          "tone": "neutral",
-          "evidence": "\"Though structurally, we are working towards our through-cycle guidance of 3.8% that we have mentioned earlier.\"",
-          "speaker": "Rajeev Mantri",
-          "role": "Group Head and CFO",
-          "location": "Transcript page 10 (PDF page 10)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "ECL transition: no material impact expected, backed by ~INR 8,000 cr contingent provisions",
-          "summary": "Both the transition and the subsequent flow are expected to be non-material for FY28, with floor rates for stage 1 and 2 still being worked through.",
-          "tone": "positive",
-          "evidence": "\"we don't expect any material impact to come through on the transition itself. This is also supported because we have existing contingent provisions almost close to 8,000 crores that continue\"",
-          "speaker": "Rajeev Mantri",
-          "role": "Group Head and CFO",
-          "location": "Transcript page 19 (PDF page 19)"
+          "evidence": "\"So, I think we might get about 6 to 9 months before that comes through. So, we'll try and mitigate the impact during that point of time.\"",
+          "speaker": "Subrat Mohanty",
+          "role": "Executive Director",
+          "location": "Transcript page 13 (PDF page 13)"
         },
         {
           "horizon": "medium_term",
@@ -1560,103 +1311,32 @@
           "speaker": "Rajeev Mantri",
           "role": "Group Head and CFO",
           "location": "Transcript page 20 (PDF page 20)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Retail share of loans to be rebuilt towards above 55%",
-          "summary": "Corporate has outgrown retail; management says it is working to stop the retail mix slipping further and to return above 55% as retail book growth catches up with disbursements.",
-          "tone": "neutral",
-          "evidence": "\"we get back to the above 55% retail mix. So that effort is on at this point in time.\"",
-          "speaker": "Subrat Mohanty",
-          "role": "Executive Director",
-          "location": "Transcript page 9 (PDF page 9)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Corporate lending growth described as diversified and sustainable",
-          "summary": "Growth is spread across capex, project finance, refinancing and working capital with selective origination; downstream salary and liability benefits are cited.",
-          "tone": "positive",
-          "evidence": "\"So corporate growth is sustainable because it's well diversified across sector segments and financing categories.\"",
-          "speaker": "Vijay Mulbagal",
-          "role": "Bank executive (role not stated in transcript)",
-          "location": "Transcript page 11 (PDF page 11)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Cost-to-assets expected to keep falling once one-offs fall away",
-          "summary": "The Q2 cost-to-assets uptick on a quarterly basis is attributed to one-timers (labour code and FCNR costs); management expects the ratio to fall further adjusted for these.",
-          "tone": "positive",
-          "evidence": "\"I think this is primarily due to the one-timers that we have seen in the cost for this quarter. That's why I think, adjusted for that, you will see the ratio coming down even further.\"",
-          "speaker": "Rajeev Mantri",
-          "role": "Group Head and CFO",
-          "location": "Transcript page 16 (PDF page 16)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "UPI MDR revenue upside cannot be sized; implementation postponed",
-          "summary": "The bank plays across issuing, PSP and acquiring roles but gives no revenue guidance and may reinvest part of any MDR revenue into the ecosystem.",
-          "tone": "neutral",
-          "evidence": "\"at this stage, we can't give any specific guidance because the MDR implementation has been postponed.\"",
-          "speaker": "Arnika Dixit",
-          "role": "Bank executive (role not stated in transcript)",
-          "location": "Transcript page 15 (PDF page 15)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "No equity capital needed for growth or protection",
-          "summary": "CET1 at 14.61% plus ~49 bps of unreckoned provision buffer; management rules out equity raising.",
-          "tone": "positive",
-          "evidence": "\"We reiterate that we do not need equity capital for either the growth or protection pillars.\"",
-          "speaker": "Rajeev Mantri",
-          "role": "Group Head and CFO",
-          "location": "Transcript page 6 (PDF page 6)"
         }
       ],
       "analyst_focus": [
         {
+          "topic": "Has the FCNR(B) money been fully deployed, and what does that mean for liquidity?",
+          "why_it_mattered": "A back-of-envelope check showed INR 1 trillion raised against INR 80,000 cr net deposit growth and INR 68,000 cr loan growth with LCR flat near 119%; analysts asked how much room is left to grow and why run-off rates rose.",
+          "question_count": 9,
+          "analysts_asking": 5
+        },
+        {
           "topic": "Has NIM bottomed, and what is the exit rate and path from here?",
           "why_it_mattered": "Five analysts pressed on NIM: reported 3.36% was down 37 bps YoY with an 11 bps FCNR(B) distortion. They tested whether Q2 is the trough, the September exit NIM, how the FCNR drag unwinds, and the Q4 timing of repo-hike repricing; management declined monthly NIM and a firm timeline.",
-          "question_count": null
+          "question_count": 5,
+          "analysts_asking": 4
         },
         {
           "topic": "Will corporate keep out-growing retail, and is that growth durable?",
           "why_it_mattered": "Retail share fell below the previously signalled 55% as wholesale grew 34% YoY; analysts asked if the mix would keep shifting given wide AA spreads and industry-wide FCNR-funded corporate lending.",
-          "question_count": null
-        },
-        {
-          "topic": "Where do credit costs settle, including ECL and FY28?",
-          "why_it_mattered": "Net credit cost fell to 0.45% after standard-asset provisions on FCNR loans; analysts asked about normalisation versus further improvement, unusual recoveries, and whether the ECL transition removes the ROA tailwind from lower credit costs in FY28.",
-          "question_count": null
-        },
-        {
-          "topic": "Why is fee growth weak and what do regulatory changes do to it?",
-          "why_it_mattered": "Fee grew only 6% YoY on cards, payments and asset-linked fee dilution; analysts asked about the draft IRDA bancassurance guidelines, how to offset them, the UPI MDR opportunity and any fee on FCNR mobilisation (none charged).",
-          "question_count": null
+          "question_count": 5,
+          "analysts_asking": 4
         },
         {
           "topic": "Is operating leverage real once one-offs are stripped out?",
           "why_it_mattered": "Opex rose 11% QoQ and cost-to-assets looked higher on a quarterly basis; analysts asked about the INR 254 cr one-offs (labour code, FCNR) and whether further jaws are available.",
-          "question_count": null
-        },
-        {
-          "topic": "Has the FCNR(B) money been fully deployed, and what does that mean for liquidity?",
-          "why_it_mattered": "A back-of-envelope check showed INR 1 trillion raised against INR 80,000 cr net deposit growth and INR 68,000 cr loan growth with LCR flat near 119%; analysts asked how much room is left to grow and why run-off rates rose.",
-          "question_count": null
-        },
-        {
-          "topic": "Personal loan strategy and unsecured growth",
-          "why_it_mattered": "With peers growing PL faster, an analyst asked whether the bank would extend PL beyond salaried borrowers; management said PL stays salaried-only and self-employed borrowers go through business loans.",
-          "question_count": null
-        },
-        {
-          "topic": "How will NII momentum evolve?",
-          "why_it_mattered": "NII growth accelerated to 5% QoQ; analysts asked whether the rate hike and FCNR deployment will extend it; no NII guidance was given.",
-          "question_count": null
-        },
-        {
-          "topic": "ECLGS disbursement scale",
-          "why_it_mattered": "Analysts sized the government-guaranteed emergency line exposure: around 12,500 loans for INR 10,700 cr sanctioned, about 80% disbursed.",
-          "question_count": null
+          "question_count": 5,
+          "analysts_asking": 4
         }
       ],
       "key_risks": [
@@ -1683,18 +1363,9 @@
       "analysis_profile": "forward_only_v1",
       "company_type": "pharma",
       "call_period": "Q2 FY2027",
-      "analyst_focus_scope": "all_material_themes",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
       "next_quarter_outlook": [
-        {
-          "horizon": "next_quarter",
-          "topic": "JB margin improvement to continue for the next two to three quarters",
-          "summary": "Q1-to-Q2 JB margin gains came mainly from field-force merger savings; the same run-rate of improvement is expected to continue.",
-          "tone": "positive",
-          "evidence": "\"So, I would expect quarter-on-quarter, this same run rate of improvement can continue maybe for the next two, three quarters.\"",
-          "speaker": "Aman Mehta",
-          "role": "Managing Director",
-          "location": "Transcript page 5 (PDF page 5)"
-        },
         {
           "horizon": "next_quarter",
           "topic": "Germany: best case is a slight decline in coming quarters, stability after 3-4 quarters",
@@ -1704,16 +1375,6 @@
           "speaker": "Sanjay Gupta",
           "role": "Executive Director, International Business",
           "location": "Transcript page 8 (PDF page 8)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "INR 950-960 cr second tranche of the Novartis ophthalmology deal due in December",
-          "summary": "A pending cash payment on the JB-Novartis ophthalmology portfolio is expected in the December quarter, which matters for net-debt trajectory (net debt/EBITDA now 1.8x).",
-          "tone": "neutral",
-          "evidence": "\"there is a second tranche of payment of about INR950 crores, INR960 crores that is pending. Would that be due anytime soon? ... That would be in December of this year.\"",
-          "speaker": "Bino (Elara Capital); Aman Mehta",
-          "role": "Analyst; Managing Director",
-          "location": "Transcript page 7 (PDF page 7)"
         },
         {
           "horizon": "current_year",
@@ -1746,56 +1407,6 @@
           "location": "Transcript page 5 (PDF page 5)"
         },
         {
-          "horizon": "current_year",
-          "topic": "US: four to five more filings this fiscal; price erosion rises in H2 from new competitors",
-          "summary": "Filings of 9-10 products in the year will exceed several prior years, but management expects new competition on recent launches to raise pricing pressure in H2.",
-          "tone": "neutral",
-          "evidence": "\"we think we can file four to five at least more before this fiscal year ends. ... I expect some new competitors on our recent launches in H2.\"",
-          "speaker": "Sanjay Gupta",
-          "role": "Executive Director, International Business",
-          "location": "Transcript page 9 (PDF page 9)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Indian pharma market growth of at least 10% to persist through next financial year",
-          "summary": "H1 market growth was about 12%; management sees it holding for the rest of this year and slipping only 1-2 points next year, calling this year potentially a one-off.",
-          "tone": "positive",
-          "evidence": "\"We think this market growth is likely to sustain for the rest of the year, and perhaps from next year it may drop a little bit, say 1%, 2%, but minimum 10% is what we think should continue from here on as well, at least for the next financial year.\"",
-          "speaker": "Aman Mehta",
-          "role": "Managing Director",
-          "location": "Transcript page 10 (PDF page 10)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Curatio to sustain high growth for the rest of the year and likely a couple of years",
-          "summary": "Curatio grew 34% in Q2 and H1 and is now 7-8% of base India; management cannot say 30% growth lasts 3-5 years but sees the trend continuing.",
-          "tone": "positive",
-          "evidence": "\"I think it should be possible to sustain high growth for at least a couple of years.\"",
-          "speaker": "Aman Mehta",
-          "role": "Managing Director",
-          "location": "Transcript page 9 (PDF page 9)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Brazil expected to keep growing mid-teens; Brazil generic semaglutide launch in 6-9 months",
-          "summary": "Four business units are performing; 53 molecules await ANVISA approval over about three years; a first local generic semaglutide launch has expanded the market.",
-          "tone": "positive",
-          "evidence": "\"Brazil, we are optimistic, it'll continue to grow double-digit, mid-teens or something in that range\"",
-          "speaker": "Sanjay Gupta",
-          "role": "Executive Director, International Business",
-          "location": "Transcript page 8 (PDF page 8)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Field force held at 9,100 this year; possible 500 addition, 9,500-9,600 next year",
-          "summary": "No headcount change this fiscal year after the field-force merger, with a possible base-business expansion later.",
-          "tone": "neutral",
-          "evidence": "\"We expect potentially some expansion may be required in the base business, so say maybe by 500 MRs or so. But we're not fully certain on what the next year's picture looks like, but it could be say something between 9,500 to 9,600.\"",
-          "speaker": "Aman Mehta",
-          "role": "Managing Director",
-          "location": "Transcript page 5 (PDF page 5)"
-        },
-        {
           "horizon": "medium_term",
           "topic": "INR 450 cr cost synergies now targeted in two years rather than three",
           "summary": "About half of the synergy is already in this year's margins and most comes through by next year; the INR 450 cr quantum is held and any upside will be reviewed in a couple of quarters.",
@@ -1807,36 +1418,6 @@
         },
         {
           "horizon": "medium_term",
-          "topic": "India revenue synergies to start showing next year",
-          "summary": "Cross-selling and adding JB brands to Torrent divisions typically take 6-12 months, with international synergies a longer 2-3 year journey.",
-          "tone": "positive",
-          "evidence": "\"So, I think next year should see a reasonable improvement in the topline growth through revenue synergies.\"",
-          "speaker": "Aman Mehta",
-          "role": "Managing Director",
-          "location": "Transcript page 6 (PDF page 6)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "No FY28 margin guidance until Q1 FY28",
-          "summary": "Management will wait for a full-year combined base before guiding FY28 EBITDA margins.",
-          "tone": "neutral",
-          "evidence": "\"No, we are not giving any guidance for FY28. We are just waiting for the full-year base to come in, and then probably next year quarter one, we will guide it.\"",
-          "speaker": "Sudhir Menon",
-          "role": "Executive Director, Finance and CFO",
-          "location": "Transcript page 13 (PDF page 13)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "R&D to stay at 4-4.5% of revenue for the next couple of years",
-          "summary": "R&D is stepping up to lift US ANDA filings from low to high single digits a year; the Q2 increase is expected to persist, which caps margin expansion.",
-          "tone": "cautious",
-          "evidence": "\"We believe that the range should not exceed, say, between 4% to 4.5% even in the following year.\"",
-          "speaker": "Aman Mehta",
-          "role": "Managing Director",
-          "location": "Transcript page 7 (PDF page 7)"
-        },
-        {
-          "horizon": "medium_term",
           "topic": "India semaglutide: lost share to be recovered; generic market could reach INR 2,000-2,500 cr in 3-5 years",
           "summary": "After a roughly two-month injectable supply gap, supplies were fully restored in September; the analyst's estimate of a INR 2,000-2,500 cr market over three to five years was called 'not out of range'.",
           "tone": "positive",
@@ -1844,78 +1425,32 @@
           "speaker": "Aman Mehta",
           "role": "Managing Director",
           "location": "Transcript page 10 (PDF page 10)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "India semaglutide pricing expected stable to gradually higher",
-          "summary": "Because the products are branded, management expects no per-patient price erosion despite rising competition.",
-          "tone": "positive",
-          "evidence": "\"And in fact, the price would only be stable or gradually increase over the next couple of years.\"",
-          "speaker": "Aman Mehta",
-          "role": "Managing Director",
-          "location": "Transcript page 12 (PDF page 12)"
         }
       ],
       "analyst_focus": [
         {
           "topic": "How fast does JB recover, in India and internationally?",
           "why_it_mattered": "JB revenue was flat YoY after integration; analysts asked whether the flat trend persists and whether international disruptions take longer to fix. Answer: India recovers gradually above 10% in H2; international slower; total double-digit in H2.",
-          "question_count": null
-        },
-        {
-          "topic": "Are INR 450 cr cost synergies conservative, and when do revenue synergies come?",
-          "why_it_mattered": "Roughly half appears already in margins; Neha Manpuria, Damayanti Kerai and Kunal Dhamesha tested upside, timing (two years versus three), and when revenue synergies start; management held the INR 450 cr number.",
-          "question_count": null
-        },
-        {
-          "topic": "Where do group and JB EBITDA margins go from 33.5%?",
-          "why_it_mattered": "Margin fell slightly QoQ (33.8% to 33.5%) as R&D rose 0.7 pts of revenue; analysts asked for JB margin parity with Torrent India, the sequential JB gain and FY28-29 direction; management gave only directional H2 'a little higher' commentary.",
-          "question_count": null
-        },
-        {
-          "topic": "Where will the combined India field force settle?",
-          "why_it_mattered": "The 9,100 MR count after merging divisions affects cost and productivity; management said flat this year with a possible 500 addition.",
-          "question_count": null
-        },
-        {
-          "topic": "Is the higher R&D and US filing push sustainable and productive?",
-          "why_it_mattered": "R&D at 4.2% of revenue was above Q1's 3.5%; analysts asked about new investment avenues and US filing cadence, and whether US growth is durable versus price erosion.",
-          "question_count": null
-        },
-        {
-          "topic": "How big and how profitable is India semaglutide, and what about Brazil?",
-          "why_it_mattered": "Torrent holds 32% share after a supply gap; analysts asked about market size, pricing per patient and Brazil launch timing, which are key new profit pools.",
-          "question_count": null
-        },
-        {
-          "topic": "Why is Indian pharma market growth suddenly 12%, and will it last?",
-          "why_it_mattered": "Market growth is well above recent years; analysts probed GLP-1, trade generics and consolidation as causes. Management could not pinpoint the delta but sees at least 10% next year.",
-          "question_count": null
+          "question_count": 9,
+          "analysts_asking": 5
         },
         {
           "topic": "Is US growth from launches durable?",
           "why_it_mattered": "US constant-currency revenue grew 13%; analysts asked how much comes from products with durable advantage. Management said there is no durable advantage in generics; the base is flat and growth comes from new launches.",
-          "question_count": null
+          "question_count": 5,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Where do group and JB EBITDA margins go from 33.5%?",
+          "why_it_mattered": "Margin fell slightly QoQ (33.8% to 33.5%) as R&D rose 0.7 pts of revenue; analysts asked for JB margin parity with Torrent India, the sequential JB gain and FY28-29 direction; management gave only directional H2 'a little higher' commentary.",
+          "question_count": 8,
+          "analysts_asking": 4
         },
         {
           "topic": "Brazil growth drivers and constraints",
           "why_it_mattered": "Growth was split about equally across price, volume and launches; analysts asked about 53 pending approvals, the constraint (ANVISA timing and local competition) and growth outlook.",
-          "question_count": null
-        },
-        {
-          "topic": "Germany outlook",
-          "why_it_mattered": "Revenue fell about 13% in constant currency; management could offer only a best case of slight decline for coming quarters.",
-          "question_count": null
-        },
-        {
-          "topic": "Curatio and OTC scale-up",
-          "why_it_mattered": "Curatio is now 7-8% of base India and growing 34%; analysts asked about sustainability and new OTC launches, which are mostly brand extensions.",
-          "question_count": null
-        },
-        {
-          "topic": "JB-Novartis ophthalmology deal risk and payment timing",
-          "why_it_mattered": "An analyst asked whether Novartis India changes endanger the deal and when the INR 950-960 cr balance is due; management said the contract is clear and payment is in December.",
-          "question_count": null
+          "question_count": 5,
+          "analysts_asking": 3
         }
       ],
       "key_risks": [
@@ -1964,7 +1499,8 @@
       "analysis_profile": "forward_only_v1",
       "company_type": "real estate developer",
       "call_period": "Q2 FY2027",
-      "analyst_focus_scope": "all_material_themes",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
       "next_quarter_outlook": [
         {
           "horizon": "next_quarter",
@@ -1997,14 +1533,14 @@
           "location": "Transcript page 5 (PDF page 5)"
         },
         {
-          "horizon": "next_quarter",
-          "topic": "Thane prices to rise on input cost increases",
-          "summary": "Inventory is ample and sales velocity is improving as buildings top up, but management plans price increases in Thane.",
-          "tone": "positive",
-          "evidence": "\"Thane, very clearly, we have enough inventory and you will see a price increase in Thane also in a bit because there is an input cost increase.\"",
+          "horizon": "current_year",
+          "topic": "Adarsh Nagar launch delayed by pending clearances",
+          "summary": "Design is ready but approvals are taking longer than expected, so a launch this year is not assured.",
+          "tone": "cautious",
+          "evidence": "\"Like really -- like knocking the door, but it is taking a little longer than what we thought.\"",
           "speaker": "Vikas Oberoi",
           "role": "Chairman and Managing Director",
-          "location": "Transcript page 8 (PDF page 8)"
+          "location": "Transcript page 4 (PDF page 4)"
         },
         {
           "horizon": "current_year",
@@ -2017,36 +1553,6 @@
           "location": "Transcript page 3 (PDF page 3)"
         },
         {
-          "horizon": "current_year",
-          "topic": "Adarsh Nagar launch delayed by pending clearances",
-          "summary": "Design is ready but approvals are taking longer than expected, so a launch this year is not assured.",
-          "tone": "cautious",
-          "evidence": "\"Like really -- like knocking the door, but it is taking a little longer than what we thought.\"",
-          "speaker": "Vikas Oberoi",
-          "role": "Chairman and Managing Director",
-          "location": "Transcript page 4 (PDF page 4)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Construction outflow about INR 1,000 cr for FY27",
-          "summary": "Full-year construction cash outflow on ongoing projects is guided at roughly INR 1,000 cr, a small number against Q2's strong NCR collections.",
-          "tone": "neutral",
-          "evidence": "\"For the whole year, it will be in the region of about Rs. 1,000-odd crores.\"",
-          "speaker": "Saumil Daru",
-          "role": "Director, Finance",
-          "location": "Transcript page 7 (PDF page 7)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Mulund Ralli Wolf launch price still being debated; Q4 launch not confirmed",
-          "summary": "Analyst floated INR 38,000-40,000 per sq ft and a Q4 launch; management did not commit to either.",
-          "tone": "neutral",
-          "evidence": "\"We are internally debating, as we speak, what should the price there be.\"",
-          "speaker": "Vikas Oberoi",
-          "role": "Chairman and Managing Director",
-          "location": "Transcript page 9 (PDF page 9)"
-        },
-        {
           "horizon": "medium_term",
           "topic": "Annuity asset spend spread over about four years (Thane, Borivali office)",
           "summary": "Mall, hotel, club and school at Thane and a 8-10 lakh sq ft Borivali asset will be funded gradually over four years.",
@@ -2055,103 +1561,32 @@
           "speaker": "Saumil Daru",
           "role": "Director, Finance",
           "location": "Transcript page 7 (PDF page 7)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Borivali hotel targeted for around end of next calendar year; Thane about four years away",
-          "summary": "Annuity growth is back-ended: Borivali hotel is under interiors; Thane has not started.",
-          "tone": "neutral",
-          "evidence": "\"Borivali, the target is like end of next Calendar Year, I would say, end of next Calendar year, next Diwali and around. And Thane, we are yet to start work there. So that is a good four years away.\"",
-          "speaker": "Vikas Oberoi",
-          "role": "Chairman and Managing Director",
-          "location": "Transcript page 6 (PDF page 6)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "RLDA project: sell-versus-lease decision still open",
-          "summary": "Approvals are in process for an office, small hotel and retail development; management has not decided between selling strata and leasing.",
-          "tone": "neutral",
-          "evidence": "\"we haven't really decided whether we will be selling and leasing or only leasing.\"",
-          "speaker": "Vikas Oberoi",
-          "role": "Chairman and Managing Director",
-          "location": "Transcript page 5 (PDF page 5)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "NCR expansion: open to land for residential and annuity assets across NCR",
-          "summary": "After Gurugram, management says it will buy land or do JDAs in Noida, Gurugram and Delhi, including malls and offices; it will not disclose pending deals.",
-          "tone": "positive",
-          "evidence": "\"So we are open to buying land for malls or offices even any other annuity assets in NCR.\"",
-          "speaker": "Vikas Oberoi",
-          "role": "Chairman and Managing Director",
-          "location": "Transcript page 9 (PDF page 9)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Further Gurugram sales contribution not guided",
-          "summary": "Management says remaining Gurugram inventory could achieve meaningful sales but explicitly declines forward-looking statements, so FY28 NCR contribution remains unquantified.",
-          "tone": "neutral",
-          "evidence": "\"Frankly, even if you open our booking and sell the rest of the inventory, we'll easily achieve that. But like I said, we frankly don't give any forward-looking statements.\"",
-          "speaker": "Vikas Oberoi",
-          "role": "Chairman and Managing Director",
-          "location": "Transcript page 5 (PDF page 5)"
-        },
-        {
-          "horizon": "long_term",
-          "topic": "Three Sixty brand in other cities (e.g. south India) possible but undated",
-          "summary": "Landowners are offering parcels for Three Sixty-style projects; no commitment on timing.",
-          "tone": "neutral",
-          "evidence": "\"No, you never -- you can never count that out ever, but I can't give you a guarantee of when.\"",
-          "speaker": "Vikas Oberoi",
-          "role": "Chairman and Managing Director",
-          "location": "Transcript page 9 (PDF page 9)"
         }
       ],
       "analyst_focus": [
         {
           "topic": "What do the Gurugram litigation and Phase 2 timing mean for NCR?",
           "why_it_mattered": "Three Sixty North was a very large launch (INR 8,000+ cr of sales); analysts needed to know if construction or Phase 2 is at risk and how much of FY28 sales NCR can contribute. Answer: no construction restriction, Phase 2 awaits approvals, no forward guidance.",
-          "question_count": null
-        },
-        {
-          "topic": "Which H2 launches will actually happen?",
-          "why_it_mattered": "Pre-sales visibility depends on Peddar Road, Thane, Forestville, Mulund and Adarsh Nagar launches; management said several would slip by a quarter and Adarsh Nagar approvals are delayed.",
-          "question_count": null
-        },
-        {
-          "topic": "How do collections and cash margin convert from the NCR launch?",
-          "why_it_mattered": "Cash margin hit roughly 80% in Q2 on Three Sixty North collections with no revenue recognition; analysts reconciled the INR 835 cr collected against the 20%-in-90-days milestone and asked for steady-state margins. Management said the balance spills into Q3.",
-          "question_count": null
-        },
-        {
-          "topic": "When do annuity and hotel assets commission?",
-          "why_it_mattered": "Annuity growth drives long-term valuation; analysts asked about Ritz-Carlton (Q1 next year), Borivali (end of next calendar year), Thane (about four years), I-Ven Worli (construction started) and RLDA (strategy undecided).",
-          "question_count": null
+          "question_count": 5,
+          "analysts_asking": 4
         },
         {
           "topic": "How is the NCR business development pipeline building?",
           "why_it_mattered": "With MMR visibility for two to three years, analysts asked which NCR markets and asset types are open and when new large deals close; management declined to disclose negotiations.",
-          "question_count": null
+          "question_count": 4,
+          "analysts_asking": 3
         },
         {
-          "topic": "Is luxury demand softening, given sales velocity and pricing at Three Sixty West?",
-          "why_it_mattered": "Karan Khanna noted 3 units in YTD FY27 versus 10 in FY26 despite sharp price rises; management said it is project- and floor-specific, not a market signal.",
-          "question_count": null
+          "topic": "When do annuity and hotel assets commission?",
+          "why_it_mattered": "Annuity growth drives long-term valuation; analysts asked about Ritz-Carlton (Q1 next year), Borivali (end of next calendar year), Thane (about four years), I-Ven Worli (construction started) and RLDA (strategy undecided).",
+          "question_count": 3,
+          "analysts_asking": 3
         },
         {
-          "topic": "What will Mulund Ralli Wolf be priced at and when does it launch?",
-          "why_it_mattered": "Eternia is up 22% YoY to about INR 36,500 per sq ft; the next launch price and timing are a Q4 pricing catalyst; not decided.",
-          "question_count": null
-        },
-        {
-          "topic": "What is the FY27 construction outflow and annuity capex phasing?",
-          "why_it_mattered": "Funding needs for ongoing projects (about INR 1,000 cr this year) and annuity assets (spread over four years) frame free cash flow.",
-          "question_count": null
-        },
-        {
-          "topic": "Why did the balance sheet expand on both sides?",
-          "why_it_mattered": "Fair-value accounting of area-based land consideration added to inventory and provisions in the launch quarter; nothing operational.",
-          "question_count": null
+          "topic": "Which H2 launches will actually happen?",
+          "why_it_mattered": "Pre-sales visibility depends on Peddar Road, Thane, Forestville, Mulund and Adarsh Nagar launches; management said several would slip by a quarter and Adarsh Nagar approvals are delayed.",
+          "question_count": 4,
+          "analysts_asking": 2
         }
       ],
       "key_risks": [
@@ -2178,18 +1613,9 @@
       "analysis_profile": "forward_only_v1",
       "company_type": "bank",
       "call_period": "Q2 FY2027",
-      "analyst_focus_scope": "all_material_themes",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
       "next_quarter_outlook": [
-        {
-          "horizon": "next_quarter",
-          "topic": "Lending yields bottomed last quarter",
-          "summary": "Adjusting for FCNR effects, lending yields were flat to slightly higher QoQ, and management treats Q1 FY27 as the trough of the yield cycle.",
-          "tone": "positive",
-          "evidence": "\"So, we have already seen the bottom of that cycle last quarter, I would say.\"",
-          "speaker": "KVS Manian",
-          "role": "MD and CEO",
-          "location": "Transcript page 8 (PDF page 8)"
-        },
         {
           "horizon": "next_quarter",
           "topic": "October repo hike: external-benchmark loans reprice before deposits; deposit competition to rise when liquidity normalises",
@@ -2199,26 +1625,6 @@
           "speaker": "Venkatraman V",
           "role": "Executive Director",
           "location": "Transcript page 4 (PDF page 4)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "Gold-loan yields can rise with rates, capped by PSU competition",
-          "summary": "Gold loans are roughly one-year products that reprice on maturity, so management expects to raise pricing as rates rise, but PSU banks charging under 9% limit how far.",
-          "tone": "neutral",
-          "evidence": "\"if yields would go up, do you see scope to increase the price? ... Of course, of course. Why would we not?\"",
-          "speaker": "Jai Prakash Mundhra (ICICI Securities); KVS Manian",
-          "role": "Analyst; MD and CEO",
-          "location": "Transcript page 9 (PDF page 9)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "Staff-cost picture to be clearer within about a quarter",
-          "summary": "Employee cost is rising on hiring and branch openings and carries an actuarial/retirement-cost component that can partly write back as rates rise; an estimate is expected in the next quarter or so.",
-          "tone": "neutral",
-          "evidence": "\"But I think we will be in a better position over the next quarter or so to be able to estimate this better.\"",
-          "speaker": "KVS Manian",
-          "role": "MD and CEO",
-          "location": "Transcript page 9 (PDF page 9)"
         },
         {
           "horizon": "current_year",
@@ -2242,40 +1648,10 @@
         },
         {
           "horizon": "current_year",
-          "topic": "Cost-to-income to be held in a narrow range; no cost benefits to be baked in",
-          "summary": "CFO cites about 52% and the CEO a base of about 54%; both say to assume cost-to-income stays around current levels while the bank invests in branches, people, technology and a new sales channel.",
-          "tone": "neutral",
-          "evidence": "\"We will continue to operate in the range of 52% on the C/I ratio, as explained in the past as well.\"",
-          "speaker": "Venkatraman V",
-          "role": "Executive Director",
-          "location": "Transcript page 4 (PDF page 4)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "ROA guidance: 3-4 bps improvement a quarter on average",
-          "summary": "After a 10 bp jump in Q2 to 1.32%, management sticks with the guided improvement rate and the 1.5% ROA question is answered only with that guidance.",
-          "tone": "neutral",
-          "evidence": "\"We have given you guidance on the ROA in the past: three to four basis points per quarter is the improvement we want to strive for.\"",
-          "speaker": "KVS Manian",
-          "role": "MD and CEO",
-          "location": "Transcript page 12 (PDF page 12)"
-        },
-        {
-          "horizon": "current_year",
           "topic": "CASA guidance unchanged",
           "summary": "After CASA grew 6.4% QoQ and 22.6% YoY, the CFO says the CASA guidance is unchanged.",
           "tone": "neutral",
           "evidence": "\"CASA grew 6.4% QoQ, and there is no change to our guidance on CASA.\"",
-          "speaker": "Venkatraman V",
-          "role": "Executive Director",
-          "location": "Transcript page 4 (PDF page 4)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Modelling note: ESOP fair-value accounting adds INR 32.7 cr to employee cost",
-          "summary": "From April 2026 all ESOPs move to fair-value accounting, cutting PAT by INR 24.5 cr; management calls it a one-time policy change that analysts should model in.",
-          "tone": "neutral",
-          "evidence": "\"So, when you are modelling employee cost and profitability, please keep this accounting change in mind.\"",
           "speaker": "Venkatraman V",
           "role": "Executive Director",
           "location": "Transcript page 4 (PDF page 4)"
@@ -2292,110 +1668,39 @@
         },
         {
           "horizon": "current_year",
-          "topic": "Rate cycle seen as supportive; constructive on remaining quarters",
-          "summary": "CEO expects the rising rate cycle to help the NIM trajectory and remains constructive for the rest of FY27.",
-          "tone": "positive",
-          "evidence": "\"The evolving interest rate cycle should provide an additional supportive factor as we move forward.\"",
-          "speaker": "KVS Manian",
-          "role": "MD and CEO",
-          "location": "Transcript page 2 (PDF page 2)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Opex investment phase continues; do not bake in benefits",
-          "summary": "Cost-to-assets above 2.3% is part of a deliberate couple-of-years investment phase.",
-          "tone": "cautious",
-          "evidence": "\"we have maintained that: do not bake in benefits on our OPEX, and that guidance remains as of now.\"",
-          "speaker": "KVS Manian",
-          "role": "MD and CEO",
-          "location": "Transcript page 7 (PDF page 7)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "ECL transition impact unchanged at under 2% of net worth",
-          "summary": "The expected-credit-loss transition impact is not changed by the rise in G-Sec yields.",
+          "topic": "ROA guidance: 3-4 bps improvement a quarter on average",
+          "summary": "After a 10 bp jump in Q2 to 1.32%, management sticks with the guided improvement rate and the 1.5% ROA question is answered only with that guidance.",
           "tone": "neutral",
-          "evidence": "\"last quarter you had mentioned that the impact is less than 2% of net worth. ... Yes. We talked about the expected credit-loss impact, and that does not change with this.\"",
-          "speaker": "Jai Prakash Mundhra (ICICI Securities); KVS Manian",
-          "role": "Analyst; MD and CEO",
-          "location": "Transcript page 9 (PDF page 9)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Inorganic growth only if accretive; no comment on the MFI/merger rumours",
-          "summary": "CEO sets accretion as the first test for any deal and declined to discuss specific transactions or segments.",
-          "tone": "neutral",
-          "evidence": "\"Therefore, the first principle is that it should be accretive.\"",
+          "evidence": "\"We have given you guidance on the ROA in the past: three to four basis points per quarter is the improvement we want to strive for.\"",
           "speaker": "KVS Manian",
           "role": "MD and CEO",
-          "location": "Transcript page 6 (PDF page 6)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Wealth business for NRI franchise remains a committed priority",
-          "summary": "The bank intends to monetise its deep NRI deposit base through wealth products and keeps CASA initiatives ongoing.",
-          "tone": "positive",
-          "evidence": "\"our NRI franchise needs to be holistically covered, and one of the items there was building our wealth business. We remain committed to doing that.\"",
-          "speaker": "KVS Manian",
-          "role": "MD and CEO",
-          "location": "Transcript page 11 (PDF page 11)"
+          "location": "Transcript page 12 (PDF page 12)"
         }
       ],
       "analyst_focus": [
         {
+          "topic": "Have lending yields bottomed and how will margins move after the rate hike?",
+          "why_it_mattered": "Yields had been drifting down; analysts wanted to know whether margins improve after the 25 bps hike and whether the 5-6 bps per quarter guidance still holds.",
+          "question_count": 15,
+          "analysts_asking": 10
+        },
+        {
           "topic": "How much did FCNR(B) lift deposits and hurt NIM, and where is the money deployed?",
           "why_it_mattered": "Federal participated in the special FCNR/NRE window with lower leverage than peers; analysts tried to compute NIM ex-FCNR and deployment, and the CEO said NIM was affected but would not quantify.",
-          "question_count": null
-        },
-        {
-          "topic": "Are there acquisition plans (MFI or other), and would they dilute quality?",
-          "why_it_mattered": "Press rumours about an MFI deal worried investors given steep credit cycles in microfinance; four analysts raised it and the CEO would only describe principles (accretive, capability or scale).",
-          "question_count": null
-        },
-        {
-          "topic": "Is loan growth sustainable and will guidance be raised?",
-          "why_it_mattered": "Growth ex-leverage was about 18% against mid-teens guidance, with strong gold, personal, commercial and card growth.",
-          "question_count": null
+          "question_count": 10,
+          "analysts_asking": 8
         },
         {
           "topic": "Is opex growth consistent with the cost-to-income guidance?",
           "why_it_mattered": "Opex looked high even after ESOP adjustment, with cost-to-assets above 2.3% on branch and hiring spend; analysts asked if the investment phase is temporary.",
-          "question_count": null
+          "question_count": 9,
+          "analysts_asking": 6
         },
         {
-          "topic": "How structural is the record fee income?",
-          "why_it_mattered": "Fee income rose 22% QoQ to INR 1,167 cr; analysts asked about FCNR-linked fees, base effects after two weak quarters and trading income repeating.",
-          "question_count": null
-        },
-        {
-          "topic": "Have lending yields bottomed and how will margins move after the rate hike?",
-          "why_it_mattered": "Yields had been drifting down; analysts wanted to know whether margins improve after the 25 bps hike and whether the 5-6 bps per quarter guidance still holds.",
-          "question_count": null
-        },
-        {
-          "topic": "Gold-loan pricing, LTV and competition",
-          "why_it_mattered": "Gold loans grew 37% YoY with LTV up from about 55% to 60-61% and a new income-generating gold loan product; analysts probed repricing and PSU competition.",
-          "question_count": null
-        },
-        {
-          "topic": "Is asset quality exposed to inflation and El Nino?",
-          "why_it_mattered": "With CPI rising to 5.54% and policy turning to calibrated tightening, analysts asked if high-yield segments show stress; none yet.",
-          "question_count": null
-        },
-        {
-          "topic": "How big is the ECL transition hit?",
-          "why_it_mattered": "G-Sec yields hardened about 40 bps; analysts asked if the under-2%-of-net-worth impact changes.",
-          "question_count": null
-        },
-        {
-          "topic": "What is the path to a 1.5% ROA and what are risk-adjusted margins?",
-          "why_it_mattered": "With asset quality strong and cost investments continuing, ROA upside depends on NIM and fees; management referred to the 3-4 bps per quarter guidance.",
-          "question_count": null
-        },
-        {
-          "topic": "NRI franchise monetisation and CASA initiatives",
-          "why_it_mattered": "NRI deposits are a core franchise; analysts asked if product depth (wealth) is being built and what drove CASA success over six to eight quarters.",
-          "question_count": null
+          "topic": "Is loan growth sustainable and will guidance be raised?",
+          "why_it_mattered": "Growth ex-leverage was about 18% against mid-teens guidance, with strong gold, personal, commercial and card growth.",
+          "question_count": 5,
+          "analysts_asking": 4
         }
       ],
       "key_risks": [
@@ -2423,7 +1728,8 @@
       "analysis_profile": "forward_only_v1",
       "company_type": "bank",
       "call_period": "Q2 FY2027",
-      "analyst_focus_scope": "all_material_themes",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
       "next_quarter_outlook": [
         {
           "horizon": "next_quarter",
@@ -2433,26 +1739,6 @@
           "evidence": "\"But on the margin, I would imagine that we should be slightly lower next quarter, and then, probably inch up in Q4.\"",
           "speaker": "Jaideep Iyer",
           "role": "Executive Director",
-          "location": "Transcript page 7 (PDF page 7)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "Full-quarter FCNR leverage drag offsets repo hike in Q3",
-          "summary": "The GIFT City FCNR leverage ran for only about a month and a half in Q2, so Q3 carries the full-quarter cost against a partial repo-hike benefit; improvement then depends on how fast liquidity moves from investments to loans.",
-          "tone": "cautious",
-          "evidence": "\"We're fairly confident to say you will see a little bit of reduction in the next quarter just on account of where the mix is sitting right now on the balance sheet.\"",
-          "speaker": "Bank management (speaker not named in transcript)",
-          "role": "Management",
-          "location": "Transcript page 10 (PDF page 10)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "Repo-linked loans reset on a 90-day cycle; full benefit next quarter",
-          "summary": "About 58% of the book is externally benchmarked (32% repo-linked) and most loans reset within the quarter, so the October rate increase shows fully in Q3-Q4.",
-          "tone": "positive",
-          "evidence": "\"So, the reset is a 90-day reset, so you will expect that most of the loans will get reset by end of the quarter. So, we'll see the full benefit in the next quarter.\"",
-          "speaker": "Bhavin Lakhpatwala",
-          "role": "Chief Financial Officer",
           "location": "Transcript page 7 (PDF page 7)"
         },
         {
@@ -2476,76 +1762,6 @@
           "location": "Transcript page 4 (PDF page 4)"
         },
         {
-          "horizon": "next_quarter",
-          "topic": "Q2 fee growth of 12% includes a one-off; not repeatable",
-          "summary": "A currency-swap related FCNR fee flattered sequential fee growth, so Q3 fee growth should not be extrapolated from Q2.",
-          "tone": "cautious",
-          "evidence": "\"So, there is a one-off, which is why you see sequentially fee going up by 12%, right?\"",
-          "speaker": "Bhavin Lakhpatwala",
-          "role": "Chief Financial Officer",
-          "location": "Transcript page 16 (PDF page 16)"
-        },
-        {
-          "horizon": "next_quarter",
-          "topic": "Sequential loan growth of 5-6% a quarter suggested for modelling",
-          "summary": "Executive Director clarifies how to translate the baseline into quarterly numbers.",
-          "tone": "positive",
-          "evidence": "\"You might want to model a 6% or a 5% to 6% quarterly number.\"",
-          "speaker": "Jaideep Iyer",
-          "role": "Executive Director",
-          "location": "Transcript page 17 (PDF page 17)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Opex growth to stay around 7-8% with a small uptick from branches, people and technology",
-          "summary": "Collection-cost rationalisation in cards is largely done, so costs rise from here with branch, wealth and technology investment, but not materially.",
-          "tone": "neutral",
-          "evidence": "\"There may be a small uptick, with our investment in the branches go up and investment in the people goes up and technology, but it's not materially way away from what we have been showing.\"",
-          "speaker": "R. Subramaniakumar",
-          "role": "MD and CEO",
-          "location": "Transcript page 16 (PDF page 16)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "Branch expansion of 30-50 a quarter; 1,000 branches in about 2.5-3 years",
-          "summary": "About 38 branches were due to open within two weeks; the earlier 1,000-branch ambition has stretched to 2.5-3 years.",
-          "tone": "neutral",
-          "evidence": "\"we are still committed to 1,000 branches in two years that we had called out earlier? ... Yes, around 2.5, 3 years, you can put it that way.\"",
-          "speaker": "Param Subramanian (Investec); R. Subramaniakumar",
-          "role": "Analyst; MD and CEO",
-          "location": "Transcript page 16 (PDF page 16)"
-        },
-        {
-          "horizon": "current_year",
-          "topic": "ENBD India business amalgamation to complete this financial year, subject to RBI approval",
-          "summary": "The amalgamation application is with the RBI; management says completion is definitely in FY27 once approved.",
-          "tone": "positive",
-          "evidence": "\"when does the ENBD India business acquisition get completed? ... Once the application is approved by them, thereafter, it will start. Definitely in this financial year.\"",
-          "speaker": "Param Subramanian (Investec); R. Subramaniakumar",
-          "role": "Analyst; MD and CEO",
-          "location": "Transcript page 16 (PDF page 16)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Excess liquidity to be fully deployed in wholesale banking over the medium term",
-          "summary": "After prepaying costly borrowings, remaining FCNR and capital-raise liquidity (about 35% of the May 2026 balance sheet) will take months to deploy and is aimed at better-rated corporates and secured retail.",
-          "tone": "positive",
-          "evidence": "\"Given the large liquidity still on the balance sheet, we expect to continue this for the next few months. Over the medium term, we expect this liquidity to be fully deployed in the wholesale banking segment\"",
-          "speaker": "R. Subramaniakumar",
-          "role": "MD and CEO",
-          "location": "Transcript page 3 (PDF page 3)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Bancassurance fee income could fall 50-60% if the draft IRDAI circular is implemented as written",
-          "summary": "About INR 300 cr of annual bancassurance income (about 8% of FY26 fees) is at risk; management says to pencil in a minimum 50-60% hit on a plain reading.",
-          "tone": "negative",
-          "evidence": "\"I would imagine anywhere between 50% to 60% impact should be minimum to be penciled in.\"",
-          "speaker": "Jaideep Iyer",
-          "role": "Executive Director",
-          "location": "Transcript page 7 (PDF page 7)"
-        },
-        {
           "horizon": "medium_term",
           "topic": "Loan growth baseline of 22-25% continues; model 5-6% per quarter",
           "summary": "Q2's 42% YoY (leverage- and liquidity-aided) is an exception; management treats 22-25% as the minimum baseline and suggests 5-6% sequential growth.",
@@ -2554,46 +1770,6 @@
           "speaker": "R. Subramaniakumar",
           "role": "MD and CEO",
           "location": "Transcript page 17 (PDF page 17)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Cards to return to growth in six months, then 10-12% next year",
-          "summary": "Credit-card balances are still shrinking; the festive quarter should stop de-growth, with 10-12% growth expected next year and unsecured share staying near 19-20%.",
-          "tone": "neutral",
-          "evidence": "\"cards, we expect to start seeing at least some positive growth in the next six months before we start delivering a 10% to 12% growth for next year.\"",
-          "speaker": "Jaideep Iyer",
-          "role": "Executive Director",
-          "location": "Transcript page 20 (PDF page 20)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Next-year mix: overall growth early-to-mid 20s, unsecured high single to low double digits",
-          "summary": "Unsecured share of the book is expected to stay roughly where it is (19-20%, slightly lower).",
-          "tone": "neutral",
-          "evidence": "\"So, you can look at an overall growth of, let's say, early to mid-20s, and an unsecured growth of, let's say, high single digits or low double digits.\"",
-          "speaker": "Jaideep Iyer",
-          "role": "Executive Director",
-          "location": "Transcript page 20 (PDF page 20)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Strategy and targets to be detailed over the coming months; no FY28 ROA guidance",
-          "summary": "CEO declines FY28 ROA targets, asks investors to focus on the current 0.92% ROA, and promises full details over a few months; this is a catalyst for medium-term targets.",
-          "tone": "neutral",
-          "evidence": "\"I did say that over a period of next few months, we'll come back to you with a complete details.\"",
-          "speaker": "R. Subramaniakumar",
-          "role": "MD and CEO",
-          "location": "Transcript page 11 (PDF page 11)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Tailwinds to margins and growth from fixed-rate liquidity in a rising-rate cycle",
-          "summary": "Equity and FCNR funding that is effectively fixed-rate while lending rates rise gives a margin and growth tailwind, with cards and microfinance credit costs normalising.",
-          "tone": "positive",
-          "evidence": "\"So, there will be tailwind to margins. There is tailwind to growth.\"",
-          "speaker": "Jaideep Iyer",
-          "role": "Executive Director",
-          "location": "Transcript page 11 (PDF page 11)"
         },
         {
           "horizon": "medium_term",
@@ -2607,90 +1783,39 @@
         },
         {
           "horizon": "medium_term",
-          "topic": "Wealth proposition at a very early stage",
-          "summary": "Product, proposition and relationship managers will take time to build; no near-term launch.",
-          "tone": "neutral",
-          "evidence": "\"So, don't expect something to be launched next week.\"",
-          "speaker": "Bank management (speaker not named in transcript)",
-          "role": "Management",
-          "location": "Transcript page 18 (PDF page 18)"
-        },
-        {
-          "horizon": "medium_term",
-          "topic": "Normalised LCR target 120-125% versus 148% now",
-          "summary": "As excess liquidity is deployed, LCR will fall toward 120-125%, implying roughly 20+ points of liquidity release into earning assets.",
-          "tone": "neutral",
-          "evidence": "\"Normally, we would want to be in the 120 to 125 zone on LCR, because there'll always be some cushion that we will want to keep.\"",
+          "topic": "Bancassurance fee income could fall 50-60% if the draft IRDAI circular is implemented as written",
+          "summary": "About INR 300 cr of annual bancassurance income (about 8% of FY26 fees) is at risk; management says to pencil in a minimum 50-60% hit on a plain reading.",
+          "tone": "negative",
+          "evidence": "\"I would imagine anywhere between 50% to 60% impact should be minimum to be penciled in.\"",
           "speaker": "Jaideep Iyer",
           "role": "Executive Director",
-          "location": "Transcript page 18 (PDF page 18)"
+          "location": "Transcript page 7 (PDF page 7)"
         }
       ],
       "analyst_focus": [
         {
-          "topic": "How will NIM move in Q3 and Q4 as FCNR leverage and liquidity deployment play out?",
-          "why_it_mattered": "Q2 NIM jumped 48 bps to 4.61% because surplus FCNR and equity liquidity sat in investments; five analysts asked for the path, the incremental yield on deployment, the full-quarter FCNR leverage cost and the repo-hike benefit. Answer: slightly lower in Q3, up in Q4, pace tied to deployment.",
-          "question_count": null
-        },
-        {
-          "topic": "How badly will the draft IRDAI bancassurance rules hit fees?",
-          "why_it_mattered": "Bancassurance is about INR 300 cr of income (8% of FY26 fees); management said to assume at least a 50-60% hit if implemented as drafted.",
-          "question_count": null
-        },
-        {
           "topic": "When do credit-card slippages and credit costs normalise?",
           "why_it_mattered": "Credit cost was INR 771 cr (63 bps) with cards provisioning of about INR 575 cr; analysts quantified the potential INR 175-250 cr saving. Management guided slippages to about 400 for Q3-Q4 and card credit cost to about 6%.",
-          "question_count": null
+          "question_count": 9,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "How will NIM move in Q3 and Q4 as FCNR leverage and liquidity deployment play out?",
+          "why_it_mattered": "Q2 NIM jumped 48 bps to 4.61% because surplus FCNR and equity liquidity sat in investments; five analysts asked for the path, the incremental yield on deployment, the full-quarter FCNR leverage cost and the repo-hike benefit. Answer: slightly lower in Q3, up in Q4, pace tied to deployment.",
+          "question_count": 11,
+          "analysts_asking": 5
         },
         {
           "topic": "Can the retail deposit franchise improve CASA and reduce cost of funds?",
           "why_it_mattered": "Average CASA ratio was 24% (28.1% ex-FCNR) with flat average CASA and low single-digit SA growth; analysts asked whether balance sheet growth depends on SA growth and about branches, people, NRI and affluent initiatives.",
-          "question_count": null
-        },
-        {
-          "topic": "What is the sustainable loan growth after a 42% YoY quarter?",
-          "why_it_mattered": "Analysts asked about FY27 and FY28 growth; management said the 22-25% baseline is the minimum and suggested 5-6% per quarter.",
-          "question_count": null
+          "question_count": 7,
+          "analysts_asking": 5
         },
         {
           "topic": "What ROA and targets for FY28 and beyond?",
           "why_it_mattered": "With ROA at 0.92%, analysts proposed that lower credit cost could lift ROA toward 1.5% and asked about Board targets; management deferred specifics to coming months.",
-          "question_count": null
-        },
-        {
-          "topic": "What is the wholesale lending strategy and its returns?",
-          "why_it_mattered": "Wholesale advances grew 56% YoY; analysts asked about target ROA, sectors, short-term lending share and project finance; management emphasised risk- and capital-adjusted returns, working-capital and trade focus, and no single sector theme.",
-          "question_count": null
-        },
-        {
-          "topic": "What happens to opex and branch rollout?",
-          "why_it_mattered": "Opex grew only 3% YoY and 7% QoQ after collection-cost cuts; analysts asked if a normalised 7-8% growth is right and whether the 1,000-branch plan holds (now 2.5-3 years).",
-          "question_count": null
-        },
-        {
-          "topic": "What will the unsecured and microfinance mix look like?",
-          "why_it_mattered": "Unsecured assets grew only 11% YoY with yields of about 21% versus 9-10% for secured retail; analysts tested the margin drag from mix shift.",
-          "question_count": null
-        },
-        {
-          "topic": "ENBD India amalgamation and wealth plans",
-          "why_it_mattered": "The Emirates NBD group tie-up and wealth proposition drive medium-term franchise changes; management said the amalgamation is with the RBI and completes this fiscal year; wealth is early.",
-          "question_count": null
-        },
-        {
-          "topic": "Liquidity buffers, duration and AFS marks",
-          "why_it_mattered": "With LCR at 148% and rising yields, analysts asked about the target LCR (120-125%), MTM risk (management stayed short duration) and the AFS reserve.",
-          "question_count": null
-        },
-        {
-          "topic": "Quality of fee growth and one-offs",
-          "why_it_mattered": "Core fee grew 12% YoY but retail fee only 9%; management confirmed an FCNR currency-swap related one-off lifted sequential growth.",
-          "question_count": null
-        },
-        {
-          "topic": "ECL transition and steady-state credit cost",
-          "why_it_mattered": "Piran Engineer asked how ECL changes steady-state credit costs; management said mix drives it and declined a number.",
-          "question_count": null
+          "question_count": 5,
+          "analysts_asking": 5
         }
       ],
       "key_risks": [
