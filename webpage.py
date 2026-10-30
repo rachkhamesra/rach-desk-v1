@@ -1,5 +1,5 @@
 """Static page: tabs, tables and an in-page chart. Everything is inline (no external requests), so it works on GitHub Pages or from a file."""
-import html, json
+import html, json, re
 import numpy as np, pandas as pd
 import metrics
 from guidance import validated_changes
@@ -155,12 +155,14 @@ def tab_52w_highs(M):
             if pd.isna(value): continue
             h = value / max_dq * bar_h; x = i * width / max(1, len(dq) - 1) - bw / 2
             bars.append(f'<rect class="h52bar{(" hot" if bool(hot) else "")}" x="{x:.1f}" y="{y0 + bar_h - h:.1f}" width="{bw:.1f}" height="{max(.7,h):.1f}"/>')
-        result = stk(s, M)
-        return (f'<article class="h52card"><div class="h52head"><h3>{result}</h3><b class="{("g" if row.px1d >= 0 else "r")}">{pc(row.px1d)} on the day</b></div>'
+        result = stk(s, M); cap = M.get("market_cap_cr", {}).get(s)
+        bucket = "unknown" if cap is None else "under10" if cap < 10000 else "10to30" if cap <= 30000 else "over30"
+        cap_text = "Market cap unavailable" if cap is None else f'₹{cap:,.0f} cr market cap'
+        return (f'<article class="h52card" data-mcap="{bucket}"><div class="h52head"><h3>{result}</h3><b class="{("g" if row.px1d >= 0 else "r")}">{pc(row.px1d)} on the day</b></div>'
                 f'<svg class="h52svg" viewBox="0 0 420 210" role="img" aria-label="One-year price and delivered-share chart for {esc(s)}">'
                 f'<path class="h52price" d="{points(close, lo, hi)}"/>{price_paths}<line x1="0" x2="420" y1="202" y2="202"/> {"".join(bars)}</svg>'
                 f'<div class="h52meta"><span>HIGH <b>{row.day_high:,.2f}</b></span><span>CLOSE <b>{row.close:,.2f}</b></span><span>FROM HIGH <b>{pc(row.close_from_high)}</b></span><span>DELIVERY <b>{row.ratio:.2f}×</b></span></div>'
-                '<div class="h52legend"><i></i> PRICE <i class="m50"></i> 50D <i class="m100"></i> 100D <i class="m200"></i> 200D · bars = delivered shares</div></article>')
+                f'<div class="h52legend"><i></i> PRICE <i class="m50"></i> 50D <i class="m100"></i> 100D <i class="m200"></i> 200D · {cap_text}</div></article>')
 
     def group(is_fo):
         frame = M["high52"]
@@ -171,7 +173,10 @@ def tab_52w_highs(M):
     return ('<h2>Fresh 52-Week Highs</h2><div class="subl">TODAY’S INTRADAY HIGH REACHED OR EXCEEDED THE PRIOR 252-SESSION HIGH</div>'
             '<p class="desc">Three compact one-year charts per row. Delivery bars are highlighted when they are at least 1.25× the prior 20-session average. Click a ticker to open its full Stocks chart.</p>'
             '<div class="h52tabs"><button class="h52tab on" data-h52="fo">F&amp;O</button><button class="h52tab" data-h52="nonfo">NON F&amp;O</button></div>'
-            f'<div class="h52group" data-h52-group="fo">{group(True)}</div><div class="h52group" data-h52-group="nonfo" hidden>{group(False)}</div>')
+            f'<div class="h52group" data-h52-group="fo">{group(True)}</div><div class="h52group" data-h52-group="nonfo" hidden>'
+            '<div class="h52caps"><button class="h52cap on" data-mcap-filter="all">ALL</button><button class="h52cap" data-mcap-filter="under10">&lt; ₹10,000 CR</button>'
+            '<button class="h52cap" data-mcap-filter="10to30">₹10,000–30,000 CR</button><button class="h52cap" data-mcap-filter="over30">&gt; ₹30,000 CR</button></div>'
+            f'{group(False)}</div>')
 
 
 def tab_cash_accumulation(M):
@@ -391,7 +396,7 @@ def guidance_library(analysis, source_url):
     return '<section><h4>MATERIAL GUIDANCE CHANGES</h4>' + ''.join(rows) + '</section>' if rows else ''
 
 
-def tab_call_library(M):
+def _tab_call_library_legacy(M):
     calls = M.get("calls", {})
     labels = {"revenue_growth": "Revenue growth", "volume_growth": "Volume growth", "order_inflow": "Order inflow",
               "demand_outlook": "Demand outlook", "margin_outlook": "Margin outlook", "ebitda_margin": "EBITDA margin",
@@ -446,6 +451,77 @@ def tab_call_library(M):
             f'<div class="calllibmeta"><span>LATEST COVERED CALL</span><b>{latest_label}</b></div>'
             '<p class="desc">A compact index of the transcript research already stored in Rachit’s Market Lens. Outlook, analyst concerns and takeaways below are pulled directly from the existing summaries; no additional analysis is performed on this page.</p>'
             f'<div class="calllibrary">{"".join(cards)}</div>' if cards else '<div class="card rempty">No conference-call summaries are available yet.</div>')
+
+
+def _compact_text(value, words=16):
+    text = " ".join(str(value or "").split())
+    clauses = [x.strip() for x in re.split(r"(?<=[.;])\s+", text) if x.strip()]
+    chosen = next((x for x in clauses if re.search(r"\d|%|bps|crore|guidance|target", x, re.I)), clauses[0] if clauses else "")
+    parts = chosen.split()
+    return " ".join(parts[:words]) + ("…" if len(parts) > words else "")
+
+
+def _call_chart(M, symbol):
+    prices = M.get("C")
+    if prices is None or symbol not in prices:
+        return '<div class="callchartempty">Price history unavailable</div>'
+    end = M.get("T", len(prices) - 1)
+    close = prices[symbol].iloc[max(0, end - 251):end + 1]
+    lines = [("price", close)] + [(f"ma{n}", close.rolling(n, min_periods=n).mean()) for n in (50, 100, 200)]
+    valid = pd.concat([x for _, x in lines]).dropna()
+    if valid.empty: return '<div class="callchartempty">Price history unavailable</div>'
+    lo, hi = float(valid.min()), float(valid.max()); pad = (hi - lo) * .06 or max(abs(hi) * .02, 1); lo -= pad; hi += pad
+    def path(values):
+        xs = np.linspace(6, 394, len(values)); out, pen = [], False
+        for x, value in zip(xs, values):
+            if pd.isna(value): pen = False; continue
+            y = 7 + (1 - (float(value) - lo) / (hi - lo)) * 118
+            out.append(("L" if pen else "M") + f"{x:.1f},{y:.1f}"); pen = True
+        return " ".join(out)
+    paths = "".join(f'<path class="callchartline {name}" d="{path(values)}"/>' for name, values in lines)
+    return f'<svg class="callchart" viewBox="0 0 400 136" role="img" aria-label="One-year price and moving averages for {esc(symbol)}">{paths}</svg><div class="callchartlegend"><i></i>PRICE <i class="m50"></i>50D <i class="m100"></i>100D <i class="m200"></i>200D</div>'
+
+
+def _call_row(M, symbol, call, changes=None):
+    analysis = call["analysis"]; filed = pd.to_datetime(call.get("filed_at"), errors="coerce")
+    filed_text = "–" if pd.isna(filed) else f"{filed:%d %b %Y}"
+    focus = analysis.get("analyst_focus", [])[:3]
+    if changes is None:
+        middle_title = "NEXT QUARTER OUTLOOK"
+        middle = "".join(f'<li><b>{esc(x.get("topic", ""))}</b><span>{esc(_compact_text(x.get("summary")))}</span></li>' for x in analysis.get("next_quarter_outlook", [])[:3])
+    else:
+        middle_title = "GUIDANCE CHANGE"
+        middle = "".join(f'<li class="shift {esc(x["direction"])}"><b>{esc(x["direction"].upper())} · {esc(x["topic"])}</b><span>{esc((str(x["old_guidance"]) + " → " + str(x["new_guidance"])) if x["old_guidance"] else x["magnitude"])}</span></li>' for x in changes[:3])
+    middle = middle or '<li class="mut">No explicit statement stored.</li>'
+    questions = "".join(f'<li><b>{esc(x.get("topic", ""))}</b><span>{str(x["question_count"]) + " questions" if x.get("question_count") is not None else "Analyst focus"}</span></li>' for x in focus) or '<li class="mut">No analyst themes stored.</li>'
+    return (f'<article class="callrow"><div class="callrowhead"><div><h3>{stk(symbol, M)}</h3><span>{esc(analysis.get("call_period", "Latest call"))} · {filed_text}</span></div>'
+            f'<a href="{esc(call.get("source_url", "#"))}" target="_blank" rel="noopener">SOURCE ↗</a></div><div class="callrowgrid">'
+            f'<section class="callchartbox">{_call_chart(M, symbol)}</section><section><h4>{middle_title}</h4><ul>{middle}</ul></section>'
+            f'<section><h4>ANALYST QUESTIONS</h4><ul>{questions}</ul></section></div></article>')
+
+
+def tab_call_library(M):
+    available = sorted(((s, c) for s, c in M.get("calls", {}).items() if c.get("analysis")), key=lambda x: x[1].get("filed_at", ""), reverse=True)
+    rows = [_call_row(M, symbol, call) for symbol, call in available]
+    latest = available[0] if available else None
+    latest_label = "–" if latest is None else f'{esc(latest[0])} · {esc(latest[1]["analysis"].get("call_period", ""))}'
+    return (f'<h2>Conference Call Library</h2><div class="subl">{len(available)} CONCISE TRANSCRIPT SUMMARIES</div>'
+            f'<div class="calllibmeta"><span>LATEST COVERED CALL</span><b>{latest_label}</b></div>'
+            '<p class="desc">One stock per row: one-year price and moving averages, three concise next-quarter points, and the three leading analyst-question themes.</p>'
+            f'<div class="calllibrary">{"".join(rows)}</div>' if rows else '<div class="card rempty">No conference-call summaries are available yet.</div>')
+
+
+def tab_guidance_shifts(M):
+    ranked = []
+    for symbol, call in M.get("calls", {}).items():
+        if not call.get("analysis"): continue
+        changes = validated_changes(call["analysis"], call.get("source_url"))
+        if changes: ranked.append((symbol, call, changes))
+    ranked.sort(key=lambda x: (x[1].get("filed_at", ""), max(c["materiality"] for c in x[2])), reverse=True)
+    rows = [_call_row(M, symbol, call, changes) for symbol, call, changes in ranked]
+    return ('<h2>Guidance Shifts</h2><div class="subl">EXPLICIT MANAGEMENT UPGRADES &amp; DOWNGRADES</div>'
+            '<p class="desc">Only clear, source-verified changes to management guidance are included. General optimism or caution does not qualify.</p>'
+            f'<div class="calllibrary">{"".join(rows)}</div>' if rows else '<div class="card rempty">No explicit guidance upgrades or downgrades are stored in the current call library.</div>')
 
 
 # ------------------------------------------------------------------ assemble
@@ -505,6 +581,7 @@ def render(M, asof_text):
     panels = [("stocks", "STOCKS", tab_stocks(M)), ("high52", "52W HIGHS", tab_52w_highs(M)), ("signals", "SIGNAL CONFLUENCE", views(tab_signal_confluence)),
               ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)),
               ("calls", "CALL LIBRARY", tab_call_library(M)),
+              ("guidance", "GUIDANCE SHIFTS", tab_guidance_shifts(M)),
               ("exchange", "EXCHANGE TRACKER", tab_exchange(M))]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}" data-t="{k}">{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
@@ -547,7 +624,7 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .cashsub{margin:18px 0 7px;font:800 11px var(--sans);letter-spacing:.1em}.cashsub.track{color:#ffd17a;margin-top:26px}
 .cashwatch tr.cashnew td{background:rgba(232,169,58,.08)}.cashwatch tr.cashnew td:first-child{box-shadow:inset 4px 0 var(--am)}.newcash{display:inline-block;margin-left:5px;padding:3px 5px;background:var(--am);color:#090909;font:800 8px var(--sans);letter-spacing:.06em;vertical-align:1px}
 .signalsub{margin:22px 0 3px;font:800 12px var(--sans);letter-spacing:.08em}.signals td{padding-top:7px;padding-bottom:7px}.signals td:nth-child(7),.signals td:nth-child(8){font-size:11px}
-.h52tabs{display:flex;width:max-content;border:1px solid #444;margin:13px 0 12px}.h52tab{border:0;background:#111;color:var(--mut);padding:8px 17px;font:800 10px var(--sans);letter-spacing:.08em;cursor:pointer}.h52tab.on{background:#f4f4f0;color:#090909}.h52grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.h52card{min-width:0;background:var(--panel);border-top:3px solid var(--g);padding:10px}.h52head{display:flex;justify-content:space-between;gap:8px;align-items:center}.h52head h3{margin:0;font-size:16px}.h52head>b{font:700 10px var(--mono);white-space:nowrap}.h52svg{display:block;width:100%;height:auto;margin-top:5px;background:#111}.h52svg line{stroke:#333}.h52price,.h52ma{fill:none;stroke-linecap:round;stroke-linejoin:round}.h52price{stroke:#f4f4f0;stroke-width:2}.h52ma{stroke-width:1.2;opacity:.9}.h52ma.ma50{stroke:#f5a623}.h52ma.ma100{stroke:#b58cff}.h52ma.ma200{stroke:#ffd84d}.h52bar{fill:#546477;opacity:.56}.h52bar.hot{fill:#5aa9ff;opacity:.95}.h52meta{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;border-top:1px solid #2b2b2b;padding-top:7px}.h52meta span{font:700 8px var(--sans);letter-spacing:.06em;color:var(--mut)}.h52meta b{display:block;color:var(--ink);font:700 10px var(--mono);margin-top:2px}.h52legend{margin-top:7px;color:var(--mut);font:8px var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.h52legend i{display:inline-block;width:13px;border-top:2px solid #f4f4f0;margin:0 3px 2px 5px}.h52legend i.m50{border-color:#f5a623}.h52legend i.m100{border-color:#b58cff}.h52legend i.m200{border-color:#ffd84d}
+.h52tabs,.h52caps{display:flex;width:max-content;border:1px solid #444;margin:13px 0 12px}.h52tab,.h52cap{border:0;background:#111;color:var(--mut);padding:8px 17px;font:800 10px var(--sans);letter-spacing:.08em;cursor:pointer}.h52tab.on,.h52cap.on{background:#f4f4f0;color:#090909}.h52grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.h52card{min-width:0;background:var(--panel);border-top:3px solid var(--g);padding:10px}.h52card[hidden]{display:none}.h52head{display:flex;justify-content:space-between;gap:8px;align-items:center}.h52head h3{margin:0;font-size:16px}.h52head>b{font:700 10px var(--mono);white-space:nowrap}.h52svg{display:block;width:100%;height:auto;margin-top:5px;background:#111}.h52svg line{stroke:#333}.h52price,.h52ma{fill:none;stroke-linecap:round;stroke-linejoin:round}.h52price{stroke:#f4f4f0;stroke-width:2}.h52ma{stroke-width:1.2;opacity:.9}.h52ma.ma50{stroke:#f5a623}.h52ma.ma100{stroke:#b58cff}.h52ma.ma200{stroke:#ffd84d}.h52bar{fill:#546477;opacity:.56}.h52bar.hot{fill:#5aa9ff;opacity:.95}.h52meta{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;border-top:1px solid #2b2b2b;padding-top:7px}.h52meta span{font:700 8px var(--sans);letter-spacing:.06em;color:var(--mut)}.h52meta b{display:block;color:var(--ink);font:700 10px var(--mono);margin-top:2px}.h52legend{margin-top:7px;color:var(--mut);font:8px var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.h52legend i{display:inline-block;width:13px;border-top:2px solid #f4f4f0;margin:0 3px 2px 5px}.h52legend i.m50{border-color:#f5a623}.h52legend i.m100{border-color:#b58cff}.h52legend i.m200{border-color:#ffd84d}
 .exheadline{display:flex;gap:28px;margin:12px 0 14px}.exheadline div{display:flex;flex-direction:column}.exheadline span{font:700 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.exheadline b{font:700 17px var(--mono)}
 .exstatus{display:inline-block;margin:0 0 9px;padding:5px 8px;border:1px solid #3c3c38;color:#b6b6af;font:700 9px var(--mono);letter-spacing:.04em}
 .exswitch{display:flex;width:max-content;border:1px solid #444;margin:13px 0 12px}.exswitchbtn{border:0;background:#111;color:var(--mut);padding:8px 20px;font:800 10px var(--sans);letter-spacing:.08em;cursor:pointer}.exswitchbtn.on{background:#f4f4f0;color:#090909}
@@ -581,10 +658,11 @@ table.ca td.note{white-space:normal;min-width:340px;max-width:560px;color:#b9b9b
 .mahere{margin-top:15px;padding-top:13px;border-top:2px solid #333}.mahit{margin-top:7px;padding:9px 10px;background:#1b1b1b;border-left:3px solid var(--am);font:11px var(--mono);line-height:1.5}.mahit b{font:800 12px var(--sans);color:#ffd17a}.mahit .cross{display:inline-block;margin-left:6px;padding:2px 5px;background:var(--g);color:#07140c;font:800 8px var(--sans);letter-spacing:.05em}.mahit .fresh{color:var(--g)}
 .guidancerow{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;border-left:3px solid var(--g);background:var(--panel);padding:8px 10px;margin-bottom:8px;font-size:12px}.guidancerow.reduction,.guidancerow.downgrade{border-color:var(--r)}.guidancerow button{margin-left:auto;cursor:pointer;white-space:normal}.guidancerow small{color:var(--mut)}#guidance-row[hidden]{display:none}.guidancechange{border-left:3px solid var(--g);padding:10px;margin:8px 0;background:var(--panel);overflow-wrap:anywhere}.guidancechange.reduction,.guidancechange.downgrade{border-color:var(--r)}.guidancechange summary{cursor:pointer}.guidancechange blockquote{margin:8px 0;white-space:pre-wrap}.guidancechange:focus,.guidancerow button:focus-visible{outline:2px solid #ffd17a;outline-offset:3px}#callintel{margin-top:10px}.callhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;background:var(--panel);border-top:3px solid #f4f4f0;padding:12px 14px;margin-bottom:8px}.callhead h3{margin:0;font-size:16px;letter-spacing:.04em}.callhead a{color:#ffd17a;font:11px var(--mono)}.callmeta{color:var(--mut);font:10px var(--mono);margin-top:3px}.callpanels{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:8px}.callsection{background:var(--panel);border-top:3px solid #444;padding:12px;min-width:0}.callsection.outlookpanel{border-color:var(--g)}.callsection.focuspanel{border-color:var(--am)}.callsection.actualspanel{border-color:#5aa9ff}.callsection h4{margin:0 0 9px;font:800 10px var(--sans);letter-spacing:.1em;color:var(--mut)}.outlook{padding:9px 10px;margin-bottom:7px;background:#191919;border-left:3px solid #777;font-size:12px;line-height:1.45}.outlook.positive{border-color:var(--g)}.outlook.cautious,.outlook.negative{border-color:var(--r)}.outlook b{display:block;margin-bottom:2px}.evidence{display:block;color:#9d9d96;font:10px var(--mono);margin-top:4px}.focus{display:grid;grid-template-columns:1fr auto;gap:9px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}.focus small{display:block;color:var(--mut);margin-top:2px}.qcount{font:700 11px var(--mono);color:#ffd17a}.metricgrid{display:grid;grid-template-columns:1fr;gap:7px}.metric{background:#191919;padding:8px 9px;font-size:11px;line-height:1.4}.metric b{display:block;color:var(--mut);font:800 9px var(--sans);letter-spacing:.07em;margin-bottom:2px}.congrats{display:flex;gap:16px;align-items:baseline;padding:10px;background:rgba(232,169,58,.1);margin-top:12px}.congrats strong{font:700 24px var(--mono);color:#ffd17a}.congrats span{font-size:11px;color:var(--mut)}.callnone{background:var(--panel);border-top:3px solid #444;padding:12px;color:var(--mut);font-size:12px}.aicaveat{margin-top:8px;color:#666;font-size:10px}
 .calllibmeta{display:flex;flex-direction:column;margin:12px 0}.calllibmeta span{font:800 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.calllibmeta b{font:700 15px var(--mono)}.calllibrary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.callcard{background:var(--panel);border-top:3px solid #f4f4f0;padding:13px;min-width:0}.callcardhead{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;padding-bottom:11px;border-bottom:1px solid var(--line)}.callcardhead h3{margin:0 0 2px;font-size:18px}.callcardhead>div>div{color:var(--mut);font:10px var(--mono)}.callscore{display:flex;gap:7px;align-items:center;text-align:right}.callscore strong{font:800 23px var(--mono);color:#ffd17a}.callscore span{font:800 8px var(--sans);letter-spacing:.07em;color:var(--mut)}.callcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.callcard h4{margin:13px 0 5px;font:800 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.callcard ol,.callcard ul{margin:0;padding-left:20px}.callcard li{position:relative;padding:6px 0 7px 2px;border-bottom:1px solid var(--line);font-size:11px;line-height:1.4}.callcard li b{display:block;font-size:11px;margin-bottom:1px}.callcard .concerns li{padding-right:28px}.callcard .concerns li span{position:absolute;right:0;top:7px;color:#ffd17a;font:700 10px var(--mono)}.takeaways{border-top:2px solid #333;margin-top:8px}.takeaways ul{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;list-style:none;padding:0}.callsource{display:inline-block;margin-top:10px;color:#ffd17a;font:800 9px var(--sans);letter-spacing:.08em}
+.calllibrary{display:flex;flex-direction:column;gap:10px}.callrow{background:var(--panel);border-top:3px solid #f4f4f0;padding:10px 12px;min-width:0}.callrowhead{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:7px}.callrowhead h3{display:inline;margin:0 9px 0 0;font-size:16px}.callrowhead span{color:var(--mut);font:9px var(--mono)}.callrowhead a{color:#ffd17a;font:800 9px var(--sans)}.callrowgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}.callrowgrid>section{min-width:0;padding:10px 13px;border-left:1px solid var(--line)}.callrowgrid>section:first-child{border-left:0;padding-left:0}.callrowgrid h4{margin:0 0 6px;font:800 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.callrowgrid ul{list-style:none;margin:0;padding:0}.callrowgrid li{padding:5px 0;border-bottom:1px solid var(--line);font-size:10px;line-height:1.35}.callrowgrid li:last-child{border-bottom:0}.callrowgrid li b,.callrowgrid li span{display:block}.callrowgrid li span{color:#b4b4ad;margin-top:1px}.callrowgrid .shift.upgrade,.callrowgrid .shift.increase,.callrowgrid .shift.improvement{border-left:3px solid var(--g);padding-left:7px}.callrowgrid .shift.reduction,.callrowgrid .shift.downgrade{border-left:3px solid var(--r);padding-left:7px}.callchart{display:block;width:100%;height:auto;background:#111}.callchartline{fill:none;stroke-linejoin:round;stroke-linecap:round}.callchartline.price{stroke:#f4f4f0;stroke-width:2}.callchartline.ma50{stroke:#f5a623}.callchartline.ma100{stroke:#b58cff}.callchartline.ma200{stroke:#ffd84d}.callchartlegend{color:var(--mut);font:8px var(--mono);margin-top:4px}.callchartlegend i{display:inline-block;width:10px;border-top:2px solid #f4f4f0;margin:0 3px 2px 6px}.callchartlegend i:first-child{margin-left:0}.callchartlegend i.m50{border-color:#f5a623}.callchartlegend i.m100{border-color:#b58cff}.callchartlegend i.m200{border-color:#ffd84d}.callchartempty{height:115px;display:grid;place-items:center;background:#111;color:var(--mut);font:10px var(--mono)}
 #ro{min-height:22px;font:11px var(--mono);color:#cfcfc8;padding:5px 4px}
 #lg{display:flex;flex-wrap:wrap;gap:6px 18px;font:12px var(--mono);color:var(--mut);padding:2px 4px 10px}#lg i{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px}#lg u{display:inline-block;width:18px;border-top:2px solid;margin-right:5px;vertical-align:middle}
 footer{max-width:1280px;margin:0 auto;padding:0 22px 40px;color:var(--mut);font-size:13px}
-@media (max-width:1000px){.h52grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.chartgrid,.callpanels,.calllibrary{grid-template-columns:1fr}#insights{position:static;max-height:none}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}@media (max-width:620px){.h52grid{grid-template-columns:1fr}.h52meta{grid-template-columns:1fr 1fr}}
+@media (max-width:1000px){.h52grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:900px){.sx{padding-top:76px}.sl{width:100%;flex-wrap:wrap}.sl #q{flex-basis:100%}#sort{width:100%}#list{top:38px;width:100%;max-height:230px}.chartgrid,.callpanels{grid-template-columns:1fr}.callrowgrid{grid-template-columns:1fr}.callrowgrid>section{border-left:0;border-top:1px solid var(--line);padding:10px 0}.callrowgrid>section:first-child{border-top:0}#insights{position:static;max-height:none}.hd1 b{font-size:21px}header{flex-direction:column;align-items:flex-start}.headright{align-items:flex-start;flex-direction:column}.meta{text-align:left}h2{font-size:21px}.hz{grid-template-columns:1fr}.atrow{flex-direction:column;gap:9px}main{padding:4px 9px 35px}}@media (max-width:620px){.h52grid{grid-template-columns:1fr}.h52meta{grid-template-columns:1fr 1fr}.h52caps{width:100%;flex-wrap:wrap}}
 """
 
 JS = r"""
@@ -596,6 +674,7 @@ try{const saved=JSON.parse(localStorage.getItem('desk-mas'));if(Array.isArray(sa
 function tab(t){const b=document.querySelector('.tab[data-t="'+t+'"]');if(b)b.click()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+b.dataset.t);if(b.dataset.t==='stocks'){draw()}});
 document.querySelectorAll('.h52tab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.h52tab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.h52group').forEach(x=>x.hidden=x.dataset.h52Group!==b.dataset.h52)});
+document.querySelectorAll('.h52cap').forEach(b=>b.onclick=()=>{const g=b.closest('.h52group'),f=b.dataset.mcapFilter;g.querySelectorAll('.h52cap').forEach(x=>x.classList.toggle('on',x===b));g.querySelectorAll('.h52card').forEach(x=>x.hidden=f!=='all'&&x.dataset.mcap!==f)});
 document.querySelectorAll('.exswitchbtn').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.exswitchbtn').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.exchangegroup').forEach(x=>x.hidden=x.dataset.exchangeGroup!==b.dataset.exchange)});
 document.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{const v=b.closest('.uview')||document;v.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
 document.querySelectorAll('.seg[data-r]').forEach(b=>b.onclick=()=>{rng=+b.dataset.r;document.querySelectorAll('.seg[data-r]').forEach(x=>x.classList.toggle('on',x===b));draw()});
