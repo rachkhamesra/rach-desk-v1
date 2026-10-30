@@ -1828,5 +1828,578 @@
       ],
       "material_guidance_changes": []
     }
+  },
+  "AUBANK": {
+    "symbol": "AUBANK",
+    "company_name": "AU Small Finance Bank Limited",
+    "filed_at": "2026-10-28T19:37:31+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/SUMIT1_28102026192812_Investor_call_transcript_SE_Submission.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/SUMIT1_28102026192812_Investor_call_transcript_SE_Submission.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-24",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "bank",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Repo hike on the 30% floating book fully visible next quarter",
+          "summary": "Only 30% of loans are floating (70% fixed); the 25 bp hike starts flowing this month and shows fully in the next quarter, with further hikes adding support.",
+          "tone": "positive",
+          "evidence": "\"happened of 25 basis points, that'll get transmitted over the next 3 to 4 months. Typically takes about 3 to 4 months, or one full quarter, so full impact will be visible next quarter, but it will start happening from this month onwards.\"",
+          "speaker": "Prince Tiwari",
+          "role": "Head, Investor Relations and FIG",
+          "location": "Transcript page 19 (PDF page 20)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Cost-of-funds gains are capping out as system liquidity tightens",
+          "summary": "Q2 cost of funds benefited from transactional current account balances and FCNR liquidity; both are fading while short-term rates rise, so further improvement is limited and depends on competitors' deposit pricing.",
+          "tone": "cautious",
+          "evidence": "\"Going forward, it will be more a function of liquidity and deposit competition which will determine the trajectory of cost of funds.\"",
+          "speaker": "Prince Tiwari",
+          "role": "Head, Investor Relations and FIG",
+          "location": "Transcript page 18 (PDF page 19)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Credit cost guided near 90 bps with room for shocks; Q3 is the quarter to watch",
+          "summary": "H1 credit cost is about 73-74 bps (81 bps including guarantee premium) against a guidance near 90 bps, so management says there is buffer for drought or other one-offs; no surprises are expected in Q4.",
+          "tone": "positive",
+          "evidence": "\"We have given a guidance of close to 90 bps, so we have enough room for any kind of vulnerabilities or one-off.\"",
+          "speaker": "Sanjay Agarwal",
+          "role": "Founder, MD and CEO",
+          "location": "Transcript page 11 (PDF page 12)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Deposit growth target around 25% a year, linked to nominal GDP growth",
+          "summary": "29% YoY deposit growth is above the target; management plans around 25%+ and expects deposits to grow at least in line with loans.",
+          "tone": "positive",
+          "evidence": "\"Our target is to grow in the range of 25% year-on-year. But it will depend on the market and the overall condition.\"",
+          "speaker": "Sanjay Agarwal",
+          "role": "Founder, MD and CEO",
+          "location": "Transcript page 11 (PDF page 12)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Mortgage growth targeted near 20% next year; overall growth 2-2.5x nominal GDP",
+          "summary": "The southern (Fincare) mortgage business is being rebuilt, MBL/LAP is growing above 15%, and housing is deliberately limited; the overall target is 2-2.5 times nominal GDP growth.",
+          "tone": "positive",
+          "evidence": "\"we are hopeful that with the distribution we have across country, we should touch in the range of 20% by next year.\"",
+          "speaker": "Sanjay Agarwal",
+          "role": "Founder, MD and CEO",
+          "location": "Transcript page 25 (PDF page 26)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Insurance fee consultation paper is a headwind to ROA; offsets from forex, cards and trade finance",
+          "summary": "Analyst sized a 7-8 bps ROA hit against the 1.8% ROA outlook; management accepts some impact whatever the final rule and points to other fee pools, UPI MDR and cost efficiency as offsets.",
+          "tone": "cautious",
+          "evidence": "\"we have been guiding for this 1.8% ROA outlook consistently. Given that this could be maybe 7, 8 basis points of impact ... Clearly, there will be some headwind from this insurance fee income consultation paper, right?\"",
+          "speaker": "Jayant Kharote (Axis Capital); Gaurav Jain",
+          "role": "Analyst; Chief Financial Officer",
+          "location": "Transcript pages 13-14 (PDF pages 14)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Is 29% deposit growth sustainable or flattered by FCNR-driven liquidity?",
+          "why_it_mattered": "Akshay Jain asked whether larger banks vacating domestic deposits for FCNR or one-offs explained growth; management said it is transactional current account money, targets around 25%+, and not a one-off.",
+          "question_count": 10,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "Can mortgages and wheels sustain 25%+ overall growth?",
+          "why_it_mattered": "Rajiv Mehta and Piran Engineer pressed on slow mortgage growth and affordable housing strategy; answer was mortgage growth toward 20% next year and strong wheels demand.",
+          "question_count": 8,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "Where does asset quality go with El Nino, drought and a credit cost guidance near 90 bps?",
+          "why_it_mattered": "Peers warned about drought in Central India; management cited 73-74 bps H1 credit cost, 99% CGFMU-covered MFI, and no stress to date.",
+          "question_count": 6,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "How exposed is the NIM to a fixed-rate book (70%) as rates rise?",
+          "why_it_mattered": "NIM was down 9 bps QoQ to 5.8%; analysts asked about repricing lag and deposit competition; management cited the 30% floating book, 36-month peak deposit tenor and a stronger franchise than in 2022.",
+          "question_count": 4,
+          "analysts_asking": 4
+        }
+      ],
+      "key_risks": [
+        "Deposit competition returns as FCNR liquidity dries up; cost of funds improvement is capped.",
+        "70% of loans are fixed-rate, so NIM depends on repricing lag and disbursement yields.",
+        "Insurance fee income rule changes could take roughly 7-8 bps off ROA.",
+        "Drought, El Nino or oil shocks could lift credit cost in Q3 (guided near 90 bps).",
+        "Opex is growing about 25% YoY from investment in people, distribution and brand.",
+        "Gold-loan growth is sensitive to gold prices."
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "GODREJPROP": {
+    "symbol": "GODREJPROP",
+    "company_name": "Godrej Properties Limited",
+    "filed_at": "2026-10-27T17:12:28+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/GODREJPROP_27102026171202_SEIntimationTranscript.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/GODREJPROP_27102026171202_SEIntimationTranscript.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-23",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "real estate developer",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "INR32,000 cr H2 launch pipeline; Q3 led by Bandra Bay and Golf Course Extension Road (Verano)",
+          "summary": "Verano slipped from Q2 into Q3; management hopes to pull more launches into Q3 to break the usual back-ended pattern.",
+          "tone": "positive",
+          "evidence": "\"we've got a cumulative launch pipeline of INR32,000 crores for H2.\"",
+          "speaker": "Gaurav Pandey",
+          "role": "MD and CEO",
+          "location": "Transcript page 4 (PDF page 5)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "H2 FY27 expected to be the best ever period for launches and sales",
+          "summary": "Only a third of the annual launch pipeline was launched in H1; launches pick up from October, with management confident of beating full-year guidance on all key operating metrics.",
+          "tone": "positive",
+          "evidence": "\"we therefore, expect the second half of this financial year to be our best ever period for both launches and sales.\"",
+          "speaker": "Pirojsha Godrej",
+          "role": "Chairperson",
+          "location": "Transcript page 3 (PDF page 4)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "H2 sales estimate of INR22,500-25,000 cr; room to beat if demand allows",
+          "summary": "Management will not cap sales for optics and says the top end implies about 40% five-year compounded bookings growth.",
+          "tone": "positive",
+          "evidence": "\"which is broadly in line with what we've updated in this presentation of INR22,500 crores to INR25,000 crores as our estimate.\"",
+          "speaker": "Pirojsha Godrej",
+          "role": "Chairperson",
+          "location": "Transcript page 7 (PDF page 8)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "H2 cash collections of INR15,000 cr and operating cash flow of INR7,000 cr",
+          "summary": "Supports free cash flow positive H2 while funding continued growth.",
+          "tone": "positive",
+          "evidence": "\"expect INR15,000 crores of cash collection and INR7,000 crores of operating cash flow in the second half of the financial year.\"",
+          "speaker": "Pirojsha Godrej",
+          "role": "Chairperson",
+          "location": "Transcript page 3 (PDF page 4)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "FY28: positive free cash flow and 20% reported ROE",
+          "summary": "FY28 is when the exceptional bookings growth of the last two years appears in reported financials under completion-based accounting.",
+          "tone": "positive",
+          "evidence": "\"We expect to deliver both positive free cash flow and a 20% reported ROE in financial year '28.\"",
+          "speaker": "Pirojsha Godrej",
+          "role": "Chairperson",
+          "location": "Transcript page 3 (PDF page 4)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "FY28 bookings growth of 10-15%, possibly 15-20%, if launches and approvals land on time",
+          "summary": "Management says the growth range is achievable even if the macro environment persists for six months, conditional on timely launches and approvals.",
+          "tone": "positive",
+          "evidence": "\"there is no reason we can't deliver at 10%, 15%, even 15%, 20% growth is possible, provided the launches come on time, the approvals come on time, there is a good product market fit.\"",
+          "speaker": "Gaurav Pandey",
+          "role": "MD and CEO",
+          "location": "Transcript page 12 (PDF page 13)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Q3 versus Q4 launch timing, approvals and NCR air-quality restrictions",
+          "why_it_mattered": "Q2 bookings were down 6% YoY because Verano and Bandra slipped; analysts needed to know how much of the INR32,000 cr H2 pipeline lands in Q3 and whether GRAP or Mumbai air-quality rules could block launches.",
+          "question_count": 17,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Sustenance sales sustainability and the 60-40 launch mix",
+          "why_it_mattered": "INR5,054 cr of sustenance sales flattered Q2; analysts asked if that continues; management said the mix flips with launch timing.",
+          "question_count": 8,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Should presales growth be capped or pushed beyond 15-20%?",
+          "why_it_mattered": "Pritesh Sheth's math implied H2 sales above guidance; management said it will not hold back and sees only about 5% market share.",
+          "question_count": 6,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Construction run rate, free cash flow and BD spend",
+          "why_it_mattered": "Strong Q2 collections and operating cash flow (INR1,584 cr) raised questions on whether construction spending will accelerate and whether H2 and FY28 stay FCF positive.",
+          "question_count": 7,
+          "analysts_asking": 3
+        }
+      ],
+      "key_risks": [
+        "Launch slippage (Verano and Bandra slipped from Q2) could push H2 bookings out or shift mix.",
+        "NCR NGT/GRAP restrictions could slow construction there.",
+        "Macro stress: Brent near $115 and weak equity markets could dampen sentiment, though no change in footfalls was reported.",
+        "Reported EBITDA and net profit are depressed by back-ended deliveries and JV-exit one-offs until Q4 and FY28.",
+        "BD thresholds may keep land additions below plan if prices are unattractive.",
+        "Handover delays after OC could create customer and brand issues."
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "NAM-INDIA": {
+    "symbol": "NAM-INDIA",
+    "company_name": "Nippon Life India Asset Management Limited",
+    "filed_at": "2026-10-27T15:45:59+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/RNLAM_27102026154539_SE_IntimationTranscript.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/RNLAM_27102026154539_SE_IntimationTranscript.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-22",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "asset manager",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Sharper market downside could raise redemptions at fund houses heavy in small-cap and sector funds",
+          "summary": "HNI investors are already exiting large-caps; NAM says its dispersed SIP book (about INR 3,200 cr a month) protects net sales.",
+          "tone": "cautious",
+          "evidence": "\"If the downside is going to be sharper from here on, then maybe some of the fund houses who have got flows in small-cap and the other sector funds, etc., might see some higher redemptions.\"",
+          "speaker": "Saugata Chatterjee",
+          "role": "President and Deputy CEO",
+          "location": "Transcript page 9 (PDF page 10)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Regulatory yield compression is already behind; remaining pressure is telescopic pricing",
+          "summary": "Q1 absorbed the regulatory change; Q2 yield dilution (blended 37 bps; equity 52 bps ex-arbitrage) came purely from AUM growth and telescopic slabs, which will keep diluting yields as AUM grows.",
+          "tone": "cautious",
+          "evidence": "\"Any changes due to regulatory change has already happened in the first quarter, so there is nothing on that in this quarter.\"",
+          "speaker": "Parag Joglekar",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 9 (PDF page 10)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Industry investor growth is slowing; management sees it as market-driven, not a concern",
+          "summary": "Investor and SIP growth have flattened industry-wide, and management expects moderation to continue with volatility but sees long-term headroom.",
+          "tone": "cautious",
+          "evidence": "\"Some bit of moderation can happen because of market dynamics, but we are not looking at that as a major concern area, because we still feel that there is a lot of opportunity for investor growth, but yes, there is a slowdown in the industry, for sure.\"",
+          "speaker": "Saugata Chatterjee",
+          "role": "President and Deputy CEO",
+          "location": "Transcript page 14 (PDF page 15)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Total cost growth guidance of 18-20% maintained for the next 6-8 quarters",
+          "summary": "Management reiterates the Q1 guidance on overall costs, implying operating-leverage depends on revenue growing faster than that.",
+          "tone": "neutral",
+          "evidence": "\"we continue to maintain our guidance of 18% to 20% growth over the next 6 to 8 quarters.\"",
+          "speaker": "Amol Bilagi",
+          "role": "Deputy Chief Financial Officer",
+          "location": "Transcript page 13 (PDF page 14)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "SIF launch depends on SEBI clearance; two strategies are being readied",
+          "summary": "The company has a team and strategies prepared and will launch once SEBI clears its application; timing is not given.",
+          "tone": "neutral",
+          "evidence": "\"We are, of course, awaiting for the SIF clearance to come in from SEBI. Once we get that, of course, we'll be in the market to launch our ideas.\"",
+          "speaker": "Saugata Chatterjee",
+          "role": "President and Deputy CEO",
+          "location": "Transcript page 8 (PDF page 9)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "AIF subsidiary costs to rise over the next 3-6 quarters",
+          "summary": "The mutual-fund AMC cost base will be nearly flat, but the consolidated entity will see incremental cost as new senior hires and professionals join the AIF business.",
+          "tone": "cautious",
+          "evidence": "\"you may see incremental cost in our AIF subsidiary over the next 3 to 6 quarters.\"",
+          "speaker": "Sundeep Sikka",
+          "role": "MD and CEO",
+          "location": "Transcript page 13 (PDF page 14)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Are small-cap and flexi-cap flows at risk after the market correction?",
+          "why_it_mattered": "Industry flows are concentrated in these categories; Sanil asked about investor psychology and mitigants; management said NAM stopped lump sums in small-cap three years ago and relies on a diversified SIP book.",
+          "question_count": 9,
+          "analysts_asking": 8
+        },
+        {
+          "topic": "Why did yields fall when peers saw an increase?",
+          "why_it_mattered": "Four analysts asked; Shreyas, Sanil, Mohit Mangal and Shobhit Sharma tested telescopic pricing, mix, distributor commissions and an extra day. Management said it is AUM growth and telescopic pricing, not regulation or mix.",
+          "question_count": 7,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "What was the SEBI AT-1 bond matter and could there be more?",
+          "why_it_mattered": "A INR 96.76 cr exceptional item drove PAT down YoY and QoQ; analysts asked for allegations, trigger and provisioning; management gave no detail and said further SEBI communication is awaited.",
+          "question_count": 6,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Employee cost, opex guidance, ESOP and AIF spend",
+          "why_it_mattered": "Analysts probed whether cost growth would stay at 18-20% given topline momentum, why employee cost was flat and what ESOP will total (about INR 58 cr).",
+          "question_count": 4,
+          "analysts_asking": 3
+        }
+      ],
+      "key_risks": [
+        "Further SEBI communication on the AT-1 settlement could bring additional costs or disclosures.",
+        "A sharper equity market fall could raise redemptions, though NAM's SIP book is large and dispersed.",
+        "Yield dilution continues as AUM grows under telescopic pricing.",
+        "Industry investor and SIP growth is slowing and NAM is avoiding NFOs.",
+        "AIF subsidiary cost build-up over the next 3-6 quarters.",
+        "Offshore flows depend on rupee and geopolitical conditions."
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "ULTRACEMCO": {
+    "symbol": "ULTRACEMCO",
+    "company_name": "UltraTech Cement Limited",
+    "filed_at": "2026-10-27T14:24:21+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/ULTRACEMCO1_27102026142336_SE_Transcript.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/ULTRACEMCO1_27102026142336_SE_Transcript.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-19",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "cement manufacturer",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "EBITDA per ton to stay higher year-on-year over the next two quarters",
+          "summary": "Management intends price rises to cover cost inflation so that YoY unit profitability holds through Q3 and Q4.",
+          "tone": "positive",
+          "evidence": "\"That's the intention.\"",
+          "speaker": "Atul Daga",
+          "role": "Whole-time Director and CFO",
+          "location": "Transcript page 8 (PDF page 9), reply to Prateek Kumar"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Fuel cost per kcal expected to hold at INR2.2 if pet coke stays near $180",
+          "summary": "Conditional cost stability assumption; a spike in pet coke would break it.",
+          "tone": "cautious",
+          "evidence": "\"So if nothing else happens, then yes, INR2.2.\"",
+          "speaker": "Atul Daga",
+          "role": "Whole-time Director and CFO",
+          "location": "Transcript page 10 (PDF page 11), reply to Ashish Jain"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Festive and post-Chhath demand pickup from mid-November",
+          "summary": "Seasonal strength is expected from mid-November with early signs of momentum already visible.",
+          "tone": "positive",
+          "evidence": "\"Activity typically picks up mid- November or as you are all aware, after what is called Chhath Puja\"",
+          "speaker": "Atul Daga",
+          "role": "Whole-time Director and CFO",
+          "location": "Transcript page 4 (PDF page 5), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "INR1,400 per ton EBITDA exit by March 2028 reaffirmed",
+          "summary": "Commitment maintained despite cost inflation, with price rises expected to absorb cost pressure.",
+          "tone": "positive",
+          "evidence": "\"If the cost pressures come in, they will get covered by price increases. So yes, we will deliver our commitment.\"",
+          "speaker": "Atul Daga",
+          "role": "Whole-time Director and CFO",
+          "location": "Transcript page 13 (PDF page 14), reply to Pinakin"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Strong cement volume growth expected through March 2029",
+          "summary": "Data centres, semiconductors, metros, urban housing and private capex support a multi-year demand run.",
+          "tone": "positive",
+          "evidence": "\"The next 2.5 - 3 years till March '29, we should be seeing a very good volume growth for cement.\"",
+          "speaker": "Atul Daga",
+          "role": "Whole-time Director and CFO",
+          "location": "Transcript page 16 (PDF page 17), closing remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "240 million ton capacity on track, organic expansion beyond 240 MT being stitched",
+          "summary": "Capacity plan is on schedule and a further organic growth phase is coming.",
+          "tone": "positive",
+          "evidence": "\"We are on track to reach 240 million tons of capacity as planned without any surprises.\"",
+          "speaker": "Atul Daga",
+          "role": "Whole-time Director and CFO",
+          "location": "Transcript page 5 (PDF page 6), prepared remarks"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Cement pricing: October price rise, sustainability and festive-season outlook",
+          "why_it_mattered": "Analysts wanted the quantum of price increases versus the Q2 average to size Q3 margins.",
+          "question_count": 13,
+          "analysts_asking": 10
+        },
+        {
+          "topic": "Fuel and input cost inflation (pet coke, imported coal, polymers, kcal cost)",
+          "why_it_mattered": "West Asia disruption raised fuel costs; analysts probed whether INR2.2/kcal is sustainable.",
+          "question_count": 15,
+          "analysts_asking": 9
+        },
+        {
+          "topic": "Ultravolt wires and cables: capex, ramp-up, utilisation, margins, ROCE and product scope",
+          "why_it_mattered": "New business launched 3 September; analysts asked about capex size, timeline and returns.",
+          "question_count": 9,
+          "analysts_asking": 9
+        },
+        {
+          "topic": "EBITDA per ton trajectory and the INR1,400 March 2028 target",
+          "why_it_mattered": "Investors tested whether cost inflation delays the unit-profit commitment.",
+          "question_count": 5,
+          "analysts_asking": 4
+        }
+      ],
+      "key_risks": [
+        "Weak monsoon and rural demand softness",
+        "West Asia conflict pushing pet coke, imported coal and polymer costs higher (pet coke ~$180/t)",
+        "Domestic coal availability constrained as Coal India prioritises power plants",
+        "Net debt/EBITDA elevated at 1.26x until March",
+        "New wires and cables business is early stage with unproven margins"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "LTF": {
+    "symbol": "LTF",
+    "company_name": "L&T Finance Limited",
+    "filed_at": "2026-10-26T19:38:36+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/ltfinance_26102026193815_NSEBSEINTIMATION.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/ltfinance_26102026193815_NSEBSEINTIMATION.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-16",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "NBFC (retail finance)",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Rural disbursements to see an upward bias in Q3 after a calibrated Q2",
+          "summary": "Post-monsoon clarity and festive demand should lift rural disbursements, within tighter guardrails.",
+          "tone": "positive",
+          "evidence": "\"you will see a little upward bias in our rural disbursement in Q3, which is primarily the festive quarter.\"",
+          "speaker": "Sudipta Roy",
+          "role": "MD and CEO",
+          "location": "Transcript page 11 (PDF page 12), reply to Shreya Shivani"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "NIM + fees to stay around the middle of the 10-10.5% corridor for the next couple of quarters",
+          "summary": "Cost of funds base is 6.95%; repo-rate hikes will lift only incremental borrowing, so margin should stay near 10.25%.",
+          "tone": "neutral",
+          "evidence": "\"I think next couple of quarters also, we will be somewhere around mid of this 10% to 10.5% trajectory is what we believe.\"",
+          "speaker": "Sachinn Joshi",
+          "role": "Whole-time Director and CFO",
+          "location": "Transcript page 11 (PDF page 12), reply to Shreya Shivani"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Cost of funds will not stay at 6.95%; up to two to three more repo hikes expected",
+          "summary": "Management expects further rate increases in December and February and says incremental yields are already 30-50 bps higher.",
+          "tone": "cautious",
+          "evidence": "\"At max, we may have 2 more coming up in December and Feb.\"",
+          "speaker": "Sachinn Joshi",
+          "role": "Whole-time Director and CFO",
+          "location": "Transcript page 10 (PDF page 11), reply to Shreya Shivani"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Credit cost to reach the 2.0-2.2% corridor by Q4 FY27",
+          "summary": "From 2.46% in Q2, a further ~25-45 bps improvement is targeted within two quarters.",
+          "tone": "positive",
+          "evidence": "\"we are confident of achieving our guided credit cost corridor of 2%-2.2% by Q4FY27.\"",
+          "speaker": "Sudipta Roy",
+          "role": "MD and CEO",
+          "location": "Transcript page 4 (PDF page 5), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "RoA to reach 2.8-3.0% exiting Q4 FY27 from 2.60%",
+          "summary": "Reiterated exit target; depends on credit cost easing and stable margins.",
+          "tone": "positive",
+          "evidence": "\"We remain hopeful that our RoA trajectory will achieve our guided objective of 2.8% - 3% exit Q4FY27.\"",
+          "speaker": "Sudipta Roy",
+          "role": "MD and CEO",
+          "location": "Transcript page 4 (PDF page 5), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Lakshya 2031: RoA 3.0-3.2% and RoE 16-18% by FY31; book CAGR 20%+",
+          "summary": "Targets reaffirmed even after the IRDAI draft; growth in Q2 was 28% against the 20% CAGR.",
+          "tone": "positive",
+          "evidence": "\"Our Return on Assets (RoA) target remains in the range of 3.0%–3.2% for FY31.\"",
+          "speaker": "Sudipta Roy",
+          "role": "MD and CEO",
+          "location": "Transcript page 6 (PDF page 7), prepared remarks"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Cost of borrowings and NIM outlook after the repo-rate hike",
+          "why_it_mattered": "Weighted borrowing cost fell 25 bps to 6.95%; analysts asked whether it holds and how funding mix (PSL, CP, PTC, WCDL) drove it.",
+          "question_count": 8,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Rural underwriting amid weak monsoon and drought-declared districts",
+          "why_it_mattered": "Monsoon at ~87% of LPA; analysts probed exposure (INR1,033 crore, 3.3% of rural book), Bihar floods and rabi risk.",
+          "question_count": 4,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Gold loan growth, AUM per branch, delinquency and GS2 trends",
+          "why_it_mattered": "Book up 242% YoY; analysts tested steady-state branch productivity and customer behaviour.",
+          "question_count": 4,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "Collection efficiency trends (two-wheeler, tractor, MFI)",
+          "why_it_mattered": "A September dip in two-wheeler collections prompted questions on credit-cost risk.",
+          "question_count": 3,
+          "analysts_asking": 3
+        }
+      ],
+      "key_risks": [
+        "Weak monsoon (about 87% of LPA) and drought in parts of Karnataka, Maharashtra, AP and Telangana",
+        "Rate increases raising incremental cost of funds",
+        "IRDAI proposal to cut credit-linked and motor insurance commissions",
+        "Execution of AI underwriting rollouts delaying partner onboarding in personal loans",
+        "Early-stage gold loan book with RBI norms on interest recognition"
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
