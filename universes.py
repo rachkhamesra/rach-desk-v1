@@ -26,7 +26,17 @@ def _top1000(content):
     if rank is not None:
         df[rank] = pd.to_numeric(df[rank], errors="coerce")
         df = df[df[rank].between(1, 1000)].sort_values(rank)
-    return [str(x).strip().upper() for x in df[symbol].dropna().head(1000)]
+    df = df.dropna(subset=[symbol]).head(1000).copy()
+    symbols = [str(x).strip().upper() for x in df[symbol]]
+    market_cap = next((c for k, c in cols.items()
+                       if ("market" in k and "cap" in k and ("crore" in k or "cr" in k))), None)
+    if market_cap is None:
+        market_cap = next((c for k, c in cols.items() if "market" in k and "cap" in k), None)
+    caps = {}
+    if market_cap is not None:
+        values = pd.to_numeric(df[market_cap].astype(str).str.replace(",", "", regex=False), errors="coerce")
+        caps = {s: float(v) for s, v in zip(symbols, values) if pd.notna(v) and v >= 0}
+    return symbols, caps
 
 
 def _latest_mcap_url(session):
@@ -50,7 +60,7 @@ def load(root, log=print):
             raw[key] = _symbols_csv(r.content)
         url = _latest_mcap_url(s)
         r = s.get(url, headers=HEADERS, timeout=60); r.raise_for_status()
-        raw["top1000"] = _top1000(r.content)
+        raw["top1000"], raw["market_cap_cr"] = _top1000(r.content)
         raw["nifty250"] = list(dict.fromkeys(raw["nifty100"] + raw["midcap150"]))
         os.makedirs(root, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:

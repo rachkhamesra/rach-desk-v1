@@ -23,7 +23,9 @@ def main():
         if a.wait_minutes > 0: sys.exit(f"BSE delivery for {last.date()} is not usable yet; not publishing a page with NSE-only delivery.")
         warn = f"<br><span style='color:#e8a93a'>BSE delivery for {last:%d %b} is not published yet: latest-day delivered shares are NSE-only</span>"
     memberships = universes.load(a.root)
+    market_cap_cr = memberships.pop("market_cap_cr", {})
     M = metrics.build(parsed, ov, memberships)
+    M["market_cap_cr"] = market_cap_cr
     calendar, actual = results.load(a.root, end)
     M["results"] = results.build_signals(M, calendar, actual)
     M["calls"] = calls.load(a.root, end, memberships.get("fo", []))
