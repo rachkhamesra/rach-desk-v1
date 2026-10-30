@@ -35,6 +35,11 @@ def _top1000(content):
     caps = {}
     if market_cap is not None:
         values = pd.to_numeric(df[market_cap].astype(str).str.replace(",", "", regex=False), errors="coerce")
+        unit = str(market_cap).strip().lower()
+        if "lakh" in unit or "lac" in unit:
+            values = values / 100.0
+        elif not ("crore" in unit or re.search(r"\bcr\b", unit)):
+            raise ValueError(f"unrecognised NSE market-cap unit in column: {market_cap}")
         caps = {s: float(v) for s, v in zip(symbols, values) if pd.notna(v) and v >= 0}
     return symbols, caps
 
