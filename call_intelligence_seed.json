@@ -1414,5 +1414,540 @@
         }
       ]
     }
+  },
+  "AXISBANK": {
+    "symbol": "AXISBANK",
+    "company_name": "Axis Bank Limited",
+    "filed_at": "2026-10-26T20:32:58+05:30",
+    "source_url": "https://www.axis.bank.in/docs/default-source/shareholders/financial-results-and-other-information/call-transcript/2026-2027/q2fy27-earnings-call.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/AXISBANK1_26102026203250_SignedSEIntimationQ2FY27EarningsCallTranscript.pdf",
+    "transcript_source_type": "company_website_transcript_linked_from_nse_covering_letter",
+    "description": "Company-website transcript linked from the NSE covering letter (user-approved source exception).",
+    "transcript_status": "available",
+    "call_date": "2026-10-17",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "bank",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "all_material_themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "NIM uplift expected from Q3 as FCNR(B) funds retire costly NRTDs",
+          "summary": "The 11 bps FCNR(B) drag was a one-quarter optics effect; part of the funds already retired expensive non-resident term deposits late in Q2, so Q3 should see NIM benefit, while the through-cycle 3.8% NIM guidance is unchanged.",
+          "tone": "positive",
+          "evidence": "\"So we should be able to see some benefit of that come through in the next quarter in terms of NIM uplift.\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 10 (PDF page 10)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Q3 and Q4 to show NIM benefit from balance-sheet optimisation",
+          "summary": "Redeploying FCNR(B) funds into loans and retiring higher-cost liabilities is expected to lift NIM over the next two quarters.",
+          "tone": "positive",
+          "evidence": "\"I think in Q3 and Q4, you should be able to see some sort of a benefit coming through due to the optimization exercise that we'll be doing.\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 10 (PDF page 10)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Sequential NIM improvement intended, but no firm timeline",
+          "summary": "Management wants NIM to move up each quarter via asset mix, liability mix and rate hikes, with some headwinds, and declines to call a time frame.",
+          "tone": "neutral",
+          "evidence": "\"But sequentially, we should be able to show an improvement going forward.\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 14 (PDF page 14)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Card fee weakness partly a festive-timing shift into October",
+          "summary": "Year-on-year fee growth was weak because the festive spend month moved from September last year to October this year, implying some catch-up in Q3.",
+          "tone": "neutral",
+          "evidence": "\"last year, September was when the festive month had started. This year, that has shifted to October. So, there is a bit of a temporal difference on account of that.\"",
+          "speaker": "Subrat Mohanty",
+          "role": "Executive Director",
+          "location": "Transcript page 13 (PDF page 13)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Latest repo-rate increase flows through loan yields in Q4, not Q3",
+          "summary": "The bank reprices its repo-linked book in the last week of the quarter, so the book-wide benefit of the latest repo hike lands in Q4; only new repo-linked loans reprice sooner.",
+          "tone": "positive",
+          "evidence": "\"So the latest repo rate increase from a book stock perspective, the benefit we will actually see in Q4 as opposed to in Q3.\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 18 (PDF page 18)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Credit costs expected to improve further, no numeric guidance",
+          "summary": "Slippage ratios and recoveries are improving in individual portfolios; part of the improvement is mix-driven, and the bank will not guide a credit cost number.",
+          "tone": "positive",
+          "evidence": "\"But directionally, what I can confirm is that we are on the trajectory towards improvement. I think there is some further improvement that also we can expect.\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 11 (PDF page 11)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Bancassurance: draft IRDA commission rules likely 6-9 months away",
+          "summary": "The bank expects regulation to take time, possibly with a glide path, and plans to mitigate through volumes, product mix and other fee sources; it will not quantify the impact.",
+          "tone": "cautious",
+          "evidence": "\"So, I think we might get about 6 to 9 months before that comes through. So, we'll try and mitigate the impact during that point of time.\"",
+          "speaker": "Subrat Mohanty",
+          "role": "Executive Director",
+          "location": "Transcript page 13 (PDF page 13)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FCNR(B) liquidity not fully deployed, leaving growth runway",
+          "summary": "Part of the incremental FCNR(B) liability is still unused for asset growth while LCR is held in a 115-120% band, so loan growth can run ahead of deposit raising in coming quarters.",
+          "tone": "positive",
+          "evidence": "\"we have not used the full FCNR (B) liquidity to grow our assets, right? So to that extent, there is runway for the balance sheet to grow\"",
+          "speaker": "Neeraj Gambhir",
+          "role": "Executive Director",
+          "location": "Transcript page 17 (PDF page 17)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Labour-code costs may recur if new guidelines arrive",
+          "summary": "The Q2 one-offs included labour-code provisions on outsourced staff and ESIC; management says known items are covered but the area is evolving.",
+          "tone": "cautious",
+          "evidence": "\"So far, based on what we have been aware of, we have already taken those into accounts. But this is an area where, you know, some new guidelines, etcetera, whenever they come, we will have to deal with that.\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 12 (PDF page 12)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Second-half posture: watchful on geopolitics, inflation, tariffs and weather",
+          "summary": "CEO flags West Asia tensions, commodity prices and weather risks while expressing confidence in sustainable and profitable growth.",
+          "tone": "neutral",
+          "evidence": "\"As we enter second half of the year, we continue to remain watchful and closely monitor the evolving external environment.\"",
+          "speaker": "Amitabh Chaudhry",
+          "role": "MD and CEO",
+          "location": "Transcript page 5 (PDF page 5)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Through-cycle NIM target of 3.8% unchanged, no timeline given",
+          "summary": "Management will not say how long it takes to get to 3.8% from 3.36% (3.47% ex-FCNR).",
+          "tone": "neutral",
+          "evidence": "\"Though structurally, we are working towards our through-cycle guidance of 3.8% that we have mentioned earlier.\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 10 (PDF page 10)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "ECL transition: no material impact expected, backed by ~INR 8,000 cr contingent provisions",
+          "summary": "Both the transition and the subsequent flow are expected to be non-material for FY28, with floor rates for stage 1 and 2 still being worked through.",
+          "tone": "positive",
+          "evidence": "\"we don't expect any material impact to come through on the transition itself. This is also supported because we have existing contingent provisions almost close to 8,000 crores that continue\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 19 (PDF page 19)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Loan growth guided at 300 bps above industry over the medium term",
+          "summary": "The medium-term growth guidance is reiterated as the base for NII; no specific NII number is given.",
+          "tone": "positive",
+          "evidence": "\"We have guided for 300 basis points higher than the industry average over the medium term.\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 20 (PDF page 20)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Retail share of loans to be rebuilt towards above 55%",
+          "summary": "Corporate has outgrown retail; management says it is working to stop the retail mix slipping further and to return above 55% as retail book growth catches up with disbursements.",
+          "tone": "neutral",
+          "evidence": "\"we get back to the above 55% retail mix. So that effort is on at this point in time.\"",
+          "speaker": "Subrat Mohanty",
+          "role": "Executive Director",
+          "location": "Transcript page 9 (PDF page 9)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Corporate lending growth described as diversified and sustainable",
+          "summary": "Growth is spread across capex, project finance, refinancing and working capital with selective origination; downstream salary and liability benefits are cited.",
+          "tone": "positive",
+          "evidence": "\"So corporate growth is sustainable because it's well diversified across sector segments and financing categories.\"",
+          "speaker": "Vijay Mulbagal",
+          "role": "Bank executive (role not stated in transcript)",
+          "location": "Transcript page 11 (PDF page 11)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Cost-to-assets expected to keep falling once one-offs fall away",
+          "summary": "The Q2 cost-to-assets uptick on a quarterly basis is attributed to one-timers (labour code and FCNR costs); management expects the ratio to fall further adjusted for these.",
+          "tone": "positive",
+          "evidence": "\"I think this is primarily due to the one-timers that we have seen in the cost for this quarter. That's why I think, adjusted for that, you will see the ratio coming down even further.\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 16 (PDF page 16)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "UPI MDR revenue upside cannot be sized; implementation postponed",
+          "summary": "The bank plays across issuing, PSP and acquiring roles but gives no revenue guidance and may reinvest part of any MDR revenue into the ecosystem.",
+          "tone": "neutral",
+          "evidence": "\"at this stage, we can't give any specific guidance because the MDR implementation has been postponed.\"",
+          "speaker": "Arnika Dixit",
+          "role": "Bank executive (role not stated in transcript)",
+          "location": "Transcript page 15 (PDF page 15)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "No equity capital needed for growth or protection",
+          "summary": "CET1 at 14.61% plus ~49 bps of unreckoned provision buffer; management rules out equity raising.",
+          "tone": "positive",
+          "evidence": "\"We reiterate that we do not need equity capital for either the growth or protection pillars.\"",
+          "speaker": "Rajeev Mantri",
+          "role": "Group Head and CFO",
+          "location": "Transcript page 6 (PDF page 6)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Has NIM bottomed, and what is the exit rate and path from here?",
+          "why_it_mattered": "Five analysts pressed on NIM: reported 3.36% was down 37 bps YoY with an 11 bps FCNR(B) distortion. They tested whether Q2 is the trough, the September exit NIM, how the FCNR drag unwinds, and the Q4 timing of repo-hike repricing; management declined monthly NIM and a firm timeline.",
+          "question_count": null
+        },
+        {
+          "topic": "Will corporate keep out-growing retail, and is that growth durable?",
+          "why_it_mattered": "Retail share fell below the previously signalled 55% as wholesale grew 34% YoY; analysts asked if the mix would keep shifting given wide AA spreads and industry-wide FCNR-funded corporate lending.",
+          "question_count": null
+        },
+        {
+          "topic": "Where do credit costs settle, including ECL and FY28?",
+          "why_it_mattered": "Net credit cost fell to 0.45% after standard-asset provisions on FCNR loans; analysts asked about normalisation versus further improvement, unusual recoveries, and whether the ECL transition removes the ROA tailwind from lower credit costs in FY28.",
+          "question_count": null
+        },
+        {
+          "topic": "Why is fee growth weak and what do regulatory changes do to it?",
+          "why_it_mattered": "Fee grew only 6% YoY on cards, payments and asset-linked fee dilution; analysts asked about the draft IRDA bancassurance guidelines, how to offset them, the UPI MDR opportunity and any fee on FCNR mobilisation (none charged).",
+          "question_count": null
+        },
+        {
+          "topic": "Is operating leverage real once one-offs are stripped out?",
+          "why_it_mattered": "Opex rose 11% QoQ and cost-to-assets looked higher on a quarterly basis; analysts asked about the INR 254 cr one-offs (labour code, FCNR) and whether further jaws are available.",
+          "question_count": null
+        },
+        {
+          "topic": "Has the FCNR(B) money been fully deployed, and what does that mean for liquidity?",
+          "why_it_mattered": "A back-of-envelope check showed INR 1 trillion raised against INR 80,000 cr net deposit growth and INR 68,000 cr loan growth with LCR flat near 119%; analysts asked how much room is left to grow and why run-off rates rose.",
+          "question_count": null
+        },
+        {
+          "topic": "Personal loan strategy and unsecured growth",
+          "why_it_mattered": "With peers growing PL faster, an analyst asked whether the bank would extend PL beyond salaried borrowers; management said PL stays salaried-only and self-employed borrowers go through business loans.",
+          "question_count": null
+        },
+        {
+          "topic": "How will NII momentum evolve?",
+          "why_it_mattered": "NII growth accelerated to 5% QoQ; analysts asked whether the rate hike and FCNR deployment will extend it; no NII guidance was given.",
+          "question_count": null
+        },
+        {
+          "topic": "ECLGS disbursement scale",
+          "why_it_mattered": "Analysts sized the government-guaranteed emergency line exposure: around 12,500 loans for INR 10,700 cr sanctioned, about 80% disbursed.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "Management will not give a timeline for NIM recovery to 3.8% and NIM still depends on FCNR(B) deployment and mix.",
+        "Fee growth is weak (6% YoY); draft IRDA bancassurance rules and uncertain UPI MDR add regulatory fee risk.",
+        "Retail share of loans has slipped below the 55% level management still wants to return to.",
+        "Labour-code related expense is described as an evolving area that could produce further one-offs.",
+        "Geopolitical tension in West Asia, commodity inflation, tariffs and weather risks are explicitly flagged for the second half."
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "TORNTPHARM": {
+    "symbol": "TORNTPHARM",
+    "company_name": "Torrent Pharmaceuticals Limited",
+    "filed_at": "2026-10-29T09:54:49+05:30",
+    "source_url": "https://torrentpharma.com/pdf/investors/Q2-FY26-27_Earnings-Call-Transcript.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/TORNTPHARM_29102026095442_SE_IntimationTranscriptofConfCall.pdf",
+    "transcript_source_type": "company_website_transcript_linked_from_nse_covering_letter",
+    "description": "Company-website transcript linked from the NSE covering letter (user-approved source exception).",
+    "transcript_status": "available",
+    "call_date": "2026-10-23",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "pharma",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "all_material_themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "JB margin improvement to continue for the next two to three quarters",
+          "summary": "Q1-to-Q2 JB margin gains came mainly from field-force merger savings; the same run-rate of improvement is expected to continue.",
+          "tone": "positive",
+          "evidence": "\"So, I would expect quarter-on-quarter, this same run rate of improvement can continue maybe for the next two, three quarters.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 5 (PDF page 5)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Germany: best case is a slight decline in coming quarters, stability after 3-4 quarters",
+          "summary": "Loss of tenders, third-party supply disruption and government-mandated price cuts have hit the non-retail business; management declines to guide.",
+          "tone": "negative",
+          "evidence": "\"Best case, I would say slight decline in the coming quarters, and eventually some stability after maybe 3 or 4 quarters.\"",
+          "speaker": "Sanjay Gupta",
+          "role": "Executive Director, International Business",
+          "location": "Transcript page 8 (PDF page 8)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "INR 950-960 cr second tranche of the Novartis ophthalmology deal due in December",
+          "summary": "A pending cash payment on the JB-Novartis ophthalmology portfolio is expected in the December quarter, which matters for net-debt trajectory (net debt/EBITDA now 1.8x).",
+          "tone": "neutral",
+          "evidence": "\"there is a second tranche of payment of about INR950 crores, INR960 crores that is pending. Would that be due anytime soon? ... That would be in December of this year.\"",
+          "speaker": "Bino (Elara Capital); Aman Mehta",
+          "role": "Analyst; Managing Director",
+          "location": "Transcript page 7 (PDF page 7)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "JB India branded business to re-accelerate above 10% in H2",
+          "summary": "After 13% in Q1 and 7% in Q2 (integration-hit), management expects gradual quarterly recovery and H2 JB India growth above the H1 average of 10%.",
+          "tone": "positive",
+          "evidence": "\"if H1 is at 10% growth for the India branded business, I would expect that H2 should be perhaps higher than that.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 4 (PDF page 4)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Overall JB growth back to double digit in H2; international recovery slower",
+          "summary": "JB international was down 7% in Q2 on plant-network and QC integration delays; management says the recovery may take longer but total JB should still return to double-digit growth in H2.",
+          "tone": "positive",
+          "evidence": "\"So while the actions have been taken, the recovery may take slightly longer in the international business, but overall we still feel that in H2, the overall JB growth should be double-digit.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 4 (PDF page 4)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Group EBITDA margin to be a little above 33.5% in H2",
+          "summary": "No numeric guidance, but management expects the second half to improve on Q2's 33.5%, with JB margins rising gradually for two to three more quarters.",
+          "tone": "positive",
+          "evidence": "\"So, I think there should be a gradual increase in the EBITDA margin. But I think we're not guiding on the number part, but at least definitely we feel H2 should be little higher than 33.5%.\"",
+          "speaker": "Sudhir Menon",
+          "role": "Executive Director, Finance and CFO",
+          "location": "Transcript page 5 (PDF page 5)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "US: four to five more filings this fiscal; price erosion rises in H2 from new competitors",
+          "summary": "Filings of 9-10 products in the year will exceed several prior years, but management expects new competition on recent launches to raise pricing pressure in H2.",
+          "tone": "neutral",
+          "evidence": "\"we think we can file four to five at least more before this fiscal year ends. ... I expect some new competitors on our recent launches in H2.\"",
+          "speaker": "Sanjay Gupta",
+          "role": "Executive Director, International Business",
+          "location": "Transcript page 9 (PDF page 9)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Indian pharma market growth of at least 10% to persist through next financial year",
+          "summary": "H1 market growth was about 12%; management sees it holding for the rest of this year and slipping only 1-2 points next year, calling this year potentially a one-off.",
+          "tone": "positive",
+          "evidence": "\"We think this market growth is likely to sustain for the rest of the year, and perhaps from next year it may drop a little bit, say 1%, 2%, but minimum 10% is what we think should continue from here on as well, at least for the next financial year.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 10 (PDF page 10)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Curatio to sustain high growth for the rest of the year and likely a couple of years",
+          "summary": "Curatio grew 34% in Q2 and H1 and is now 7-8% of base India; management cannot say 30% growth lasts 3-5 years but sees the trend continuing.",
+          "tone": "positive",
+          "evidence": "\"I think it should be possible to sustain high growth for at least a couple of years.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 9 (PDF page 9)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Brazil expected to keep growing mid-teens; Brazil generic semaglutide launch in 6-9 months",
+          "summary": "Four business units are performing; 53 molecules await ANVISA approval over about three years; a first local generic semaglutide launch has expanded the market.",
+          "tone": "positive",
+          "evidence": "\"Brazil, we are optimistic, it'll continue to grow double-digit, mid-teens or something in that range\"",
+          "speaker": "Sanjay Gupta",
+          "role": "Executive Director, International Business",
+          "location": "Transcript page 8 (PDF page 8)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Field force held at 9,100 this year; possible 500 addition, 9,500-9,600 next year",
+          "summary": "No headcount change this fiscal year after the field-force merger, with a possible base-business expansion later.",
+          "tone": "neutral",
+          "evidence": "\"We expect potentially some expansion may be required in the base business, so say maybe by 500 MRs or so. But we're not fully certain on what the next year's picture looks like, but it could be say something between 9,500 to 9,600.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 5 (PDF page 5)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "INR 450 cr cost synergies now targeted in two years rather than three",
+          "summary": "About half of the synergy is already in this year's margins and most comes through by next year; the INR 450 cr quantum is held and any upside will be reviewed in a couple of quarters.",
+          "tone": "positive",
+          "evidence": "\"But directionally, yes, we've been able to achieve that much faster. Instead of three years, I think we should be able to get there in two years' time.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 6 (PDF page 6)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "India revenue synergies to start showing next year",
+          "summary": "Cross-selling and adding JB brands to Torrent divisions typically take 6-12 months, with international synergies a longer 2-3 year journey.",
+          "tone": "positive",
+          "evidence": "\"So, I think next year should see a reasonable improvement in the topline growth through revenue synergies.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 6 (PDF page 6)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "No FY28 margin guidance until Q1 FY28",
+          "summary": "Management will wait for a full-year combined base before guiding FY28 EBITDA margins.",
+          "tone": "neutral",
+          "evidence": "\"No, we are not giving any guidance for FY28. We are just waiting for the full-year base to come in, and then probably next year quarter one, we will guide it.\"",
+          "speaker": "Sudhir Menon",
+          "role": "Executive Director, Finance and CFO",
+          "location": "Transcript page 13 (PDF page 13)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "R&D to stay at 4-4.5% of revenue for the next couple of years",
+          "summary": "R&D is stepping up to lift US ANDA filings from low to high single digits a year; the Q2 increase is expected to persist, which caps margin expansion.",
+          "tone": "cautious",
+          "evidence": "\"We believe that the range should not exceed, say, between 4% to 4.5% even in the following year.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 7 (PDF page 7)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "India semaglutide: lost share to be recovered; generic market could reach INR 2,000-2,500 cr in 3-5 years",
+          "summary": "After a roughly two-month injectable supply gap, supplies were fully restored in September; the analyst's estimate of a INR 2,000-2,500 cr market over three to five years was called 'not out of range'.",
+          "tone": "positive",
+          "evidence": "\"Yes. That that should be possible. At least three to five years, that number is not out of range.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 10 (PDF page 10)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "India semaglutide pricing expected stable to gradually higher",
+          "summary": "Because the products are branded, management expects no per-patient price erosion despite rising competition.",
+          "tone": "positive",
+          "evidence": "\"And in fact, the price would only be stable or gradually increase over the next couple of years.\"",
+          "speaker": "Aman Mehta",
+          "role": "Managing Director",
+          "location": "Transcript page 12 (PDF page 12)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "How fast does JB recover, in India and internationally?",
+          "why_it_mattered": "JB revenue was flat YoY after integration; analysts asked whether the flat trend persists and whether international disruptions take longer to fix. Answer: India recovers gradually above 10% in H2; international slower; total double-digit in H2.",
+          "question_count": null
+        },
+        {
+          "topic": "Are INR 450 cr cost synergies conservative, and when do revenue synergies come?",
+          "why_it_mattered": "Roughly half appears already in margins; Neha Manpuria, Damayanti Kerai and Kunal Dhamesha tested upside, timing (two years versus three), and when revenue synergies start; management held the INR 450 cr number.",
+          "question_count": null
+        },
+        {
+          "topic": "Where do group and JB EBITDA margins go from 33.5%?",
+          "why_it_mattered": "Margin fell slightly QoQ (33.8% to 33.5%) as R&D rose 0.7 pts of revenue; analysts asked for JB margin parity with Torrent India, the sequential JB gain and FY28-29 direction; management gave only directional H2 'a little higher' commentary.",
+          "question_count": null
+        },
+        {
+          "topic": "Where will the combined India field force settle?",
+          "why_it_mattered": "The 9,100 MR count after merging divisions affects cost and productivity; management said flat this year with a possible 500 addition.",
+          "question_count": null
+        },
+        {
+          "topic": "Is the higher R&D and US filing push sustainable and productive?",
+          "why_it_mattered": "R&D at 4.2% of revenue was above Q1's 3.5%; analysts asked about new investment avenues and US filing cadence, and whether US growth is durable versus price erosion.",
+          "question_count": null
+        },
+        {
+          "topic": "How big and how profitable is India semaglutide, and what about Brazil?",
+          "why_it_mattered": "Torrent holds 32% share after a supply gap; analysts asked about market size, pricing per patient and Brazil launch timing, which are key new profit pools.",
+          "question_count": null
+        },
+        {
+          "topic": "Why is Indian pharma market growth suddenly 12%, and will it last?",
+          "why_it_mattered": "Market growth is well above recent years; analysts probed GLP-1, trade generics and consolidation as causes. Management could not pinpoint the delta but sees at least 10% next year.",
+          "question_count": null
+        },
+        {
+          "topic": "Is US growth from launches durable?",
+          "why_it_mattered": "US constant-currency revenue grew 13%; analysts asked how much comes from products with durable advantage. Management said there is no durable advantage in generics; the base is flat and growth comes from new launches.",
+          "question_count": null
+        },
+        {
+          "topic": "Brazil growth drivers and constraints",
+          "why_it_mattered": "Growth was split about equally across price, volume and launches; analysts asked about 53 pending approvals, the constraint (ANVISA timing and local competition) and growth outlook.",
+          "question_count": null
+        },
+        {
+          "topic": "Germany outlook",
+          "why_it_mattered": "Revenue fell about 13% in constant currency; management could offer only a best case of slight decline for coming quarters.",
+          "question_count": null
+        },
+        {
+          "topic": "Curatio and OTC scale-up",
+          "why_it_mattered": "Curatio is now 7-8% of base India and growing 34%; analysts asked about sustainability and new OTC launches, which are mostly brand extensions.",
+          "question_count": null
+        },
+        {
+          "topic": "JB-Novartis ophthalmology deal risk and payment timing",
+          "why_it_mattered": "An analyst asked whether Novartis India changes endanger the deal and when the INR 950-960 cr balance is due; management said the contract is clear and payment is in December.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "JB international recovery is slower than India and depends on plant-network and QC integration milestones.",
+        "R&D at 4-4.5% of revenue for two to three years limits margin expansion even as synergies come through.",
+        "New competitors on recent US launches are expected to raise price erosion in H2.",
+        "Germany remains weak, with only a best-case outlook of slight decline.",
+        "India semaglutide faces rising competition; Q2 shows how supply interruptions can cost share.",
+        "A INR 950-960 cr Novartis ophthalmology payment is due in December."
+      ],
+      "material_guidance_changes": [
+        {
+          "direction": "upgrade",
+          "topic": "JB cost synergies timeline (INR 450 cr)",
+          "old_guidance": "INR 450 cr over three years",
+          "new_guidance": "INR 450 cr in about two years",
+          "magnitude": "Same quantum delivered one year earlier; further upside deferred for a couple of quarters",
+          "materiality": 3,
+          "explicit_statement": "Management says synergies are being achieved much faster than planned, in two years instead of three.",
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "Aman Mehta",
+            "role": "Managing Director",
+            "location": "Transcript page 6 (PDF page 6)",
+            "quote": "\"But directionally, yes, we've been able to achieve that much faster. Instead of three years, I think we should be able to get there in two years' time.\"",
+            "source_url": "https://torrentpharma.com/pdf/investors/Q2-FY26-27_Earnings-Call-Transcript.pdf",
+            "filing_date": "2026-10-29",
+            "call_period": "Q2 FY2027"
+          }
+        }
+      ]
+    }
   }
 }
