@@ -2401,5 +2401,597 @@
       ],
       "material_guidance_changes": []
     }
+  },
+  "VMM": {
+    "symbol": "VMM",
+    "company_name": "Vishal Mega Mart Limited",
+    "filed_at": "2026-10-26T13:12:56+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/VMMP2024_26102026130822_Disclosure_Transcript_VMM_Oct_2026.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/VMMP2024_26102026130822_Disclosure_Transcript_VMM_Oct_2026.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-21",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "value retail (department store chain)",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Q3 same-store sales growth needs to exceed 10% as festive sales shift into the quarter",
+          "summary": "Festival shift cut Q2 SSSG to 5.4% (about 9% adjusted); management expects Q3 to rebound above 10% so the nine-month number looks double digit.",
+          "tone": "positive",
+          "evidence": "\"Q3 will have to be higher than 10%, as you rightly said, for the first nine months to look like double-digit growth.\"",
+          "speaker": "Gunender Kapur",
+          "role": "Founder, MD and CEO",
+          "location": "Transcript page 4 (PDF page 5), reply to Percy"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "No material gross margin impact in Q3 and Q4 from inflation",
+          "summary": "Cost re-engineering and vendor price pass-through are said to offset higher input costs even if crude stays near $100.",
+          "tone": "positive",
+          "evidence": "\"we do not see any material impact further going into quarter 3 and quarter 4 of the year.\"",
+          "speaker": "Gunender Kapur",
+          "role": "Founder, MD and CEO",
+          "location": "Transcript page 4 (PDF page 5), reply to Percy"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Full-year SSSG goal is double digit",
+          "summary": "After 7.7% in H1 (about 9.5% adjusted), the double-digit target requires a strong H2.",
+          "tone": "positive",
+          "evidence": "\"Well, our goal is to achieve double-digit for the full year.\"",
+          "speaker": "Gunender Kapur",
+          "role": "Founder, MD and CEO",
+          "location": "Transcript page 4 (PDF page 5), reply to Percy"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "More than 100 new stores this year",
+          "summary": "Store-opening guidance reiterated; 53 gross new stores were added in H1, leaving about 50 for H2.",
+          "tone": "positive",
+          "evidence": "\"we are quite confident of our guidance of opening more than 100 stores this year.\"",
+          "speaker": "Gunender Kapur",
+          "role": "Founder, MD and CEO",
+          "location": "Transcript page 8 (PDF page 9), reply to Prerna Jhunjhunwala"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "SSSG of 8-10% enough to offset higher employee costs",
+          "summary": "Minimum-wage increases and new-store costs are elevated; management sees margins holding at this growth range.",
+          "tone": "neutral",
+          "evidence": "\"Anything between 8% to 10% is good enough to offset this impact.\"",
+          "speaker": "Amit Gupta",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 14 (PDF page 15), reply to Devanshu Bansal"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "EBITDA margin to improve about 30 bps a year via operating leverage",
+          "summary": "Double-digit growth against 6-7% store-level cost inflation drives operating leverage; gross margin will not be expanded.",
+          "tone": "positive",
+          "evidence": "\"that would probably improve our EBITDA margin by 30 bps every year.\"",
+          "speaker": "Gunender Kapur",
+          "role": "Founder, MD and CEO",
+          "location": "Transcript page 10 (PDF page 11), reply to Rahul Agarwal"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Festival shift and Q3 same-store sales rebound",
+          "why_it_mattered": "Q2 SSSG of 5.4% looked weak; analysts asked what Q3 must deliver to reach double digit.",
+          "question_count": 12,
+          "analysts_asking": 9
+        },
+        {
+          "topic": "Store expansion pace, geography and format (large, small, Belong & Co)",
+          "why_it_mattered": "Store adds, Tier 2/3 and Kerala/Gujarat/Maharashtra focus, area addition lagging store additions.",
+          "question_count": 12,
+          "analysts_asking": 7
+        },
+        {
+          "topic": "Gross margin protection amid inflation and vendor price increases",
+          "why_it_mattered": "Crude and raw material inflation raised concern about H2 gross margin.",
+          "question_count": 9,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "Medium-term margin trajectory and operating leverage",
+          "why_it_mattered": "Analysts asked if margins stay flat through FY28-29 given growth investment.",
+          "question_count": 9,
+          "analysts_asking": 6
+        }
+      ],
+      "key_risks": [
+        "Persistent input-cost inflation and crude near $100",
+        "Elevated employee costs from minimum-wage increases",
+        "Festival timing makes quarterly comparisons volatile",
+        "New-format (Belong & Co, small stores) execution",
+        "Price elasticity from inflation"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "ADANIGREEN": {
+    "symbol": "ADANIGREEN",
+    "company_name": "Adani Green Energy Limited",
+    "filed_at": "2026-10-26T12:56:31+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/ADANIGREEN_26102026125605_Letter.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/ADANIGREEN_26102026125605_Letter.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-22",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "renewable power producer",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Khavda Phase 3 transmission now expected in Q4 FY27, a quarter or more later than earlier plan",
+          "summary": "Evacuation timing slipped from year-end to the next quarter; commissioning is contingent on the corridor, with balance-of-system ready to install modules quickly.",
+          "tone": "cautious",
+          "evidence": "\"Now we are expecting this transmission line of Phase 3, the evacuations to come by the next quarter.\"",
+          "speaker": "Ashish Khanna",
+          "role": "Chief Executive Officer",
+          "location": "Transcript page 4 (PDF page 5), reply to Mohit Kumar"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Second 7 GW Khavda transmission line also looks delayed",
+          "summary": "Company is focusing on the first corridor, which carries most Khavda evacuation.",
+          "tone": "cautious",
+          "evidence": "\"That is also, as we speak, looks to be delayed on that particular part.\"",
+          "speaker": "Ashish Khanna",
+          "role": "Chief Executive Officer",
+          "location": "Transcript page 6 (PDF page 7), reply to Nirav Shah"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "4.5-5 GW capacity commissioning this fiscal is possible only if the corridor arrives by end of Q4",
+          "summary": "The full-year capacity target is retained but is now entirely dependent on transmission timing.",
+          "tone": "cautious",
+          "evidence": "\"we still believe that if this corridor comes by the end of this next quarter, I mean quarter 4, we will be in a position to commission 4.5 to 5 gigawatt.\"",
+          "speaker": "Ashish Khanna",
+          "role": "Chief Executive Officer",
+          "location": "Transcript page 4 (PDF page 5), reply to Mohit Kumar"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Battery storage to exceed 10 GWh by year-end (6.6 GWh installed)",
+          "summary": "BESS capex is being accelerated to hedge against transmission delays; 3.5 GWh is tied up and about 3.1 GWh is in the process of being tied up.",
+          "tone": "positive",
+          "evidence": "\"So we are very committed to not only commission the 10 gigawatt by the end of the year, but would be definitely able to surpass it too.\"",
+          "speaker": "Ashish Khanna",
+          "role": "Chief Executive Officer",
+          "location": "Transcript page 5 (PDF page 6), reply to Mohit Kumar"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "500 MW Chitravathi pumped storage to complete by year-end",
+          "summary": "First pumped-storage project nears completion in FY27.",
+          "tone": "positive",
+          "evidence": "\"While our maiden 500-megawatt pump storage project at Chitravathi is also progressing towards completion by year-end.\"",
+          "speaker": "Ashish Khanna",
+          "role": "Chief Executive Officer",
+          "location": "Transcript page 3 (PDF page 4), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Merchant exposure being removed via 25-year PPAs (solar at INR2.7, wind at INR3.93)",
+          "summary": "Realisations from merchant sales of about INR2.4 are being replaced with fixed long-term tariffs; execution is the only risk management wants to carry.",
+          "tone": "neutral",
+          "evidence": "\"we have tied up wind at INR 3.93 for the 25-year period.\"",
+          "speaker": "Saurabh Shah",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 14 (PDF page 15), reply to Puneet"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Battery storage targets, tie-ups and how much solar it can absorb",
+          "why_it_mattered": "BESS is positioned as virtual transmission; about 3.5 GWh of 6.6 GWh tied up so far.",
+          "question_count": 9,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "Khavda transmission commissioning and timing slippage",
+          "why_it_mattered": "Phase 3 and Phase 6/7 corridors determine when 4.5-5 GW of capacity can be commissioned.",
+          "question_count": 8,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Curtailment: impact on CUF, EBITDA and who bears it under the PPA",
+          "why_it_mattered": "Solar CUF dipped to about 23%; analysts probed deemed-generation payment and AESL terms.",
+          "question_count": 7,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "EBITDA growth versus generation growth and realisations",
+          "why_it_mattered": "EBITDA up about 51% against generation up 33%; merchant prices and cost efficiency explained.",
+          "question_count": 15,
+          "analysts_asking": 4
+        }
+      ],
+      "key_risks": [
+        "Delays in Khavda transmission (Phase 3, 6, 7) and persistent curtailment",
+        "Leverage near 5.6x through FY28-29",
+        "Counterparty concentration with a related private offtaker (AESL)",
+        "Rising interest rates and FX on 30% dollar debt",
+        "Execution risk on large BESS and pumped-storage build"
+      ],
+      "material_guidance_changes": [
+        {
+          "direction": "downgrade",
+          "topic": "Khavda Phase 3 transmission timing",
+          "old_guidance": "Transmission expected by end of FY27 (Q3)",
+          "new_guidance": "Now expected in the next quarter (Q4 FY27); 4.5-5 GW commissioning target retained but dependent on this",
+          "magnitude": "Roughly one quarter slippage",
+          "materiality": 3,
+          "explicit_statement": "Management states it was earlier expecting lines by year-end and now expects Phase 3 evacuation in the next quarter.",
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "Ashish Khanna",
+            "role": "Chief Executive Officer",
+            "location": "Transcript page 4 (PDF page 5)",
+            "quote": "\"we were earlier expecting these lines to come by the end of this year. Now we are expecting this transmission line of Phase 3, the evacuations to come by the next quarter.\"",
+            "source_url": "https://nsearchives.nseindia.com/corporate/ADANIGREEN_26102026125605_Letter.pdf",
+            "filing_date": "2026-10-26",
+            "call_period": "Q2 FY2027"
+          }
+        }
+      ]
+    }
+  },
+  "CROMPTON": {
+    "symbol": "CROMPTON",
+    "company_name": "Crompton Greaves Consumer Electricals Limited",
+    "filed_at": "2026-10-24T17:18:59+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/Crompton123_24102026171847_TranscriptofEarningCall.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/Crompton123_24102026171847_TranscriptofEarningCall.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-16",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "consumer electricals and appliances",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts not reliably measurable for this transcript; themes ranked by judgment",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Further price increases will follow commodity moves; about 80% of cost increases already passed on",
+          "summary": "Cumulative price hikes of 11-16% (fans 17-18%) cover most input inflation; remaining gap to be closed by Unnati savings or further hikes.",
+          "tone": "cautious",
+          "evidence": "\"About 80% of the cost increases have been passed on.\"",
+          "speaker": "Promeet Ghosh",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 5 (PDF page 6), reply to Aditya Bhartia"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Gross margin outlook cannot be predicted given commodity and geopolitical volatility",
+          "summary": "Management declines to promise further gross-margin improvement but commits to pass through cost increases.",
+          "tone": "cautious",
+          "evidence": "\"we do want to be pretty consistent in passing through cost increases to the market.\"",
+          "speaker": "Promeet Ghosh",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 13 (PDF page 14), reply to Umang Mehta"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Solar pump orders to pick up in the next quarter on Kusum 2.0",
+          "summary": "Kusum 1.1 order flow tapered in Q2; the new government scheme should revive the solar pump business.",
+          "tone": "positive",
+          "evidence": "\"We are aware that this will pick up in the next quarter with GOI having announced Kusum 2.0.\"",
+          "speaker": "Promeet Ghosh",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 3 (PDF page 4), prepared remarks"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Andhra Pradesh solar rooftop order to be completed in the coming quarter with some spillover",
+          "summary": "Revenue recognition on the government order peaks in Q2-Q3; after that growth depends on B2C, C&I and selective tenders.",
+          "tone": "neutral",
+          "evidence": "\"I would expect that it will get completely done in the coming quarter, pretty much with some spillover in the quarter thereafter.\"",
+          "speaker": "Promeet Ghosh",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 6 (PDF page 7), reply to Aditya Bhartia"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Greenfield manufacturing plant evaluation in advanced stages (fans, appliances, wires)",
+          "summary": "A shift from an outsourced to partly owned manufacturing model is under consideration, with wires included.",
+          "tone": "positive",
+          "evidence": "\"Evaluation of Greenfield manufacturing plant is in advanced stages.\"",
+          "speaker": "Promeet Ghosh",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 4 (PDF page 5), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "On track for medium-term guidance (double revenue, 11-12% EBITDA margin by FY29)",
+          "summary": "Three quarters of double-digit growth keep management confident; the 12% margin is on a larger revenue base.",
+          "tone": "positive",
+          "evidence": "\"we believe we are very well on track for our medium-term guidance.\"",
+          "speaker": "Promeet Ghosh",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 4 (PDF page 5), prepared remarks"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Raw material inflation, price hikes already taken and further hikes needed",
+          "why_it_mattered": "Commodity costs surged; analysts wanted pass-through levels (about 80%) and Q3 margin direction.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Solar rooftop and pump business: revenue recognition, tenders, repeatability and unit economics",
+          "why_it_mattered": "Andhra Pradesh order is about half executed; analysts probed what comes after.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Fans pricing versus volume and underlying demand drivers",
+          "why_it_mattered": "Cumulative fan price rises of 17-18% raised concern on volume elasticity.",
+          "question_count": null,
+          "analysts_asking": null
+        },
+        {
+          "topic": "Medium-term margin ambition (11-12% EBITDA by FY29) and fan growth drivers",
+          "why_it_mattered": "Margin fell from 11.8% in FY25; analysts asked whether the target is a recovery or expansion.",
+          "question_count": null,
+          "analysts_asking": null
+        }
+      ],
+      "key_risks": [
+        "Volatile commodity prices and geopolitical shocks",
+        "Elasticity from cumulative price increases (fans 17-18%)",
+        "Low-margin pass-through mix from solar rooftop and pumps",
+        "Dependence on government schemes (Kusum, PM Surya Ghar) and tender profitability",
+        "E-commerce repositioning and LKA restructuring execution"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "HAVELLS": {
+    "symbol": "HAVELLS",
+    "company_name": "Havells India Limited",
+    "filed_at": "2026-10-24T12:29:41+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/HAVELLS1_24102026122932_signed_Transcript_Q2FY2627.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/HAVELLS1_24102026122932_signed_Transcript_Q2FY2627.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-22",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "electricals and consumer durables",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Further price increases of 5-7% needed in Q3 for some products",
+          "summary": "Raw material inflation continues; price actions in Q3 are planned even though Q2 is not usually a pricing quarter for the industry.",
+          "tone": "cautious",
+          "evidence": "\"I think in this quarter, certain price hikes will have to be taken\"",
+          "speaker": "Anil Rai Gupta",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 7 (PDF page 8), reply to Sonali"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Lloyd cost pass-through to begin in Q3 and extend into Q4 as the season picks up",
+          "summary": "Subdued Lloyd margins reflect incomplete pass-through in the off-season; recovery depends on the AC season.",
+          "tone": "neutral",
+          "evidence": "\"I think this will start in the third quarter and will trickle into the fourth quarter as well.\"",
+          "speaker": "Anil Rai Gupta",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 3 (PDF page 4), reply to Natasha Jain"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "No revenue guidance for FY27",
+          "summary": "The company continues to avoid giving numeric revenue or margin targets.",
+          "tone": "neutral",
+          "evidence": "\"we do not give any revenue guidance for the year\"",
+          "speaker": "Anil Rai Gupta",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 9 (PDF page 10), reply to Saurabh Jain"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Cable contribution margin to return to normal after aluminium-driven dip",
+          "summary": "Management frames the Q2 cable margin hit as volatility; normal range is 15-15.5% at product mix.",
+          "tone": "neutral",
+          "evidence": "\"we'll be coming back to our normal margin levels in underground cable business as well.\"",
+          "speaker": "Anil Rai Gupta",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 11 (PDF page 12), reply to Karan Gupta"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Cable capacity expansion fully on stream within about 18 months, mainly MV and EHV",
+          "summary": "Large multi-phase cable capex completes by roughly April 2028; capacity skewed to higher-voltage cables.",
+          "tone": "positive",
+          "evidence": "\"I think by in next 18 months, the full expansion will be on stream.\"",
+          "speaker": "Rajiv Goel",
+          "role": "Executive Director",
+          "location": "Transcript page 14 (PDF page 15), reply to Umang Mehta"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Lloyd to aim for profitability in the medium term, no timeline given",
+          "summary": "The air-conditioning brand continues to be invested in; management avoids a profit-turnaround date.",
+          "tone": "cautious",
+          "evidence": "\"at least start making profitability in the medium term.\"",
+          "speaker": "Anil Rai Gupta",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 8 (PDF page 9), reply to Pavan Kumar"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Cable and wire contribution margin after the aluminium price decline",
+          "why_it_mattered": "Cable contribution margin fell about 380 bps YoY; analysts wanted the trajectory.",
+          "question_count": 33,
+          "analysts_asking": 11
+        },
+        {
+          "topic": "Pricing actions and raw material outlook for Q3",
+          "why_it_mattered": "Price hikes of 10-25% over 12 months and more planned.",
+          "question_count": 22,
+          "analysts_asking": 8
+        },
+        {
+          "topic": "Lloyd: growth split, margin pressure, profitability timeline and channel inventory",
+          "why_it_mattered": "Seasonally weak Q2 with cost under-recovery and continued losses.",
+          "question_count": 12,
+          "analysts_asking": 8
+        },
+        {
+          "topic": "Capex and cable expansion progress",
+          "why_it_mattered": "INR14 billion FY27 capex mostly for cables and wires; expansion timeline asked.",
+          "question_count": 8,
+          "analysts_asking": 6
+        }
+      ],
+      "key_risks": [
+        "Volatile raw material prices (aluminium, copper) and incomplete pass-through",
+        "New wire competitors and irrational pricing",
+        "Lloyd profitability and seasonality",
+        "Cable margin sensitivity to aluminium price",
+        "Execution of large cable capex"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "HDFCBANK": {
+    "symbol": "HDFCBANK",
+    "company_name": "HDFC Bank Limited",
+    "filed_at": "2026-10-23T22:50:22+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/HDFCBANK_23102026224657_SEintimationTranscriptofearningscall17oct2026.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/HDFCBANK_23102026224657_SEintimationTranscriptofearningscall17oct2026.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-17",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "private sector bank",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "keyword match across analyst turns; counts are distinct analysts whose questions touch the theme and the number of question turns; a multi-part question can touch several themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "NIM expected to be neutral to positive; Q2 seen as the bottom",
+          "summary": "A 25 bp repo hike on a roughly 70% floating book gives a tailwind by December, partly offset by the full-quarter cost of FCNR(B) deposits.",
+          "tone": "positive",
+          "evidence": "\"So, net of that, we still think that there can be neutral to positive on the margin as we go forward.\"",
+          "speaker": "Srinivasan Vaidyanathan",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 9 (PDF page 10), reply to Rikin Shah"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "October repo hike to be reflected in loan yields by December",
+          "summary": "Repricing of the roughly 70% floating-rate book is under way, with part of the benefit visible in Q3.",
+          "tone": "positive",
+          "evidence": "\"should largely be factored in by December.\"",
+          "speaker": "Srinivasan Vaidyanathan",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 9 (PDF page 10), reply to Rikin Shah"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Liability momentum and LCR glide path plan to be shared in the next couple of quarters",
+          "summary": "LCR at 113% and softer core deposits led by large one-off outflows; management promises balance-sheet adjustments.",
+          "tone": "cautious",
+          "evidence": "\"you will see a kind of a thought process in the near future from Anup and team on what they are planning to do in improving core liability momentum and the LCR glide path as well.\"",
+          "speaker": "Sashidhar Jagdishan",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 15 (PDF page 16), reply to Nitin Aggarwal"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Draft IRDAI commission cuts have pretty high impact in current form",
+          "summary": "Bancassurance income would fall sharply if the draft stands; mitigants are higher persistency, volume growth and cost action.",
+          "tone": "cautious",
+          "evidence": "\"But yes, in its current form, when you look at only the commission, it is pretty strong, pretty high impact.\"",
+          "speaker": "Srinivasan Vaidyanathan",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 16 (PDF page 17), reply to Ankit Bihani"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Deposit market-share runway in more than half of 765 districts",
+          "summary": "Nascent branches are 2-3 points below average market share, implying scope for CASA and household deposit growth.",
+          "tone": "positive",
+          "evidence": "\"more than 54% of the districts, significant opportunity exists\"",
+          "speaker": "Srinivasan Vaidyanathan",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 12 (PDF page 13), reply to Chintan"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Retail share of deposits to rise via non-deposit strategies and less corporate liability intake",
+          "summary": "New leadership is expected to restructure funding to reduce reliance on high-cost non-retail liabilities.",
+          "tone": "positive",
+          "evidence": "\"we probably will have the proportion of retail becoming larger and larger\"",
+          "speaker": "Sashidhar Jagdishan",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 6 (PDF page 7), reply to Mahrukh Adajania"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Cost of funds, FCNR(B) deposit deployment and time deposit mix",
+          "why_it_mattered": "Deposit growth was time-deposit led and cost of funds was flat at 4.4%.",
+          "question_count": 5,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Loan mix: corporate growth versus retail and MSME, yield trade-offs",
+          "why_it_mattered": "Peers shifted to higher-yield segments; bank argues ROA is comparable across segments.",
+          "question_count": 5,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Net interest margin trajectory (Q2 at 3.32%) and rate-hike pass-through",
+          "why_it_mattered": "Margins fell similarly to peers; investors asked when the bottom is and how FCNR and repo increases interplay.",
+          "question_count": 5,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "Retail and CASA deposit momentum, share of retail deposits",
+          "why_it_mattered": "Retail share slipped; one-off large outflows masked momentum.",
+          "question_count": 2,
+          "analysts_asking": 2
+        }
+      ],
+      "key_risks": [
+        "Persistent large deposit outflows and pressure on CASA mix",
+        "LCR near 113% limiting loan growth",
+        "Draft IRDAI commission cuts hitting bancassurance fee income",
+        "Management transition (CEO and Deputy MD changes)",
+        "Weak monsoon and agri asset quality",
+        "Priority-sector small and marginal farmer shortfall"
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
