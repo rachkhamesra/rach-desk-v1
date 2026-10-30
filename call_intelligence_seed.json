@@ -2408,5 +2408,300 @@
       ],
       "material_guidance_changes": []
     }
+  },
+  "RBLBANK": {
+    "symbol": "RBLBANK",
+    "company_name": "RBL Bank Limited",
+    "filed_at": "2026-10-16T19:35:53+05:30",
+    "source_url": "https://webassets.rbl.bank.in/ir_admin/financial_highlights/Call_Transcript_Q2_FY_27_Edited.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/RBLBANK_16102026193456_TranscriptofEarningsCallQuarterSept2026Signed.pdf",
+    "transcript_source_type": "company_website_transcript_linked_from_nse_covering_letter",
+    "description": "Company-website transcript linked from the NSE covering letter (user-approved source exception).",
+    "transcript_status": "available",
+    "call_date": "2026-10-12",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "bank",
+      "call_period": "Q2 FY2027",
+      "analyst_focus_scope": "all_material_themes",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "NIM expected slightly lower in Q3, edging up in Q4",
+          "summary": "Q2 NIM of 4.61% benefits from FCNR/equity liquidity parked in short-term investments; a full quarter of FCNR leverage costs and slow deployment point to a dip in Q3, then a rise in Q4 as the repo hike flows through.",
+          "tone": "cautious",
+          "evidence": "\"But on the margin, I would imagine that we should be slightly lower next quarter, and then, probably inch up in Q4.\"",
+          "speaker": "Jaideep Iyer",
+          "role": "Executive Director",
+          "location": "Transcript page 7 (PDF page 7)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Full-quarter FCNR leverage drag offsets repo hike in Q3",
+          "summary": "The GIFT City FCNR leverage ran for only about a month and a half in Q2, so Q3 carries the full-quarter cost against a partial repo-hike benefit; improvement then depends on how fast liquidity moves from investments to loans.",
+          "tone": "cautious",
+          "evidence": "\"We're fairly confident to say you will see a little bit of reduction in the next quarter just on account of where the mix is sitting right now on the balance sheet.\"",
+          "speaker": "Bank management (speaker not named in transcript)",
+          "role": "Management",
+          "location": "Transcript page 10 (PDF page 10)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Repo-linked loans reset on a 90-day cycle; full benefit next quarter",
+          "summary": "About 58% of the book is externally benchmarked (32% repo-linked) and most loans reset within the quarter, so the October rate increase shows fully in Q3-Q4.",
+          "tone": "positive",
+          "evidence": "\"So, the reset is a 90-day reset, so you will expect that most of the loans will get reset by end of the quarter. So, we'll see the full benefit in the next quarter.\"",
+          "speaker": "Bhavin Lakhpatwala",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 7 (PDF page 7)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Credit-card slippages to fall to about INR 400 cr in Q3-Q4; card credit cost toward 6%",
+          "summary": "September monthly slippages were already 125-130 cr against 600+ for the quarter; card credit cost should drop from low double digits to the 6% zone, and cards provisioning of about INR 575 cr should fall.",
+          "tone": "positive",
+          "evidence": "\"we would expect credit card slippages to come down to around a 400 plus-minus number for Q3, Q4 kind of numbers. And therefore, credit costs on cards should come down from the low double digits that we've seen to the 6% zone.\"",
+          "speaker": "Jaideep Iyer",
+          "role": "Executive Director",
+          "location": "Transcript page 8 (PDF page 8)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Retail slippages expected to trend materially lower, consistent with prior guidance",
+          "summary": "JLG microfinance is back to normal, rural collections are stable, and credit-card trends match the earlier plan; deficient monsoon in certain districts keeps management watchful.",
+          "tone": "positive",
+          "evidence": "\"we expect slippages to trend materially downwards, in line with our guidance in the last quarter.\"",
+          "speaker": "R. Subramaniakumar",
+          "role": "MD and CEO",
+          "location": "Transcript page 4 (PDF page 4)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Q2 fee growth of 12% includes a one-off; not repeatable",
+          "summary": "A currency-swap related FCNR fee flattered sequential fee growth, so Q3 fee growth should not be extrapolated from Q2.",
+          "tone": "cautious",
+          "evidence": "\"So, there is a one-off, which is why you see sequentially fee going up by 12%, right?\"",
+          "speaker": "Bhavin Lakhpatwala",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 16 (PDF page 16)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Sequential loan growth of 5-6% a quarter suggested for modelling",
+          "summary": "Executive Director clarifies how to translate the baseline into quarterly numbers.",
+          "tone": "positive",
+          "evidence": "\"You might want to model a 6% or a 5% to 6% quarterly number.\"",
+          "speaker": "Jaideep Iyer",
+          "role": "Executive Director",
+          "location": "Transcript page 17 (PDF page 17)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Opex growth to stay around 7-8% with a small uptick from branches, people and technology",
+          "summary": "Collection-cost rationalisation in cards is largely done, so costs rise from here with branch, wealth and technology investment, but not materially.",
+          "tone": "neutral",
+          "evidence": "\"There may be a small uptick, with our investment in the branches go up and investment in the people goes up and technology, but it's not materially way away from what we have been showing.\"",
+          "speaker": "R. Subramaniakumar",
+          "role": "MD and CEO",
+          "location": "Transcript page 16 (PDF page 16)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Branch expansion of 30-50 a quarter; 1,000 branches in about 2.5-3 years",
+          "summary": "About 38 branches were due to open within two weeks; the earlier 1,000-branch ambition has stretched to 2.5-3 years.",
+          "tone": "neutral",
+          "evidence": "\"we are still committed to 1,000 branches in two years that we had called out earlier? ... Yes, around 2.5, 3 years, you can put it that way.\"",
+          "speaker": "Param Subramanian (Investec); R. Subramaniakumar",
+          "role": "Analyst; MD and CEO",
+          "location": "Transcript page 16 (PDF page 16)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "ENBD India business amalgamation to complete this financial year, subject to RBI approval",
+          "summary": "The amalgamation application is with the RBI; management says completion is definitely in FY27 once approved.",
+          "tone": "positive",
+          "evidence": "\"when does the ENBD India business acquisition get completed? ... Once the application is approved by them, thereafter, it will start. Definitely in this financial year.\"",
+          "speaker": "Param Subramanian (Investec); R. Subramaniakumar",
+          "role": "Analyst; MD and CEO",
+          "location": "Transcript page 16 (PDF page 16)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Excess liquidity to be fully deployed in wholesale banking over the medium term",
+          "summary": "After prepaying costly borrowings, remaining FCNR and capital-raise liquidity (about 35% of the May 2026 balance sheet) will take months to deploy and is aimed at better-rated corporates and secured retail.",
+          "tone": "positive",
+          "evidence": "\"Given the large liquidity still on the balance sheet, we expect to continue this for the next few months. Over the medium term, we expect this liquidity to be fully deployed in the wholesale banking segment\"",
+          "speaker": "R. Subramaniakumar",
+          "role": "MD and CEO",
+          "location": "Transcript page 3 (PDF page 3)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Bancassurance fee income could fall 50-60% if the draft IRDAI circular is implemented as written",
+          "summary": "About INR 300 cr of annual bancassurance income (about 8% of FY26 fees) is at risk; management says to pencil in a minimum 50-60% hit on a plain reading.",
+          "tone": "negative",
+          "evidence": "\"I would imagine anywhere between 50% to 60% impact should be minimum to be penciled in.\"",
+          "speaker": "Jaideep Iyer",
+          "role": "Executive Director",
+          "location": "Transcript page 7 (PDF page 7)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Loan growth baseline of 22-25% continues; model 5-6% per quarter",
+          "summary": "Q2's 42% YoY (leverage- and liquidity-aided) is an exception; management treats 22-25% as the minimum baseline and suggests 5-6% sequential growth.",
+          "tone": "positive",
+          "evidence": "\"You just look back in March and June, we said the baseline of between 22% to 25%. So, that baseline will be continued as we move forward. That's the minimum.\"",
+          "speaker": "R. Subramaniakumar",
+          "role": "MD and CEO",
+          "location": "Transcript page 17 (PDF page 17)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Cards to return to growth in six months, then 10-12% next year",
+          "summary": "Credit-card balances are still shrinking; the festive quarter should stop de-growth, with 10-12% growth expected next year and unsecured share staying near 19-20%.",
+          "tone": "neutral",
+          "evidence": "\"cards, we expect to start seeing at least some positive growth in the next six months before we start delivering a 10% to 12% growth for next year.\"",
+          "speaker": "Jaideep Iyer",
+          "role": "Executive Director",
+          "location": "Transcript page 20 (PDF page 20)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Next-year mix: overall growth early-to-mid 20s, unsecured high single to low double digits",
+          "summary": "Unsecured share of the book is expected to stay roughly where it is (19-20%, slightly lower).",
+          "tone": "neutral",
+          "evidence": "\"So, you can look at an overall growth of, let's say, early to mid-20s, and an unsecured growth of, let's say, high single digits or low double digits.\"",
+          "speaker": "Jaideep Iyer",
+          "role": "Executive Director",
+          "location": "Transcript page 20 (PDF page 20)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Strategy and targets to be detailed over the coming months; no FY28 ROA guidance",
+          "summary": "CEO declines FY28 ROA targets, asks investors to focus on the current 0.92% ROA, and promises full details over a few months; this is a catalyst for medium-term targets.",
+          "tone": "neutral",
+          "evidence": "\"I did say that over a period of next few months, we'll come back to you with a complete details.\"",
+          "speaker": "R. Subramaniakumar",
+          "role": "MD and CEO",
+          "location": "Transcript page 11 (PDF page 11)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Tailwinds to margins and growth from fixed-rate liquidity in a rising-rate cycle",
+          "summary": "Equity and FCNR funding that is effectively fixed-rate while lending rates rise gives a margin and growth tailwind, with cards and microfinance credit costs normalising.",
+          "tone": "positive",
+          "evidence": "\"So, there will be tailwind to margins. There is tailwind to growth.\"",
+          "speaker": "Jaideep Iyer",
+          "role": "Executive Director",
+          "location": "Transcript page 11 (PDF page 11)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Liability costs to fall gradually; SA rates gradual, TD rates relative to market",
+          "summary": "Deposit cost rationalisation continues but term-deposit rate cuts are tied to the market rate cycle.",
+          "tone": "neutral",
+          "evidence": "\"SA we would be a gradual. TD rates, I think I would caveat that by saying that will obviously be a function of economic interest rates.\"",
+          "speaker": "Jaideep Iyer",
+          "role": "Executive Director",
+          "location": "Transcript page 19 (PDF page 19)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Wealth proposition at a very early stage",
+          "summary": "Product, proposition and relationship managers will take time to build; no near-term launch.",
+          "tone": "neutral",
+          "evidence": "\"So, don't expect something to be launched next week.\"",
+          "speaker": "Bank management (speaker not named in transcript)",
+          "role": "Management",
+          "location": "Transcript page 18 (PDF page 18)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Normalised LCR target 120-125% versus 148% now",
+          "summary": "As excess liquidity is deployed, LCR will fall toward 120-125%, implying roughly 20+ points of liquidity release into earning assets.",
+          "tone": "neutral",
+          "evidence": "\"Normally, we would want to be in the 120 to 125 zone on LCR, because there'll always be some cushion that we will want to keep.\"",
+          "speaker": "Jaideep Iyer",
+          "role": "Executive Director",
+          "location": "Transcript page 18 (PDF page 18)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "How will NIM move in Q3 and Q4 as FCNR leverage and liquidity deployment play out?",
+          "why_it_mattered": "Q2 NIM jumped 48 bps to 4.61% because surplus FCNR and equity liquidity sat in investments; five analysts asked for the path, the incremental yield on deployment, the full-quarter FCNR leverage cost and the repo-hike benefit. Answer: slightly lower in Q3, up in Q4, pace tied to deployment.",
+          "question_count": null
+        },
+        {
+          "topic": "How badly will the draft IRDAI bancassurance rules hit fees?",
+          "why_it_mattered": "Bancassurance is about INR 300 cr of income (8% of FY26 fees); management said to assume at least a 50-60% hit if implemented as drafted.",
+          "question_count": null
+        },
+        {
+          "topic": "When do credit-card slippages and credit costs normalise?",
+          "why_it_mattered": "Credit cost was INR 771 cr (63 bps) with cards provisioning of about INR 575 cr; analysts quantified the potential INR 175-250 cr saving. Management guided slippages to about 400 for Q3-Q4 and card credit cost to about 6%.",
+          "question_count": null
+        },
+        {
+          "topic": "Can the retail deposit franchise improve CASA and reduce cost of funds?",
+          "why_it_mattered": "Average CASA ratio was 24% (28.1% ex-FCNR) with flat average CASA and low single-digit SA growth; analysts asked whether balance sheet growth depends on SA growth and about branches, people, NRI and affluent initiatives.",
+          "question_count": null
+        },
+        {
+          "topic": "What is the sustainable loan growth after a 42% YoY quarter?",
+          "why_it_mattered": "Analysts asked about FY27 and FY28 growth; management said the 22-25% baseline is the minimum and suggested 5-6% per quarter.",
+          "question_count": null
+        },
+        {
+          "topic": "What ROA and targets for FY28 and beyond?",
+          "why_it_mattered": "With ROA at 0.92%, analysts proposed that lower credit cost could lift ROA toward 1.5% and asked about Board targets; management deferred specifics to coming months.",
+          "question_count": null
+        },
+        {
+          "topic": "What is the wholesale lending strategy and its returns?",
+          "why_it_mattered": "Wholesale advances grew 56% YoY; analysts asked about target ROA, sectors, short-term lending share and project finance; management emphasised risk- and capital-adjusted returns, working-capital and trade focus, and no single sector theme.",
+          "question_count": null
+        },
+        {
+          "topic": "What happens to opex and branch rollout?",
+          "why_it_mattered": "Opex grew only 3% YoY and 7% QoQ after collection-cost cuts; analysts asked if a normalised 7-8% growth is right and whether the 1,000-branch plan holds (now 2.5-3 years).",
+          "question_count": null
+        },
+        {
+          "topic": "What will the unsecured and microfinance mix look like?",
+          "why_it_mattered": "Unsecured assets grew only 11% YoY with yields of about 21% versus 9-10% for secured retail; analysts tested the margin drag from mix shift.",
+          "question_count": null
+        },
+        {
+          "topic": "ENBD India amalgamation and wealth plans",
+          "why_it_mattered": "The Emirates NBD group tie-up and wealth proposition drive medium-term franchise changes; management said the amalgamation is with the RBI and completes this fiscal year; wealth is early.",
+          "question_count": null
+        },
+        {
+          "topic": "Liquidity buffers, duration and AFS marks",
+          "why_it_mattered": "With LCR at 148% and rising yields, analysts asked about the target LCR (120-125%), MTM risk (management stayed short duration) and the AFS reserve.",
+          "question_count": null
+        },
+        {
+          "topic": "Quality of fee growth and one-offs",
+          "why_it_mattered": "Core fee grew 12% YoY but retail fee only 9%; management confirmed an FCNR currency-swap related one-off lifted sequential growth.",
+          "question_count": null
+        },
+        {
+          "topic": "ECL transition and steady-state credit cost",
+          "why_it_mattered": "Piran Engineer asked how ECL changes steady-state credit costs; management said mix drives it and declined a number.",
+          "question_count": null
+        }
+      ],
+      "key_risks": [
+        "NIM is expected to dip in Q3 before improving; outcome depends on how fast liquidity is deployed into higher-yielding loans.",
+        "Draft IRDAI bancassurance rules could cut roughly INR 300 cr of annual fee income by at least 50-60%.",
+        "Deficient monsoon in certain districts keeps rural collections a watch item, though no stress has been seen so far.",
+        "Credit-card recovery is the main credit-cost lever; slippages must fall to the guided level.",
+        "Q2 growth and NIM include one-offs (FCNR leverage, swap-related fees) that will not repeat.",
+        "ENBD India amalgamation needs RBI approval, and medium-term targets have not yet been disclosed."
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
