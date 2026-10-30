@@ -16,6 +16,13 @@ class UniverseParsingTest(unittest.TestCase):
         self.assertEqual(symbols, ["ONE", "TWO"])
         self.assertEqual(caps, {"ONE": 9000.0, "TWO": 22000.0})
 
+    def test_market_cap_lakh_values_are_converted_to_crore(self):
+        df = pd.DataFrame({"Rank": [1, 2, 3], "Symbol": ["SMALL", "MID", "LARGE"],
+                           "Average Market Capitalization (Rs. Lakhs)": [900000, 2000000, 4100000]})
+        buf = io.BytesIO(); df.to_excel(buf, index=False)
+        _, caps = universes._top1000(buf.getvalue())
+        self.assertEqual(caps, {"SMALL": 9000.0, "MID": 20000.0, "LARGE": 41000.0})
+
 
 if __name__ == "__main__":
     unittest.main()

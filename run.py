@@ -24,6 +24,7 @@ def main():
         warn = f"<br><span style='color:#e8a93a'>BSE delivery for {last:%d %b} is not published yet: latest-day delivered shares are NSE-only</span>"
     memberships = universes.load(a.root)
     market_cap_cr = memberships.pop("market_cap_cr", {})
+    print(f"market-cap universe: {len(market_cap_cr)} NSE companies loaded in ₹ crore")
     M = metrics.build(parsed, ov, memberships)
     M["market_cap_cr"] = market_cap_cr
     calendar, actual = results.load(a.root, end)
