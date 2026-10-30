@@ -156,7 +156,7 @@ def tab_52w_highs(M):
             h = value / max_dq * bar_h; x = i * width / max(1, len(dq) - 1) - bw / 2
             bars.append(f'<rect class="h52bar{(" hot" if bool(hot) else "")}" x="{x:.1f}" y="{y0 + bar_h - h:.1f}" width="{bw:.1f}" height="{max(.7,h):.1f}"/>')
         result = stk(s, M); cap = M.get("market_cap_cr", {}).get(s)
-        bucket = "unknown" if cap is None else "under10" if cap < 10000 else "10to30" if cap <= 30000 else "over30"
+        bucket = "unknown" if cap is None else "under5" if cap < 5000 else "5to10" if cap < 10000 else "10to20" if cap <= 20000 else "over20"
         cap_text = "Market cap unavailable" if cap is None else f'₹{cap:,.0f} cr market cap'
         return (f'<article class="h52card" data-mcap="{bucket}"><div class="h52head"><h3>{result}</h3><b class="{("g" if row.px1d >= 0 else "r")}">{pc(row.px1d)} on the day</b></div>'
                 f'<svg class="h52svg" viewBox="0 0 420 210" role="img" aria-label="One-year price and delivered-share chart for {esc(s)}">'
@@ -174,8 +174,9 @@ def tab_52w_highs(M):
             '<p class="desc">Three compact one-year charts per row. Delivery bars are highlighted when they are at least 1.25× the prior 20-session average. Click a ticker to open its full Stocks chart.</p>'
             '<div class="h52tabs"><button class="h52tab on" data-h52="fo">F&amp;O</button><button class="h52tab" data-h52="nonfo">NON F&amp;O</button></div>'
             f'<div class="h52group" data-h52-group="fo">{group(True)}</div><div class="h52group" data-h52-group="nonfo" hidden>'
-            '<div class="h52caps"><button class="h52cap on" data-mcap-filter="all">ALL</button><button class="h52cap" data-mcap-filter="under10">&lt; ₹10,000 CR</button>'
-            '<button class="h52cap" data-mcap-filter="10to30">₹10,000–30,000 CR</button><button class="h52cap" data-mcap-filter="over30">&gt; ₹30,000 CR</button></div>'
+            '<div class="h52caps"><button class="h52cap on" data-mcap-filter="all">ALL</button><button class="h52cap" data-mcap-filter="under5">&lt; ₹5,000 CR</button>'
+            '<button class="h52cap" data-mcap-filter="5to10">₹5,000–10,000 CR</button><button class="h52cap" data-mcap-filter="10to20">₹10,000–20,000 CR</button>'
+            '<button class="h52cap" data-mcap-filter="over20">&gt; ₹20,000 CR</button></div>'
             f'{group(False)}</div>')
 
 

@@ -20,5 +20,6 @@ def test_52_week_high_screen_has_both_groups_and_three_column_cards():
     assert "FUTURE" in html and "CASH" in html
     assert html.count('class="h52card"') == 2
     assert "h52grid" in html
-    assert "&lt; ₹10,000 CR" in html and "₹10,000–30,000 CR" in html and "&gt; ₹30,000 CR" in html
-    assert 'data-mcap="10to30"' in html
+    assert "&lt; ₹5,000 CR" in html and "₹5,000–10,000 CR" in html
+    assert "₹10,000–20,000 CR" in html and "&gt; ₹20,000 CR" in html
+    assert 'data-mcap="10to20"' in html
