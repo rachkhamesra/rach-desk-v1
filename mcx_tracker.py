@@ -14,6 +14,7 @@ import requests
 CACHE = "mcx_turnover.csv"
 HISTORY_URL = "https://www.mcxindia.com/backpage.aspx/GetHistoricalDataDetails"
 HISTORY_PAGE = "https://www.mcxindia.com/market-data/historical-data"
+BHAVCOPY_PAGE = "https://www.mcxindia.com/market-data/bhavcopy"
 EXPIRY_URL = "https://groww.in/commodities/calendar?instrument=OPTIONS&exchange=MCX"
 HEADERS = {
     "Accept": "application/json, text/javascript, */*; q=0.01",
@@ -68,6 +69,107 @@ def fetch_history(start, end, session=None):
     return pd.concat([op.rename("premium_value_lakh"), fu.rename("futures_notional_lakh")], axis=1).reset_index(names="date").dropna(subset=["date"])
 
 
+def _numeric(series):
+    return pd.to_numeric(series.astype(str).str.replace(",", "", regex=False).str.strip(), errors="coerce")
+
+
+def summarize_bhavcopy(rows, date):
+    """Reconstruct MCX's OPTFUT premium value from official contract rows.
+
+    Bhavcopy option Value includes strike notional. Commodity quote units differ,
+    so infer the exchange's decimal multiplier from value, strike, close and the
+    reported underlying quantity, then remove strike notional row by row.
+    """
+    frame = pd.DataFrame(rows)
+    if frame.empty:
+        return pd.DataFrame(columns=["date", "premium_value_lakh", "futures_notional_lakh"])
+    instrument = _column(frame, "InstrumentName", "Instrument Name", "Instrument")
+    value_col = _column(frame, "Value", "ValueLacs", "Value (Lacs)", "Value (Lakhs)")
+    if not instrument or not value_col:
+        raise ValueError(f"MCX bhavcopy columns changed: {list(frame.columns)}")
+    frame["_instrument"] = frame[instrument].astype(str).str.strip().str.upper()
+    frame["_value"] = _numeric(frame[value_col]).fillna(0)
+    futures = frame.loc[frame._instrument == "FUTCOM", "_value"].sum()
+    options = frame[frame._instrument == "OPTFUT"].copy()
+    if options.empty:
+        raise ValueError("MCX bhavcopy contains no OPTFUT rows")
+    strike_col = _column(options, "StrikePrice", "Strike Price")
+    close_col = _column(options, "Close")
+    prior_col = _column(options, "PreviousClose", "Previous Close", "PCP")
+    quantity_col = _column(options, "VolumeInThousands", "Volume (In 000's)", "Volume(In 000's)")
+    if not strike_col or not quantity_col:
+        raise ValueError("MCX bhavcopy lacks strike or underlying-volume fields")
+    strike = _numeric(options[strike_col]).fillna(0)
+    close = _numeric(options[close_col]).fillna(0) if close_col else pd.Series(0, index=options.index)
+    if prior_col:
+        close = close.mask(close <= 0, _numeric(options[prior_col]))
+    close = close.fillna(0)
+    quantity = _numeric(options[quantity_col].astype(str).str.extract(r"([0-9,.]+)", expand=False)).fillna(0)
+    value = options["_value"]
+    traded = (value > 0) & (quantity > 0) & (strike > 0)
+    approx = value[traded] / ((strike[traded] + close[traded].clip(lower=0)) * quantity[traded])
+    powers = np.array([1.0, .1, .01, .001, .0001, .00001])
+    scales = approx.map(lambda x: powers[np.abs(np.log(np.maximum(x, 1e-12) / powers)).argmin()])
+    premium = (value[traded] - strike[traded] * quantity[traded] * scales).clip(lower=0).sum()
+    return pd.DataFrame({"date": [pd.Timestamp(date).normalize()], "premium_value_lakh": [premium],
+                         "futures_notional_lakh": [futures if futures else np.nan]})
+
+
+def fetch_bhavcopy_days(dates):
+    """Use a real browser for MCX's bot-gated official bhavcopy endpoint.
+
+    GitHub's Ubuntu runner includes Chrome; Selenium Manager locates its driver.
+    A single browser session is reused for all missing dates.
+    """
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+
+    options = Options()
+    for flag in ("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu",
+                 "--window-size=1920,1080", "--disable-blink-features=AutomationControlled"):
+        options.add_argument(flag)
+    options.add_argument(f'user-agent={HEADERS["User-Agent"]}')
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    driver = webdriver.Chrome(options=options)
+    driver.set_script_timeout(120)
+    try:
+        driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source": "Object.defineProperty(navigator,'webdriver',{get:()=>undefined})"})
+        driver.get("https://www.mcxindia.com/")
+        driver.get(BHAVCOPY_PAGE)
+        WebDriverWait(driver, 45).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'meta[name="X-XSRF-Token"]')))
+        output = []
+        script = r"""
+const instrument=arguments[0], date=arguments[1], done=arguments[arguments.length-1];
+const meta=document.querySelector('meta[name="X-XSRF-Token"]');
+const box=document.createElement('div'); box.innerHTML=meta ? meta.content : '';
+const token=box.querySelector('input')?.value;
+if(!token){done(JSON.stringify({error:'missing request token'}));return;}
+fetch('/market-data/bhavcopy/GetDateWiseBhavCopy?InstrumentName='+encodeURIComponent(instrument)+'&fromDate='+encodeURIComponent(date),
+ {headers:{'__requestverificationtoken':token,'X-Requested-With':'XMLHttpRequest','Content-Type':'application/json'}})
+ .then(async r=>({ok:r.ok,status:r.status,text:await r.text()}))
+ .then(x=>done(JSON.stringify(x))).catch(e=>done(JSON.stringify({error:String(e)})));
+"""
+        for date in dates:
+            day_rows = []
+            shown = f"{pd.Timestamp(date):%d/%m/%Y}"
+            for instrument in ("OPTFUT", "FUTCOM"):
+                envelope = json.loads(driver.execute_async_script(script, instrument, shown))
+                if not envelope.get("ok"):
+                    raise RuntimeError(f'MCX bhavcopy {instrument} returned {envelope.get("status") or envelope.get("error")}')
+                payload = json.loads(envelope["text"])
+                body = payload.get("d", payload)
+                if isinstance(body, str): body = json.loads(body)
+                day_rows.extend(body.get("Data", []))
+            if day_rows:
+                output.append(summarize_bhavcopy(day_rows, date))
+        return pd.concat(output, ignore_index=True) if output else pd.DataFrame(columns=["date", "premium_value_lakh", "futures_notional_lakh"])
+    finally:
+        driver.quit()
+
+
 def fetch_expiries(session=None):
     """Parse the structured expiry map embedded in Groww's public MCX options calendar."""
     session = session or requests.Session()
@@ -94,6 +196,7 @@ def load(root, end, log=print):
     cached = cached.dropna(subset=["date"]).drop_duplicates("date", keep="last")
     end = pd.Timestamp(end).normalize()
     status = "MCX history cache loaded"
+    history_error = None
     try:
         start = max(pd.Timestamp("2024-09-01"), end - pd.Timedelta(days=30))
         fresh = fetch_history(start, end)
@@ -103,8 +206,22 @@ def load(root, end, log=print):
             cached.to_csv(path, index=False, date_format="%Y-%m-%d")
             status = f"Official MCX history refreshed through {cached.date.max():%d %b %Y}"
     except Exception as exc:
-        status = f"MCX refresh blocked ({type(exc).__name__}); showing last verified official report"
-        log(status)
+        history_error = exc
+        log(f"MCX historical endpoint blocked ({type(exc).__name__}); trying official bhavcopy")
+    if history_error is not None:
+        latest = cached.date.max() if len(cached) else end - pd.Timedelta(days=7)
+        missing = list(pd.bdate_range(latest + pd.Timedelta(days=1), end))
+        try:
+            fresh = fetch_bhavcopy_days(missing) if missing else pd.DataFrame()
+            if len(fresh):
+                cached = pd.concat([cached, fresh], ignore_index=True).drop_duplicates("date", keep="last").sort_values("date")
+                os.makedirs(root, exist_ok=True)
+                cached.to_csv(path, index=False, date_format="%Y-%m-%d")
+            status = (f"Official MCX bhavcopy refreshed through {cached.date.max():%d %b %Y}" if len(cached)
+                      else "MCX bhavcopy returned no verified sessions")
+        except Exception as exc:
+            status = f"MCX history and bhavcopy refresh blocked ({type(exc).__name__}); showing last verified official report"
+            log(f"{status}: {exc}")
     try:
         expiries = fetch_expiries()
     except Exception as exc:

@@ -1,4 +1,5 @@
 import pandas as pd
+import requests
 
 import mcx_tracker
 import webpage
@@ -29,3 +30,31 @@ def test_mcx_build_adds_upcoming_expiries_and_charts():
 
 def test_mcx_month_week_boundaries():
     assert [mcx_tracker.month_week(day) for day in (1, 8, 9, 16, 17, 24, 25, 31)] == [1, 1, 2, 2, 3, 3, 4, 4]
+
+
+def test_bhavcopy_reconstructs_option_premium_across_quote_units():
+    rows = [
+        {"Instrument Name": "OPTFUT", "Strike Price": "1300", "Close": "2.96",
+         "Volume(In 000's)": "1467.500 KGS", "Value(Lacs)": "19123.91"},
+        {"Instrument Name": "OPTFUT", "Strike Price": "142000", "Close": "2297.50",
+         "Volume(In 000's)": "190.000 GRMS", "Value(Lacs)": "27428.61"},
+        {"Instrument Name": "FUTCOM", "Strike Price": "0", "Close": "100",
+         "Volume(In 000's)": "1.000 KGS", "Value(Lacs)": "123.45"},
+    ]
+    out = mcx_tracker.summarize_bhavcopy(rows, "2026-10-28").iloc[0]
+    assert abs(out.premium_value_lakh - 495.02) < 1e-6
+    assert out.futures_notional_lakh == 123.45
+
+
+def test_load_uses_bhavcopy_when_history_endpoint_is_blocked(tmp_path, monkeypatch):
+    pd.DataFrame({"date": ["2026-10-28"], "premium_value_lakh": [930133.33],
+                  "futures_notional_lakh": [3920605.93]}).to_csv(tmp_path / mcx_tracker.CACHE, index=False)
+    monkeypatch.setattr(mcx_tracker, "fetch_history", lambda *a, **k: (_ for _ in ()).throw(requests.HTTPError("403")))
+    monkeypatch.setattr(mcx_tracker, "fetch_bhavcopy_days", lambda dates: pd.DataFrame({
+        "date": [pd.Timestamp("2026-10-29")], "premium_value_lakh": [1_100_000.0],
+        "futures_notional_lakh": [4_000_000.0]}))
+    monkeypatch.setattr(mcx_tracker, "fetch_expiries", lambda: pd.DataFrame(columns=["date", "symbol", "name"]))
+    history, _, status = mcx_tracker.load(str(tmp_path), pd.Timestamp("2026-10-29"), log=lambda *_: None)
+    assert history.date.max() == pd.Timestamp("2026-10-29")
+    assert history.iloc[-1].premium_value_lakh == 1_100_000.0
+    assert status == "Official MCX bhavcopy refreshed through 29 Oct 2026"
