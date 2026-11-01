@@ -35,6 +35,12 @@ The BSE tracker stores daily Options Premium Turnover in ₹ crore from January 
 
 The Exchange Tracker has BSE and MCX sub-tabs. The MCX tracker starts with the official date-wise OPTFUT Premium Value reports supplied through 28 October 2026 and retains FUTCOM Total Value for later use. It compares the current part of the month with the same bucket in prior months: Week 1 = days 1–8, Week 2 = 9–16, Week 3 = 17–24 and Week 4 = 25–month-end. It attempts an incremental refresh from MCX Historical Data, retains the last verified report if MCX blocks automated retrieval, and labels that state visibly rather than presenting stale data as current. Its Daily Read also retrieves upcoming MCX options expiries from Groww's public commodity calendar.
 
+## Watchlist
+Press ☆ next to a stock's name to add it, or type a ticker on the Watchlist tab. The list lives in the browser's local storage on that device only; Export and Import copy it as comma-separated tickers to move it between devices. The ★ button beside the search box narrows the Stocks list to watched stocks.
+
+## Base follow-through
+`metrics.base_followthrough` replays the Breakout Bases scan on every past session in the loaded history and records what happened after each signal. A signal is the first day a stock reaches a stage (building, near, fresh) after at least 10 sessions out of it. Returns are measured from that day's close at 5, 10 and 20 sessions, with the excess over the Nifty, the worst dip, and whether the low undercut the base support within 20 sessions. Only data up to the signal day feeds the signal. The tab recomputes win rate, average and median from the signals using the same five filters as the Breakout Bases tab. With the default 420 days of history the sample is small (about 190 replayed sessions); run with `--days 1100` for three years. Results are historical and say nothing certain about the next trade.
+
 ## Corporate actions (automatic)
 NSE and BSE do not adjust the previous close, so a split or bonus looks like a crash. A one-day jump is treated as a corporate action when
 1. it is confirmed by an exchange signal: the ISIN changed, or the futures lot size moved the opposite way; or

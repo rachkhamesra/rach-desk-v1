@@ -52,3 +52,21 @@ def test_base_without_delivery_is_retained_for_optional_filtering():
     out = metrics.breakout_bases(close, high, low, delivery, ratio, ["BASE"], len(dates) - 1)
     assert len(out) == 1
     assert not bool(out.iloc[0].delivery_ok)
+
+
+def test_followthrough_measures_forward_returns_without_lookahead():
+    dates, open_, high, low, close, delivery, ratio = sample_market()
+    nifty = np.full(len(dates), 100.0)
+    out = metrics.base_followthrough(close, high, low, delivery, ratio, ["BASE"], len(dates) - 1, nifty=nifty)
+    assert len(out) and set(out.sym) == {"BASE"}
+    row = out[out.r5.notna()].iloc[0]
+    assert np.isclose(row.r5, close["BASE"].iloc[int(row.t) + 5] / close["BASE"].iloc[int(row.t)] * 100 - 100)
+    assert np.isclose(row.x5, row.r5)                                   # flat benchmark, so excess equals the return
+    last = out.sort_values("t").iloc[-1]
+    assert np.isnan(last.r20) and last.fail20 is None        # the horizon has not happened yet
+    assert (out.groupby("stage").t.diff().dropna() > 10).all()  # repeat appearances inside the cooldown are one signal
+    cut = len(dates) - 30                                     # a shorter history gives identical earlier signals
+    short = metrics.base_followthrough(close.iloc[:cut + 1], high.iloc[:cut + 1], low.iloc[:cut + 1],
+                                       delivery.iloc[:cut + 1], ratio.iloc[:cut + 1], ["BASE"], cut, nifty=nifty[:cut + 1])
+    early = out[out.t <= cut].reset_index(drop=True)[["t", "stage", "quality"]]
+    assert early.equals(short[["t", "stage", "quality"]].reset_index(drop=True))
