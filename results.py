@@ -1,5 +1,5 @@
 """NSE results calendar and confirmed result-declaration timestamps."""
-import os
+import os, re
 from urllib.parse import urlencode
 
 import pandas as pd
@@ -34,6 +34,37 @@ def _merge_csv(path, fresh, keys):
     return out
 
 
+CAL_COLUMNS = ["symbol", "meeting_date", "announced_at", "purpose", "source_url", "name", "industry", "desc"]
+LOOKBACK_DAYS, LOOKAHEAD_DAYS = 7, 120
+PERIOD = re.compile(r"((?:quarter(?:ly)?|half[- ]year(?:ly)?|nine[- ]months?|annual|year|period)[^.]{0,45}?ended[^.]{0,25}?\d{4})", re.I)
+
+
+def is_result_meeting(purpose, desc):
+    return "financial result" in f"{purpose} {desc}".lower()
+
+
+def period_of(desc):
+    """'Quarterly ended September 2026' style phrase from an exchange intimation, or ''."""
+    m = PERIOD.search(str(desc or ""))
+    return re.sub(r"\s+", " ", m.group(1)).strip() if m else ""
+
+
+def latest_meetings(cal, gap_days=45):
+    """One result meeting per company and quarter. A re-announced date supersedes the older intimation
+    (meetings closer together than `gap_days` are the same event; the newest announcement wins)."""
+    if not len(cal): return cal
+    cal = cal.dropna(subset=["symbol", "meeting_date"]).sort_values(["symbol", "meeting_date"])
+    keep = []
+    for _, g in cal.groupby("symbol", sort=False):
+        cluster = []
+        for i, r in g.iterrows():
+            if cluster and (r.meeting_date - cluster[-1][1]).days > gap_days:
+                keep.append(max(cluster, key=lambda c: (c[2], c[1]))[0]); cluster = []
+            cluster.append((i, r.meeting_date, r.announced_at if pd.notna(r.announced_at) else pd.Timestamp.min))
+        keep.append(max(cluster, key=lambda c: (c[2], c[1]))[0])
+    return cal.loc[keep].sort_values(["meeting_date", "symbol"]).reset_index(drop=True)
+
+
 def load(root, asof, log=print):
     """Refresh and return (scheduled meetings, actual result declarations).
 
@@ -44,20 +75,24 @@ def load(root, asof, log=print):
     actual_path = os.path.join(root, "results_actual.csv")
 
     try:
-        raw = _get("/api/corporate-board-meetings", {"index": "equities"})
+        # Without a date range NSE returns only its latest 20 intimations, so always ask for the whole window.
+        start, end = pd.Timestamp(asof) - pd.Timedelta(days=LOOKBACK_DAYS), pd.Timestamp(asof) + pd.Timedelta(days=LOOKAHEAD_DAYS)
+        raw = _get("/api/corporate-board-meetings", {"index": "equities", "from_date": f"{start:%d-%m-%Y}", "to_date": f"{end:%d-%m-%Y}"})
         rows = []
         for x in raw:
             purpose = str(x.get("bm_purpose") or "")
             desc = str(x.get("bm_desc") or "")
-            if "financial result" not in (purpose + " " + desc).lower(): continue
+            if not is_result_meeting(purpose, desc): continue
             rows.append(dict(symbol=x.get("bm_symbol"), meeting_date=x.get("bm_date"), announced_at=x.get("bm_timestamp"),
-                             purpose=purpose, source_url=x.get("attachment")))
-        fresh = pd.DataFrame(rows, columns=["symbol", "meeting_date", "announced_at", "purpose", "source_url"])
+                             purpose=purpose, source_url=x.get("attachment"), name=x.get("sm_name"), industry=x.get("sm_indusrty"), desc=desc))
+        fresh = pd.DataFrame(rows, columns=CAL_COLUMNS)
         cal = _merge_csv(cal_path, fresh, ["symbol", "meeting_date"])
-        log(f"results calendar: {len(fresh)} current NSE entries")
+        log(f"results calendar: {len(fresh)} NSE result meetings between {start:%d %b} and {end:%d %b %Y}")
     except Exception as e:
         log(f"results calendar refresh failed ({e}); using cached copy")
-        cal = pd.read_csv(cal_path) if os.path.exists(cal_path) else pd.DataFrame(columns=["symbol", "meeting_date", "announced_at", "purpose", "source_url"])
+        cal = pd.read_csv(cal_path) if os.path.exists(cal_path) else pd.DataFrame(columns=CAL_COLUMNS)
+        for col in CAL_COLUMNS:
+            if col not in cal: cal[col] = None
 
     try:
         start = pd.Timestamp(asof) - pd.Timedelta(days=8)
@@ -78,9 +113,11 @@ def load(root, asof, log=print):
         log(f"actual-results refresh failed ({e}); using cached copy")
         actual = pd.read_csv(actual_path) if os.path.exists(actual_path) else pd.DataFrame(columns=["symbol", "declared_at", "subject", "source_url"])
 
+    for col in CAL_COLUMNS:
+        if col not in cal: cal[col] = None
     for df, col in ((cal, "meeting_date"), (cal, "announced_at"), (actual, "declared_at")):
         if col in df: df[col] = pd.to_datetime(df[col], dayfirst=True, errors="coerce")
-    return cal, actual
+    return latest_meetings(cal), actual
 
 
 def build_signals(M, calendar, actual):
@@ -108,9 +145,11 @@ def build_signals(M, calendar, actual):
         for _, r in latest.iterrows():
             if r.symbol not in universe or pd.isna(r.meeting_date): continue
             d = pd.Timestamp(r.meeting_date)
-            if today - pd.Timedelta(days=7) <= d <= today + pd.Timedelta(days=45):
+            if today - pd.Timedelta(days=LOOKBACK_DAYS) <= d <= today + pd.Timedelta(days=LOOKAHEAD_DAYS):
+                text = lambda v: "" if v is None or pd.isna(v) else str(v)
                 rows.append(dict(symbol=r.symbol, event_date=d, declared_at=pd.NaT, status="UPCOMING" if d >= today else "SCHEDULED",
-                                 source_url=r.get("source_url", ""), sessions=one(r.symbol, d)))
+                                 source_url=r.get("source_url", ""), sessions=one(r.symbol, d), purpose=text(r.get("purpose")),
+                                 name=text(r.get("name")), industry=text(r.get("industry")), period=period_of(r.get("desc"))))
     if len(actual):
         actual = actual.copy(); actual["event_day"] = actual["declared_at"].dt.normalize()
         latest = actual.sort_values("declared_at").drop_duplicates(["symbol", "event_day"], keep="first")
