@@ -1,4 +1,5 @@
 """Everything the pages show, computed from adjusted panels."""
+import time
 import numpy as np, pandas as pd
 import corp, panel
 
@@ -48,44 +49,61 @@ def _touches(values, level, tolerance=.02):
     return int((inside & ~inside.shift(1, fill_value=False)).sum())
 
 
-def breakout_bases(C, H, L, DQ, RAT, symbols, T):
+def _base_pre(C, H, L, DQ, RAT):
+    """Plain arrays the base scan reads on every day, built once for the whole panel."""
+    prev = C.shift(1)
+    tr = np.fmax(np.fmax((H - L).abs(), (H - prev).abs()), (L - prev).abs())
+    arr = lambda df: df.to_numpy(dtype=float)
+    return dict(col={c: i for i, c in enumerate(C.columns)}, C=arr(C), H=arr(H.reindex(columns=C.columns)), L=arr(L.reindex(columns=C.columns)),
+                DQ=arr(DQ.reindex(columns=C.columns)), RAT=arr(RAT.reindex(columns=C.columns)),
+                atr20=arr(tr.rolling(20, min_periods=1).mean()), atr60=arr(tr.rolling(60, min_periods=1).mean()),
+                ma50=arr(C.rolling(50, min_periods=50).mean()))
+
+
+def _nanmean(a):
+    a = a[~np.isnan(a)]
+    return a.mean() if a.size else np.nan
+
+
+def breakout_bases(C, H, L, DQ, RAT, symbols, T, pre=None):
     """Build an F&O base universe; the page applies optional quality filters."""
     rows = []
+    pre = pre or _base_pre(C, H, L, DQ, RAT)
+    Cn, Hn, Ln, DQn, RATn = pre["C"], pre["H"], pre["L"], pre["DQ"], pre["RAT"]
     for symbol in symbols:
-        if symbol not in C or T < min(BASE_WINDOWS): continue
-        best = None
+        if symbol not in pre["col"] or T < min(BASE_WINDOWS): continue
+        j = pre["col"][symbol]; best = None
         for window in BASE_WINDOWS:
             if T - window < 1: continue
             # Establish the range through yesterday so a genuine current breakout is measurable.
-            c = C[symbol].iloc[T - window:T]; h = H[symbol].iloc[T - window:T]; l = L[symbol].iloc[T - window:T]
-            if c.notna().sum() < window * .9 or h.notna().sum() < window * .9 or l.notna().sum() < window * .9: continue
-            resistance, support = h.quantile(.90), l.quantile(.10)
-            if pd.isna(resistance) or pd.isna(support) or support <= 0 or resistance <= support: continue
+            c = Cn[T - window:T, j]; h = Hn[T - window:T, j]; l = Ln[T - window:T, j]
+            if (~np.isnan(c)).sum() < window * .9 or (~np.isnan(h)).sum() < window * .9 or (~np.isnan(l)).sum() < window * .9: continue
+            resistance, support = np.nanquantile(h, .90), np.nanquantile(l, .10)
+            if np.isnan(resistance) or np.isnan(support) or support <= 0 or resistance <= support: continue
             width = (resistance / support - 1) * 100
             range_ok = width <= 10
-            prev = C[symbol].shift(1)
-            tr = pd.concat([(H[symbol] - L[symbol]).abs(), (H[symbol] - prev).abs(), (L[symbol] - prev).abs()], axis=1).max(axis=1)
-            atr20, atr60 = tr.iloc[T - 19:T + 1].mean(), tr.iloc[T - 59:T + 1].mean()
-            compression = atr20 / atr60 if pd.notna(atr60) and atr60 else np.nan
-            compression_ok = pd.notna(compression) and compression <= 1.0
-            ma50 = C[symbol].rolling(50, min_periods=50).mean()
-            slope = (ma50.iloc[T] / ma50.iloc[T - 20] - 1) * 100 if T >= 70 and pd.notna(ma50.iloc[T - 20]) else np.nan
-            trend_ok = pd.notna(slope) and slope >= -2
-            close = C[symbol].iloc[T]
-            if pd.isna(close): continue
+            atr20, atr60 = pre["atr20"][T, j], pre["atr60"][T, j]
+            compression = atr20 / atr60 if not np.isnan(atr60) and atr60 else np.nan
+            compression_ok = not np.isnan(compression) and compression <= 1.0
+            ma50 = pre["ma50"][:, j]
+            slope = (ma50[T] / ma50[T - 20] - 1) * 100 if T >= 70 and not np.isnan(ma50[T - 20]) else np.nan
+            trend_ok = not np.isnan(slope) and slope >= -2
+            close = Cn[T, j]
+            if np.isnan(close): continue
             location = (close - support) / (resistance - support)
-            touches = _touches(h, resistance)
+            inside = ~np.isnan(h) & (h >= resistance * .98) & (h <= resistance * 1.02)
+            touches = int(inside[0]) + int((inside[1:] & ~inside[:-1]).sum())
             touches_ok = touches >= 2
-            recent_rat = RAT[symbol].iloc[max(0, T - 9):T + 1]
+            recent_rat = RATn[max(0, T - 9):T + 1, j]
             delivery_days = int((recent_rat >= 1.25).sum())
-            prior20 = DQ[symbol].iloc[T - 24:T - 4].mean(); recent5 = DQ[symbol].iloc[T - 4:T + 1].mean()
-            delivery5 = recent5 / prior20 if pd.notna(prior20) and prior20 else np.nan
-            delivery_ok = delivery_days >= 2 or (pd.notna(delivery5) and delivery5 >= 1.0)
-            prior3 = C[symbol].iloc[max(0, T - 3):T]
+            prior20 = _nanmean(DQn[T - 24:T - 4, j]); recent5 = _nanmean(DQn[T - 4:T + 1, j])
+            delivery5 = recent5 / prior20 if not np.isnan(prior20) and prior20 else np.nan
+            delivery_ok = delivery_days >= 2 or (not np.isnan(delivery5) and delivery5 >= 1.0)
+            prior3 = Cn[max(0, T - 3):T, j]
             fresh = close > resistance * 1.005 and not (prior3 > resistance * 1.005).any()
             distance = (resistance / close - 1) * 100
             if fresh:
-                delivery_ok = delivery_ok and bool((recent_rat.tail(3) >= 1.25).any())
+                delivery_ok = delivery_ok and bool((recent_rat[-3:] >= 1.25).any())
                 stage = "fresh"
             elif distance <= 3 and location >= .75:
                 stage = "near"
@@ -94,11 +112,11 @@ def breakout_bases(C, H, L, DQ, RAT, symbols, T):
             else:
                 continue
             score = ({"fresh": 3, "near": 2, "building": 1}[stage] * 100 + touches * 5 + delivery_days * 3
-                     + (max(0, 1 - compression) * 20 if pd.notna(compression) else 0) - max(distance, 0))
+                     + (max(0, 1 - compression) * 20 if not np.isnan(compression) else 0) - max(distance, 0))
             item = dict(sym=symbol, stage=stage, base_days=window, support=support, resistance=resistance,
                         range_width=width, distance=distance, touches=touches, compression=compression,
                         ma50_slope=slope, delivery_days=delivery_days, delivery5=delivery5,
-                        close=close, ratio=RAT[symbol].iloc[T], score=score,
+                        close=close, ratio=RATn[T, j], score=score,
                         range_ok=range_ok, compression_ok=compression_ok, trend_ok=trend_ok,
                         touches_ok=touches_ok, delivery_ok=delivery_ok)
             quality = sum((range_ok, compression_ok, trend_ok, touches_ok, delivery_ok))
@@ -109,6 +127,46 @@ def breakout_bases(C, H, L, DQ, RAT, symbols, T):
                "compression", "ma50_slope", "delivery_days", "delivery5", "close", "ratio", "score",
                "range_ok", "compression_ok", "trend_ok", "touches_ok", "delivery_ok"]
     return pd.DataFrame(rows, columns=columns).sort_values(["stage", "score"], ascending=[True, False]).reset_index(drop=True)
+
+
+FOLLOW_HORIZONS = (5, 10, 20)
+FOLLOW_FLAGS = ("range_ok", "trend_ok", "compression_ok", "touches_ok", "delivery_ok")
+FOLLOW_COLUMNS = ["sym", "t", "stage", "support", "close", "quality", *FOLLOW_FLAGS,
+                  "r5", "r10", "r20", "x5", "x10", "x20", "mdd20", "fail20", "to_date", "age"]
+
+
+def base_followthrough(C, H, L, DQ, RAT, symbols, T, nifty=None, cooldown=10):
+    """Replay the base scan on every past session and measure what happened next.
+
+    A signal is the first day a stock appears in a stage after at least `cooldown` sessions out of
+    it. Returns are from that day's close, so nothing after the signal date feeds the signal.
+    `fail20` means the low undercut the base support within 20 sessions; it is only set once those
+    20 sessions exist. `mdd20` is the worst low versus the signal close over the sessions seen.
+    """
+    pre = _base_pre(C, H, L, DQ, RAT)
+    nifty = None if nifty is None else np.asarray(nifty, dtype=float)
+    last_seen, rows = {}, []
+    for t in range(max(BASE_WINDOWS) + 1, T + 1):
+        frame = breakout_bases(C, H, L, DQ, RAT, symbols, t, pre=pre)
+        for r in frame.itertuples():
+            key = (r.sym, r.stage)
+            fresh_signal = key not in last_seen or t - last_seen[key] > cooldown
+            last_seen[key] = t
+            if not fresh_signal: continue
+            close, path = C[r.sym].iloc[t], C[r.sym].iloc[t + 1:]
+            item = dict(sym=r.sym, t=t, stage=r.stage, support=r.support, close=close, quality=sum(getattr(r, f) for f in FOLLOW_FLAGS),
+                        age=T - t, to_date=(path.iloc[-1] / close - 1) * 100 if len(path) and pd.notna(path.iloc[-1]) else np.nan)
+            for f in FOLLOW_FLAGS: item[f] = bool(getattr(r, f))
+            for h in FOLLOW_HORIZONS:
+                ok = t + h <= T and pd.notna(C[r.sym].iloc[t + h]) and close > 0
+                item[f"r{h}"] = (C[r.sym].iloc[t + h] / close - 1) * 100 if ok else np.nan
+                bench = nifty is not None and ok and nifty[t] and not np.isnan(nifty[t]) and not np.isnan(nifty[t + h])
+                item[f"x{h}"] = item[f"r{h}"] - (nifty[t + h] / nifty[t] - 1) * 100 if bench else np.nan
+            lows = L[r.sym].iloc[t + 1:t + 1 + max(FOLLOW_HORIZONS)].dropna()
+            item["mdd20"] = (lows.min() / close - 1) * 100 if len(lows) else np.nan
+            item["fail20"] = (bool(lows.min() < r.support) if len(lows) else None) if t + max(FOLLOW_HORIZONS) <= T else None
+            rows.append(item)
+    return pd.DataFrame(rows, columns=FOLLOW_COLUMNS)
 
 
 def build(parsed, overrides=None, memberships=None):
@@ -226,6 +284,9 @@ def build(parsed, overrides=None, memberships=None):
 
     # ---------------- F&O consolidation and breakout candidates
     M["breakout_bases"] = breakout_bases(C, H, L, DQ, RAT, memberships.get("fo", []), T)
+    started = time.time()
+    M["base_signals"] = base_followthrough(C, H, L, DQ, RAT, memberships.get("fo", []), T, nifty=M.get("nifty"))
+    print(f"base follow-through: {len(M['base_signals'])} past signals replayed in {time.time() - started:.0f}s")
 
     # ---------------- relative performance
     def rel_at(t, h):
