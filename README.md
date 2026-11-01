@@ -53,10 +53,14 @@ NSE and BSE do not adjust the previous close, so a split or bonus looks like a c
 
 Otherwise it is a real move and is left alone. Prices before the date are multiplied by the factor and delivered shares and open interest divided by it, so charts, averages and the 20-day baseline stay on one share basis. Each adjustment shows as a green dashed line on the stock's chart, and `site/corporate_actions.csv` is an audit log. On the 14 events in the first year: 13 adjusted (KOTAKBANK 5:1 split, LICI and PIDILITIND bonuses, ANGELONE 10:1, the VEDL demerger, among them) and POLICYBZR's -36% crash left alone. Nothing needs maintaining by hand; `corp_actions.csv` exists only as an override if you ever disagree with a call (symbol,date,action,ratio,note).
 
-## Results dates and pre-result activity
-The nightly run scans NSE's all-equity board-meeting filings for scheduled dates and its corporate-announcement filings for the actual declaration timestamp. There is no separate calendar tab: upcoming results appear as dated badges beside the stock on the main Stocks page. The scanner excludes press releases, call transcripts and newspaper notices. The feeds are cached and merged on each run, so temporary NSE downtime leaves the most recent dates in place and does not stop the rest of the desk from publishing.
+## Results calendar and pre-result activity
+Each build asks NSE's board-meetings feed for every meeting from a week back to 120 days ahead (without a date range NSE returns only its latest 20, so the range is essential) and keeps the ones that consider financial results. A re-announced date replaces the older one. The workflow runs three times a day, so new intimations appear within hours. The feeds are cached and merged, so temporary NSE downtime leaves the last known dates in place. NSE's feed covers every NSE-listed stock in the universe; BSE's own calendar API refuses automated requests from cloud servers, so BSE is not read separately.
 
-For each result it examines the three completed trading sessions before the declaration date. `PRE-RESULT ACTIVITY` means that, on at least one of those sessions, delivered shares were above the prior 20-session average and the absolute price move was greater than 0.8 times the stock's prior-60-session daily-return standard deviation. Both baselines are shifted, so the signal uses no future data.
+Where it shows:
+- **Call Library, Upcoming Results:** every announced result meeting in the universe, with filters for Top 500 by market cap, F&O, five market-cap bands (market caps are NSE's last half-yearly average, so a size band, not a live value), date window (today, 3, 7, 14 days) and a ticker or company search.
+- **Stocks chart:** a "Result in N days" banner above the chart with the date, meeting type, period and the NSE filing, and a dated badge beside the stock name.
+
+For each result the scan examines the three completed trading sessions before the declaration date. `PRE-RESULT ACTIVITY` means that, on at least one of those sessions, delivered shares were above the prior 20-session average and the absolute price move was greater than 0.8 times the stock's prior-60-session daily-return standard deviation. Both baselines are shifted, so the signal uses no future data.
 
 ## Definitions
 - Delivered shares = NSE + BSE (mapped through the ISIN). Delivery % is shown for reference, never used to rank.
