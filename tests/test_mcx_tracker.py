@@ -29,3 +29,24 @@ def test_mcx_build_adds_upcoming_expiries_and_charts():
 
 def test_mcx_month_week_boundaries():
     assert [mcx_tracker.month_week(day) for day in (1, 8, 9, 16, 17, 24, 25, 31)] == [1, 1, 2, 2, 3, 3, 4, 4]
+
+
+def test_official_summary_row_uses_reported_premium_only():
+    row = ["OPTFUT", "29 Oct 2026", "33503335", "459323503.31", "1281519.43"]
+    parsed = mcx_tracker.parse_official_summary_row(row, "2026-10-29")
+    assert parsed["date"] == pd.Timestamp("2026-10-29")
+    assert parsed["premium_value_lakh"] == 1281519.43
+    assert pd.isna(parsed["futures_notional_lakh"])
+
+
+def test_load_appends_only_official_summary_rows(tmp_path, monkeypatch):
+    pd.DataFrame([{"date": "2026-10-28", "premium_value_lakh": 930133.33,
+                   "futures_notional_lakh": 3920605.93}]).to_csv(tmp_path / mcx_tracker.CACHE, index=False)
+    official = pd.DataFrame([{"date": pd.Timestamp("2026-10-29"), "premium_value_lakh": 1281519.43,
+                              "futures_notional_lakh": float("nan")}])
+    monkeypatch.setattr(mcx_tracker, "fetch_official_summaries", lambda dates: (official, []))
+    monkeypatch.setattr(mcx_tracker, "fetch_expiries", lambda: pd.DataFrame(columns=["date", "symbol", "name"]))
+    history, _, status = mcx_tracker.load(tmp_path, pd.Timestamp("2026-10-29"))
+    assert history.date.max() == pd.Timestamp("2026-10-29")
+    assert history.iloc[-1].premium_value_lakh == 1281519.43
+    assert "Official MCX Summary Report refreshed" in status
