@@ -7,7 +7,7 @@ import webpage
 
 def sample_market():
     dates = pd.bdate_range("2026-04-01", periods=140)
-    wave = 105 + 5 * np.sin(np.arange(140) * 2 * np.pi / 20)
+    wave = 105 + 3.5 * np.sin(np.arange(140) * 2 * np.pi / 20)
     wave[-20:] = 105 + 2 * np.sin(np.arange(20) * 2 * np.pi / 20)
     wave[-1] = 108.5
     close = pd.DataFrame({"BASE": wave}, index=dates)
@@ -26,7 +26,7 @@ def test_breakout_base_detects_near_breakout_with_delivery():
     assert len(out) == 1
     row = out.iloc[0]
     assert row.stage == "near"
-    assert row.range_width <= 18
+    assert row.range_width <= 10
     assert row.touches >= 2
     assert row.delivery_days == 2
 

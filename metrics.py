@@ -8,7 +8,7 @@ SIGMA_WINDOW = 60       # sessions of daily returns used for the 0.5 sigma "at a
 LIST_N = 30             # names per side in the relative-performance lists
 CASH_MAS = (50, 100, 200)
 CASH_MIN_DAYS = 2
-BASE_WINDOWS = (40, 60, 90, 120)
+BASE_WINDOWS = (40, 60, 90)
 
 
 def pctile(series, value):
@@ -62,7 +62,7 @@ def breakout_bases(C, H, L, DQ, RAT, symbols, T):
             resistance, support = h.quantile(.90), l.quantile(.10)
             if pd.isna(resistance) or pd.isna(support) or support <= 0 or resistance <= support: continue
             width = (resistance / support - 1) * 100
-            range_ok = width <= 18
+            range_ok = width <= 10
             prev = C[symbol].shift(1)
             tr = pd.concat([(H[symbol] - L[symbol]).abs(), (H[symbol] - prev).abs(), (L[symbol] - prev).abs()], axis=1).max(axis=1)
             atr20, atr60 = tr.iloc[T - 19:T + 1].mean(), tr.iloc[T - 59:T + 1].mean()
