@@ -8323,5 +8323,1181 @@
       ],
       "material_guidance_changes": []
     }
+  },
+  "BANKINDIA": {
+    "symbol": "BANKINDIA",
+    "company_name": "Bank of India",
+    "filed_at": "2026-10-30T15:58:10+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/BANKINDIA5_30102026155810_TranscriptQ2FY27.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/BANKINDIA5_30102026155810_TranscriptQ2FY27.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-23",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "bank",
+      "call_period": "Q2 FY27",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts from 11 questioners, a mix of analysts, shareholders and online queries; a turn is one question topic put to management; non-interest income and ROA themes drew 2 or fewer",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "ECL provisioning to be front-loaded in Q3 and Q4 after Board approval; impact about 0.5% of CRAR a year over four years, with no ECL provision held today",
+          "summary": "ECL rules apply from 1 April 2027. CRAR is 17.78% against the 11.50% requirement; management expects profits to absorb the cost.",
+          "tone": "negative",
+          "evidence": "\"we expect that from Q3 onwards we will be making the provisions\"",
+          "speaker": "Rajneesh Karnatak",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 15 (PDF page 16), reply to Manoj Alimchandani"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Repo hike to add about 6-7 bps to NIM as 66% of domestic advances are repo-linked and 60% of term deposits reprice only after 1 to 18 months",
+          "summary": "Q2 global NIM fell from 2.52% to 2.47%, of which about 5 bps came from the Rs 40,000 crore FCNR leveraged book.",
+          "tone": "positive",
+          "evidence": "\"help the bank in improvement in the NIM by around 6 to 7 basis points\"",
+          "speaker": "Rajneesh Karnatak",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 10 (PDF page 11), reply to Ashok Ajmera"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 guidance: global advances to grow 15-16% and global deposits 16-17%",
+          "summary": "Q2 global advances grew 20.6% and deposits 21.6% year on year, including FCNR-linked overseas balance sheet growth; a credit pipeline of about Rs 86,000-87,000 crore (about 10% of the book) supports the target.",
+          "tone": "positive",
+          "evidence": "\"global advances to grow by 15-16%, and global deposits by 16-17%.\"",
+          "speaker": "Rajneesh Karnatak",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 5 (PDF page 6), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "ROA above 1% in coming quarters and for March 2027; guidance given only up to March 2027",
+          "summary": "ROA has been above 1% for three quarters against 0.89-0.95% historically; H1 profit was about Rs 6,000 crore with about Rs 12,000 crore implied for the year.",
+          "tone": "positive",
+          "evidence": "\"we will have ROA of above 1% in the ensuing quarters also\"",
+          "speaker": "Rajneesh Karnatak",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 13 (PDF page 14), reply to Mayur Gala (True Alpha Finserv)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Credit pipeline of about Rs 86,000-87,000 crore: corporate Rs 65,000 crore (renewables, power, roads, oil and gas, cement), RAM Rs 20,000 crore",
+          "summary": "Supply chain finance is expected to reach about Rs 1,500 crore by year-end; infrastructure loans disburse over seven to eight quarters.",
+          "tone": "positive",
+          "evidence": "\"we have a total pipeline of somewhere around Rs. 86,000-Rs. 87,000 crores\"",
+          "speaker": "Rajneesh Karnatak",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 12 (PDF page 13), reply to Sushil Choksey"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Non-interest income run rate to stay above Rs 2,500 crore a quarter, helped by recoveries from written-off accounts (Rs 978 crore in Q2)",
+          "summary": "Q2 recoveries were lumpy, from two to three accounts, with a target to hold the run rate through the year.",
+          "tone": "neutral",
+          "evidence": "\"we will be able to maintain this run rate of more than, Rs 2,500 crore\"",
+          "speaker": "Rajneesh Karnatak",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 18 (PDF page 19), reply to Siddharth Rajpurohit (Systematix)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Loan growth, pipeline and sector exposure",
+          "why_it_mattered": "Questions on whether growth targets hold amid crude and drought, sanctioned-undrawn pipeline, AI and data-centre capex lending, and infrastructure outstanding.",
+          "question_count": 6,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "ECL preparedness and provisioning",
+          "why_it_mattered": "Questions on ECL size and timing, whether provisions are front-loaded, the fall in standard-asset provisions, and why NPA provisions doubled.",
+          "question_count": 4,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "Gold loans, NBFC and real estate exposure",
+          "why_it_mattered": "Questions on gold-loan stress, the Rs 61,000 crore book and split, commercial real estate, and NBFC lending quality.",
+          "question_count": 4,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "NIM, CASA and FCNR balance-sheet effect",
+          "why_it_mattered": "Questions on the CASA ratio decline, NIM impact of FCNR and repo hikes, and the gap between overseas loans and deposits.",
+          "question_count": 4,
+          "analysts_asking": 2
+        }
+      ],
+      "key_risks": [
+        "ECL transition provisioning from 1 April 2027",
+        "Falling CASA ratio and rising bulk deposits",
+        "El Nino and drought effects on asset quality",
+        "Lumpy written-off recoveries inflating other income",
+        "Rising deposit cost as repricing catches up"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "SONACOMS": {
+    "symbol": "SONACOMS",
+    "company_name": "Sona BLW Precision Forgings Ltd (Sona Comstar)",
+    "filed_at": "2026-10-31T18:34:21+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/SONACOMS_31102026183421_Intimation.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/SONACOMS_31102026183421_Intimation.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-26",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "manufacturer (auto components)",
+      "call_period": "Q2 FY27",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts hand-tallied from 5 analysts plus one chat question from the host; a turn is one question topic put to management",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Denso joint venture 1 (business carve-out) targeted to close by end of December, possibly spilling into January; JV 2 to close in the first half of calendar 2027",
+          "summary": "Management expects roughly Rs 900 crore of proceeds from Denso, on which tax will be paid; JV 2 will block some capex.",
+          "tone": "positive",
+          "evidence": "\"we're targeting to close this JV 1 part of it which is carving out of the business by end of December\"",
+          "speaker": "Rohit Nanda",
+          "role": "Group CFO",
+          "location": "Transcript page 9 (PDF page 10), reply to Arvind Sharma"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Traction-motor volumes running well above plan (up about 50% sequentially) with another product launch this quarter; mix will keep diluting margin percentage",
+          "summary": "Wallet-share gains with existing customers and growth in two- and three-wheelers drive the surge; management says near-term predictability is difficult.",
+          "tone": "positive",
+          "evidence": "\"Traction motor demand has significantly exceeded even our own internal expectations.\"",
+          "speaker": "Vivek Vikram Singh",
+          "role": "Managing Director and Group CEO",
+          "location": "Transcript page 2 (PDF page 3), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Margins to hold unless oil spikes to about $150, as management sees inflation as unsustainable at current levels",
+          "summary": "Heavy rare-earth exports from China remain restricted, with no easing expected; the company uses light rare earth in motors.",
+          "tone": "neutral",
+          "evidence": "\"unless oil goes to 150 when all bets are off, we think we will hold\"",
+          "speaker": "Vivek Vikram Singh",
+          "role": "Managing Director and Group CEO",
+          "location": "Transcript page 13 (PDF page 14), reply to Basudeb Banerjee"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "EBITDA margin range of 23-25% retained despite traction-motor mix and input inflation; Q2 margin was 23%, down 2.3 points year on year",
+          "summary": "Mix shift toward lower-margin traction motors and higher steel, copper and freight costs are partly offset by operating leverage; pass-through works with a lag and cuts the percentage margin arithmetically.",
+          "tone": "neutral",
+          "evidence": "\"I don't think there is any reason to change our range, I think 23-25 is fair.\"",
+          "speaker": "Vivek Vikram Singh",
+          "role": "Managing Director and Group CEO",
+          "location": "Transcript page 13 (PDF page 14), reply to Basudeb Banerjee"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Aspiration to grow 10x in 10 years, implying about a 25% CAGR, which management expects to hold in the medium term",
+          "summary": "Q2 revenue grew 35% to Rs 1,546 crore; net order book Rs 251 billion after Rs 36 billion of Q2 wins; BEV share of automotive revenue reached 51%.",
+          "tone": "positive",
+          "evidence": "\"in the medium term we should be able to stick to that CAGR\"",
+          "speaker": "Vivek Vikram Singh",
+          "role": "Managing Director and Group CEO",
+          "location": "Transcript page 17 (PDF page 18), reply to Pramod Kumar"
+        },
+        {
+          "horizon": "long_term",
+          "topic": "Robotics and physical AI orders are about 4% of the order book; management will not give a timeline for the inflection but expects a steep curve",
+          "summary": "Capex of Rs 62 crore was declared last quarter for this area; first demonstrations are planned for Bharat Expo in February.",
+          "tone": "neutral",
+          "evidence": "\"I don't know is the real answer.\"",
+          "speaker": "Vivek Vikram Singh",
+          "role": "Managing Director and Group CEO",
+          "location": "Transcript page 16 (PDF page 17), reply to Pramod Kumar"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Robotics, physical AI and humanoid opportunity",
+          "why_it_mattered": "Questions on robotics actuators, BOM share in humanoids, R&D spend and capital, the inflection year, and plans to deploy humanoids on factory floors.",
+          "question_count": 4,
+          "analysts_asking": 2
+        },
+        {
+          "topic": "EV product traction: traction motors, suspension motors, differential assemblies",
+          "why_it_mattered": "Questions on drivers behind suspension-motor and traction-motor growth, three-wheeler contribution, wallet share and recovery in differential assemblies.",
+          "question_count": 3,
+          "analysts_asking": 2
+        },
+        {
+          "topic": "Margins, input inflation and pass-through",
+          "why_it_mattered": "Questions on whether the 23-25% range changes with mix, how pass-through works with a lag, and heavy rare-earth availability.",
+          "question_count": 3,
+          "analysts_asking": 2
+        },
+        {
+          "topic": "Denso JVs and cash deployment",
+          "why_it_mattered": "Questions on JV 1 and JV 2 timelines, net cash of about Rs 1,400-1,500 crore and M&A criteria.",
+          "question_count": 2,
+          "analysts_asking": 2
+        }
+      ],
+      "key_risks": [
+        "Input inflation (steel, copper, oil derivatives) and freight",
+        "Product mix toward lower-margin traction motors",
+        "Heavy rare-earth supply from China",
+        "Customer concentration in EV driveline and US EV demand",
+        "Denso JV closing delays"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "STLTECH": {
+    "symbol": "STLTECH",
+    "company_name": "Sterlite Technologies Ltd (STL)",
+    "filed_at": "2026-10-27T16:42:26+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/STLTECH_27102026164226_SEIntimation_Transcript_Signed.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/STLTECH_27102026164226_SEIntimation_Transcript_Signed.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-23",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "manufacturer (optical fibre and connectivity)",
+      "call_period": "Q2 FY27",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts hand-tallied from 9 analysts; a turn is one question topic put to management, and a multi-part question counts once per theme it touches",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Open order book of Rs 35,274 crore, of which Rs 3,021 crore is scheduled for execution in Q3; spot business is now negligible",
+          "summary": "Multiyear hyperscaler and telecom agreements, including a potential $1.2 billion five-year deal, make revenue more scheduled and predictable.",
+          "tone": "positive",
+          "evidence": "\"INR3,021 crores is scheduled for execution in Q3\"",
+          "speaker": "Ajay Jhanjhari",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 7 (PDF page 8), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Data-centre segment to scale to 50% of revenue this fiscal (33% in H1); mix of 50-60% targeted by design",
+          "summary": "Management wants customer and geographic diversification and is cutting low-end, commoditised fibre and cable.",
+          "tone": "positive",
+          "evidence": "\"towards scaling this segment to 50% of revenues in the current fiscal\"",
+          "speaker": "Ajay Jhanjhari",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 7 (PDF page 8), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Margin in the second half to match or beat Q2 (27% operational), in line with the Lakshya path",
+          "summary": "Management is shifting mix toward data centres; H1 margin was 24.4%.",
+          "tone": "positive",
+          "evidence": "\"we would definitely like to perform or better what we have reported in Q2\"",
+          "speaker": "Ankit Agarwal",
+          "role": "Managing Director",
+          "location": "Transcript page 11 (PDF page 12), reply to Abhay Joshi (Baroda BNP Paribas MF)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Optical connectivity attach rate focus is 25% and beyond for FY27, after an all-time high of 24% in H1",
+          "summary": "Attach rate was 20% in H1 FY26; management gives no FY29 attach target and says the greenfield site will lift termination capability.",
+          "tone": "positive",
+          "evidence": "\"driving this 25% and beyond for the current financial year\"",
+          "speaker": "Ankit Agarwal",
+          "role": "Managing Director",
+          "location": "Transcript page 5 (PDF page 6), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Capacity expansion of 50% in preform, fibre and cable plus a greenfield pre-termination site, with capex of about Rs 1,000 crore a year through FY29",
+          "summary": "Utilisation is improving as germanium and helium supply eases; the company does not disclose utilisation and says projects will come online over the next few quarters.",
+          "tone": "neutral",
+          "evidence": "\"total capex of INR1,000 crores per year\"",
+          "speaker": "Ajay Jhanjhari",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 8 (PDF page 9), prepared remarks"
+        },
+        {
+          "horizon": "long_term",
+          "topic": "FY29 EBITDA margin target raised to about 30% from 27%; FY29 revenue target kept at Rs 20,000 crore",
+          "summary": "Q2 operational EBITDA margin was 27.1% (reported EBITDA included a Rs 161 crore US tariff refund). Management cites record order book, richer data-centre mix and a higher attach rate.",
+          "tone": "positive",
+          "evidence": "\"about 30%, up from 27% earlier\"",
+          "speaker": "Ajay Jhanjhari",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 8 (PDF page 9), prepared remarks"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Order book durability and AI data-centre capex risk",
+          "why_it_mattered": "Questions on the order pipeline, delivery timelines amid US data-centre delays, hyperscaler funding and rates, demand beyond FY29, and diversification.",
+          "question_count": 6,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Attach rate and connectivity solutions",
+          "why_it_mattered": "Questions on the DC share of attach revenue, the attach-rate path to FY29, and benchmarks against global peers above 100%.",
+          "question_count": 3,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "One-offs, finance cost and working capital",
+          "why_it_mattered": "Questions on the Rs 161 crore tariff refund and further refunds, the Rs 49 crore impairment, higher interest cost, receivables and falling payable days.",
+          "question_count": 4,
+          "analysts_asking": 2
+        },
+        {
+          "topic": "Margin outlook and mix",
+          "why_it_mattered": "Questions on what drove the FY29 margin upgrade, the FY27 margin trajectory after the Q2 jump, and pricing.",
+          "question_count": 3,
+          "analysts_asking": 2
+        }
+      ],
+      "key_risks": [
+        "Delays in US AI data-centre projects and hyperscaler funding",
+        "Raw material supply (germanium, helium)",
+        "Customer and geographic concentration (North America 61% of H1 revenue)",
+        "Falling payable days and rising working capital",
+        "Execution of 50% capacity expansion"
+      ],
+      "material_guidance_changes": [
+        {
+          "direction": "upgrade",
+          "topic": "FY29 EBITDA margin target",
+          "old_guidance": "27%",
+          "new_guidance": "about 30%",
+          "magnitude": "+3 percentage points",
+          "materiality": "high",
+          "explicit_statement": true,
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "Ajay Jhanjhari",
+            "role": "Chief Financial Officer",
+            "location": "Transcript page 8 (PDF page 9)",
+            "quote": "\"about 30%, up from 27% earlier\"",
+            "source_url": "https://nsearchives.nseindia.com/corporate/STLTECH_27102026164226_SEIntimation_Transcript_Signed.pdf",
+            "filing_date": "2026-10-27",
+            "call_period": "Q2 FY27"
+          }
+        }
+      ]
+    }
+  },
+  "PIRAMALFIN": {
+    "symbol": "PIRAMALFIN",
+    "company_name": "Piramal Finance Ltd",
+    "filed_at": "2026-10-23T14:53:59+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/Piramalcapital_23102026145359_PFL_SE_Intimation_Transcript_Signed.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/Piramalcapital_23102026145359_PFL_SE_Intimation_Transcript_Signed.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-19",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "lender (NBFC)",
+      "call_period": "Q2 FY27",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts hand-tallied from 6 analysts; a turn is one question topic put to management; only 3 themes cleared two or more analysts",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Growth-business RoAUM to reach 2.5% by the Q4 FY27 exit, from 2.0% in Q2; no cost-of-borrowing relief assumed",
+          "summary": "A longer-term goal above 3% remains; the FY28 exit target close to 3% will be recalibrated in Q4 because of the insurance commission draft.",
+          "tone": "positive",
+          "evidence": "\"we have all the levers that we think we need to deliver 2.5% in Q4 of this year\"",
+          "speaker": "Jairam Sridharan",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 12 (PDF page 13), reply to Anand Dama (Nuvama)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 AUM growth guidance of 25% retained; AUM expected to double every three years, implying Rs 1.5 lakh crore by FY28",
+          "summary": "Q2 AUM grew 24% to Rs 1,13,112 crore, with Growth AUM up 30%; disbursements rose 34% and the legacy book is now 1.5% of AUM.",
+          "tone": "positive",
+          "evidence": "\"we had guided for a 25% AUM growth in FY27\"",
+          "speaker": "Jairam Sridharan",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 3 (PDF page 4), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 profit growth guidance of 50% year on year reaffirmed despite the IRDAI draft on insurance commissions",
+          "summary": "H1 PAT crossed Rs 1,000 crore, up 67%; Q2 PAT was Rs 545 crore.",
+          "tone": "positive",
+          "evidence": "\"FY27 profit growth guidance of 50% profit growth year-on-year\"",
+          "speaker": "Jairam Sridharan",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 5 (PDF page 6), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Stock cost of borrowing to stay similar or lower over the next 12 months despite repo hikes",
+          "summary": "Incremental long-term cost fell from 9.36% (H1 FY26) to 8.46% (H1 FY27); about Rs 37,500 crore of borrowings mature in 18 months at about 9.1%, against 8.4% for new borrowing.",
+          "tone": "positive",
+          "evidence": "\"overall cost of borrowing at Piramal Finance on a stock basis will continue to be at similar or lower levels over the next 12 months\"",
+          "speaker": "Jairam Sridharan",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 5 (PDF page 6), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "IRDAI draft, if effective 1 April 2027, would cut insurance commissions by 18-24 bps of FY28 RoA gross; natural hedge via the 50% stake in Pramerica Life",
+          "summary": "Management also cites sales-incentive rationalisation as a cushion; the draft is not yet policy and feedback goes to the regulator next week.",
+          "tone": "negative",
+          "evidence": "\"potentially having 18 to 24 basis points of impact on FY28 return on assets\"",
+          "speaker": "Jairam Sridharan",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 5 (PDF page 6), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Growth-business opex to AUM can fall another 30-35 bps over six quarters; unsecured mix to move from 21% toward 25-26%",
+          "summary": "Gold-loan branches to double to 200 by March 2027; leverage to rise toward 4.5-5x over the medium term from 3.6x.",
+          "tone": "positive",
+          "evidence": "\"another 30-35 bps that is possible over the next 6 quarters\"",
+          "speaker": "Jairam Sridharan",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 11 (PDF page 12), reply to Abhijit Tibrewal (Motilal Oswal)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Rate hikes, cost of borrowing, NIM and pass-through",
+          "why_it_mattered": "Questions on passing rate hikes to customers, yield and NIM optics from the legacy runoff, MCLR versus market-linked mix, retiring debt cost and credit spread tailwinds.",
+          "question_count": 10,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "Asset quality: vintage risk, IT-sector housing, gold loans",
+          "why_it_mattered": "Questions on rising 90-plus in housing and LAP vintages, digital and used-car loans, gold-loan customers in delinquency and small-ticket stress.",
+          "question_count": 5,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "RoAUM trajectory, insurance commission draft and unsecured growth",
+          "why_it_mattered": "Questions on the path from 2.0% to 2.5% to 3%, levers for the gap, FY28 impact of the IRDAI draft, regulator talks and appetite for unsecured loans.",
+          "question_count": 4,
+          "analysts_asking": 2
+        }
+      ],
+      "key_risks": [
+        "IRDAI cap on insurance commissions",
+        "Rising borrowing costs and rate-hike transmission",
+        "IT-sector housing loan stress in South India",
+        "Gold-loan competition and rising customer leverage",
+        "Wholesale prepayments slowing growth"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "HDBFS": {
+    "symbol": "HDBFS",
+    "company_name": "HDB Financial Services Ltd",
+    "filed_at": "2026-10-20T12:49:50+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/HDBF_20102026124950_Intimation_of_Transcript.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/HDBF_20102026124950_Intimation_of_Transcript.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-14",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "lender (NBFC)",
+      "call_period": "Q2 FY27",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts hand-tallied from 11 analysts; a turn is one question topic put to management; opex-productivity drew 2 analysts and ranked below insurance on importance",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "NIM to be held in a narrow range, aiming for at least 8.2% in the near term and 8%+ over the long term, from 8.23% in Q2",
+          "summary": "Q3 is seen with only a minor NIM impact from the 25 bps repo hike; 55-60% of bank borrowings are repo-linked and reprice quickly, while the floating LAP book and product mix give offsets.",
+          "tone": "neutral",
+          "evidence": "\"come up to an 8.2%+ at least in the near term\"",
+          "speaker": "Jaykumar Shah",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 5 (PDF page 6), reply to Renish (ICICI Securities)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Disbursement growth to improve from 18.7% in Q2, with loan-book growth picking up from Q4; FY27 growth is not expected to reach 17-18%",
+          "summary": "Gross loan book grew 11.7% year on year; FY26 disbursement growth was only 3%, so prepayment drag eases this year.",
+          "tone": "positive",
+          "evidence": "\"hopeful that Q4 starts to show that in terms of direction\"",
+          "speaker": "Jaykumar Shah",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 9 (PDF page 10), reply to Viral Shah (IIFL Capital)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Used commercial-vehicle actions to show results between Q3 and Q4; Enterprise Lending (LAP, gold, unsecured business loans) is accelerating",
+          "summary": "LAP is growing 3-3.5% sequentially, gold 7-10% sequentially, and unsecured business loans turned positive after six quarters.",
+          "tone": "positive",
+          "evidence": "\"will start to see results between Q3 and Q4 on the disbursement growth side\"",
+          "speaker": "Jaykumar Shah",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 11 (PDF page 12), reply to Vinod Rajamani (Nirmal Bang)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "RoA target of 2.5% or more on an annual basis, from 2.42% in Q2",
+          "summary": "Management says it will not let AI investment inflate costs; cost-to-income was 39.3%.",
+          "tone": "positive",
+          "evidence": "\"consistently are able to deliver at a 2.5% on an annual basis in terms of RoA\"",
+          "speaker": "Jaykumar Shah",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 8 (PDF page 9), reply to Shreya Shivani (Nomura)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Credit cost to be managed around 2.3% plus or minus, with Q2 at 2.37%",
+          "summary": "Stage 3 rose only 7 bps and the Stage 2 build in commercial vehicles is called seasonal and expected to reverse next quarter.",
+          "tone": "neutral",
+          "evidence": "\"we would want to manage the credit cost in the range of 2.3% +/-\"",
+          "speaker": "Jaykumar Shah",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 10 (PDF page 11), reply to Shreepal Doshi (Equirus)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Insurance commission draft puts about Rs 455 crore of last year's fee income, about 0.3% of RoA, at risk; mitigation plans will be shared once rules are final",
+          "summary": "HDB is working with FIDC on a joint representation to IRDAI.",
+          "tone": "negative",
+          "evidence": "\"that's around 0.3% on the RoA tree\"",
+          "speaker": "Jaykumar Shah",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 16 (PDF page 17), reply to Prithviraj Patil (Investec)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Growth recovery: asset finance, used CV and FY28 trajectory",
+          "why_it_mattered": "Questions on weak CV and used-vehicle growth, high repayments, whether 17-18% growth returns, what growth counts as success and why growth would beat industry slowdown.",
+          "question_count": 8,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "NIM, rate pass-through and cost of funds",
+          "why_it_mattered": "Questions on asset yields, cost of funds in a rising-rate cycle, floating share of assets and liabilities, repricing of LAP and fixed-rate products and bank-borrowing transmission.",
+          "question_count": 7,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Asset quality: Stage 2 and 3 seasonality and drought",
+          "why_it_mattered": "Questions on rising Stage 2 and Stage 3 in asset finance, bounce rates after September, drought exposure and credit cost for the year.",
+          "question_count": 5,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Insurance commission draft and fee income",
+          "why_it_mattered": "Questions on the impact of the IRDAI consultation paper on fee income and NIM plus fees in FY28, and mitigation.",
+          "question_count": 2,
+          "analysts_asking": 2
+        }
+      ],
+      "key_risks": [
+        "IRDAI cap on insurance commissions",
+        "Weak used-CV growth and older delinquent asset-finance book",
+        "Rising rates compressing NIM",
+        "Deficient monsoon and drought in parts of Maharashtra",
+        "High prepayments slowing book growth"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "POONAWALLA": {
+    "symbol": "POONAWALLA",
+    "company_name": "Poonawalla Fincorp Ltd",
+    "filed_at": "2026-10-14T17:26:27+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/POONAWALLA_14102026172627_7PFLIntimationofearningscallTranscriptQ2FY27.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/POONAWALLA_14102026172627_7PFLIntimationofearningscallTranscriptQ2FY27.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-09",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "lender (NBFC)",
+      "call_period": "Q2 FY27",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts hand-tallied from 4 analysts; a turn is one question topic put to management. The call was held on 9 October 2026 and the transcript filed on 14 October",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Opex to AUM, 4.15% in Q2, to stay within the guided 10-25 bps range of movement as collections, AI and branches are front-loaded",
+          "summary": "Management says it will not shy away from sensible investments and expects quarterly fluctuations while aiming for structural operating leverage.",
+          "tone": "neutral",
+          "evidence": "\"sits within the 10 to 25 basis point range we had guided for\"",
+          "speaker": "Arvind Kapil",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 3 (PDF page 4), prepared remarks"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "The 25 bps repo hike has already been passed through to customers; NCDs are about 30% of borrowings at fixed rates, and portfolio yield of 14.08% sits about 200 bps above cost-adjusted disbursement yield",
+          "summary": "Cost of borrowing was 7.76% in Q2, and management expects minimal impact on profitability.",
+          "tone": "positive",
+          "evidence": "\"not only can I pass this 25 basis point, which we've already passed effective a week back\"",
+          "speaker": "Arvind Kapil",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 14 (PDF page 15), reply to Abhijit Tibrewal (Motilal Oswal)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "About 200 new gold-loan branches to be added in FY27, after 90 in Q2 took the network to 550",
+          "summary": "Gold-loan disbursements rose to Rs 1,066 crore from Rs 875 crore; a gold branch breaks even in about 13 months and the company invests in 300-400 branches a year.",
+          "tone": "positive",
+          "evidence": "\"on track to add a total of approximately 200 new branches in this financial year\"",
+          "speaker": "Arvind Kapil",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 4 (PDF page 5), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Credit cost to keep improving over the next one to two years from 2.19% in Q2; management calls the gain structural, not cyclical",
+          "summary": "Latest 6 MOB 30-plus cohort is 0.35% (excluding gold), against 0.67% a quarter earlier; GNPA is 1.20%.",
+          "tone": "positive",
+          "evidence": "\"we have a fair sense of scope for further moving strength-to-strength over the next one year to two years\"",
+          "speaker": "Arvind Kapil",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 15 (PDF page 16), reply to Abhijit Tibrewal (Motilal Oswal)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "RoA, 2.18% in Q2, to peak about 2.5 to 3 years from now as newer products reach full returns; contributors are lending spread, operating leverage and credit cost",
+          "summary": "Newer businesses are targeted at 3-3.5% RoA at maturity; the cross-sell engine has only just started to fire.",
+          "tone": "positive",
+          "evidence": "\"your peak will come in probably 2.5, 3 years from now\"",
+          "speaker": "Arvind Kapil",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 15 (PDF page 16), reply to Abhijit Tibrewal (Motilal Oswal)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "IRDAI insurance commission draft expected to be absorbed through lending spreads and operating leverage, even if it applies",
+          "summary": "No fee impact figure was given.",
+          "tone": "neutral",
+          "evidence": "\"probably be able to comfortably be able to handle the strength of whole lending spreads\"",
+          "speaker": "Arvind Kapil",
+          "role": "Managing Director and Chief Executive Officer",
+          "location": "Transcript page 17 (PDF page 18), reply to Avinash Singh (Emkay Global)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Credit cost and asset quality durability",
+          "why_it_mattered": "Questions on where credit cost settles, whether benign conditions explain the improvement, seasoning of a book where 60-65% is under 12 months old, and write-offs.",
+          "question_count": 4,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "RoA path, operating leverage and cross-sell",
+          "why_it_mattered": "Questions on products per customer, how much of RoA improvement comes from operating leverage versus credit cost, and the sustainable RoA at scale.",
+          "question_count": 4,
+          "analysts_asking": 2
+        },
+        {
+          "topic": "New-product mix and profitability",
+          "why_it_mattered": "Questions on how many new products are profitable, the 28% disbursement share of new products and mix shifts over coming quarters.",
+          "question_count": 2,
+          "analysts_asking": 2
+        },
+        {
+          "topic": "Rate-hike cost of borrowing and insurance commission",
+          "why_it_mattered": "Questions on floating versus fixed liabilities, sensitivity to a 50 bps repo hike, and the fee impact of the IRDAI draft.",
+          "question_count": 2,
+          "analysts_asking": 2
+        }
+      ],
+      "key_risks": [
+        "IRDAI cap on insurance commissions",
+        "Rising borrowing costs",
+        "Quarterly fluctuation in opex from front-loaded investment",
+        "Benign credit cycle reversing",
+        "Newer products at lower seasoning"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "BALKRISIND": {
+    "symbol": "BALKRISIND",
+    "company_name": "Balkrishna Industries Ltd (BKT)",
+    "filed_at": "2026-10-27T18:11:36+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/BALKRISIND_27102026181136_Transcriptsigned.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/BALKRISIND_27102026181136_Transcriptsigned.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-22",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "manufacturer (tyres)",
+      "call_period": "Business update call on Pirelli offtake agreement (22 October 2026)",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts hand-tallied from about 12 analysts; a turn is one question topic put to management; several analysts asked more than once",
+      "next_quarter_outlook": [
+        {
+          "horizon": "medium_term",
+          "topic": "Pirelli offtake to start in calendar 2027 and scale to 800,000 Pirelli-branded premium car tyres a year by calendar 2030, made at the new Bhuj PCR plant",
+          "summary": "Tyres are 17-inch and above; Pirelli is expected to substitute imports, mainly for India, with some for its global markets. The minimum offtake commitment is confidential.",
+          "tone": "positive",
+          "evidence": "\"We expect the offtake from this partnership to commence in 2027.\"",
+          "speaker": "Rajiv Poddar",
+          "role": "Joint Managing Director",
+          "location": "Transcript page 2 (PDF page 3), prepared remarks"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "No extra capex for the offtake agreement; it falls within the ongoing expansion plan, with additional investment only if the joint venture proceeds",
+          "summary": "Existing Bhuj machinery is almost identical to Pirelli's equipment and only specifications and technology differ.",
+          "tone": "positive",
+          "evidence": "\"there is no need of any further capex\"",
+          "speaker": "Rajiv Poddar",
+          "role": "Joint Managing Director",
+          "location": "Transcript page 9 (PDF page 10), reply to Basudeb Banerjee (CLSA)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "About 80% of phase-1 PCR capacity (6,700 tyres a day) stays with the BKT brand; Pirelli takes the remainder",
+          "summary": "Pirelli targets the roughly 10% super-premium segment; capacity can expand modularly if demand for both brands warrants.",
+          "tone": "neutral",
+          "evidence": "\"maybe 80% of that would be still for the BKT brand\"",
+          "speaker": "Satish Sharma",
+          "role": "Senior President and Director, Strategy and Business Development",
+          "location": "Transcript page 6 (PDF page 7), reply to Vijay Pandey (Axis Capital)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Margins to be maintained at the stated blended level; Pirelli pricing is raw material cost plus conversion cost, so BKT earns a conversion margin",
+          "summary": "Management declined to give revenue or margin potential for the Pirelli volumes at this stage.",
+          "tone": "neutral",
+          "evidence": "\"That, I think, is our stated policy, so this will not change that.\"",
+          "speaker": "Rajiv Poddar",
+          "role": "Joint Managing Director",
+          "location": "Transcript page 10 (PDF page 11), reply to Yash Agarwal (Nirmal Bang)"
+        },
+        {
+          "horizon": "long_term",
+          "topic": "Pirelli volumes count within the existing FY30 target of about 20% of revenue from non-off-highway tyres; the 2030 vision is unchanged",
+          "summary": "Management says conviction in Vision 2030 has risen; no revenue or margin figures were given for the Pirelli business.",
+          "tone": "positive",
+          "evidence": "\"it will be part of that same 20%.\"",
+          "speaker": "Rajiv Poddar",
+          "role": "Joint Managing Director",
+          "location": "Transcript page 6 (PDF page 7), reply to Joseph George (IIFL Capital)"
+        },
+        {
+          "horizon": "long_term",
+          "topic": "A 50-50 joint venture for a dedicated premium passenger tyre plant depends on preset conditions; the window to announce runs to 2030, with no capex or timeline given",
+          "summary": "Both Pirelli-branded and BKT-branded tyres would be made at the joint venture plant for India and export markets.",
+          "tone": "neutral",
+          "evidence": "\"We have till 2030 to announce the work on the JV\"",
+          "speaker": "Rajiv Poddar",
+          "role": "Joint Managing Director",
+          "location": "Transcript page 9 (PDF page 10), reply to Basudeb Banerjee (CLSA)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Capacity, capex and ramp-up of the Pirelli volumes",
+          "why_it_mattered": "Questions on investment need, ramp to 800,000 tyres, share of the 6,700-a-day Bhuj capacity, tyre sizes and machinery needs for Pirelli specifications.",
+          "question_count": 8,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Commercial terms: pricing, margin, minimum commitment and fees",
+          "why_it_mattered": "Questions on revenue and margin potential versus the 21-23% blended margin, minimum offtake, conversion-cost pricing, royalty and the testing service agreement.",
+          "question_count": 7,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Strategic benefits: brand, distribution and technology",
+          "why_it_mattered": "Questions on access to Pirelli designs, distribution reach, procurement synergies, brand differentiation and learning from Pirelli.",
+          "question_count": 7,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Joint venture timing and structure",
+          "why_it_mattered": "Questions on JV timeline, capex, preset conditions and target regions.",
+          "question_count": 4,
+          "analysts_asking": 3
+        }
+      ],
+      "key_risks": [
+        "Offtake terms and minimum volumes are confidential",
+        "Premium-car-tyre ramp depends on Pirelli demand",
+        "JV conditions may not be met",
+        "Execution of the new PCR plant ramp-up",
+        "Silent period: no Q2 or business commentary was given"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "SUPREMEIND": {
+    "symbol": "SUPREMEIND",
+    "company_name": "The Supreme Industries Ltd",
+    "filed_at": "2026-10-31T16:28:41+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/SUPREMEIND_31102026162841_SEIntiamtionTranscriptoftheearningconferencecallheldon26102026.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/SUPREMEIND_31102026162841_SEIntiamtionTranscriptoftheearningconferencecallheldon26102026.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-26",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "manufacturer (plastic products)",
+      "call_period": "Q2 FY27",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts hand-tallied from about 12 questioners; a turn is one question topic put to management; Nal Se Jal tied with employee cost at 2 analysts and was kept for decision-usefulness",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "cPVC and other piping prices to be raised 3-7% product by product from the day after the call",
+          "summary": "Price rises lag raw-material moves by 10-15 days to help distributors; packaging film prices have been hard to raise.",
+          "tone": "positive",
+          "evidence": "\"We are announcing increase in price from tomorrow.\"",
+          "speaker": "M. P. Taparia",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 6 (PDF page 7), reply to Sneha (Nuvama)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 revenue of Rs 13,500-14,000 crore at an operating margin of 14-14.5%",
+          "summary": "Management says it is very comfortable at 14-14.5%; H1 operating profit was Rs 829 crore (+34%). Q2 margin was about 13% despite inventory gains.",
+          "tone": "positive",
+          "evidence": "\"we expect our business to grow between INR13,500 crores to INR14,000 crores\"",
+          "speaker": "M. P. Taparia",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 7 (PDF page 8), reply to R. Ghawri (individual investor)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Company-wide volume growth of about 10% for FY27, despite the steep Q1 decline",
+          "summary": "Q2 volumes grew 24% in piping, 3% in packaging, 13% in industrial and fell 14% in consumer products.",
+          "tone": "positive",
+          "evidence": "\"volume growth of about 10% for FY27\"",
+          "speaker": "M. P. Taparia",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 3 (PDF page 4), prepared remarks"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Plastic piping FY27 volume growth guidance of 13%, cut earlier from the 15-17% range; October growth so far is 23%",
+          "summary": "Management expects no further cut, citing PVC and cPVC resistance to crude-price volatility, ample capacity and covered raw material; H2 needs about 22% growth to reach 13%.",
+          "tone": "neutral",
+          "evidence": "\"in the first 25 days, we have maintained 23% volume growth\"",
+          "speaker": "M. P. Taparia",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 3 (PDF page 4), reply to Shravan Shah (Dolat Capital)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 capex cash outflow of no more than Rs 700-750 crore, funded from internal accruals, with new units at Bihar, Jammu, Erode, Puducherry and Malanpur",
+          "summary": "No new greenfield unit comes on stream this year, so the H1 employee cost of Rs 330 crore is the benchmark for H2.",
+          "tone": "neutral",
+          "evidence": "\"Outflow should not be more than INR700 crores to INR750 crores.\"",
+          "speaker": "P. C. Somani",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 6 (PDF page 7), reply to Anu (Anand Rathi)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Nal Se Jal (rural water scheme) volumes this year expected to be much lower than budget because states are not matching funds",
+          "summary": "Contractors are waiting for pending state payments; irrigation and solar piping offer smaller volumes.",
+          "tone": "negative",
+          "evidence": "\"it is going to be much lower than what was the budget\"",
+          "speaker": "M. P. Taparia",
+          "role": "Chairman and Managing Director",
+          "location": "Transcript page 7 (PDF page 8), reply to Ritesh Shah (Investec)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Piping volume growth and sustainability of demand",
+          "why_it_mattered": "Questions on the 13% piping guidance versus H1, October growth of 23%, Diwali timing, growth drivers (housing, agriculture), revenue guidance and market share.",
+          "question_count": 7,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "Margins: packaging, polymer costs and inventory gains",
+          "why_it_mattered": "Questions on the margin miss, packaging margin squeeze, inventory gains in Q1 and Q2, price pass-through lag and cPVC price increases.",
+          "question_count": 8,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "Segment outlook: packaging, consumer, industrial and new businesses",
+          "why_it_mattered": "Questions on weak packaging and consumer products, the industrial products outlook, uPVC windows, bath fittings, gas piping and the jump in Others.",
+          "question_count": 5,
+          "analysts_asking": 3
+        },
+        {
+          "topic": "Nal Se Jal and government-led demand",
+          "why_it_mattered": "Questions on whether Nal Se Jal orders will return after central releases of Rs 7,700 crore, and the state funding bottleneck.",
+          "question_count": 2,
+          "analysts_asking": 2
+        }
+      ],
+      "key_risks": [
+        "Polymer price volatility linked to crude and West Asia",
+        "Weak packaging and consumer product demand",
+        "Nal Se Jal orders stuck on state funding",
+        "Inventory gains reversing if PVC prices fall",
+        "Higher employee costs"
+      ],
+      "material_guidance_changes": [
+        {
+          "direction": "downgrade",
+          "topic": "Plastic piping FY27 volume growth",
+          "old_guidance": "15-17% (as stated by the analyst)",
+          "new_guidance": "13%",
+          "magnitude": "-2 to -4 percentage points",
+          "materiality": "medium",
+          "explicit_statement": true,
+          "source_verified": true,
+          "evidence_verified": true,
+          "evidence": {
+            "speaker": "M. P. Taparia",
+            "role": "Chairman and Managing Director",
+            "location": "Transcript page 6 (PDF page 7)",
+            "quote": "\"We have given volume growth of 13% in the piping business.\"",
+            "source_url": "https://nsearchives.nseindia.com/corporate/SUPREMEIND_31102026162841_SEIntiamtionTranscriptoftheearningconferencecallheldon26102026.pdf",
+            "filing_date": "2026-10-31",
+            "call_period": "Q2 FY27"
+          }
+        }
+      ]
+    }
+  },
+  "JKCEMENT": {
+    "symbol": "JKCEMENT",
+    "company_name": "JK Cement Ltd",
+    "filed_at": "2026-10-28T12:22:56+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/JKCEMENT_28102026122256_Intdt28102026transcriptofearningcall62.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/JKCEMENT_28102026122256_Intdt28102026transcriptofearningcall62.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-27",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "manufacturer (cement)",
+      "call_period": "Q2 FY27",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts hand-tallied from 17 analysts; a turn is one question topic put to management, and a multi-part question counts once per theme it touches",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Fuel cost per Kcal to rise from Rs 1.71 toward Rs 2, with about Rs 80-100 a ton of impact in each of Q3 and Q4 as petcoke and Indian coal prices climb",
+          "summary": "Q3 gets partial relief from old-priced inventory and the full impact comes in Q4; the fuel mix is 55% Indian coal, 13% alternate fuels and the rest petcoke.",
+          "tone": "negative",
+          "evidence": "\"there will be impact both in Q3 as well as Q4\"",
+          "speaker": "Ajay Kumar Saraogi",
+          "role": "Deputy Managing Director and Chief Financial Officer",
+          "location": "Transcript page 4 (PDF page 5), reply to Navin Sahadeo (ICICI Securities)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Cement prices are up about Rs 20 a bag since mid-September; a further Rs 10-15 is needed to cover costs, with hikes possible after Diwali",
+          "summary": "Packaging costs have peaked; a weaker rupee would raise polymer costs.",
+          "tone": "positive",
+          "evidence": "\"other INR10 to INR15 is minimum is required\"",
+          "speaker": "Ajay Kumar Saraogi",
+          "role": "Deputy Managing Director and Chief Financial Officer",
+          "location": "Transcript page 14 (PDF page 15), reply to Pinakin Parekh (HSBC)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "FY27 grey cement volume guidance of 23 million tons, expected to be '23 million plus'; management declines to commit to 24 million",
+          "summary": "H1 grey volume was 11.3 million tons (+19%). Diwali, Delhi construction curbs and drought-hit southern markets (about 15% of volume) are cited as uncertainties.",
+          "tone": "neutral",
+          "evidence": "\"It would be 23 million tons plus.\"",
+          "speaker": "Ajay Kumar Saraogi",
+          "role": "Deputy Managing Director and Chief Financial Officer",
+          "location": "Transcript page 4 (PDF page 5), reply to Navin Sahadeo (ICICI Securities)"
+        },
+        {
+          "horizon": "current_year",
+          "topic": "Paint business to end FY27 with positive EBITDA on paint revenue of about Rs 500-550 crore, with a 3-5% EBITDA margin targeted for FY28",
+          "summary": "Q2 paint revenue was Rs 116 crore with a Rs 2 crore EBITDA loss; the Rs 600 crore investment limit is not to be raised.",
+          "tone": "positive",
+          "evidence": "\"3% to 5% should be the EBITDA\"",
+          "speaker": "Ajay Kumar Saraogi",
+          "role": "Deputy Managing Director and Chief Financial Officer",
+          "location": "Transcript page 12 (PDF page 13), reply to Shravan Shah (Dolat Capital)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Capacity additions: Jaisalmer integrated plant and Bikaner grinding by H1 FY28, Bathinda by September 2027, toward 50 million tons by FY30",
+          "summary": "Capex is Rs 3,500 crore in FY27 and about Rs 2,500 crore a year afterward; net debt peaks near Rs 6,000 crore, with net debt to EBITDA at 2.25-2.35 at the end of FY27.",
+          "tone": "neutral",
+          "evidence": "\"we are doing INR3,500 crores in this fiscal\"",
+          "speaker": "Ajay Kumar Saraogi",
+          "role": "Deputy Managing Director and Chief Financial Officer",
+          "location": "Transcript page 6 (PDF page 7), reply to Sanjeev Singh (Motilal Oswal)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Mahan coal block to start in H1 FY29, with landed coal cost of Rs 1-1.25 per Kcal",
+          "summary": "The Shahdol block is six to eight months from a definite schedule.",
+          "tone": "positive",
+          "evidence": "\"we are targeting in first half of FY29 to make this Mahan operative\"",
+          "speaker": "Ajay Kumar Saraogi",
+          "role": "Deputy Managing Director and Chief Financial Officer",
+          "location": "Transcript page 15 (PDF page 16), reply to Ritesh Shah (Investec)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Fuel cost, cement pricing and margins",
+          "why_it_mattered": "Questions on cost per Kcal at spot petcoke and coal, timing of impact, fuel mix, price hikes after Diwali, packaging costs and EBITDA per ton versus peers.",
+          "question_count": 10,
+          "analysts_asking": 8
+        },
+        {
+          "topic": "Volume outlook, market share and utilisation",
+          "why_it_mattered": "Questions on H2 volumes against 23 versus 24 million tons, drought, UP elections, Central India share gains, clinker inventory and Bihar utilisation of about 50%.",
+          "question_count": 7,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "New businesses: paint, RMC and construction chemicals",
+          "why_it_mattered": "Questions on paint revenue and EBITDA, rationale for expanding paint, advertising allocation, margins of 35-38% targeted, and RMC plant breakeven.",
+          "question_count": 8,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "White cement and putty volumes and pricing",
+          "why_it_mattered": "Questions on 13-14% standalone volume growth, Fujairah disruption, pricing headroom and peak and lean months.",
+          "question_count": 5,
+          "analysts_asking": 4
+        }
+      ],
+      "key_risks": [
+        "Petcoke and Indian coal price spikes",
+        "Rupee weakness raising polymer packaging cost",
+        "Fujairah export disruption",
+        "Drought and Delhi construction curbs",
+        "Rising net debt to Rs 6,000 crore at peak"
+      ],
+      "material_guidance_changes": []
+    }
+  },
+  "MMFIN": {
+    "symbol": "MMFIN",
+    "company_name": "Mahindra & Mahindra Financial Services Ltd",
+    "filed_at": "2026-10-27T16:33:29+05:30",
+    "source_url": "https://nsearchives.nseindia.com/corporate/M_MFIN_27102026163329_EaningstRanscriptQ22027SIGNED.pdf",
+    "exchange_filing_url": "https://nsearchives.nseindia.com/corporate/M_MFIN_27102026163329_EaningstRanscriptQ22027SIGNED.pdf",
+    "transcript_source_type": "nse_attachment_transcript",
+    "description": "NSE-served transcript PDF.",
+    "transcript_status": "available",
+    "call_date": "2026-10-27",
+    "analysis": {
+      "analysis_profile": "forward_only_v1",
+      "company_type": "lender (NBFC)",
+      "call_period": "Q2 FY27",
+      "analyst_focus_scope": "top_themes_by_question_count",
+      "analyst_count_basis": "counts hand-tallied from 12 analysts; a turn is one question topic put to management, and a multi-part question counts once per theme it touches",
+      "next_quarter_outlook": [
+        {
+          "horizon": "next_quarter",
+          "topic": "Cost of funds to trend upward after the rate hike, with floating-rate resets and refinancing at higher cost; management would not quantify the impact",
+          "summary": "About 10 bps of the stock reprices within a quarter on a 25 bps hike. Most of the vehicle book is fixed-rate, so pass-through is partial and NIM expansion is difficult.",
+          "tone": "negative",
+          "evidence": "\"the cost of funds for us will be towards an upward trajectory\"",
+          "speaker": "Pradeep Agrawal",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 14 (PDF page 15), reply to Abhijit Tibrewal (Motilal Oswal)"
+        },
+        {
+          "horizon": "next_quarter",
+          "topic": "Festive start is soft: Navratri unit disbursements fell versus last year, with tractor weaker, though H2 growth is still sought",
+          "summary": "Last year had pent-up GST-cut demand. Trade advances are well above normal to support Q3. Drought in 282 districts is the key risk to tractors.",
+          "tone": "negative",
+          "evidence": "\"it's a fall from last year, the underlying commerce as well as the underlying unit disbursements\"",
+          "speaker": "Raul Rebello",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 14 (PDF page 15), reply to Abhijit Tibrewal (Motilal Oswal)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "AUM growth guided at 16-18% over the medium to long term; no yearly commitment, and H2 FY27 faces a high base",
+          "summary": "Q2 AUM grew 15% and disbursements 22%. Wheels (80% of the book) is to grow slightly ahead of industry, with diversification (non-wheels grew 52%) providing the alpha.",
+          "tone": "neutral",
+          "evidence": "\"not changing our posture from a 16% to 18% medium to long-term AUM growth\"",
+          "speaker": "Raul Rebello",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 8 (PDF page 9), reply to Renish (ICICI)"
+        },
+        {
+          "horizon": "medium_term",
+          "topic": "Credit cost guided at 1.3-1.7%, with no change to guidance despite drought risk",
+          "summary": "Q2 credit cost was 1.6% and GS2+GS3 8.1%. An overlay of Rs 852 crore is held for El Nino and West Asia risk and no additions are planned.",
+          "tone": "positive",
+          "evidence": "\"change any guidance in terms of our zip codes of 1.3 to 1.7 credit cost\"",
+          "speaker": "Raul Rebello",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 9 (PDF page 10), reply to Kunal Shah (Citi)"
+        },
+        {
+          "horizon": "long_term",
+          "topic": "FY31 goals reaffirmed: AUM growth 16-18%, credit cost 1.3-1.7% and ROA of 2.2-2.5%",
+          "summary": "H1 ROA was 2.3%. Q2 ROA dipped on a high liquidity buffer and trade advances, which management calls seasonal. Management says NIM will be challenging but should not fall below 7%.",
+          "tone": "positive",
+          "evidence": "\"operate between a 2.2% to 2.5%\"",
+          "speaker": "Raul Rebello",
+          "role": "Managing Director and CEO",
+          "location": "Transcript page 21 (PDF page 22), closing remarks"
+        },
+        {
+          "horizon": "long_term",
+          "topic": "Merger of the rural housing finance subsidiary into the parent targeted for June-July 2027, with appointed date of 1 April 2027",
+          "summary": "Lender approvals are in hand, NCLT and some regulator approvals are pending. Mortgage may dilute ROA in the first few years.",
+          "tone": "neutral",
+          "evidence": "\"appointed date for this merger is 1st April 2027\"",
+          "speaker": "Pradeep Agrawal",
+          "role": "Chief Financial Officer",
+          "location": "Transcript page 16 (PDF page 17), reply to Gautam Jain (GCJ Financial)"
+        }
+      ],
+      "analyst_focus": [
+        {
+          "topic": "Growth outlook, festive demand and disbursements",
+          "why_it_mattered": "Questions on AUM growth over four to six quarters, H2 disbursement against a high base, Navratri trends, rural versus urban demand and the rise in trade advances.",
+          "question_count": 7,
+          "analysts_asking": 6
+        },
+        {
+          "topic": "Cost of funds, NIM and yield pass-on",
+          "why_it_mattered": "Questions on cost of funds trajectory after the rate hike, liquidity buffer, repricing of floating borrowings, pass-through to customers, MCLR versus repo linkage and NIM versus the 7% mark.",
+          "question_count": 8,
+          "analysts_asking": 5
+        },
+        {
+          "topic": "Asset quality, credit cost and drought risk",
+          "why_it_mattered": "Questions on credit cost staying within 1.3-1.7%, measures in drought districts, tractor collections and the stable 1.2-1.3% net loss rate.",
+          "question_count": 5,
+          "analysts_asking": 4
+        },
+        {
+          "topic": "AI-orchestrated disbursements and opex",
+          "why_it_mattered": "Questions on the share of AI-led disbursements, what that means for top-up and used vehicle loans, cohort asset quality and the rise in headcount.",
+          "question_count": 4,
+          "analysts_asking": 2
+        }
+      ],
+      "key_risks": [
+        "Insurance distribution consultation paper could cut fee income",
+        "Drought in 282 districts hitting tractor collections",
+        "Rising cost of funds against a mostly fixed-rate book",
+        "Soft Navratri start versus last year",
+        "Merger approvals from NCLT and regulators"
+      ],
+      "material_guidance_changes": []
+    }
   }
 }
