@@ -68,6 +68,78 @@ def fetch_history(start, end, session=None):
     return pd.concat([op.rename("premium_value_lakh"), fu.rename("futures_notional_lakh")], axis=1).reset_index(names="date").dropna(subset=["date"])
 
 
+def parse_official_summary_row(cells, expected_date):
+    """Validate one rendered MCX OPTFUT summary row and return its published premium value."""
+    if len(cells) < 5 or str(cells[0]).strip().upper() != "OPTFUT":
+        raise ValueError("not an MCX OPTFUT summary row")
+    date = pd.to_datetime(str(cells[1]).strip(), dayfirst=True, errors="coerce")
+    expected = pd.Timestamp(expected_date).normalize()
+    if pd.isna(date) or date.normalize() != expected:
+        raise ValueError(f"MCX summary returned {cells[1]!r}, expected {expected:%d %b %Y}")
+    premium = pd.to_numeric(str(cells[4]).replace(",", "").strip(), errors="coerce")
+    if pd.isna(premium) or premium <= 0:
+        raise ValueError("MCX summary premium value is missing or invalid")
+    return {"date": expected, "premium_value_lakh": float(premium), "futures_notional_lakh": np.nan}
+
+
+def fetch_official_summaries(dates, timeout=35):
+    """Read exchange-reported OPTFUT premium values from MCX's rendered Historical Data page.
+
+    This deliberately uses the official Summary Report UI only. It does not estimate premium
+    turnover from bhavcopy rows or substitute another source.
+    """
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+
+    options = Options()
+    for flag in ("--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu",
+                 "--window-size=1920,1080", "--disable-blink-features=AutomationControlled"):
+        options.add_argument(flag)
+    options.add_argument(f'user-agent={HEADERS["User-Agent"]}')
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    driver = webdriver.Chrome(options=options)
+    output, missing = [], []
+    try:
+        driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+            "source": "Object.defineProperty(navigator,'webdriver',{get:()=>undefined})"
+        })
+        driver.get(HISTORY_PAGE)
+        WebDriverWait(driver, timeout).until(lambda d: d.find_element(By.ID, "datewise1"))
+        for day in [pd.Timestamp(x).normalize() for x in dates]:
+            driver.execute_script("""
+const date=arguments[0];
+document.querySelector('#datewise1').click();
+const instrument=document.querySelector('#ddlInstrumentName-historicalSummary');
+instrument.value='OPTFUT'; instrument.dispatchEvent(new Event('change',{bubbles:true}));
+for(const id of ['#txtFromDate-historicalSummary_fromdate','#txtToDate-historicalSummary_toDate']){
+  const input=document.querySelector(id); input.value=date;
+  input.dispatchEvent(new Event('input',{bubbles:true})); input.dispatchEvent(new Event('change',{bubbles:true}));
+}
+document.querySelectorAll('a#btnSummary')[0].click();
+""", f"{day:%Y-%m-%d}")
+
+            wanted = f"{day:%d %b %Y}".lower()
+            try:
+                def find_row(d):
+                    for table in d.find_elements(By.TAG_NAME, "table"):
+                        if not table.is_displayed(): continue
+                        for row in table.find_elements(By.CSS_SELECTOR, "tbody tr"):
+                            cells = [cell.text.strip() for cell in row.find_elements(By.TAG_NAME, "td")]
+                            if len(cells) >= 5 and cells[0].upper() == "OPTFUT" and cells[1].lower() == wanted:
+                                return cells
+                    return False
+                cells = WebDriverWait(driver, timeout).until(find_row)
+                output.append(parse_official_summary_row(cells, day))
+            except Exception:
+                missing.append(day)
+        frame = pd.DataFrame(output, columns=["date", "premium_value_lakh", "futures_notional_lakh"])
+        return frame, missing
+    finally:
+        driver.quit()
+
+
 def fetch_expiries(session=None):
     """Parse the structured expiry map embedded in Groww's public MCX options calendar."""
     session = session or requests.Session()
@@ -87,23 +159,27 @@ def fetch_expiries(session=None):
 
 
 def load(root, end, log=print):
-    """Refresh the official MCX summary when accessible and preserve the last good cache."""
+    """Refresh from MCX's official rendered Summary Report and preserve verified history."""
     path = os.path.join(root, CACHE)
     cached = pd.read_csv(path, parse_dates=["date"]) if os.path.exists(path) else pd.DataFrame(columns=["date", "premium_value_lakh", "futures_notional_lakh"])
     cached["date"] = pd.to_datetime(cached.get("date"), errors="coerce").dt.normalize()
     cached = cached.dropna(subset=["date"]).drop_duplicates("date", keep="last")
     end = pd.Timestamp(end).normalize()
     status = "MCX history cache loaded"
+    latest = cached.date.max() if len(cached) else max(pd.Timestamp("2024-09-01"), end - pd.Timedelta(days=10))
+    missing_dates = list(pd.bdate_range(latest + pd.Timedelta(days=1), end))[-7:]
     try:
-        start = max(pd.Timestamp("2024-09-01"), end - pd.Timedelta(days=30))
-        fresh = fetch_history(start, end)
+        fresh, unpublished = fetch_official_summaries(missing_dates) if missing_dates else (pd.DataFrame(), [])
         if len(fresh):
             cached = pd.concat([cached, fresh], ignore_index=True).drop_duplicates("date", keep="last").sort_values("date")
             os.makedirs(root, exist_ok=True)
             cached.to_csv(path, index=False, date_format="%Y-%m-%d")
-            status = f"Official MCX history refreshed through {cached.date.max():%d %b %Y}"
+            status = f"Official MCX Summary Report refreshed through {cached.date.max():%d %b %Y}"
+        if unpublished:
+            status = f"Official MCX Summary Report has no newer published row; latest verified date is {cached.date.max():%d %b %Y}"
+            log("MCX Summary Report not yet published for: " + ", ".join(f"{x:%d %b}" for x in unpublished))
     except Exception as exc:
-        status = f"MCX refresh blocked ({type(exc).__name__}); showing last verified official report"
+        status = f"Official MCX Summary Report unavailable ({type(exc).__name__}); latest verified date unchanged"
         log(status)
     try:
         expiries = fetch_expiries()

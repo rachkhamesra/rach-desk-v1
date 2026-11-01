@@ -2,7 +2,7 @@ name: Daily desk
 
 on:
   schedule:
-    # 6:00 AM IST, Monday-Friday: refresh MCX's prior-session report and redeploy.
+    # 6:00 AM IST, Monday-Friday: read MCX's official rendered OPTFUT Summary Report and redeploy.
     - cron: "30 0 * * 1-5"
     # 8:00 PM IST, Monday-Friday: Exchange Tracker data should be available by then.
     - cron: "30 14 * * 1-5"
