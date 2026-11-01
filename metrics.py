@@ -8,6 +8,7 @@ SIGMA_WINDOW = 60       # sessions of daily returns used for the 0.5 sigma "at a
 LIST_N = 30             # names per side in the relative-performance lists
 CASH_MAS = (50, 100, 200)
 CASH_MIN_DAYS = 2
+BASE_WINDOWS = (40, 60, 90, 120)
 
 
 def pctile(series, value):
@@ -41,6 +42,71 @@ def appeared_today(flags, cooldown=2, min_days=1):
     return bool(now and now["days"] >= min_days and (not prev or prev["days"] < min_days))
 
 
+def _touches(values, level, tolerance=.02):
+    """Count separate visits to the resistance zone, not consecutive days in one visit."""
+    inside = values.notna() & (values >= level * (1 - tolerance)) & (values <= level * (1 + tolerance))
+    return int((inside & ~inside.shift(1, fill_value=False)).sum())
+
+
+def breakout_bases(C, H, L, DQ, RAT, symbols, T):
+    """Find explainable F&O consolidation bases with delivery confirmation."""
+    rows = []
+    for symbol in symbols:
+        if symbol not in C or T < min(BASE_WINDOWS): continue
+        best = None
+        for window in BASE_WINDOWS:
+            if T - window < 1: continue
+            # Establish the range through yesterday so a genuine current breakout is measurable.
+            c = C[symbol].iloc[T - window:T]; h = H[symbol].iloc[T - window:T]; l = L[symbol].iloc[T - window:T]
+            if c.notna().sum() < window * .9 or h.notna().sum() < window * .9 or l.notna().sum() < window * .9: continue
+            resistance, support = h.quantile(.90), l.quantile(.10)
+            if pd.isna(resistance) or pd.isna(support) or support <= 0 or resistance <= support: continue
+            width = (resistance / support - 1) * 100
+            if width > 18: continue
+            prev = C[symbol].shift(1)
+            tr = pd.concat([(H[symbol] - L[symbol]).abs(), (H[symbol] - prev).abs(), (L[symbol] - prev).abs()], axis=1).max(axis=1)
+            atr20, atr60 = tr.iloc[T - 19:T + 1].mean(), tr.iloc[T - 59:T + 1].mean()
+            compression = atr20 / atr60 if pd.notna(atr60) and atr60 else np.nan
+            if pd.isna(compression) or compression > 1.0: continue
+            ma50 = C[symbol].rolling(50, min_periods=50).mean()
+            slope = (ma50.iloc[T] / ma50.iloc[T - 20] - 1) * 100 if T >= 70 and pd.notna(ma50.iloc[T - 20]) else np.nan
+            if pd.isna(slope) or slope < -2: continue
+            close = C[symbol].iloc[T]
+            if pd.isna(close): continue
+            location = (close - support) / (resistance - support)
+            touches = _touches(h, resistance)
+            if touches < 2: continue
+            recent_rat = RAT[symbol].iloc[max(0, T - 9):T + 1]
+            delivery_days = int((recent_rat >= 1.25).sum())
+            prior20 = DQ[symbol].iloc[T - 24:T - 4].mean(); recent5 = DQ[symbol].iloc[T - 4:T + 1].mean()
+            delivery5 = recent5 / prior20 if pd.notna(prior20) and prior20 else np.nan
+            delivery_ok = delivery_days >= 2 or (pd.notna(delivery5) and delivery5 >= 1.0)
+            if not delivery_ok: continue
+            prior3 = C[symbol].iloc[max(0, T - 3):T]
+            fresh = close > resistance * 1.005 and not (prior3 > resistance * 1.005).any()
+            distance = (resistance / close - 1) * 100
+            if fresh:
+                if not ((recent_rat.iloc[-1] >= 1.25) or (recent_rat.tail(3) >= 1.25).any()): continue
+                stage = "fresh"
+            elif distance <= 3 and location >= .75:
+                stage = "near"
+            elif location >= .75:
+                stage = "building"
+            else:
+                continue
+            score = ({"fresh": 3, "near": 2, "building": 1}[stage] * 100 + touches * 5 + delivery_days * 3
+                     + max(0, 1 - compression) * 20 - max(distance, 0))
+            item = dict(sym=symbol, stage=stage, base_days=window, support=support, resistance=resistance,
+                        range_width=width, distance=distance, touches=touches, compression=compression,
+                        ma50_slope=slope, delivery_days=delivery_days, delivery5=delivery5,
+                        close=close, ratio=RAT[symbol].iloc[T], score=score)
+            if best is None or item["score"] > best["score"]: best = item
+        if best: rows.append(best)
+    columns = ["sym", "stage", "base_days", "support", "resistance", "range_width", "distance", "touches",
+               "compression", "ma50_slope", "delivery_days", "delivery5", "close", "ratio", "score"]
+    return pd.DataFrame(rows, columns=columns).sort_values(["stage", "score"], ascending=[True, False]).reset_index(drop=True)
+
+
 def build(parsed, overrides=None, memberships=None):
     dates = sorted(parsed); memberships = memberships or {}
     fo_date = [d for d in dates if parsed[d]["fo"] is not None][-1]
@@ -48,7 +114,8 @@ def build(parsed, overrides=None, memberships=None):
     requested = list(dict.fromkeys(memberships.get("top1000", []) + sum((memberships.get(k, []) for k in ("nifty500", "smallcap250", "nifty250", "nifty100", "fo")), [])))
     syms = panel.universe(parsed, requested); N = len(dates); T = N - 1
     W = lambda part, col: panel.wide(parsed, dates, syms, part, col)
-    close_raw, high_raw, isin, lot = W("cm", "close"), W("cm", "high"), W("cm", "isin"), W("fo", "lot")
+    open_raw, high_raw, low_raw, close_raw = W("cm", "open"), W("cm", "high"), W("cm", "low"), W("cm", "close")
+    isin, lot = W("cm", "isin"), W("fo", "lot")
     nse_dq, nse_tq = W("deliv", "dq"), W("deliv", "tq")
     bse_dq = panel.wide(parsed, dates, syms, "bse", "dq").fillna(0); bse_vol = panel.wide(parsed, dates, syms, "bse", "vol").fillna(0)
     dq_raw, tq_raw = nse_dq + bse_dq, nse_tq + bse_vol                      # NSE + BSE, in shares, as on the reference page
@@ -58,10 +125,10 @@ def build(parsed, overrides=None, memberships=None):
     turn = W("deliv", "turn_cr")
     ev = corp.find_events(close_raw.ffill(limit=5), isin, lot, turn, overrides)
     F = corp.factors(pd.DatetimeIndex(dates), syms, ev)
-    C = (close_raw * F).ffill(limit=5); H = high_raw * F; DQ = dq_raw / F; TQ = tq_raw / F
+    C = (close_raw * F).ffill(limit=5); O = open_raw * F; H = high_raw * F; L = low_raw * F; DQ = dq_raw / F; TQ = tq_raw / F
     allowed = set(syms)
     memberships = {k: [s for s in v if s in allowed] for k, v in memberships.items()}
-    M = dict(bse_share=bse_share, dates=dates, syms=syms, memberships=memberships, N=N, T=T, events=ev, C=C, H=H, DQ=DQ, TQ=TQ, oi=oi, doi=doi, nifty=nifty, close_raw=close_raw, dq_raw=dq_raw, tq_raw=tq_raw)
+    M = dict(bse_share=bse_share, dates=dates, syms=syms, memberships=memberships, N=N, T=T, events=ev, O=O, C=C, H=H, L=L, DQ=DQ, TQ=TQ, oi=oi, doi=doi, nifty=nifty, close_raw=close_raw, dq_raw=dq_raw, tq_raw=tq_raw)
     M["unresolved"] = set()
 
     ret1 = C.pct_change(fill_method=None); sig_prev = ret1.rolling(60, min_periods=30).std().shift(1)
@@ -152,6 +219,9 @@ def build(parsed, overrides=None, memberships=None):
     M["cash_accumulation"] = episode_rows(qualifies)
     M["cash_tracking"] = episode_rows(tracking, track=True)
     M["cash_mas"] = active_cash_mas
+
+    # ---------------- F&O consolidation and breakout candidates
+    M["breakout_bases"] = breakout_bases(C, H, L, DQ, RAT, memberships.get("fo", []), T)
 
     # ---------------- relative performance
     def rel_at(t, h):
