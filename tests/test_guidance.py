@@ -42,6 +42,20 @@ class GuidanceTests(unittest.TestCase):
         no_pair = sample_change("improvement", None, None)
         self.assertTrue(guidance.valid_change(no_pair))
 
+    def test_newer_batch_field_shapes_are_normalised_but_nothing_else_is_relaxed(self):
+        url = sample_change()["evidence"]["source_url"]
+        word = sample_change(materiality="medium"); word["explicit_statement"] = True
+        got = guidance.validated_changes({"call_period": "Q2 FY2027", "material_guidance_changes": [word]}, url)
+        self.assertEqual(len(got), 1)
+        self.assertEqual(got[0]["materiality"], 3)
+        self.assertIn("15%–17%", got[0]["explicit_statement"])
+        self.assertEqual(guidance.normalize_change(sample_change(materiality="high"))["materiality"], 5)
+        for mutate in (lambda c: c.update(explicit_statement=False), lambda c: c.update(materiality="severe"),
+                       lambda c: c.update(direction="narrowed"), lambda c: c.update(source_verified=False),
+                       lambda c: c["evidence"].update(source_url="https://company.example/t.pdf")):
+            bad = sample_change(materiality="medium"); bad["explicit_statement"] = True; mutate(bad)
+            self.assertEqual(guidance.validated_changes({"call_period": "Q2 FY2027", "material_guidance_changes": [bad]}), [])
+
     def test_exact_seed_changes_use_only_latest_transcript(self):
         seed = json.loads(Path("call_intelligence_seed.json").read_text())
         expected = {"ETERNAL": 1, "SHRIRAMFIN": 1, "INFY": 1, "PNB": 1, "PGEL": 0, "INDHOTEL": 1}

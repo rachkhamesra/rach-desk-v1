@@ -74,13 +74,32 @@ def valid_change(change, call_period=None, source_url=None):
     return True
 
 
+MATERIALITY_WORDS = {"low": 1, "medium": 3, "high": 5}
+
+
+def normalize_change(change):
+    """Accept the two shapes newer transcript batches use for fields the schema stores differently:
+    materiality as low/medium/high (stored as 1/3/5) and explicit_statement as a bare true (replaced by a
+    sentence built from the verified old/new/magnitude fields). Every substantive check still applies."""
+    if not isinstance(change, dict): return change
+    out = dict(change)
+    word = out.get("materiality")
+    if isinstance(word, str) and word.strip().lower() in MATERIALITY_WORDS:
+        out["materiality"] = MATERIALITY_WORDS[word.strip().lower()]
+    if out.get("explicit_statement") is True and isinstance(out.get("topic"), str):
+        old, new, magnitude = out.get("old_guidance"), out.get("new_guidance"), out.get("magnitude")
+        if old and new: out["explicit_statement"] = f"Management stated {new} for {out['topic']}, previously {old}."
+        elif isinstance(magnitude, str) and magnitude.strip(): out["explicit_statement"] = f"Management stated a change in {out['topic']}: {magnitude}."
+    return out
+
+
 def validated_changes(analysis, source_url=None):
     changes = analysis.get("material_guidance_changes", [])
     if not isinstance(changes, list):
         return []
     period = analysis.get("call_period")
     unique = {}
-    for item in changes:
+    for item in map(normalize_change, changes):
         if valid_change(item, period, source_url):
             key = (item["direction"], item["topic"], item["old_guidance"], item["new_guidance"], item["magnitude"])
             unique.setdefault(key, item)
