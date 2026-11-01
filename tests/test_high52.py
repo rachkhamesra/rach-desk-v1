@@ -14,9 +14,12 @@ def test_52_week_high_screen_has_both_groups_and_three_column_cards():
         {"sym": "CASH", "fo": False, "day_high": 92, "prior_high": 90, "close": 90, "close_from_high": -2.17, "px1d": .8, "ratio": 1.3},
     ])
     market = {"T": 252, "dates": list(dates), "C": close, "DQ": delivery, "RAT": ratio,
-              "high52": highs, "unresolved": set(), "results": []}
+              "high52": highs, "market_cap_cr": {"CASH": 18000}, "unresolved": set(), "results": []}
     html = webpage.tab_52w_highs(market)
     assert "F&amp;O" in html and "NON F&amp;O" in html
     assert "FUTURE" in html and "CASH" in html
     assert html.count('class="h52card"') == 2
     assert "h52grid" in html
+    assert "&lt; ₹5,000 CR" in html and "₹5,000–10,000 CR" in html
+    assert "₹10,000–20,000 CR" in html and "&gt; ₹20,000 CR" in html
+    assert 'data-mcap="10to20"' in html
