@@ -213,7 +213,10 @@ def tab_breakout_bases(M):
         base_start = xs[max(0, len(xs) - int(row.base_days))] if len(xs) else 8
         stage_label = {"building": "BUILDING A BASE", "near": "NEAR BREAKOUT", "fresh": "FRESH BREAKOUT"}[row.stage]
         distance_label = f'{row.distance:+.1f}% to resistance' if row.distance >= 0 else f'{abs(row.distance):.1f}% above resistance'
-        return (f'<article class="basecard"><div class="basehead"><div><h3>{stk(symbol, M)}</h3><span class="basestage {esc(row.stage)}">{stage_label}</span></div>'
+        flags = {"range": bool(row.range_ok), "compression": bool(row.compression_ok), "trend": bool(row.trend_ok),
+                 "touches": bool(row.touches_ok), "delivery": bool(row.delivery_ok)}
+        attrs = ' '.join(f'data-{key}="{str(value).lower()}"' for key, value in flags.items())
+        return (f'<article class="basecard" {attrs}><div class="basehead"><div><h3>{stk(symbol, M)}</h3><span class="basestage {esc(row.stage)}">{stage_label}</span></div>'
                 f'<b>{distance_label}</b></div><svg class="basechart" viewBox="0 0 420 238" role="img" aria-label="Candlestick consolidation chart for {esc(symbol)}">'
                 f'<rect class="basezone" x="{base_start:.1f}" y="{py(row.resistance):.1f}" width="{width-base_start-8:.1f}" height="{max(1,py(row.support)-py(row.resistance)):.1f}"/>'
                 f'<line class="baseres" x1="{base_start:.1f}" x2="412" y1="{py(row.resistance):.1f}" y2="{py(row.resistance):.1f}"/>'
@@ -226,11 +229,18 @@ def tab_breakout_bases(M):
 
     def group(stage):
         subset = frame[frame.stage == stage].sort_values("score", ascending=False) if len(frame) else frame
-        return ('<div class="basegrid">' + ''.join(card(row) for row in subset.head(30).itertuples()) + '</div>'
+        return ('<div class="basegrid">' + ''.join(card(row) for row in subset.head(60).itertuples()) + '</div>'
                 if len(subset) else '<div class="card rempty">No F&amp;O stocks currently qualify for this stage.</div>')
 
-    return ('<h2>Breakout Bases</h2><div class="subl">F&amp;O · CONSOLIDATION + VOLATILITY COMPRESSION + DELIVERED-SHARE CONFIRMATION</div>'
-            '<p class="desc">Scans 40-, 60-, 90- and 120-session bases. Qualifiers have an 18% or narrower robust range, at least two separate resistance tests, a flat-to-rising 50-day average, compressed 20-day versus 60-day ATR, price in the upper quarter of the base, and either two ≥1.25× delivery days in ten sessions or a five-day delivery average above its prior 20-day baseline.</p>'
+    return ('<h2>Breakout Bases</h2><div class="subl">F&amp;O · CUSTOMISABLE CONSOLIDATION SCANNER</div>'
+            '<p class="desc">All cards are in the upper quarter of a valid 40-, 60- or 90-session base. Turn individual quality filters on or off below; your choices are remembered on this device.</p>'
+            '<div class="basefilters" role="group" aria-label="Breakout base filters">'
+            '<button class="basefilter on" data-base-filter="range" aria-pressed="true"><i></i>NARROW RANGE ≤10%</button>'
+            '<button class="basefilter on" data-base-filter="compression" aria-pressed="true"><i></i>VOLATILITY COMPRESSION</button>'
+            '<button class="basefilter on" data-base-filter="trend" aria-pressed="true"><i></i>FLAT / RISING 50DMA</button>'
+            '<button class="basefilter on" data-base-filter="touches" aria-pressed="true"><i></i>2+ RESISTANCE TESTS</button>'
+            '<button class="basefilter on" data-base-filter="delivery" aria-pressed="true"><i></i>DELIVERY CONFIRMATION</button>'
+            '<span class="basecount" aria-live="polite"></span></div>'
             '<div class="basetabs"><button class="basetab on" data-base="near">NEAR BREAKOUT</button><button class="basetab" data-base="fresh">FRESH BREAKOUT</button><button class="basetab" data-base="building">BUILDING A BASE</button></div>'
             f'<div class="basegroup" data-base-group="near">{group("near")}</div><div class="basegroup" data-base-group="fresh" hidden>{group("fresh")}</div>'
             f'<div class="basegroup" data-base-group="building" hidden>{group("building")}</div>')
@@ -682,6 +692,7 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .cashwatch tr.cashnew td{background:rgba(232,169,58,.08)}.cashwatch tr.cashnew td:first-child{box-shadow:inset 4px 0 var(--am)}.newcash{display:inline-block;margin-left:5px;padding:3px 5px;background:var(--am);color:#090909;font:800 8px var(--sans);letter-spacing:.06em;vertical-align:1px}
 .signalsub{margin:22px 0 3px;font:800 12px var(--sans);letter-spacing:.08em}.signals td{padding-top:7px;padding-bottom:7px}.signals td:nth-child(7),.signals td:nth-child(8){font-size:11px}
 .h52tabs,.h52caps{display:flex;width:max-content;border:1px solid #444;margin:13px 0 12px}.h52tab,.h52cap{border:0;background:#111;color:var(--mut);padding:8px 17px;font:800 10px var(--sans);letter-spacing:.08em;cursor:pointer}.h52tab.on,.h52cap.on{background:#f4f4f0;color:#090909}.h52grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.h52card{min-width:0;background:var(--panel);border-top:3px solid var(--g);padding:10px}.h52card[hidden]{display:none}.h52head{display:flex;justify-content:space-between;gap:8px;align-items:center}.h52head h3{margin:0;font-size:16px}.h52head>b{font:700 10px var(--mono);white-space:nowrap}.h52svg{display:block;width:100%;height:auto;margin-top:5px;background:#111}.h52svg line{stroke:#333}.h52price,.h52ma{fill:none;stroke-linecap:round;stroke-linejoin:round}.h52price{stroke:#f4f4f0;stroke-width:2}.h52ma{stroke-width:1.2;opacity:.9}.h52ma.ma50{stroke:#f5a623}.h52ma.ma100{stroke:#b58cff}.h52ma.ma200{stroke:#ffd84d}.h52bar{fill:#546477;opacity:.56}.h52bar.hot{fill:#5aa9ff;opacity:.95}.h52meta{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;border-top:1px solid #2b2b2b;padding-top:7px}.h52meta span{font:700 8px var(--sans);letter-spacing:.06em;color:var(--mut)}.h52meta b{display:block;color:var(--ink);font:700 10px var(--mono);margin-top:2px}.h52legend{margin-top:7px;color:var(--mut);font:8px var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.h52legend i{display:inline-block;width:13px;border-top:2px solid #f4f4f0;margin:0 3px 2px 5px}.h52legend i.m50{border-color:#f5a623}.h52legend i.m100{border-color:#b58cff}.h52legend i.m200{border-color:#ffd84d}
+.basefilters{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:13px 0 10px}.basefilter{display:flex;align-items:center;gap:7px;border:1px solid #3b3b3b;background:#111;color:var(--mut);padding:8px 10px;font:800 9px var(--sans);letter-spacing:.07em;cursor:pointer}.basefilter i{width:8px;height:8px;border:1px solid #666;background:transparent}.basefilter.on{color:var(--ink);border-color:#74746f}.basefilter.on i{background:var(--g);border-color:var(--g);box-shadow:0 0 0 2px rgba(63,191,122,.14)}.basefilter:focus-visible{outline:2px solid var(--am);outline-offset:2px}.basecount{margin-left:auto;color:var(--mut);font:700 10px var(--mono);white-space:nowrap}
 .exheadline{display:flex;gap:28px;margin:12px 0 14px}.exheadline div{display:flex;flex-direction:column}.exheadline span{font:700 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.exheadline b{font:700 17px var(--mono)}
 .exstatus{display:inline-block;margin:0 0 9px;padding:5px 8px;border:1px solid #3c3c38;color:#b6b6af;font:700 9px var(--mono);letter-spacing:.04em}
 .exswitch{display:flex;width:max-content;border:1px solid #444;margin:13px 0 12px}.exswitchbtn{border:0;background:#111;color:var(--mut);padding:8px 20px;font:800 10px var(--sans);letter-spacing:.08em;cursor:pointer}.exswitchbtn.on{background:#f4f4f0;color:#090909}
@@ -734,6 +745,11 @@ document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelect
 document.querySelectorAll('.h52tab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.h52tab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.h52group').forEach(x=>x.hidden=x.dataset.h52Group!==b.dataset.h52)});
 document.querySelectorAll('.h52cap').forEach(b=>b.onclick=()=>{const g=b.closest('.h52group'),f=b.dataset.mcapFilter;g.querySelectorAll('.h52cap').forEach(x=>x.classList.toggle('on',x===b));g.querySelectorAll('.h52card').forEach(x=>x.hidden=f!=='all'&&x.dataset.mcap!==f)});
 document.querySelectorAll('.basetab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.basetab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.basegroup').forEach(x=>x.hidden=x.dataset.baseGroup!==b.dataset.base)});
+const baseFilterDefaults=['range','compression','trend','touches','delivery'];let activeBaseFilters=new Set(baseFilterDefaults);
+try{const saved=JSON.parse(localStorage.getItem('desk-base-filters'));if(Array.isArray(saved))activeBaseFilters=new Set(saved)}catch(e){}
+function applyBaseFilters(){const p=document.getElementById('p-bases');if(!p)return;p.querySelectorAll('.basefilter').forEach(b=>{const on=activeBaseFilters.has(b.dataset.baseFilter);b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))});let shown=0;p.querySelectorAll('.basecard').forEach(card=>{const visible=[...activeBaseFilters].every(f=>card.dataset[f]==='true');card.hidden=!visible;if(visible&&!card.closest('.basegroup').hidden)shown++});const count=p.querySelector('.basecount');if(count)count.textContent=`${shown} SHOWN`}
+document.querySelectorAll('.basefilter').forEach(b=>b.onclick=()=>{const f=b.dataset.baseFilter;activeBaseFilters.has(f)?activeBaseFilters.delete(f):activeBaseFilters.add(f);try{localStorage.setItem('desk-base-filters',JSON.stringify([...activeBaseFilters]))}catch(e){}applyBaseFilters()});
+document.querySelectorAll('.basetab').forEach(b=>{const old=b.onclick;b.onclick=()=>{old();applyBaseFilters()}});applyBaseFilters();
 document.querySelectorAll('.exswitchbtn').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.exswitchbtn').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.exchangegroup').forEach(x=>x.hidden=x.dataset.exchangeGroup!==b.dataset.exchange)});
 document.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{const v=b.closest('.uview')||document;v.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
 document.querySelectorAll('.seg[data-r]').forEach(b=>b.onclick=()=>{rng=+b.dataset.r;document.querySelectorAll('.seg[data-r]').forEach(x=>x.classList.toggle('on',x===b));draw()});
