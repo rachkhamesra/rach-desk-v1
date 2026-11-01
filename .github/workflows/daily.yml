@@ -50,6 +50,12 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CALLS_MODEL: gpt-6-luna
           CALLS_MAX_NEW: "12"
+      - name: Password-lock the page
+        # Fails the deploy (the previous site stays up) if the secret is missing or too short,
+        # so a build is never published unlocked.
+        run: python lock.py site/index.html
+        env:
+          SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
