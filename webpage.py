@@ -180,6 +180,11 @@ def tab_52w_highs(M):
             f'{group(False)}</div>')
 
 
+def _subtabs(items):
+    return ('<div class="subtabs" role="group">' + "".join(
+        f'<button type="button" class="subtab{" on" if i == 0 else ""}" data-sub="{k}" aria-pressed="{"true" if i == 0 else "false"}">{label}</button>' for i, (k, label) in enumerate(items)) + '</div>')
+
+
 BASE_FILTER_BUTTONS = (
     '<div class="basefilters" role="group" aria-label="Breakout base filters">'
     '<button class="basefilter on" data-base-filter="range" aria-pressed="true"><i></i>NARROW RANGE ≤10%</button>'
@@ -243,12 +248,13 @@ def tab_breakout_bases(M):
         return ('<div class="basegrid">' + ''.join(card(row) for row in subset.head(60).itertuples()) + '</div>'
                 if len(subset) else '<div class="card rempty">No F&amp;O stocks currently qualify for this stage.</div>')
 
-    return ('<h2>Breakout Bases</h2><div class="subl">F&amp;O · CUSTOMISABLE CONSOLIDATION SCANNER</div>'
-            '<p class="desc">All cards are in the upper quarter of a valid 40-, 60- or 90-session base. Turn individual quality filters on or off below; your choices are remembered on this device.</p>'
-            + BASE_FILTER_BUTTONS +
+    scan = ('<p class="desc">All cards are in the upper quarter of a valid 40-, 60- or 90-session base. Turn individual quality filters on or off above; your choices are remembered on this device.</p>'
             '<div class="basetabs"><button class="basetab on" data-base="near">NEAR BREAKOUT</button><button class="basetab" data-base="fresh">FRESH BREAKOUT</button><button class="basetab" data-base="building">BUILDING A BASE</button></div>'
             f'<div class="basegroup" data-base-group="near">{group("near")}</div><div class="basegroup" data-base-group="fresh" hidden>{group("fresh")}</div>'
             f'<div class="basegroup" data-base-group="building" hidden>{group("building")}</div>')
+    return ('<h2>Breakout Bases</h2><div class="subl">F&amp;O · CUSTOMISABLE CONSOLIDATION SCANNER</div>'
+            + _subtabs([("scan", "SCANNER"), ("follow", "FOLLOW-THROUGH")]) + BASE_FILTER_BUTTONS
+            + f'<div class="subview" data-sub="scan">{scan}</div><div class="subview" data-sub="follow" hidden>{tab_followthrough(M)}</div>')
 
 
 def tab_cash_accumulation(M):
@@ -642,22 +648,20 @@ def stocks_json(M):
 def tab_followthrough(M):
     sig = M.get("base_signals", pd.DataFrame())
     span = f'{M["dates"][int(sig.t.min())]:%d %b %Y} to {M["dates"][-1]:%d %b %Y}' if len(sig) else "no history yet"
-    return ('<h2>Base Follow-Through</h2><div class="subl">F&amp;O · WHAT HAPPENED AFTER PAST BREAKOUT-BASE SIGNALS</div>'
-            f'<p class="desc">The Breakout Bases scan is replayed on every past session ({span}, <b>{len(sig):,} signals</b>). A signal is the first day a stock reaches a stage after at least 10 sessions out of it. '
+    return (f'<p class="desc">The Breakout Bases scan is replayed on every past session ({span}, <b>{len(sig):,} signals</b>). A signal is the first day a stock reaches a stage after at least 10 sessions out of it. '
             'Returns run from that day\'s close. "Vs Nifty" is the return minus the Nifty over the same days. "Broke support" means the low went under the base support within 20 sessions. '
-            'The same filters as the Breakout Bases tab apply and are shared with it. Rows with fewer than 30 signals are greyed: treat them as anecdotes.</p>'
-            + BASE_FILTER_BUTTONS + '<div id="fu-summary"></div><h3 class="fuh">RECENT SIGNALS</h3><div id="fu-list"></div>')
+            'The filter buttons above apply here too. Rows with fewer than 30 signals are greyed: treat them as anecdotes.</p>'
+            '<div id="fu-summary"></div><h3 class="fuh">RECENT SIGNALS</h3><div id="fu-list"></div>')
 
 
 def tab_watchlist(M):
-    return ('<h2>Watchlist</h2><div class="subl">STOCKS YOU TRACK · SAVED ON THIS DEVICE</div>'
-            '<p class="desc">Press ☆ beside any stock on the Stocks tab, or add a ticker here. The list is saved in this browser only, so use Export and Import to move it between your phone and computer.</p>'
+    return ('<p class="desc">Stocks you track, saved on this device. Press ☆ beside any stock on the Chart view, or add a ticker here. The list is saved in this browser only, so use Export and Import to move it between your phone and computer.</p>'
             '<div class="wlbar"><input id="wl-add" list="wl-syms" placeholder="Add ticker" autocomplete="off" autocapitalize="characters" spellcheck="false"><datalist id="wl-syms"></datalist>'
             '<button class="seg" id="wl-addbtn">ADD</button><button class="seg" id="wl-export">EXPORT</button><button class="seg" id="wl-import">IMPORT</button><span id="wl-msg" class="mut" aria-live="polite"></span></div>'
             '<div id="wl-body"></div>')
 
 
-def tab_stocks(M):
+def _stocks_chart(M):
     return ('<div class="sx"><aside class="sl"><input id="q" placeholder="Search ticker" autocomplete="off" autocapitalize="characters" spellcheck="false">'
             '<button type="button" class="seg" id="wlonly" aria-pressed="false" title="Show only my watchlist" aria-label="Show only my watchlist">★</button>'
             '<select id="sort"><option value="az">Sort: A to Z</option><option value="ratio">Sort: delivery ÷ 20d avg</option><option value="px">Sort: price move today</option><option value="rs">Sort: 20-day relative strength</option></select>'
@@ -670,6 +674,16 @@ def tab_stocks(M):
             '<div id="ro"></div><div id="lg"></div></div><aside id="insights"></aside></div><section id="callintel"></section></div></div>')
 
 
+def tab_stocks(M):
+    return (_subtabs([("chart", "CHART"), ("watch", "WATCHLIST")]) + f'<div class="subview" data-sub="chart" id="sv-chart">{_stocks_chart(M)}</div>'
+            f'<div class="subview" data-sub="watch" hidden>{tab_watchlist(M)}</div>')
+
+
+def tab_calls(M):
+    return (_subtabs([("calls", "CALLS"), ("guidance", "GUIDANCE SHIFTS")]) + f'<div class="subview" data-sub="calls">{tab_call_library(M)}</div>'
+            f'<div class="subview" data-sub="guidance" hidden>{tab_guidance_shifts(M)}</div>')
+
+
 def render(M, asof_text):
     M["hist_label"] = "1Y" if M["N"] < 600 else "3Y"
     data = json.dumps(stocks_json(M), separators=(",", ":"))
@@ -678,10 +692,9 @@ def render(M, asof_text):
     choices = [(k, label) for k, label in choices if M["memberships"].get(k)]
     def views(fn):
         return "".join(f'<div class="uview" data-u="{k}"{("" if k == "top1000" else " hidden")}>{fn(M, allowed=M["memberships"][k])}</div>' for k, _ in choices)
-    panels = [("stocks", "STOCKS", tab_stocks(M)), ("watch", "WATCHLIST", tab_watchlist(M)), ("bases", "BREAKOUT BASES", tab_breakout_bases(M)), ("follow", "BASE FOLLOW-THROUGH", tab_followthrough(M)), ("high52", "52W HIGHS", tab_52w_highs(M)), ("signals", "SIGNAL CONFLUENCE", views(tab_signal_confluence)),
+    panels = [("stocks", "STOCKS", tab_stocks(M)), ("bases", "BREAKOUT BASES", tab_breakout_bases(M)), ("high52", "52W HIGHS", tab_52w_highs(M)), ("signals", "SIGNAL CONFLUENCE", views(tab_signal_confluence)),
               ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)),
-              ("calls", "CALL LIBRARY", tab_call_library(M)),
-              ("guidance", "GUIDANCE SHIFTS", tab_guidance_shifts(M)),
+              ("calls", "CALL LIBRARY", tab_calls(M)),
               ("exchange", "EXCHANGE TRACKER", tab_exchange(M))]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}" data-t="{k}">{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
@@ -760,7 +773,7 @@ table.ca td.note{white-space:normal;min-width:340px;max-width:560px;color:#b9b9b
 .guidancerow{display:flex;flex-wrap:nowrap;gap:6px 12px;align-items:center;border-left:3px solid var(--g);background:rgba(63,191,122,.16);padding:8px 10px;margin-bottom:8px;font-size:12px;white-space:nowrap;overflow-x:auto}.guidancerow>*{flex:0 0 auto}.guidancerow.reduction,.guidancerow.downgrade{border-color:var(--r);background:rgba(239,90,77,.16)}.guidancerow button{margin-left:auto;cursor:pointer;white-space:nowrap}.guidancerow small{color:var(--mut)}#guidance-row[hidden]{display:none}.guidancechange{border-left:3px solid var(--g);padding:10px;margin:8px 0;background:var(--panel);overflow-wrap:anywhere}.guidancechange.reduction,.guidancechange.downgrade{border-color:var(--r)}.guidancechange summary{cursor:pointer}.guidancechange blockquote{margin:8px 0;white-space:pre-wrap}.guidancechange:focus,.guidancerow button:focus-visible{outline:2px solid #ffd17a;outline-offset:3px}#callintel{margin-top:10px}.fuh{margin:22px 0 8px;font:800 10px var(--sans);letter-spacing:.1em;color:var(--mut)}#fu-summary tr.mut td{color:var(--mut)}.star{background:none;border:0;color:var(--mut);font-size:20px;line-height:1;cursor:pointer;padding:0 4px}.star.on,.wlmark{color:#ffd17a;font-style:normal}.star:focus-visible,.wlx:focus-visible,#wlonly:focus-visible{outline:2px solid var(--am);outline-offset:2px}#wlonly{flex:0 0 auto;padding:6px 11px;font-size:14px;line-height:1}#wlonly.on{background:#f4f4f0;color:#0a0a0a}.wlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}.wlbar input{background:#101010;color:var(--ink);border:1px solid #444;padding:8px 10px;font:600 12px var(--mono);text-transform:uppercase}.wlx{background:none;border:0;color:var(--mut);cursor:pointer;padding:4px 8px}.wlx:hover{color:var(--r)}.callhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;background:var(--panel);border-top:3px solid #f4f4f0;padding:12px 14px;margin-bottom:8px}.callhead h3{margin:0;font-size:16px;letter-spacing:.04em}.callhead a{color:#ffd17a;font:11px var(--mono)}.callmeta{color:var(--mut);font:10px var(--mono);margin-top:3px}.callpanels{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:8px}.callsection{background:var(--panel);border-top:3px solid #444;padding:12px;min-width:0}.callsection.outlookpanel{border-color:var(--g)}.callsection.focuspanel{border-color:var(--am)}.callsection.actualspanel{border-color:#5aa9ff}.callsection h4{margin:0 0 9px;font:800 10px var(--sans);letter-spacing:.1em;color:var(--mut)}.outlook{padding:9px 10px;margin-bottom:7px;background:#191919;border-left:3px solid #777;font-size:12px;line-height:1.45}.outlook.positive{border-color:var(--g)}.outlook.cautious,.outlook.negative{border-color:var(--r)}.outlook b{display:block;margin-bottom:2px}.evidence{display:block;color:#9d9d96;font:10px var(--mono);margin-top:4px}.focus{display:grid;grid-template-columns:1fr auto;gap:9px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12px}.focus small{display:block;color:var(--mut);margin-top:2px}.qcount{font:700 11px var(--mono);color:#ffd17a}.metricgrid{display:grid;grid-template-columns:1fr;gap:7px}.metric{background:#191919;padding:8px 9px;font-size:11px;line-height:1.4}.metric b{display:block;color:var(--mut);font:800 9px var(--sans);letter-spacing:.07em;margin-bottom:2px}.congrats{display:flex;gap:16px;align-items:baseline;padding:10px;background:rgba(232,169,58,.1);margin-top:12px}.congrats strong{font:700 24px var(--mono);color:#ffd17a}.congrats span{font-size:11px;color:var(--mut)}.callnone{background:var(--panel);border-top:3px solid #444;padding:12px;color:var(--mut);font-size:12px}.aicaveat{margin-top:8px;color:#666;font-size:10px}
 .calllibmeta{display:flex;flex-direction:column;margin:12px 0}.calllibmeta span{font:800 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.calllibmeta b{font:700 15px var(--mono)}.calllibrary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.callcard{background:var(--panel);border-top:3px solid #f4f4f0;padding:13px;min-width:0}.callcardhead{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;padding-bottom:11px;border-bottom:1px solid var(--line)}.callcardhead h3{margin:0 0 2px;font-size:18px}.callcardhead>div>div{color:var(--mut);font:10px var(--mono)}.callscore{display:flex;gap:7px;align-items:center;text-align:right}.callscore strong{font:800 23px var(--mono);color:#ffd17a}.callscore span{font:800 8px var(--sans);letter-spacing:.07em;color:var(--mut)}.callcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.callcard h4{margin:13px 0 5px;font:800 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.callcard ol,.callcard ul{margin:0;padding-left:20px}.callcard li{position:relative;padding:6px 0 7px 2px;border-bottom:1px solid var(--line);font-size:11px;line-height:1.4}.callcard li b{display:block;font-size:11px;margin-bottom:1px}.callcard .concerns li{padding-right:28px}.callcard .concerns li span{position:absolute;right:0;top:7px;color:#ffd17a;font:700 10px var(--mono)}.takeaways{border-top:2px solid #333;margin-top:8px}.takeaways ul{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;list-style:none;padding:0}.callsource{display:inline-block;margin-top:10px;color:#ffd17a;font:800 9px var(--sans);letter-spacing:.08em}
 .calllibrary{display:flex;flex-direction:column;gap:10px}.callrow{background:var(--panel);border-top:3px solid #f4f4f0;padding:10px 12px;min-width:0}.callrowhead{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:7px}.callrowhead h3{display:inline;margin:0 9px 0 0;font-size:16px}.callrowhead span{color:var(--mut);font:9px var(--mono)}.callrowhead a{color:#ffd17a;font:800 9px var(--sans)}.callrowgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}.callrowgrid>section{min-width:0;padding:10px 13px;border-left:1px solid var(--line)}.callrowgrid>section:first-child{border-left:0;padding-left:0}.callrowgrid h4{margin:0 0 6px;font:800 9px var(--sans);letter-spacing:.1em;color:var(--mut)}.callrowgrid ul{list-style:none;margin:0;padding:0}.callrowgrid li{padding:5px 0;border-bottom:1px solid var(--line);font-size:10px;line-height:1.35}.callrowgrid li:last-child{border-bottom:0}.callrowgrid li b,.callrowgrid li span{display:block}.callrowgrid li span{color:#b4b4ad;margin-top:1px}.callrowgrid .shift.upgrade,.callrowgrid .shift.increase,.callrowgrid .shift.improvement{border-left:3px solid var(--g);padding-left:7px}.callrowgrid .shift.reduction,.callrowgrid .shift.downgrade{border-left:3px solid var(--r);padding-left:7px}.callchart{display:block;width:100%;height:auto;background:#111}.callchartline{fill:none;stroke-linejoin:round;stroke-linecap:round}.callchartline.price{stroke:#f4f4f0;stroke-width:2}.callchartline.ma50{stroke:#f5a623}.callchartline.ma100{stroke:#b58cff}.callchartline.ma200{stroke:#ffd84d}.callchartlegend{color:var(--mut);font:8px var(--mono);margin-top:4px}.callchartlegend i{display:inline-block;width:10px;border-top:2px solid #f4f4f0;margin:0 3px 2px 6px}.callchartlegend i:first-child{margin-left:0}.callchartlegend i.m50{border-color:#f5a623}.callchartlegend i.m100{border-color:#b58cff}.callchartlegend i.m200{border-color:#ffd84d}.callchartempty{height:115px;display:grid;place-items:center;background:#111;color:var(--mut);font:10px var(--mono)}
-.basetabs{display:flex;width:max-content;border:1px solid #444;margin:13px 0 12px}.basetab{border:0;background:#111;color:var(--mut);padding:8px 16px;font:800 10px var(--sans);letter-spacing:.08em;cursor:pointer}.basetab.on{background:#f4f4f0;color:#090909}.basegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.basecard{min-width:0;background:var(--panel);border-top:3px solid #555;padding:10px}.basehead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.basehead h3{display:inline;margin:0 7px 0 0;font-size:16px}.basehead>b{font:700 9px var(--mono);color:var(--mut);white-space:nowrap;margin-top:3px}.basestage{display:inline-block;padding:3px 5px;font:800 8px var(--sans);letter-spacing:.06em;background:#292929}.basestage.near{color:#ffd17a}.basestage.fresh{color:#8ce4b4;background:rgba(63,191,122,.13)}.basestage.building{color:#9ec9ff}.basechart{display:block;width:100%;height:auto;background:#101010;margin-top:7px}.basezone{fill:rgba(90,169,255,.07)}.baseres{stroke:#e8a93a;stroke-dasharray:4 3}.basesup{stroke:#555;stroke-dasharray:3 4}.basechartline{fill:none;stroke-width:1.15;opacity:.9}.basechartline.ma50{stroke:#2f77ff}.basechartline.ma100{stroke:#b58cff}.basechartline.ma200{stroke:#ffd84d}.basevol{fill:#586778;opacity:.55}.basevol.hot{fill:#5aa9ff;opacity:.95}.baseaxis{stroke:#333}.basestats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;border-top:1px solid var(--line);padding-top:8px}.basestats span{font:800 8px var(--sans);letter-spacing:.05em;color:var(--mut)}.basestats b{display:block;color:var(--ink);font:700 10px var(--mono);margin-top:2px}.baselegend{margin-top:7px;color:var(--mut);font:8px var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.baselegend i{display:inline-block;width:12px;border-top:2px solid;margin:0 3px 2px 6px}.baselegend i:first-child{margin-left:0}.baselegend .candle{border-color:#f4f4f0}.baselegend .m50{border-color:#2f77ff}.baselegend .m100{border-color:#b58cff}.baselegend .m200{border-color:#ffd84d}
+.basetabs,.subtabs{display:flex;width:max-content;max-width:100%;border:1px solid #444;margin:13px 0 12px}.subtabs{margin-top:10px}.basetab,.subtab{border:0;background:#111;color:var(--mut);padding:8px 16px;font:800 10px var(--sans);letter-spacing:.08em;cursor:pointer}.basetab.on,.subtab.on{background:#f4f4f0;color:#090909}.subtab:focus-visible{outline:2px solid var(--am);outline-offset:2px}.basegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.basecard{min-width:0;background:var(--panel);border-top:3px solid #555;padding:10px}.basehead{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.basehead h3{display:inline;margin:0 7px 0 0;font-size:16px}.basehead>b{font:700 9px var(--mono);color:var(--mut);white-space:nowrap;margin-top:3px}.basestage{display:inline-block;padding:3px 5px;font:800 8px var(--sans);letter-spacing:.06em;background:#292929}.basestage.near{color:#ffd17a}.basestage.fresh{color:#8ce4b4;background:rgba(63,191,122,.13)}.basestage.building{color:#9ec9ff}.basechart{display:block;width:100%;height:auto;background:#101010;margin-top:7px}.basezone{fill:rgba(90,169,255,.07)}.baseres{stroke:#e8a93a;stroke-dasharray:4 3}.basesup{stroke:#555;stroke-dasharray:3 4}.basechartline{fill:none;stroke-width:1.15;opacity:.9}.basechartline.ma50{stroke:#2f77ff}.basechartline.ma100{stroke:#b58cff}.basechartline.ma200{stroke:#ffd84d}.basevol{fill:#586778;opacity:.55}.basevol.hot{fill:#5aa9ff;opacity:.95}.baseaxis{stroke:#333}.basestats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;border-top:1px solid var(--line);padding-top:8px}.basestats span{font:800 8px var(--sans);letter-spacing:.05em;color:var(--mut)}.basestats b{display:block;color:var(--ink);font:700 10px var(--mono);margin-top:2px}.baselegend{margin-top:7px;color:var(--mut);font:8px var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.baselegend i{display:inline-block;width:12px;border-top:2px solid;margin:0 3px 2px 6px}.baselegend i:first-child{margin-left:0}.baselegend .candle{border-color:#f4f4f0}.baselegend .m50{border-color:#2f77ff}.baselegend .m100{border-color:#b58cff}.baselegend .m200{border-color:#ffd84d}
 #ro{min-height:22px;font:11px var(--mono);color:#cfcfc8;padding:5px 4px}
 #lg{display:flex;flex-wrap:wrap;gap:6px 18px;font:12px var(--mono);color:var(--mut);padding:2px 4px 10px}#lg i{display:inline-block;width:14px;height:10px;margin-right:6px;vertical-align:-1px}#lg u{display:inline-block;width:18px;border-top:2px solid;margin-right:5px;vertical-align:middle}
 footer{max-width:1280px;margin:0 auto;padding:0 22px 40px;color:var(--mut);font-size:13px}
@@ -774,10 +787,13 @@ const G='#2fbf71',R='#ef5a4d',GL='rgba(47,191,113,.64)',RL='rgba(239,90,77,.64)'
 let cur=null,rng=252,thr=1.25,universe='top1000',SY=D.universes[universe]||ALL,selectedMas=new Set([50,200]);
 try{const saved=JSON.parse(localStorage.getItem('desk-mas'));if(Array.isArray(saved))selectedMas=new Set(saved.map(Number))}catch(e){}
 function tab(t){const b=document.querySelector('.tab[data-t="'+t+'"]');if(b)b.click()}
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+b.dataset.t);if(b.dataset.t==='stocks'){draw()}if(b.dataset.t==='watch'){renderWatch()}});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+b.dataset.t);if(b.dataset.t==='stocks'){draw()}});
 document.querySelectorAll('.h52tab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.h52tab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.h52group').forEach(x=>x.hidden=x.dataset.h52Group!==b.dataset.h52)});
 document.querySelectorAll('.h52cap').forEach(b=>b.onclick=()=>{const g=b.closest('.h52group'),f=b.dataset.mcapFilter;g.querySelectorAll('.h52cap').forEach(x=>x.classList.toggle('on',x===b));g.querySelectorAll('.h52card').forEach(x=>x.hidden=f!=='all'&&x.dataset.mcap!==f)});
 document.querySelectorAll('.basetab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.basetab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.basegroup').forEach(x=>x.hidden=x.dataset.baseGroup!==b.dataset.base)});
+/* ---------- sub-tabs inside a tab ---------- */
+document.querySelectorAll('.subtab').forEach(b=>b.onclick=()=>{const bar=b.closest('.subtabs'),root=bar.parentElement;bar.querySelectorAll('.subtab').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b))});root.querySelectorAll(':scope > .subview').forEach(v=>v.hidden=v.dataset.sub!==b.dataset.sub);
+ if(b.dataset.sub==='chart')draw();else if(b.dataset.sub==='watch')renderWatch();else if(b.dataset.sub==='follow')renderFollow();const bc=root.querySelector('.basecount');if(bc)bc.hidden=b.dataset.sub==='follow'});
 /* ---------- watchlist ---------- */
 let WL=[],wlOnly=false;try{const s=JSON.parse(localStorage.getItem('desk-watchlist'));if(Array.isArray(s))WL=s.filter(x=>D.stocks[x])}catch(e){}
 function saveWL(){try{localStorage.setItem('desk-watchlist',JSON.stringify(WL))}catch(e){}}
@@ -849,7 +865,7 @@ document.getElementById('q').oninput=list;document.getElementById('sort').onchan
 document.getElementById('q').onkeydown=e=>{if(e.key==='Enter'){const f=document.querySelector('#list .li[data-s]');if(f)pick(f.dataset.s)}};
 document.getElementById('list').onclick=e=>{const li=e.target.closest('.li[data-s]');if(li)pick(li.dataset.s)};
 function pick(s){cur=s;list();draw();history.replaceState(null,'','#'+s);if(document.activeElement)document.activeElement.blur();if(window.innerWidth<900)document.getElementById('sh').scrollIntoView({behavior:'smooth',block:'start'})}
-document.addEventListener('click',e=>{const a=e.target.closest('a.stk');if(a){e.preventDefault();tab('stocks');cur=a.dataset.s;list();draw();history.replaceState(null,'','#'+cur);window.scrollTo(0,0)}});
+document.addEventListener('click',e=>{const a=e.target.closest('a.stk');if(a){e.preventDefault();tab('stocks');document.querySelector('#p-stocks .subtab[data-sub="chart"]').click();cur=a.dataset.s;list();draw();history.replaceState(null,'','#'+cur);window.scrollTo(0,0)}});
 /* ---------- chart ---------- */
 function drawLegacy(){
  if(!cur||document.getElementById('p-stocks').hidden)return;
@@ -906,7 +922,7 @@ function drawLegacy(){
  svg.onpointermove=mv;svg.onpointerdown=mv;svg.onpointerleave=()=>{document.getElementById('xh').setAttribute('visibility','hidden')};
 }
 function draw(){
- if(!cur||document.getElementById('p-stocks').hidden)return;
+ if(!cur||document.getElementById('p-stocks').hidden||document.getElementById('sv-chart').hidden)return;
  const S=D.stocks[cur],n=S.c.length,v0=Math.max(0,n-rng),box=document.getElementById('chartbox'),W=Math.max(320,box.clientWidth-8),sm=W<560,fs=sm?9:10,L=sm?42:54,Rr=8;
  const xs=i=>L+(i-v0)*(W-L-Rr)/Math.max(1,n-1-v0),bw=Math.max(1.4,(W-L-Rr)/(n-v0)*.82);
  const line=(a,y,col,sw=1.5,dash=null,map=v=>v)=>{let d='',pen=false;for(let i=v0;i<n;i++){const v=a[i];if(v==null){pen=false;continue}d+=(pen?'L':'M')+xs(i).toFixed(1)+','+y(map(v)).toFixed(1);pen=true}return `<path d="${d}" fill="none" stroke="${col}" stroke-width="${sw}"${dash?' stroke-dasharray="'+dash+'"':''} stroke-linejoin="round"/>`};
