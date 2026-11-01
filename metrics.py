@@ -8,7 +8,7 @@ SIGMA_WINDOW = 60       # sessions of daily returns used for the 0.5 sigma "at a
 LIST_N = 30             # names per side in the relative-performance lists
 CASH_MAS = (50, 100, 200)
 CASH_MIN_DAYS = 2
-BASE_WINDOWS = (40, 60, 90, 120)
+BASE_WINDOWS = (40, 60, 90)
 
 
 def pctile(series, value):

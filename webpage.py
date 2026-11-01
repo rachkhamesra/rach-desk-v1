@@ -233,7 +233,7 @@ def tab_breakout_bases(M):
                 if len(subset) else '<div class="card rempty">No F&amp;O stocks currently qualify for this stage.</div>')
 
     return ('<h2>Breakout Bases</h2><div class="subl">F&amp;O · CUSTOMISABLE CONSOLIDATION SCANNER</div>'
-            '<p class="desc">All cards are in the upper quarter of a valid 40-, 60-, 90- or 120-session base. Turn individual quality filters on or off below; your choices are remembered on this device.</p>'
+            '<p class="desc">All cards are in the upper quarter of a valid 40-, 60- or 90-session base. Turn individual quality filters on or off below; your choices are remembered on this device.</p>'
             '<div class="basefilters" role="group" aria-label="Breakout base filters">'
             '<button class="basefilter on" data-base-filter="range" aria-pressed="true"><i></i>NARROW RANGE ≤10%</button>'
             '<button class="basefilter on" data-base-filter="compression" aria-pressed="true"><i></i>VOLATILITY COMPRESSION</button>'
