@@ -49,7 +49,7 @@ def _touches(values, level, tolerance=.02):
 
 
 def breakout_bases(C, H, L, DQ, RAT, symbols, T):
-    """Find explainable F&O consolidation bases with delivery confirmation."""
+    """Build an F&O base universe; the page applies optional quality filters."""
     rows = []
     for symbol in symbols:
         if symbol not in C or T < min(BASE_WINDOWS): continue
@@ -62,31 +62,30 @@ def breakout_bases(C, H, L, DQ, RAT, symbols, T):
             resistance, support = h.quantile(.90), l.quantile(.10)
             if pd.isna(resistance) or pd.isna(support) or support <= 0 or resistance <= support: continue
             width = (resistance / support - 1) * 100
-            if width > 18: continue
+            range_ok = width <= 18
             prev = C[symbol].shift(1)
             tr = pd.concat([(H[symbol] - L[symbol]).abs(), (H[symbol] - prev).abs(), (L[symbol] - prev).abs()], axis=1).max(axis=1)
             atr20, atr60 = tr.iloc[T - 19:T + 1].mean(), tr.iloc[T - 59:T + 1].mean()
             compression = atr20 / atr60 if pd.notna(atr60) and atr60 else np.nan
-            if pd.isna(compression) or compression > 1.0: continue
+            compression_ok = pd.notna(compression) and compression <= 1.0
             ma50 = C[symbol].rolling(50, min_periods=50).mean()
             slope = (ma50.iloc[T] / ma50.iloc[T - 20] - 1) * 100 if T >= 70 and pd.notna(ma50.iloc[T - 20]) else np.nan
-            if pd.isna(slope) or slope < -2: continue
+            trend_ok = pd.notna(slope) and slope >= -2
             close = C[symbol].iloc[T]
             if pd.isna(close): continue
             location = (close - support) / (resistance - support)
             touches = _touches(h, resistance)
-            if touches < 2: continue
+            touches_ok = touches >= 2
             recent_rat = RAT[symbol].iloc[max(0, T - 9):T + 1]
             delivery_days = int((recent_rat >= 1.25).sum())
             prior20 = DQ[symbol].iloc[T - 24:T - 4].mean(); recent5 = DQ[symbol].iloc[T - 4:T + 1].mean()
             delivery5 = recent5 / prior20 if pd.notna(prior20) and prior20 else np.nan
             delivery_ok = delivery_days >= 2 or (pd.notna(delivery5) and delivery5 >= 1.0)
-            if not delivery_ok: continue
             prior3 = C[symbol].iloc[max(0, T - 3):T]
             fresh = close > resistance * 1.005 and not (prior3 > resistance * 1.005).any()
             distance = (resistance / close - 1) * 100
             if fresh:
-                if not ((recent_rat.iloc[-1] >= 1.25) or (recent_rat.tail(3) >= 1.25).any()): continue
+                delivery_ok = delivery_ok and bool((recent_rat.tail(3) >= 1.25).any())
                 stage = "fresh"
             elif distance <= 3 and location >= .75:
                 stage = "near"
@@ -95,15 +94,20 @@ def breakout_bases(C, H, L, DQ, RAT, symbols, T):
             else:
                 continue
             score = ({"fresh": 3, "near": 2, "building": 1}[stage] * 100 + touches * 5 + delivery_days * 3
-                     + max(0, 1 - compression) * 20 - max(distance, 0))
+                     + (max(0, 1 - compression) * 20 if pd.notna(compression) else 0) - max(distance, 0))
             item = dict(sym=symbol, stage=stage, base_days=window, support=support, resistance=resistance,
                         range_width=width, distance=distance, touches=touches, compression=compression,
                         ma50_slope=slope, delivery_days=delivery_days, delivery5=delivery5,
-                        close=close, ratio=RAT[symbol].iloc[T], score=score)
-            if best is None or item["score"] > best["score"]: best = item
+                        close=close, ratio=RAT[symbol].iloc[T], score=score,
+                        range_ok=range_ok, compression_ok=compression_ok, trend_ok=trend_ok,
+                        touches_ok=touches_ok, delivery_ok=delivery_ok)
+            quality = sum((range_ok, compression_ok, trend_ok, touches_ok, delivery_ok))
+            item["quality"] = quality
+            if best is None or (item["quality"], item["score"]) > (best["quality"], best["score"]): best = item
         if best: rows.append(best)
     columns = ["sym", "stage", "base_days", "support", "resistance", "range_width", "distance", "touches",
-               "compression", "ma50_slope", "delivery_days", "delivery5", "close", "ratio", "score"]
+               "compression", "ma50_slope", "delivery_days", "delivery5", "close", "ratio", "score",
+               "range_ok", "compression_ok", "trend_ok", "touches_ok", "delivery_ok"]
     return pd.DataFrame(rows, columns=columns).sort_values(["stage", "score"], ascending=[True, False]).reset_index(drop=True)
 
 
