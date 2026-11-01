@@ -12,7 +12,7 @@ class CallIntelligenceTest(unittest.TestCase):
     def test_bundled_static_intelligence_contains_exact_requested_scope(self):
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "call_intelligence_seed.json")
         with open(path, encoding="utf-8") as f: seed = json.load(f)
-        requested = {"ETERNAL", "SHRIRAMFIN", "INFY", "PNB", "PGEL", "INDHOTEL", "DRREDDY", "APLAPOLLO", "CGPOWER", "TATACONSUM", "JSWSTEEL", "KEI", "SBICARD", "SHREECEM", "SWIGGY", "MAHABANK", "SAGILITY", "AXISBANK", "TORNTPHARM", "OBEROIRLTY", "FEDERALBNK", "RBLBANK", "AUBANK", "GODREJPROP", "NAM-INDIA", "ULTRACEMCO", "LTF", "VMM", "ADANIGREEN", "CROMPTON", "HAVELLS", "HDFCBANK", "YESBANK", "PERSISTENT", "ICICIBANK", "HDFCLIFE", "HINDZINC", "BAJFINANCE", "DLF", "IRFC", "UJJIVANSFB", "JIOFIN", "LTM", "TECHM", "INDIANB", "360ONE", "ICICILIFE"}
+        requested = {"ETERNAL", "SHRIRAMFIN", "INFY", "PNB", "PGEL", "INDHOTEL", "DRREDDY", "APLAPOLLO", "CGPOWER", "TATACONSUM", "JSWSTEEL", "KEI", "SBICARD", "SHREECEM", "SWIGGY", "MAHABANK", "SAGILITY", "AXISBANK", "TORNTPHARM", "OBEROIRLTY", "FEDERALBNK", "RBLBANK", "AUBANK", "GODREJPROP", "NAM-INDIA", "ULTRACEMCO", "LTF", "VMM", "ADANIGREEN", "CROMPTON", "HAVELLS", "HDFCBANK", "YESBANK", "PERSISTENT", "ICICIBANK", "HDFCLIFE", "HINDZINC", "BAJFINANCE", "DLF", "IRFC", "UJJIVANSFB", "JIOFIN", "LTM", "TECHM", "INDIANB", "360ONE", "ICICILIFE", "ANGELONE", "HDFCAMC", "POLYCAB", "TATAELXSI", "ICICIGI", "CANBK", "KARURVYSYA", "WIPRO", "ANANDRATHI", "HCLTECH", "TCS"}
         self.assertEqual(set(seed), requested)
         self.assertEqual(set(calls.PUBLISHED_SYMBOLS), requested)
         analysed = [x for x in seed.values() if x.get("analysis")]
@@ -46,7 +46,7 @@ class CallIntelligenceTest(unittest.TestCase):
         self.assertNotIn("CONGRATULATIONS", html)
         self.assertIn('class="callrow"', html)
         self.assertIn("Price history unavailable", html)
-        self.assertIn("44 CONCISE TRANSCRIPT SUMMARIES", html)
+        self.assertIn("55 CONCISE TRANSCRIPT SUMMARIES", html)
         self.assertIn("questions", html)
 
     @patch("calls.results._get")
