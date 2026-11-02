@@ -50,6 +50,7 @@ jobs:
             data/mcx_turnover.csv
             data/published.json
             data/heat
+            data/power
           key: desk-data-${{ github.run_id }}
           restore-keys: desk-data-
       - name: Build latest published market session
@@ -93,6 +94,7 @@ jobs:
             data/mcx_turnover.csv
             data/published.json
             data/heat
+            data/power
           key: desk-data-${{ github.run_id }}
 
   deploy:
