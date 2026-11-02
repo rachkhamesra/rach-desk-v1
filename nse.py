@@ -49,12 +49,20 @@ def _ghosts(root):
     return set(open(f).read().split()) if os.path.exists(f) else set()
 
 
+def recent_without_bse(parsed):
+    """Parsed days with no BSE delivery: either BSE had not published yet, or an older parser dropped it.
+    They are asked for again every run (a missing file is one quick 404) until BSE data is in."""
+    return {d for d in sorted(parsed) if parsed[d].get("bse") is None}
+
+
 def sync(root, start, end, wait_minutes=0, budget_s=None, workers=6, log=print):
     """Download whatever is missing for every weekday in [start, end]. Returns the list of trading days.
     budget_s lets a caller stop early (resumable): the cache keeps whatever was fetched."""
     t0 = time.time(); days = list(pd.bdate_range(start, end)); hol = _ghosts(root)
     pf = os.path.join(root, "parsed.pkl")
-    have = set(pd.read_pickle(pf).keys()) if os.path.exists(pf) else set()      # days already parsed: nothing to download for them
+    cached = pd.read_pickle(pf) if os.path.exists(pf) else {}
+    have = set(cached.keys())                                                    # days already parsed: nothing to download for them
+    late_bse = recent_without_bse(cached)                                        # but BSE publishes later than NSE: keep asking for those
     key = lambda d: d.strftime("%Y-%m-%d")
     deadline = time.time() + wait_minutes * 60
     while True:
@@ -77,7 +85,7 @@ def sync(root, start, end, wait_minutes=0, budget_s=None, workers=6, log=print):
         if time.time() >= deadline: raise SystemExit(f"NSE has not published {days[-1].date()} yet.")
         log("waiting for NSE to publish today's files ..."); time.sleep(300)
     for kind in ("cm", "fo", "idx", "bsedel", "bsecm"):
-        need = [d for d in trading if d not in have and not os.path.exists(path(root, kind, d))]
+        need = [d for d in trading if (d not in have or (kind.startswith("bse") and d in late_bse)) and not os.path.exists(path(root, kind, d))]
         if budget_s: need = need[: max(0, int((budget_s - (time.time() - t0)) * 4))]
         if need:
             log(f"{kind} files to fetch: {len(need)}")
@@ -134,7 +142,8 @@ def read_bse(root, d, nse_cm):
     if not (os.path.exists(pd_) and os.path.exists(pc)) or nse_cm is None: return None
     dl = _read_zip_csv_sep(pd_)
     dl.columns = [c.strip() for c in dl.columns]
-    if str(dl["DATE"].iloc[0]).strip() != f"{d:%d%m%Y}": return None
+    # BSE writes the date as a number (2 Nov 2026 is 2112026), so the leading zero of days 1-9 is lost
+    if str(dl["DATE"].iloc[0]).strip().split(".")[0].zfill(8) != f"{d:%d%m%Y}": return None
     num = lambda c: pd.to_numeric(dl[c], errors="coerce")
     dl = pd.DataFrame({"code": num("SCRIP CODE").astype("Int64"), "dq": num("DELIVERY QTY"), "vol": num("DAY'S VOLUME")})
     cm = pd.read_csv(pc, usecols=["FinInstrmId", "ISIN"]); code_isin = dict(zip(pd.to_numeric(cm["FinInstrmId"], errors="coerce").astype("Int64"), cm["ISIN"]))
@@ -161,7 +170,8 @@ def parse_all(root, trading, log=print):
     """Parse each trading day once; results are cached in data/parsed.pkl."""
     f = os.path.join(root, "parsed.pkl")
     parsed = pd.read_pickle(f) if os.path.exists(f) else {}
-    todo = [d for d in trading if (d not in parsed or "bse" not in parsed[d]) and os.path.exists(path(root, "cm", d)) and os.path.exists(path(root, "fo", d)) and os.path.exists(path(root, "idx", d))]
+    retry = recent_without_bse({d: v for d, v in parsed.items() if d in trading})
+    todo = [d for d in trading if (d not in parsed or "bse" not in parsed[d] or (d in retry and os.path.exists(path(root, "bsedel", d)) and os.path.exists(path(root, "bsecm", d)))) and os.path.exists(path(root, "cm", d)) and os.path.exists(path(root, "fo", d)) and os.path.exists(path(root, "idx", d))]
     if todo: log(f"parsing {len(todo)} days")
     for d in todo:
         if d in parsed: parsed[d]["bse"] = read_bse(root, d, parsed[d]["cm"]); continue

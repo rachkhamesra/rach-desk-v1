@@ -4,10 +4,11 @@ on:
   schedule:
     # 6:00 AM IST, Monday-Friday: read MCX's official rendered OPTFUT Summary Report and redeploy.
     - cron: "30 0 * * 1-5"
-    # 8:00 PM IST, Monday-Friday: Exchange Tracker data should be available by then.
-    - cron: "30 14 * * 1-5"
-    # 9:00 PM IST, Monday-Friday: automatic second check for late publications.
-    - cron: "30 15 * * 1-5"
+    # From 7:00 PM IST every 30 minutes until 1:00 AM IST, Monday-Friday. Each run first checks whether the
+    # newest session (including BSE delivery, which publishes after NSE) is already live and exits if so,
+    # so the retries stop costing anything once the day is complete. GitHub may start these a while late.
+    - cron: "30 13 * * 1-5"
+    - cron: "0,30 14-19 * * 1-5"
   workflow_dispatch: {}
 
 permissions:
@@ -17,19 +18,21 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    outputs:
+      publish: ${{ steps.build.outputs.publish }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
         with:
           path: |
             data/parsed.pkl
@@ -40,28 +43,51 @@ jobs:
             data/call_intelligence.json
             data/bse_premium_turnover.csv
             data/mcx_turnover.csv
+            data/published.json
           key: desk-data-${{ github.run_id }}
           restore-keys: desk-data-
       - name: Build latest published market session
-        # Never hold a runner open for an unpublished date. A later scheduled run
-        # will pick it up while this run still refreshes Exchange Tracker and deploys.
-        run: python run.py --wait-minutes 0
+        # Never hold a runner open for an unpublished date. The evening retries (not the 6 AM refresh, and
+        # never a manual run) exit early when the newest session is already live; a later run picks up the rest.
+        id: build
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" != "30 0 * * 1-5" ]; then SKIP="--skip-if-unchanged"; fi
+          python run.py --wait-minutes 0 $SKIP
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CALLS_MODEL: gpt-6-luna
           CALLS_MAX_NEW: "12"
       - name: Password-lock the page
+        if: steps.build.outputs.publish != 'false'
         # Fails the deploy (the previous site stays up) if the secret is missing or too short,
         # so a build is never published unlocked.
         run: python lock.py site/index.html
         env:
           SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
       - uses: actions/upload-pages-artifact@v3
+        if: steps.build.outputs.publish != 'false'
         with:
           path: site
+      - name: Save the data cache
+        # Only after a real build, so skipped retries do not each store a new ~80 MB cache.
+        if: steps.build.outputs.publish != 'false'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            data/parsed.pkl
+            data/holidays.txt
+            data/results_calendar.csv
+            data/results_actual.csv
+            data/universes.json
+            data/call_intelligence.json
+            data/bse_premium_turnover.csv
+            data/mcx_turnover.csv
+            data/published.json
+          key: desk-data-${{ github.run_id }}
 
   deploy:
     needs: build
+    if: needs.build.outputs.publish != 'false'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
