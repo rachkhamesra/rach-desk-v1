@@ -1,0 +1,180 @@
+{
+ "note": "Edit this file to add or change a city. Region is North, East, West or South (central India sits with West).",
+ "cities": [
+  {
+   "name": "Delhi",
+   "state": "Delhi",
+   "region": "North",
+   "lat": 28.61,
+   "lon": 77.21
+  },
+  {
+   "name": "Jaipur",
+   "state": "Rajasthan",
+   "region": "North",
+   "lat": 26.91,
+   "lon": 75.79
+  },
+  {
+   "name": "Lucknow",
+   "state": "Uttar Pradesh",
+   "region": "North",
+   "lat": 26.85,
+   "lon": 80.95
+  },
+  {
+   "name": "Kanpur",
+   "state": "Uttar Pradesh",
+   "region": "North",
+   "lat": 26.45,
+   "lon": 80.35
+  },
+  {
+   "name": "Ludhiana",
+   "state": "Punjab",
+   "region": "North",
+   "lat": 30.9,
+   "lon": 75.86
+  },
+  {
+   "name": "Chandigarh",
+   "state": "Chandigarh",
+   "region": "North",
+   "lat": 30.73,
+   "lon": 76.78
+  },
+  {
+   "name": "Agra",
+   "state": "Uttar Pradesh",
+   "region": "North",
+   "lat": 27.18,
+   "lon": 78.01
+  },
+  {
+   "name": "Kolkata",
+   "state": "West Bengal",
+   "region": "East",
+   "lat": 22.57,
+   "lon": 88.36
+  },
+  {
+   "name": "Patna",
+   "state": "Bihar",
+   "region": "East",
+   "lat": 25.59,
+   "lon": 85.14
+  },
+  {
+   "name": "Bhubaneswar",
+   "state": "Odisha",
+   "region": "East",
+   "lat": 20.3,
+   "lon": 85.82
+  },
+  {
+   "name": "Ranchi",
+   "state": "Jharkhand",
+   "region": "East",
+   "lat": 23.34,
+   "lon": 85.31
+  },
+  {
+   "name": "Guwahati",
+   "state": "Assam",
+   "region": "East",
+   "lat": 26.14,
+   "lon": 91.74
+  },
+  {
+   "name": "Mumbai",
+   "state": "Maharashtra",
+   "region": "West",
+   "lat": 19.08,
+   "lon": 72.88
+  },
+  {
+   "name": "Pune",
+   "state": "Maharashtra",
+   "region": "West",
+   "lat": 18.52,
+   "lon": 73.86
+  },
+  {
+   "name": "Ahmedabad",
+   "state": "Gujarat",
+   "region": "West",
+   "lat": 23.02,
+   "lon": 72.57
+  },
+  {
+   "name": "Surat",
+   "state": "Gujarat",
+   "region": "West",
+   "lat": 21.17,
+   "lon": 72.83
+  },
+  {
+   "name": "Nagpur",
+   "state": "Maharashtra",
+   "region": "West",
+   "lat": 21.15,
+   "lon": 79.09
+  },
+  {
+   "name": "Indore",
+   "state": "Madhya Pradesh",
+   "region": "West",
+   "lat": 22.72,
+   "lon": 75.86
+  },
+  {
+   "name": "Bhopal",
+   "state": "Madhya Pradesh",
+   "region": "West",
+   "lat": 23.26,
+   "lon": 77.41
+  },
+  {
+   "name": "Chennai",
+   "state": "Tamil Nadu",
+   "region": "South",
+   "lat": 13.08,
+   "lon": 80.27
+  },
+  {
+   "name": "Bengaluru",
+   "state": "Karnataka",
+   "region": "South",
+   "lat": 12.97,
+   "lon": 77.59
+  },
+  {
+   "name": "Hyderabad",
+   "state": "Telangana",
+   "region": "South",
+   "lat": 17.39,
+   "lon": 78.49
+  },
+  {
+   "name": "Kochi",
+   "state": "Kerala",
+   "region": "South",
+   "lat": 9.93,
+   "lon": 76.27
+  },
+  {
+   "name": "Visakhapatnam",
+   "state": "Andhra Pradesh",
+   "region": "South",
+   "lat": 17.69,
+   "lon": 83.22
+  },
+  {
+   "name": "Coimbatore",
+   "state": "Tamil Nadu",
+   "region": "South",
+   "lat": 11.02,
+   "lon": 76.96
+  }
+ ]
+}
