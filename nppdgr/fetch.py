@@ -10,7 +10,7 @@ import urllib.request
 from pathlib import Path
 
 BASE = "https://npp.gov.in/public-reports/cea/daily/dgr"
-UA = "india-heat-watch/0.1 (research; polite fetcher)"
+UA = "rach-desk/1.0 (research; polite fetcher)"
 OLE2_MAGIC = b"\xd0\xcf\x11\xe0"  # real .xls files start with this; an HTML error page does not
 
 
