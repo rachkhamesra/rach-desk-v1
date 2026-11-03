@@ -7,8 +7,7 @@ Main screen: search a ticker, see its adjusted price with moving averages, deliv
 ## Set up (once)
 1. Create a GitHub repo and push this folder.
 2. Settings, Pages, Source: **GitHub Actions**.
-3. Settings, Secrets and variables, Actions, **New repository secret**: name `SITE_PASSWORD`, value a passphrase of 12+ characters (longer is better). Every build is encrypted with it, and the deploy fails if the secret is missing, so the site is never published unlocked.
-4. Actions tab, run **Daily desk** once ("Run workflow"). The first run downloads about 14 months of files (a few minutes). After that it runs by itself.
+3. Actions tab, run **Daily desk** once ("Run workflow"). The first run downloads about 14 months of files (a few minutes). After that it runs by itself.
 
 The bundled F&O conference-call summaries work without an API key. A future automated refresh can be enabled by adding an OpenAI API key at **Settings → Secrets and variables → Actions → New repository secret** with the name `OPENAI_API_KEY`; the current prototype does not require it.
 
@@ -49,8 +48,8 @@ The BSE tracker stores daily Options Premium Turnover in ₹ crore from January 
 
 The Exchange Tracker has BSE and MCX sub-tabs. The MCX tracker starts with the official date-wise OPTFUT Premium Value reports supplied through 28 October 2026 and retains FUTCOM Total Value for later use. It compares the current part of the month with the same bucket in prior months: Week 1 = days 1–8, Week 2 = 9–16, Week 3 = 17–24 and Week 4 = 25–month-end. It attempts an incremental refresh from MCX Historical Data, retains the last verified report if MCX blocks automated retrieval, and labels that state visibly rather than presenting stale data as current. Its Daily Read also retrieves upcoming MCX options expiries from Groww's public commodity calendar.
 
-## Password lock
-`lock.py` runs in the workflow after the build and replaces `site/index.html` with an unlock screen holding the encrypted page (gzip, then AES-256-GCM, key from PBKDF2-HMAC-SHA256 with 600,000 rounds, decrypted in the browser with WebCrypto). Tick "Remember" to skip the prompt on that device for 30 days; the fixed salt in `lock.py` keeps that working across nightly rebuilds. It keeps casual visitors out, but the encrypted file is still public, so pick a long passphrase. Changing the password locks out remembered devices until they enter the new one. The repository is not hidden by this: keep it private if the code and data should not be public. `site/corporate_actions.csv` is dropped from the deployed site. Locally, `python run.py` still produces an unlocked page; lock it with `SITE_PASSWORD=... python lock.py site/index.html`. Needs a current browser over https (or localhost).
+## Password lock (off by default)
+`lock.py` can replace `site/index.html` with an unlock screen holding the encrypted page (gzip, AES-256-GCM, key from PBKDF2-HMAC-SHA256 with 600,000 rounds, decrypted in the browser with WebCrypto). The workflow runs it only when the repository variable `SITE_LOCK` is set to `on` (Settings, Secrets and variables, Actions, Variables), and then it needs the `SITE_PASSWORD` secret (12+ characters) and fails the deploy rather than publishing an unlocked page. With the variable unset or anything else, the site is published as a plain page, including `site/corporate_actions.csv`. It keeps casual visitors out, but the encrypted file is still public and the repository is not hidden by it. Changing the password locks out remembered devices until they enter the new one. Locally, `SITE_PASSWORD=... python lock.py site/index.html` locks a built page. Needs a current browser over https (or localhost).
 
 ## Watchlist
 Press ☆ next to a stock's name to add it, or type a ticker on the Watchlist view (Stocks tab, Watchlist button). The list lives in the browser's local storage on that device only; Export and Import copy it as comma-separated tickers to move it between devices. The ★ button beside the search box narrows the Stocks list to watched stocks.

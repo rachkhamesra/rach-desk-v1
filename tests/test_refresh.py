@@ -71,3 +71,15 @@ def test_parse_all_fills_in_bse_once_published(tmp_path, monkeypatch):
     out = nse.parse_all(root, [d])
     assert out[d]["bse"] is bse or out[d]["bse"].equals(bse)
     assert pd.read_pickle(tmp_path / "parsed.pkl")[d]["bse"] is not None
+
+
+def test_morning_retry_rules():
+    today = pd.Timestamp("2026-11-03"); last = pd.Timestamp("2026-11-02")
+    done = {"asof": "2026-11-02", "complete": True, "built_on": "2026-11-03", "mcx_latest": "2026-11-02"}
+    never = lambda: (_ for _ in ()).throw(AssertionError("MCX must not be asked"))
+    assert not run.can_skip({**done, "asof": "2026-11-01"}, last, True, today, True, never)          # a newer session: build (MCX is not even asked)
+    assert run.can_skip(done, last, True, today, True, lambda: "2026-11-02")                         # built today, MCX unchanged: skip
+    assert not run.can_skip(done, last, True, today, True, lambda: "2026-11-03")                     # MCX posted a newer day: build
+    assert not run.can_skip({**done, "built_on": "2026-11-02"}, last, True, today, True, never)      # the 6 AM run never happened: a daily retry builds
+    assert run.can_skip({**done, "built_on": "2026-11-02"}, last, True, today, False, lambda: "2026-11-02")   # an evening retry does not need a build today
+    assert not run.can_skip({k: v for k, v in done.items() if k != "mcx_latest"}, last, True, today, True, lambda: "2026-11-02")  # older marker: build once to record MCX
