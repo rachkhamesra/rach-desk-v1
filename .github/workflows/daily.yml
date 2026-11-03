@@ -9,6 +9,11 @@ on:
     # so the retries stop costing anything once the day is complete. GitHub may start these a while late.
     - cron: "30 13 * * 1-5"
     - cron: "0,30 14-19 * * 1-5"
+    # Saturday and Sunday at about 7:47 AM and 7:47 PM IST: there is no market session to wait for, so these
+    # always rebuild. They refresh the weekly-moving data (city temperatures, results calendar, call
+    # transcripts, exchange trackers); the second run is a backup in case GitHub drops or delays the first.
+    - cron: "17 2 * * 6,0"
+    - cron: "17 14 * * 6,0"
   workflow_dispatch: {}
 
 permissions:
@@ -45,14 +50,18 @@ jobs:
             data/mcx_turnover.csv
             data/published.json
             data/heat
+            data/power
           key: desk-data-${{ github.run_id }}
           restore-keys: desk-data-
       - name: Build latest published market session
-        # Never hold a runner open for an unpublished date. The evening retries (not the 6 AM refresh, and
-        # never a manual run) exit early when the newest session is already live; a later run picks up the rest.
+        # Never hold a runner open for an unpublished date. The weekday evening retries (not the 6 AM refresh,
+        # the weekend refreshes or a manual run) exit early when the newest session is already live.
         id: build
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" != "30 0 * * 1-5" ]; then SKIP="--skip-if-unchanged"; fi
+          # Only the weekday evening retries may exit early; the morning, weekend and manual runs always build.
+          case "${{ github.event.schedule }}" in
+            "30 13 * * 1-5"|"0,30 14-19 * * 1-5") SKIP="--skip-if-unchanged" ;;
+          esac
           python run.py --wait-minutes 0 $SKIP
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -85,6 +94,7 @@ jobs:
             data/mcx_turnover.csv
             data/published.json
             data/heat
+            data/power
           key: desk-data-${{ github.run_id }}
 
   deploy:

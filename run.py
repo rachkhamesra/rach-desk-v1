@@ -3,7 +3,7 @@
 import argparse, json, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import nse, metrics, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat
+import nse, metrics, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MARKER = "published.json"
@@ -54,6 +54,7 @@ def main():
     calendar, actual = results.load(a.root, end)
     M["results"] = results.build_signals(M, calendar, actual)
     M["calls"] = calls.load(a.root, end, memberships.get("fo", []))
+    M["power"] = power.load_and_build(a.root, end)         # experimental alternative data; each build loads what its time budget allows
     M["heat"] = heat.load_and_build(a.root, end)           # experimental alternative data; a failure here never stops the build
     exchange_history = exchange_tracker.load(a.root, end)
     exchange_prices = M["C"]["BSE"] if "BSE" in M["C"] else pd.Series(dtype=float)

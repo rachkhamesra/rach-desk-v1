@@ -1,0 +1,86 @@
+match,pattern,owner,confidence,note
+exact,DADRI (NCTPP),NTPC,high,
+exact,RIHAND STPS,NTPC,high,
+exact,SINGRAULI STPS,NTPC,high,
+exact,TANDA TPS,NTPC,high,
+exact,UNCHAHAR TPS,NTPC,high,
+exact,KORBA STPS,NTPC,high,
+exact,LARA TPP,NTPC,high,
+exact,SIPAT STPS,NTPC,high,
+exact,GADARWARA TPP,NTPC,high,
+exact,KHARGONE STPP,NTPC,high,
+exact,VINDHYACHAL STPS,NTPC,high,
+exact,MAUDA TPS,NTPC,high,
+exact,SOLAPUR STPS,NTPC,high,
+exact,SIMHADRI,NTPC,high,
+exact,KUDGI STPP,NTPC,high,
+exact,RAMAGUNDEM STPS,NTPC,high,
+exact,TELANGANA STPP PH-1,NTPC,high,
+exact,BARH  STPS,NTPC,high,
+exact,KAHALGAON TPS,NTPC,high,
+exact,NABINAGAR STPP,NTPC,high,
+exact,NORTH KARANPURA TPP,NTPC,high,
+exact,DARLIPALI STPS,NTPC,high,
+exact,TALCHER STPS,NTPC,high,
+exact,FARAKKA STPS,NTPC,high,
+exact,BONGAIGAON TPP,NTPC,high,
+exact,BARAUNI TPS,NTPC,high,
+exact,SEIONI TPP,NTPC,medium,"Believed to be the former Jhabua Power plant, now NTPC; verify"
+exact,INDIRA GANDHI STPP,NTPC JV,high,Aravali Power (NTPC-Haryana)
+exact,MEJA STPP,NTPC JV,high,Meja Urja Nigam (NTPC-UPRVUNL)
+exact,BHILAI TPS,NTPC JV,medium,"NTPC-SAIL (NSPCL) / SAIL plants; Durgapur Steel is DVC-run, verify"
+exact,ROURKELA PP-II EXPANSION,NTPC JV,medium,"NTPC-SAIL (NSPCL) / SAIL plants; Durgapur Steel is DVC-run, verify"
+exact,DURGAPUR STEEL TPS,NTPC JV,medium,"NTPC-SAIL (NSPCL) / SAIL plants; Durgapur Steel is DVC-run, verify"
+exact,VALLUR TPP,NTPC JV,high,NTPC Tamil Nadu Energy Co
+exact,MUZAFFARPUR TPS,NTPC JV,high,Kanti Bijlee Utpadan Nigam
+exact,NABINAGAR TPP,NTPC JV,high,Bhartiya Rail Bijlee Co (NTPC-Railways)
+exact,PATRATU STPP,NTPC JV,high,Patratu Vidyut Utpadan Nigam (NTPC-JUVNL)
+exact,BOKARO TPS `A` EXP,DVC,high,
+exact,CHANDRAPURA(DVC) TPS,DVC,high,
+exact,KODARMA TPP,DVC,high,
+exact,MEJIA TPS,DVC,high,
+exact,RAGHUNATHPUR TPP,DVC,high,
+exact,NEYVELI ( EXT) TPS,NLC,high,
+exact,NEYVELI NEW TPP,NLC,high,
+exact,NEYVELI TPS-II,NLC,high,
+exact,NEYVELI TPS-II EXP,NLC,high,
+exact,BARSINGSAR LIGNITE,NLC,high,
+exact,NTPL TUTICORIN  TPP,NLC JV,high,NLC Tamil Nadu Power (NLC-TANGEDCO)
+exact,GHATAMPUR TPP,NLC JV,high,NLC India New UP Power (NLC-UPRVUNL)
+exact,BUXAR TPP,SJVN,high,SJVN Thermal
+exact,KHURJA TPP,THDC,high,
+exact,DAE (RAJASTHAN),NPCIL,high,
+exact,RAJASTHAN  A.P.S.,NPCIL,high,
+exact,NARORA  A.P.S.,NPCIL,high,
+exact,KAKRAPARA,NPCIL,high,
+exact,TARAPUR,NPCIL,high,
+exact,KAIGA,NPCIL,high,
+exact,MADRAS  A.P.S.,NPCIL,high,
+exact,KUDANKULAM,NPCIL,high,
+exact,BHAVINI PFBR,BHAVINI,high,
+regex,^ADANI POWER LIMITED ,Adani Power,high,Plant name includes the company
+exact,MUNDRA UMTPP,Tata Power,high,
+exact,TROMBAY TPS,Tata Power,high,
+exact,MAITHON RB TPP,Tata Power JV,high,Maithon Power (Tata Power-DVC)
+exact,SASAN UMTPP,Reliance Power,high,
+exact,JSW Mahanadi Power Company Limited,JSW Energy,high,
+exact,JSW RATNAGIRI TPP,JSW Energy,high,
+exact,TORANGALLU TPS(SBU-I),JSW Energy,high,
+exact,TORANGALLU TPS(SBU-II),JSW Energy,high,
+exact,JSW Energy Utkal Limited,JSW Energy,high,
+exact,OP JINDAL TPS,Jindal Power,medium,Jindal Power / JSPL; verify
+exact,TAMNAR TPP,Jindal Power,medium,Jindal Power / JSPL; verify
+exact,SABARMATI (D-F STATIONS),Torrent Power,high,
+exact,BUDGE BUDGE TPS,CESC,high,
+exact,HALDIA TPP,CESC,high,
+exact,SOUTHERN REPL. TPS,CESC,high,
+exact,BALCO TPS,Vedanta,high,
+exact,Vedanta Ltd Chhattisgarh TPP,Vedanta,high,
+exact,VEDANTA TPP,Vedanta,high,
+exact,MAHAN TPP,REVIEW,low,Ownership changed through insolvency/M&A in recent years; confirm before assigning
+exact,BARADARHA TPS,REVIEW,low,Ownership changed through insolvency/M&A in recent years; confirm before assigning
+exact,PATHADI TPP,REVIEW,low,Ownership changed through insolvency/M&A in recent years; confirm before assigning
+exact,PATHADI STAGE II,REVIEW,low,Ownership changed through insolvency/M&A in recent years; confirm before assigning
+exact,ANPARA C TPS,REVIEW,low,Ownership changed through insolvency/M&A in recent years; confirm before assigning
+exact,LALITPUR TPS,REVIEW,low,Ownership changed through insolvency/M&A in recent years; confirm before assigning
+exact,PRAYAGRAJ TPP,REVIEW,low,Ownership changed through insolvency/M&A in recent years; confirm before assigning
