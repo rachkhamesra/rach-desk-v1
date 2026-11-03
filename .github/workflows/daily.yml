@@ -4,6 +4,9 @@ on:
   schedule:
     # 6:00 AM IST, Monday-Friday: read MCX's official rendered OPTFUT Summary Report and redeploy.
     - cron: "30 0 * * 1-5"
+    # 6:30 AM to 9:30 AM IST every 30 minutes: retries for the 6 AM run above, which GitHub has started hours late
+    # or not at all. They exit early unless nothing was published yet today or MCX has posted a newer day.
+    - cron: "0,30 1-3 * * 1-5"
     # From 7:00 PM IST every 30 minutes until 1:00 AM IST, Monday-Friday. Each run first checks whether the
     # newest session (including BSE delivery, which publishes after NSE) is already live and exits if so,
     # so the retries stop costing anything once the day is complete. GitHub may start these a while late.
@@ -58,9 +61,10 @@ jobs:
         # the weekend refreshes or a manual run) exit early when the newest session is already live.
         id: build
         run: |
-          # Only the weekday evening retries may exit early; the morning, weekend and manual runs always build.
+          # Only the weekday retries (morning and evening) may exit early; the 6 AM, weekend and manual runs always build.
           case "${{ github.event.schedule }}" in
             "30 13 * * 1-5"|"0,30 14-19 * * 1-5") SKIP="--skip-if-unchanged" ;;
+            "0,30 1-3 * * 1-5") SKIP="--skip-if-unchanged --daily" ;;
           esac
           python run.py --wait-minutes 0 $SKIP
         env:
@@ -68,9 +72,10 @@ jobs:
           CALLS_MODEL: gpt-6-luna
           CALLS_MAX_NEW: "12"
       - name: Password-lock the page
-        if: steps.build.outputs.publish != 'false'
-        # Fails the deploy (the previous site stays up) if the secret is missing or too short,
-        # so a build is never published unlocked.
+        # Off unless the repository variable SITE_LOCK is set to "on" (Settings > Secrets and variables > Actions >
+        # Variables). When on, it fails the deploy (the previous site stays up) if the SITE_PASSWORD secret is
+        # missing or too short, so a locked build is never published unlocked by accident.
+        if: steps.build.outputs.publish != 'false' && vars.SITE_LOCK == 'on'
         run: python lock.py site/index.html
         env:
           SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
