@@ -1,0 +1,14 @@
+name = "rach-desk-scheduler"
+main = "worker.mjs"
+compatibility_date = "2026-10-01"
+
+[triggers]
+# One trigger every 30 minutes (UTC :00 and :30, which is IST :30 and :00). worker.mjs decides which of these
+# moments should start a build; the rest do nothing.
+crons = ["*/30 * * * *"]
+
+[vars]
+REPO = "rachkhamesra/rach-desk-v1"
+WORKFLOW = "daily.yml"
+REF = "main"
+# The GITHUB_TOKEN secret is set separately and never stored in this file:  npx wrangler secret put GITHUB_TOKEN

@@ -17,6 +17,7 @@ API = "https://archive-api.open-meteo.com/v1/archive"
 ONI_URL = "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
 FIRST_YEAR, BASE_FIRST, BASE_LAST = 1991, 1991, 2020
 LAG_DAYS, REFRESH_DAYS, PAUSE_S = 6, 40, 2.0
+EVERY_DAYS = 7                 # ERA5 trails real time by about five days, so a city is refreshed weekly, not on every build
 BUDGET_S, MAX_FAILS = 300, 2    # network time one build may spend here, and consecutive failed cities before giving up for this build
 REGIONS = ("North", "East", "West", "South")
 SEASONS = {"summer": dict(label="Cooling season (Mar–Jun)", start_month=3, months=(3, 4, 5, 6), length=122),
@@ -57,12 +58,22 @@ def fetch_city(city, start, end, session=None, log=print, sleep=time.sleep):
     return None
 
 
-def refresh(root, asof, cities=None, log=print, fetcher=fetch_city, sleep=time.sleep, budget_s=None, clock=time.time):
+def _recent(fetched, today, days):
+    """True when `fetched` (YYYY-MM-DD) is less than `days` days before `today`."""
+    try:
+        return (pd.Timestamp(today) - pd.Timestamp(fetched)).days < days
+    except (TypeError, ValueError):
+        return False
+
+
+def refresh(root, asof, cities=None, log=print, fetcher=fetch_city, sleep=time.sleep, budget_s=None, clock=time.time, every=None):
     """Update data/heat/<city>.csv and return {city name: DataFrame}. A failure for one city keeps its cache.
+    A city downloaded in the last `every` days (7) is not asked for again, so most builds make no temperature requests at all.
 
     This data is optional, so it can never hold a build up: after `budget_s` seconds of downloading, or MAX_FAILS
     cities in a row failing (Open-Meteo rate-limits shared GitHub addresses), the rest keep their cached data until the next build."""
     budget_s = float(os.environ.get("HEAT_BUDGET_S", BUDGET_S)) if budget_s is None else budget_s
+    every = int(os.environ.get("HEAT_EVERY_DAYS", EVERY_DAYS)) if every is None else every
     t0, fails, stop = clock(), 0, None
     cities = cities or load_cities()
     folder = os.path.join(root, "heat"); os.makedirs(folder, exist_ok=True)
@@ -76,8 +87,8 @@ def refresh(root, asof, cities=None, log=print, fetcher=fetch_city, sleep=time.s
     for i, c in enumerate(cities):
         path = os.path.join(folder, slug(c["name"]) + ".csv")
         old = pd.read_csv(path, index_col=0, parse_dates=True) if os.path.exists(path) else None
-        if old is not None and meta.get(c["name"]) == today:
-            frames[c["name"]] = old; continue                              # already refreshed today
+        if old is not None and _recent(meta.get(c["name"]), today, every):
+            frames[c["name"]] = old; continue                              # refreshed within the last `every` days
         start = pd.Timestamp(f"{FIRST_YEAR}-01-01") if old is None or not len(old) else max(old.index.min(), end - timedelta(days=REFRESH_DAYS))
         if stop is None and clock() - t0 > budget_s: stop = f"time budget of {budget_s:.0f}s used"
         if stop is None and fails >= MAX_FAILS: stop = f"{fails} cities failed in a row"
@@ -99,12 +110,20 @@ def refresh(root, asof, cities=None, log=print, fetcher=fetch_city, sleep=time.s
     return frames
 
 
-def fetch_oni(root, log=print):
-    """{'YYYY-MM': anomaly} from NOAA CPC, centred on the middle month of each 3-month season; cached."""
+def fetch_oni(root, asof=None, log=print, every=None):
+    """{'YYYY-MM': anomaly} from NOAA CPC, centred on the middle month of each 3-month season; cached, asked for weekly."""
     path = os.path.join(root, "heat", "oni.txt"); os.makedirs(os.path.dirname(path), exist_ok=True)
+    meta_path = os.path.join(root, "heat", "_fetched.json"); today = f"{pd.Timestamp(asof if asof is not None else pd.Timestamp.now()):%Y-%m-%d}"
+    every = int(os.environ.get("HEAT_EVERY_DAYS", EVERY_DAYS)) if every is None else every
     try:
-        r = requests.get(ONI_URL, timeout=60); r.raise_for_status()
-        text = r.text; open(path, "w").write(text)
+        with open(meta_path) as f: meta = json.load(f)
+    except (OSError, ValueError):
+        meta = {}
+    if os.path.exists(path) and _recent(meta.get("_oni"), today, every): return parse_oni(open(path).read())
+    try:
+        r = requests.get(ONI_URL, timeout=30); r.raise_for_status()
+        text = r.text; open(path, "w").write(text); meta["_oni"] = today
+        with open(meta_path, "w") as f: json.dump(meta, f)
     except requests.RequestException as e:
         log(f"heat: ONI download failed ({type(e).__name__}); using cached copy" if os.path.exists(path) else f"heat: ONI unavailable ({type(e).__name__})")
         text = open(path).read() if os.path.exists(path) else ""
@@ -263,7 +282,7 @@ def load_and_build(root, asof, log=print):
     """The one call run.py makes. Any failure leaves the rest of the site untouched."""
     try:
         frames = refresh(root, asof, log=log)
-        data = build(frames, fetch_oni(root, log=log), asof)
+        data = build(frames, fetch_oni(root, asof, log=log), asof)
         if data: log(f"heat: {len(data['cities'])} cities, through {data['asof']}")
         else: log("heat: no city data yet; the Alternative Data tab will say so")
         return data
