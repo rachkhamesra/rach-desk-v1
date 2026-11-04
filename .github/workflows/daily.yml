@@ -68,6 +68,7 @@ jobs:
           esac
           python run.py --wait-minutes 0 $SKIP
         env:
+          PYTHONUNBUFFERED: "1"          # so the log shows progress while the build runs
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CALLS_MODEL: gpt-6-luna
           CALLS_MAX_NEW: "12"

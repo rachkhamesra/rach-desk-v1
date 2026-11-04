@@ -107,3 +107,12 @@ def test_history_stored_by_an_older_parser_is_reloaded(tmp_path):
     (folder / "status.json").write_text('{"missing": {}, "problems": {}}')                  # no version: written before the labels were fixed
     f, _ = power.refresh(str(tmp_path), D26, start=D24, log=lambda *a: None, fetch=fixture_fetch(), pause=0)
     assert (f["fuel"] != "").all() and f[f["date"] == "2024-10-30"]["actual_mu"].sum() > 4000
+
+
+def test_a_portal_that_keeps_failing_stops_the_download_for_this_build(tmp_path):
+    calls = []
+    def down(day, n, raw, force=False):
+        calls.append(day); raise RuntimeError("timed out")
+    logs = []
+    power.refresh(str(tmp_path), D26, start=D22, log=logs.append, fetch=down, pause=0)
+    assert len(calls) == power.MAX_DOWNLOAD_FAILS and any("failed in a row" in m for m in logs)

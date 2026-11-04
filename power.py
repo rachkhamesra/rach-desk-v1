@@ -62,7 +62,15 @@ def _read(path, cols):
     return pd.read_csv(path) if os.path.exists(path) else pd.DataFrame(columns=cols)
 
 
-def refresh(root, today, start=FIRST_DAY, budget_s=BUDGET_S, log=print, fetch=fetch_one, pause=PAUSE_S, owners=None):
+MAX_DOWNLOAD_FAILS = 4          # downloads failing in a row: the portal is down or blocking this address, so stop for this build
+
+
+def _fetch(day, n, raw, force=False):
+    """Bounded: two tries of 30 seconds, so a slow portal costs about a minute a day rather than five."""
+    return fetch_one(day, n, raw, retries=2, force=force, timeout=30)
+
+
+def refresh(root, today, start=FIRST_DAY, budget_s=BUDGET_S, log=print, fetch=_fetch, pause=PAUSE_S, owners=None):
     """Bring data/power up to date. Newest days first, so a long backfill is resumable and the page fills from the recent end."""
     folder = os.path.join(root, "power"); os.makedirs(folder, exist_ok=True)
     fleet_p, owner_p, status_p = (os.path.join(folder, n) for n in ("fleet.csv", "owner.csv", "status.json"))
@@ -77,7 +85,7 @@ def refresh(root, today, start=FIRST_DAY, budget_s=BUDGET_S, log=print, fetch=fe
     have = set(fleet["date"].unique()); today = pd.Timestamp(today).date()
     days = [today - dt.timedelta(days=i) for i in range((today - start).days + 1)]       # newest first
     owners = owners or OwnerMap()
-    raw = tempfile.mkdtemp(prefix="dgr-"); t0 = time.time(); done = skipped = 0
+    raw = tempfile.mkdtemp(prefix="dgr-"); t0 = time.time(); done = skipped = streak = 0
     new_fleet, new_owner = [], []
     def flush(last=False):
         nonlocal fleet, owner, new_fleet, new_owner
@@ -96,9 +104,12 @@ def refresh(root, today, start=FIRST_DAY, budget_s=BUDGET_S, log=print, fetch=fe
             if time.time() - t0 > budget_s:
                 log(f"power: time budget reached after {done} days; the rest continues on the next run"); break
             try:
-                path, state = fetch(day, 2, raw, force=recent)
+                path, state = fetch(day, 2, raw, force=recent); streak = 0
             except RuntimeError as e:
-                problems[iso] = f"download: {e}"[:160]; skipped += 1; continue
+                problems[iso] = f"download: {e}"[:160]; skipped += 1; streak += 1
+                if streak >= MAX_DOWNLOAD_FAILS:
+                    log(f"power: {streak} downloads failed in a row; stopping for this build"); break
+                continue
             if state == "missing":
                 missing[iso] = today.isoformat(); skipped += 1; pause and time.sleep(pause); continue
             try:

@@ -22,7 +22,7 @@ def cache_path(raw_dir: Path, day: dt.date, n: int) -> Path:
     return Path(raw_dir) / f"{day:%Y-%m-%d}" / f"dgr{n}.xls"
 
 
-def fetch_one(day: dt.date, n: int, raw_dir, retries: int = 4, force: bool = False):
+def fetch_one(day: dt.date, n: int, raw_dir, retries: int = 4, force: bool = False, timeout: int = 60):
     """Return (path, status) with status in {'cached','ok','missing'}.
 
     'missing' means the portal has no file for that date yet (404, or a 200 that is not a
@@ -35,7 +35,7 @@ def fetch_one(day: dt.date, n: int, raw_dir, retries: int = 4, force: bool = Fal
     req = urllib.request.Request(url_for(day, n), headers={"User-Agent": UA})
     for attempt in range(retries):
         try:
-            with urllib.request.urlopen(req, timeout=60) as r:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
                 body = r.read()
             if not body.startswith(OLE2_MAGIC):
                 return None, "missing"
