@@ -76,10 +76,25 @@ def test_refresh_fetches_everything_once_then_only_recent_days_and_survives_fail
     assert set(f1) == {"Testville"} and calls[0][1] == pd.Timestamp("1991-01-01")      # no cache: full history; failure with no cache: skipped
     n = len(calls)
     heat.refresh(str(tmp_path), "2026-11-02", cities=cities, fetcher=fetcher, sleep=lambda s: None)
-    assert len(calls) == n + 1 and calls[-1][0] == "Bad"                                 # fetched today already: only the failed city retries
-    f3 = heat.refresh(str(tmp_path), "2026-11-03", cities=[CITY], fetcher=fetcher, sleep=lambda s: None)
-    assert (calls[-1][2] - calls[-1][1]).days == heat.REFRESH_DAYS and f3["Testville"].index.min() == pd.Timestamp("1991-01-01")
-    assert f3["Testville"].index.is_monotonic_increasing and not f3["Testville"].index.has_duplicates
+    assert len(calls) == n + 1 and calls[-1][0] == "Bad"                                 # fetched already: only the city that has no data retries
+    n = len(calls)
+    f3 = heat.refresh(str(tmp_path), "2026-11-08", cities=[CITY], fetcher=fetcher, sleep=lambda s: None)
+    assert len(calls) == n and f3["Testville"].index.max() == pd.Timestamp("2026-10-27")  # six days later: a weekly refresh is not due, no request at all
+    f4 = heat.refresh(str(tmp_path), "2026-11-09", cities=[CITY], fetcher=fetcher, sleep=lambda s: None)
+    assert len(calls) == n + 1 and (calls[-1][2] - calls[-1][1]).days == heat.REFRESH_DAYS   # seven days later: only the last 40 days are fetched
+    assert f4["Testville"].index.min() == pd.Timestamp("1991-01-01") and f4["Testville"].index.max() == pd.Timestamp("2026-11-03")
+    assert f4["Testville"].index.is_monotonic_increasing and not f4["Testville"].index.has_duplicates
+
+
+def test_oni_is_downloaded_weekly_not_on_every_build(tmp_path, monkeypatch):
+    hits = []
+    class R:
+        text = " DJF 2026  26.1  -0.20\n"
+        def raise_for_status(self): pass
+    monkeypatch.setattr(heat.requests, "get", lambda *a, **k: hits.append(1) or R())
+    assert heat.fetch_oni(str(tmp_path), "2026-11-02", log=lambda *a: None) == {"2026-01": -0.2} and len(hits) == 1
+    heat.fetch_oni(str(tmp_path), "2026-11-05", log=lambda *a: None); assert len(hits) == 1      # three days later: cached copy
+    heat.fetch_oni(str(tmp_path), "2026-11-09", log=lambda *a: None); assert len(hits) == 2      # a week later: downloaded again
 
 
 def test_regions_average_their_cities_and_missing_data_is_dropped():
