@@ -90,3 +90,19 @@ def test_regions_average_their_cities_and_missing_data_is_dropped():
     assert set(out["regions"]) == {"North", "South"} and abs(out["all"]["ytd"]) < .05
     assert out["regions"]["North"]["p1"] == 1.0 and out["regions"]["South"]["p1"] == -1.0
     assert heat.build({}, None, cities=cities) is None
+
+
+def test_downloads_stop_after_repeated_failures_and_after_the_time_budget(tmp_path):
+    cities = [dict(CITY, name=f"C{i}") for i in range(6)]
+    calls = []
+    def failing(city, start, end, log=print):
+        calls.append(city["name"]); return None
+    logs = []
+    frames = heat.refresh(str(tmp_path / "a"), "2026-11-02", cities=cities, fetcher=failing, sleep=lambda s: None, log=logs.append, budget_s=1e9)
+    assert calls == ["C0", "C1"] and frames == {}                                  # two in a row failed: the other four are not even tried
+    assert any("stopped downloading" in m for m in logs)
+    calls.clear(); now = [0.0]
+    def slow(city, start, end, log=print):
+        calls.append(city["name"]); now[0] += 100; return synthetic(f"{end:%Y-%m-%d}").loc[start:end]
+    heat.refresh(str(tmp_path / "b"), "2026-11-02", cities=cities, fetcher=slow, sleep=lambda s: None, log=lambda *a: None, budget_s=250, clock=lambda: now[0])
+    assert calls == ["C0", "C1", "C2"]                                              # 100s each; the budget is checked before each city, so C3 (at 300s) is not started

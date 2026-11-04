@@ -17,6 +17,7 @@ API = "https://archive-api.open-meteo.com/v1/archive"
 ONI_URL = "https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt"
 FIRST_YEAR, BASE_FIRST, BASE_LAST = 1991, 1991, 2020
 LAG_DAYS, REFRESH_DAYS, PAUSE_S = 6, 40, 2.0
+BUDGET_S, MAX_FAILS = 300, 2    # network time one build may spend here, and consecutive failed cities before giving up for this build
 REGIONS = ("North", "East", "West", "South")
 SEASONS = {"summer": dict(label="Cooling season (Mar–Jun)", start_month=3, months=(3, 4, 5, 6), length=122),
            "winter": dict(label="Heating season (Dec–Feb)", start_month=12, months=(12, 1, 2), length=91)}
@@ -40,10 +41,11 @@ def fetch_city(city, start, end, session=None, log=print, sleep=time.sleep):
     s = session or requests
     params = dict(latitude=city["lat"], longitude=city["lon"], start_date=f"{start:%Y-%m-%d}", end_date=f"{end:%Y-%m-%d}",
                   daily="temperature_2m_mean,temperature_2m_max", timezone="Asia/Kolkata")
-    for wait in (0, 15, 30, 45):
+    timeout = 120 if (end - start).days > 400 else 30        # the first, full-history download is large; later ones are 40 days
+    for wait in (0, 10, 20):
         sleep(wait)
         try:
-            r = s.get(API, params=params, timeout=90)
+            r = s.get(API, params=params, timeout=timeout)
             if r.status_code == 200:
                 d = r.json()["daily"]
                 return pd.DataFrame({"mean": d["temperature_2m_mean"], "max": d["temperature_2m_max"]},
@@ -55,8 +57,13 @@ def fetch_city(city, start, end, session=None, log=print, sleep=time.sleep):
     return None
 
 
-def refresh(root, asof, cities=None, log=print, fetcher=fetch_city, sleep=time.sleep):
-    """Update data/heat/<city>.csv and return {city name: DataFrame}. A failure for one city keeps its cache."""
+def refresh(root, asof, cities=None, log=print, fetcher=fetch_city, sleep=time.sleep, budget_s=None, clock=time.time):
+    """Update data/heat/<city>.csv and return {city name: DataFrame}. A failure for one city keeps its cache.
+
+    This data is optional, so it can never hold a build up: after `budget_s` seconds of downloading, or MAX_FAILS
+    cities in a row failing (Open-Meteo rate-limits shared GitHub addresses), the rest keep their cached data until the next build."""
+    budget_s = float(os.environ.get("HEAT_BUDGET_S", BUDGET_S)) if budget_s is None else budget_s
+    t0, fails, stop = clock(), 0, None
     cities = cities or load_cities()
     folder = os.path.join(root, "heat"); os.makedirs(folder, exist_ok=True)
     meta_path = os.path.join(folder, "_fetched.json")
@@ -72,14 +79,22 @@ def refresh(root, asof, cities=None, log=print, fetcher=fetch_city, sleep=time.s
         if old is not None and meta.get(c["name"]) == today:
             frames[c["name"]] = old; continue                              # already refreshed today
         start = pd.Timestamp(f"{FIRST_YEAR}-01-01") if old is None or not len(old) else max(old.index.min(), end - timedelta(days=REFRESH_DAYS))
+        if stop is None and clock() - t0 > budget_s: stop = f"time budget of {budget_s:.0f}s used"
+        if stop is None and fails >= MAX_FAILS: stop = f"{fails} cities failed in a row"
+        if stop:
+            if old is not None: frames[c["name"]] = old
+            continue
         if i: sleep(PAUSE_S)
         new = fetcher(c, start, end, log=log)
         if new is None:
+            fails += 1
             log(f"heat: {c['name']} not refreshed; keeping its last good data")
             if old is not None: frames[c["name"]] = old
             continue
+        fails = 0
         df = new if old is None else pd.concat([old[old.index < new.index.min()], new]).sort_index()
         df.to_csv(path); meta[c["name"]] = today; frames[c["name"]] = df
+    if stop: log(f"heat: stopped downloading ({stop}); the remaining cities keep their cached data until the next build")
     with open(meta_path, "w") as f: json.dump(meta, f)
     return frames
 
