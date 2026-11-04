@@ -5,12 +5,11 @@ on:
   # GitHub's own schedule below is best-effort (it has started jobs hours late or not at all), so it only acts as a
   # backstop: every one of these runs is skippable and exits within seconds when a build has already covered it.
   schedule:
-    - cron: "30 0 * * 1-5"       # 6:00 AM IST weekdays: MCX, results calendar, call transcripts
-    - cron: "0,30 1-3 * * 1-5"   # 6:30-9:30 AM IST weekdays: retries until a build has run today
-    - cron: "30 13 * * 1-5"      # 7:00 PM IST weekdays, then every 30 minutes until about 1 AM IST: new NSE/BSE session
-    - cron: "0,30 14-19 * * 1-5"
-    - cron: "17 2 * * 6,0"       # weekends about 7:47 AM and 7:47 PM IST: weekly-moving data
-    - cron: "17 14 * * 6,0"
+    - cron: "30 0 * * *"         # 6:00 AM IST every day: MCX, results calendar, call transcripts
+    - cron: "0,30 1 * * *"       # 6:30 and 7:00 AM IST: retries until a build has run today
+    - cron: "30 13 * * 1-5"      # weekdays 7:00 PM IST, then every 30 minutes until 10:00 PM IST: new NSE/BSE session
+    - cron: "0,30 14-16 * * 1-5"
+    - cron: "17 14 * * 6,0"      # weekends about 7:47 PM IST: weekly-moving data
   workflow_dispatch:
     inputs:
       mode:
@@ -64,8 +63,8 @@ jobs:
           # GitHub's own scheduled runs are backstops and may always skip when a build already covered them.
           MODE="${MODE_INPUT:-always}"
           case "$SCHEDULE" in
-            "30 13 * * 1-5"|"0,30 14-19 * * 1-5") MODE=retry ;;
-            "30 0 * * 1-5"|"0,30 1-3 * * 1-5"|"17 2 * * 6,0"|"17 14 * * 6,0") MODE=daily ;;
+            "30 13 * * 1-5"|"0,30 14-16 * * 1-5") MODE=retry ;;
+            "30 0 * * *"|"0,30 1 * * *"|"17 14 * * 6,0") MODE=daily ;;
           esac
           SKIP=""
           case "$MODE" in

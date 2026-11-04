@@ -2,7 +2,8 @@
 // and starts the GitHub workflow at the right moments. GitHub's own `schedule:` is best-effort and has started jobs
 // hours late or not at all, so this is the primary clock; the workflow's own crons stay as a backstop.
 //
-// All times are IST (UTC+5:30). `mode` is a workflow input:
+// All times are IST (UTC+5:30). wrangler.toml lists cron triggers only for the moments below, so the Worker does not wake
+// at any other time. `mode` is a workflow input:
 //   daily - build if nothing has been published yet today, or the newest session or MCX has something new
 //   retry - build only if the newest session (with its BSE delivery) or MCX has something new
 // (the workflow also accepts "always", for starting a build by hand)
@@ -14,18 +15,13 @@ export function plan(ms) {
   const ist = new Date(ms + IST_OFFSET_MIN * 60000);
   const day = ist.getUTCDay();                                   // 0 = Sunday
   const mins = ist.getUTCHours() * 60 + ist.getUTCMinutes();
-  const weekday = (d) => d >= 1 && d <= 5;
-  // Evening: 19:00 to 01:00 IST for a weekday's session (so Friday's runs finish at 01:00 on Saturday).
-  if (mins >= 19 * 60 || mins <= 60) {
-    const session = mins <= 60 ? (day + 6) % 7 : day;
-    if (weekday(session)) return "retry";
-  }
-  if (weekday(day)) {
-    // The morning refresh (MCX, results calendar, transcripts), then retries until a build has run today.
-    if (mins >= 6 * 60 && mins <= 9 * 60 + 30) return "daily";
-  } else {
-    if (mins === 8 * 60 || mins === 20 * 60) return "daily";     // weekend refresh and its backup
-  }
+  const weekday = day >= 1 && day <= 5;
+  // Morning, every day, 06:00 to 07:00 IST: MCX, results calendar and transcripts. Retries until a build has run today.
+  if (mins >= 6 * 60 && mins <= 7 * 60) return "daily";
+  // Weekday evenings, 19:00 to 22:00 IST: the new NSE/BSE session, with its BSE delivery.
+  if (weekday && mins >= 19 * 60 && mins <= 22 * 60) return "retry";
+  // Weekend evening: one backup for the weekly-moving data.
+  if (!weekday && mins === 20 * 60) return "daily";
   return null;
 }
 
