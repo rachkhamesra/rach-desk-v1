@@ -34,11 +34,10 @@ def test_one_day_reduces_without_losing_generation():
     assert ntpc["mw"] > 50000 and 0 < ntpc["coal_mw"] <= ntpc["mw"] and 0 < ntpc["coal_mwdays"] / ntpc["coal_mw"] < 60
 
 
-def test_refresh_stores_days_keeps_detail_for_the_newest_and_does_not_refetch_history(tmp_path):
+def test_refresh_stores_days_and_does_not_refetch_history(tmp_path):
     calls = []
     f, o = power.refresh(str(tmp_path), D26, start=D22, log=lambda *a: None, fetch=fixture_fetch(calls), pause=0)
     assert sorted(f["date"].unique()) == ["2022-10-30", "2024-10-30", "2026-10-30"]
-    assert (tmp_path / "power" / "stations_last.csv").exists() and pd.read_csv(tmp_path / "power" / "stations_last.csv")["date"].iloc[0] == "2026-10-30"
     n = len(calls); calls.clear()
     power.refresh(str(tmp_path), D26, start=D22, log=lambda *a: None, fetch=fixture_fetch(calls), pause=0)
     assert len(calls) == power.RETRY_WINDOW + 1                                          # only the last 12 days: stored history and old gaps are left alone
@@ -63,18 +62,32 @@ def test_time_budget_stops_cleanly_and_keeps_what_it_has(tmp_path):
     assert any("time budget" in x for x in logs)
 
 
-def test_build_aligns_years_and_summarises(tmp_path):
+def test_build_aligns_years_and_keeps_only_totals_and_companies(tmp_path):
     power.refresh(str(tmp_path), D26, start=D22, log=lambda *a: None, fetch=fixture_fetch(), pause=0)
     out = power.build(str(tmp_path))
     assert out["asof"] == "2026-10-30" and out["years"] == [2026, 2025, 2024] and out["n_days"] == 3
+    assert set(out["series"]) == {"ALL", "THERMAL", "HYDRO"}                               # no regions, states, stations or outage tables
+    assert not {"cards", "stations", "units"} & set(out)
     allc = out["series"]["ALL"]
     assert abs(allc["years"]["2026"][-1] - 4249.4) < .1 and len(allc["years"]["2026"]) == 303   # 30 Oct is day 303 of a 365-day year
     assert allc["years"]["2024"][302] is not None and allc["years"]["2025"][302] is None        # only the days we stored are filled
-    card = next(c for c in out["cards"] if c["key"] == "THERMAL")
-    assert card["last"] > 2000 and card["unit"] == "MU/day"
-    plf = out["series"]["PLF"]["years"]["2026"][-1]; assert 40 < plf < 100
-    assert out["stations"] and out["stations"][0]["coal"] <= out["stations"][-1]["coal"]
+    assert out["series"]["THERMAL"]["years"]["2026"][-1] > 2000
+    assert out["owners"] == [] and out["companies"] == []                                        # three stored days are too few to rank a company
+    assert not (tmp_path / "power" / "stations_last.csv").exists()
     assert power.build(str(tmp_path / "nothing")) is None
+
+
+def test_company_series_follow_each_owner_across_years():
+    rows = []
+    for d in pd.date_range("2024-01-01", "2026-10-30"):
+        rows.append(dict(date=f"{d:%Y-%m-%d}", owner="NTPC", fuel="THERMAL", n=1, mw=5000, actual_mu=100.0 + d.year - 2024, outage_mw=0, coal_mw=0, coal_mwdays=0))
+        rows.append(dict(date=f"{d:%Y-%m-%d}", owner="NTPC", fuel="HYDRO", n=1, mw=500, actual_mu=5.0, outage_mw=0, coal_mw=0, coal_mwdays=0))
+        rows.append(dict(date=f"{d:%Y-%m-%d}", owner="Adani Power", fuel="THERMAL", n=1, mw=900, actual_mu=40.0, outage_mw=0, coal_mw=0, coal_mwdays=0))
+    out = power.company_series(pd.DataFrame(rows), ["NTPC", "Adani Power"], pd.Timestamp("2026-10-30"), [2026, 2025, 2024])
+    ntpc, adani = out
+    assert ntpc["symbol"] == "NTPC" and adani["symbol"] == "ADANIPOWER"
+    assert ntpc["years"]["2024"][0] == 105.0 and ntpc["years"]["2025"][0] == 106.0 and ntpc["years"]["2026"][0] == 107.0   # all fuels added together
+    assert len(ntpc["years"]["2026"]) == 303 and len(ntpc["years"]["2025"]) == 365 and adani["years"]["2026"][10] == 40.0
 
 
 def test_owner_table_compares_the_same_weekdays_a_year_earlier():
@@ -84,10 +97,11 @@ def test_owner_table_compares_the_same_weekdays_a_year_earlier():
             d = pd.Timestamp("2026-10-30") - pd.Timedelta(days=i + off)
             rows.append(dict(date=f"{d:%Y-%m-%d}", owner="NTPC", fuel="THERMAL", n=1, mw=5000, actual_mu=mu, outage_mw=100, coal_mw=5000, coal_mwdays=5000 * 10))
             rows.append(dict(date=f"{d:%Y-%m-%d}", owner="Other", fuel="THERMAL", n=1, mw=100, actual_mu=1, outage_mw=0, coal_mw=0, coal_mwdays=0))
+            rows.append(dict(date=f"{d:%Y-%m-%d}", owner="STATE: Gujarat", fuel="THERMAL", n=1, mw=900, actual_mu=20, outage_mw=0, coal_mw=0, coal_mwdays=0))
     out = power.owner_rows(pd.DataFrame(rows), pd.Timestamp("2026-10-30"))
-    assert [r["owner"] for r in out] == ["NTPC"]                # "Other" is never ranked as an owner
+    assert [r["owner"] for r in out] == ["NTPC"]                # neither "Other" nor a state-owned generator is ranked as a company
     r = out[0]
-    assert r["symbol"] == "NTPC" and r["mu"] == 100.0 and r["yoy"] == 25.0 and r["coal"] == 10.0 and r["outage"] == 100
+    assert r["symbol"] == "NTPC" and r["mu"] == 100.0 and r["yoy"] == 25.0 and r["coal"] == 10.0 and "outage" not in r
     assert abs(r["plf"] - 100 * 1000 / (5000 * 24) * 100) < .1
 
 
