@@ -6,16 +6,16 @@ GitHub's own `schedule:` trigger is best-effort: it has started the desk's jobs 
 
 | When | Mode | Meaning |
 |---|---|---|
-| Mon-Fri 06:00 to 09:30, every 30 min | `daily` | Build unless a build already ran today and nothing is new (MCX, results calendar, transcripts) |
-| Mon-Fri 19:00 to 01:00, every 30 min | `retry` | Build only if the newest NSE/BSE session (with BSE delivery) or MCX has something new |
-| Sat and Sun 08:00 and 20:00 | `daily` | Weekly-moving data; the 20:00 run is a backup |
+| Every day 06:00, 06:30 and 07:00 | `daily` | Build unless a build already ran today and nothing is new (MCX, results calendar, transcripts) |
+| Mon-Fri 19:00 to 22:00, every 30 min | `retry` | Build only if the newest NSE/BSE session (with BSE delivery) or MCX has something new |
+| Sat and Sun 20:00 | `daily` | A backup for the weekly-moving data |
 
-The decision is the `plan` function in `worker.mjs` (change the times there; `worker.test.mjs` shows what each moment does). `always` exists only for starting a build by hand.
+wrangler.toml lists cron triggers only for those moments (`30 0 * * *`, `0,30 1 * * *`, `30 13 * * *`, `0,30 14-16 * * *`, all UTC), so the Worker does not wake at any other time. If you set it up in the dashboard instead, add those four crons. The decision is the `plan` function in `worker.mjs`; `worker.test.mjs` checks every half hour of a week and that each moment is covered by a cron. `always` exists only for starting a build by hand.
 
 ## One-time setup (about 10 minutes)
 
 1. **A GitHub token that can start the workflow.** GitHub, Settings, Developer settings, Personal access tokens, Fine-grained tokens, Generate new token. Resource owner: you. Repository access: **only** `rach-desk-v1`. Repository permissions: **Actions: Read and write** (Metadata read is added automatically). Expiry: up to one year; put a reminder in your calendar, because a lapsed token silently stops the Worker (the GitHub backstop keeps running, just late).
-2. **A Cloudflare account** (the free plan is enough: one cron trigger, 48 invocations a day) and `wrangler`. From this folder:
+2. **A Cloudflare account** (the free plan is enough: four cron triggers, at most about 20 invocations a day) and `wrangler`. From this folder:
    ```bash
    cd scheduler
    npx wrangler login
