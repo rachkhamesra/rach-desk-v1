@@ -89,15 +89,33 @@ def test_prices_download_weekly_and_survive_failures(tmp_path):
     assert calls == []                                                          # fetched within the last 7 days: no requests
 
 
-def test_the_page_shows_three_years_of_tables_and_says_how_experimental_it_is():
+def test_thresholds_find_a_planted_level_effect_and_none_in_noise():
+    gen, iexp, prices = make_world(effect=1.0)
+    G = {t: gen for t in ("NTPC", "ADANIPOWER", "NHPC", "JSWENERGY")}; G["ADANIGREEN"] = None
+    thr = bt.thresholds(G, iexp, prices)
+    assert set(thr) <= {k for k, _, _ in bt.SIGNALS} and thr
+    for t in thr.values():
+        assert [b["label"] for b in t["bands"]] == [x[2] for x in bt.BANDS] and all(c["se"] > 0 for c in t["cuts"])
+    noise = bt.thresholds(G, iexp, make_world(effect=0.0)[2])
+    res = bt.run(G, iexp, prices); out = bt.summarise(res, thr)
+    assert set(out["years"]) == {"2024", "2025", "2026"} and "strongest" in out and isinstance(out["strong_enough"], bool)
+    assert bt.summarise(bt.run(G, iexp, make_world(effect=0.0)[2]), noise)["years"]["2025"]["WORKS"] <= 2
+
+
+def test_the_power_tab_panels_show_works_held_doesnt_and_threshold():
     import webpage
     gen, iexp, prices = make_world(effect=1.0)
-    html = webpage.tab_backtest({"backtest": bt.run({"NTPC": gen, "ADANIPOWER": gen, "NHPC": gen, "JSWENERGY": gen, "ADANIGREEN": None}, iexp, prices)})
-    assert "VERY EXPERIMENTAL" in html and "expbadge red" in html
-    for y in ("2024", "2025", "2026"): assert f'data-sub="{y}"' in html
-    assert html.count("<table") >= 3 * 2 + 1 and "Adani Green" in html and "NO DATA" in html and "COULD WORK, NOT TESTED YET" in html
-    assert "no generation series for this company" in html
-    assert "needs share prices" in webpage.tab_backtest({}) or "needs share prices" in webpage.tab_backtest({"backtest": None})
+    G = {t: gen for t in ("NTPC", "ADANIPOWER", "NHPC", "JSWENERGY")}; G["ADANIGREEN"] = None
+    summ = bt.summarise(bt.run(G, iexp, prices), bt.thresholds(G, iexp, prices)); summ["generated"] = "2026-11-06"
+    html = webpage.backtest_panels(summ)
+    for text in ("What works", "Held in more than one year", "What doesn", "Is there a threshold?", "VERY EXPERIMENTAL", "Run on a local machine"): assert text in html
+    assert html.count("<svg") >= 3 and "<table" not in html
+    assert "has not been run" in webpage.backtest_panels(None)
+
+
+def test_saved_results_round_trip(tmp_path):
+    assert bt.load_saved(str(tmp_path / "missing.json")) is None
+    (tmp_path / "r.json").write_text('{"years": {}}'); assert bt.load_saved(str(tmp_path / "r.json")) == {"years": {}}
 
 
 def test_nhpc_is_scored_against_all_india_hydro_and_says_so():

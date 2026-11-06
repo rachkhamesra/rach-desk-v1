@@ -69,7 +69,7 @@ def main():
     M["calls"] = calls.load(a.root, end, memberships.get("fo", []))
     M["power"] = power.load_and_build(a.root, end)         # experimental alternative data; each build loads what its time budget allows
     M["heat"] = heat.load_and_build(a.root, end)
-    M["backtest"] = backtest.load_and_run(a.root, end)      # very experimental; prices are fetched weekly and a failure never stops the build           # experimental alternative data; a failure here never stops the build
+    M["backtest"] = backtest.load_saved()      # results of `python backtest.py`, run locally; the build never fetches prices for it
     exchange_history = exchange_tracker.load(a.root, end)
     exchange_prices = M["C"]["BSE"] if "BSE" in M["C"] else pd.Series(dtype=float)
     M["exchange_tracker"] = exchange_tracker.build(exchange_history, exchange_prices)

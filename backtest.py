@@ -1,4 +1,6 @@
-"""Very experimental: do generation levels and IEX day-ahead prices lead these power stocks?
+"""Run locally (python backtest.py), not in the daily build. Writes config/backtest_results.json, which the Power generation tab shows.
+
+Very experimental: do generation levels and IEX day-ahead prices lead these power stocks?
 
 For each stock and each signal, on every fifth trading day of a calendar year: take what was knowable on that
 day (generation lagged two days, IEX price one day), then look at the stock's return over the next 10 and 20
@@ -206,3 +208,101 @@ def load_and_run(root, today, log=print):
     except Exception as e:
         log(f"backtest: skipped ({type(e).__name__}: {e})")
         return None
+
+
+# ------------------------------------------------------------------ thresholds and the summary shown on the page
+BANDS = [(-99, -1, "below -1"), (-1, 0, "-1 to 0"), (0, 1, "0 to +1"), (1, 99, "above +1")]
+CUTS = (0.0, 0.5, 1.0, 1.5)
+
+
+def _samples(gen_by_stock, iexp, prices, first_year=2024):
+    """Every fifth trading day from first_year: the signal as a z-score against its own past year, and the 20-day return over Nifty."""
+    rows = []
+    for ticker, _, sym in STOCKS:
+        if sym not in prices: continue
+        px = prices[sym].dropna(); nf = prices[NIFTY].dropna().reindex(px.index).ffill()
+        fwd = np.log(px.shift(-20) / px) - np.log(nf.shift(-20) / nf)
+        for key, s in make_signals(gen_by_stock.get(ticker), iexp).items():
+            s_td = s.reindex(px.index.union(s.index)).ffill(limit=5).reindex(px.index)
+            z = s_td if key == "BOTH" else zscore(s_td)
+            d = pd.DataFrame({"z": z, "f": fwd}).dropna(); d = d[d.index.year >= first_year].iloc[::STEP]
+            d["stock"], d["sig"] = ticker, key; rows.append(d)
+    return pd.concat(rows) if rows else pd.DataFrame(columns=["z", "f", "stock", "sig"])
+
+
+def thresholds(gen_by_stock, iexp, prices):
+    """Per signal, pooled over the five stocks and 2024 onward: mean 20-day excess return by signal band, and the best cut-off.
+    se is the standard error of the difference between the groups, counting one independent observation per 20 trading days."""
+    A = _samples(gen_by_stock, iexp, prices)
+    out = {}
+    sd = float(A["f"].std()) if len(A) else 0.0
+    for key, _, _ in SIGNALS:
+        x = A[A["sig"] == key]
+        if len(x) < 40: continue
+        bands = [dict(label=lab, n=int(((x.z > lo) & (x.z <= hi)).sum()), mean=float(x[(x.z > lo) & (x.z <= hi)]["f"].mean() * 100) if ((x.z > lo) & (x.z <= hi)).any() else None)
+                 for lo, hi, lab in BANDS]
+        cuts = []
+        for c in CUTS:
+            hi, lo = x[x.z > c]["f"], x[x.z <= c]["f"]
+            if len(hi) < 10 or len(lo) < 10: continue
+            se = sd * np.sqrt(1 / max(1, len(hi) * STEP / 20) + 1 / max(1, len(lo) * STEP / 20))
+            cuts.append(dict(cut=c, n=int(len(hi)), above=float(hi.mean() * 100), below=float(lo.mean() * 100), diff=float((hi.mean() - lo.mean()) * 100), se=float(se * 100)))
+        out[key] = dict(bands=bands, cuts=cuts, n=int(len(x)))
+    return out
+
+
+def summarise(res, thr):
+    """The small panels: verdict counts by year, what held in more than one year, how each signal fared overall, and the threshold read."""
+    years = list(res["years"])
+    keep = ("WORKS", "SOMETIMES WORKS", "COULD WORK")
+    held, by_sig = [], {}
+    for i, r0 in enumerate(res["years"][years[0]]["rows"]):
+        vs = [res["years"][y]["rows"][i] for y in years]
+        pos = [r for r in vs if r["verdict"] in keep]
+        neg = [r for r in vs if r["verdict"] == "INVERSE"]
+        if len(pos) >= 2: held.append(dict(stock=r0["stock"], signal=r0["signal"], years=[y for y, r in zip(years, vs) if r["verdict"] in keep], against=[y for y, r in zip(years, vs) if r["verdict"] == "INVERSE"]))
+        b = by_sig.setdefault(r0["signal"], dict(positive=0, flat=0, inverse=0, nodata=0))
+        for r in vs:
+            b["positive" if r["verdict"] in ("WORKS", "SOMETIMES WORKS") else "inverse" if r["verdict"] == "INVERSE" else "nodata" if r["verdict"] == "NO DATA" else "flat"] += 1
+    best = []
+    for key, t in thr.items():
+        for c in t["cuts"]:
+            best.append(dict(signal=key, **c, z=c["diff"] / c["se"] if c["se"] else 0.0))
+    best.sort(key=lambda r: -abs(r["z"]))
+    return dict(years={y: res["years"][y]["counts"] | {"tests": res["years"][y]["tests"], "chance": res["years"][y]["chance"]} for y in years},
+                held=held, by_signal=by_sig, thresholds=thr, strongest=best[:3], signals=res["signals"], asof=res["asof"], prices_from=res["prices_from"],
+                partial=res["years"][years[-1]]["partial"], strong_enough=bool(best and abs(best[0]["z"]) >= 2))
+
+
+SAVED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config", "backtest_results.json")
+
+
+def load_saved(path=SAVED):
+    try:
+        with open(path) as f: return json.load(f)
+    except (OSError, ValueError):
+        return None
+
+
+def main(root="data", today=None):
+    import datetime as dt
+    today = today or dt.date.today()
+    import power
+    prices = refresh_prices(root, today)
+    res = load_and_run(root, today)
+    if not res: raise SystemExit("no results: needs prices and the power dataset in " + root)
+    iex = pd.read_csv(os.path.join(root, "power", "iex_dam.csv"), parse_dates=["date"]).dropna(subset=["wmcp"]).set_index("date")["wmcp"]
+    owner = power._read(os.path.join(root, "power", "owner.csv"), power.OWNER_COLS); series = power.daily_series(power._read(os.path.join(root, "power", "fleet.csv"), power.FLEET_COLS))
+    gen = {}
+    for t, name, _ in STOCKS:
+        g = series.get(PROXIES[t]) if t in PROXIES else (owner[owner["owner"] == name].groupby("date")["actual_mu"].sum() if name else None)
+        if g is not None and len(g): g = g.copy(); g.index = pd.to_datetime(g.index)
+        gen[t] = g if g is not None and len(g) else None
+    out = summarise(res, thresholds(gen, iex, prices)); out["generated"] = f"{today:%Y-%m-%d}"
+    os.makedirs(os.path.dirname(SAVED), exist_ok=True)
+    with open(SAVED, "w") as f: json.dump(out, f, indent=1, default=float)
+    print("wrote", SAVED)
+
+
+if __name__ == "__main__":
+    main()

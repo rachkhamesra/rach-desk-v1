@@ -53,7 +53,6 @@ jobs:
             data/published.json
             data/heat
             data/power
-            data/backtest
           key: desk-data-${{ github.run_id }}
           restore-keys: desk-data-
       - name: Build latest published market session
@@ -110,7 +109,6 @@ jobs:
             data/published.json
             data/heat
             data/power
-            data/backtest
           key: desk-data-${{ github.run_id }}
 
   deploy:

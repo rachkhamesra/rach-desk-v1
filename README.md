@@ -87,11 +87,19 @@ For each result the scan examines the three completed trading sessions before th
 - Persistent delivery: at least 3 of the last 5 sessions at 1.25x or more. At a moving average: within 0.5 sigma of the average (sigma = 60-session daily standard deviation).
 - Moving averages 32, 50, 100, 200, 233, 377, 610; each switches on when there are enough sessions. Percentile columns read 1Y until about three years of history exist.
 
-## Backtest tab (very experimental)
-A red tab that asks whether generation or IEX day-ahead price moves have ever predicted the share price of NTPC, Adani Power, Adani Green, NHPC and JSW Energy. Scored separately for 2024, 2025 and 2026.
+## Backtest panels (very experimental)
+Four small panels at the bottom of Alternative Data, Power generation: what works, what held in more than one year, what doesn't, and whether there is a threshold. The question is whether generation or IEX day-ahead price moves have ever predicted the share price of NTPC, Adani Power, Adani Green, NHPC and JSW Energy.
 
-- **Signals:** generation 30-day average vs a year earlier; generation 14-day vs 60-day; the same two for IEX weighted MCP; and "both rising" (average of the two year-on-year z-scores). Generation is lagged 2 days and price 1 day, as they would be published.
-- **Scoring:** every 5th trading day, forward 10- and 20-day return minus Nifty. Reports rank correlation (IC), a t-stat (adjusted for overlapping windows), the return gap between high and low signal, and how often the direction was right. Verdict rules are listed on the tab. About 2% of tests would look like "works" by pure chance, and the tab says how many to expect.
-- **NHPC** uses all-India hydro generation as a stand-in. **Adani Green** has no generation data (the CEA conventional report excludes solar and wind), so only its price tests run.
-- **Prices** come from Yahoo Finance's unofficial chart API, refreshed weekly into `data/backtest/`. If it is blocked from the GitHub runner the tab keeps the cached file, or shows "needs share prices".
-- This is a screen for ideas, not a trading system: few independent observations per year, no costs, and one regime (rising prices and falling stocks in 2026).
+**It is run on a local machine, not in the daily build.** From the repo root, with the power data in `data/power`:
+
+```bash
+python backtest.py
+```
+
+That downloads share prices (Yahoo Finance's unofficial API, cached in `data/backtest/`), scores everything, and writes `config/backtest_results.json`, which you commit. The build only reads that file, so a blocked or changed price source can never break the site. Re-run it when you want fresher results.
+
+- **Signals:** generation 30-day average vs a year earlier; generation 14-day vs 60-day; the same two for IEX weighted price; and "both rising". Generation is lagged 2 days and price 1 day, as they would be published.
+- **Scoring:** every 5th trading day, the forward 10- and 20-day return minus Nifty, scored per calendar year (2024, 2025, 2026). Verdicts: works, sometimes works, could work, doesn't work, inverse.
+- **Threshold panel:** each signal is turned into standard deviations from its own past year and pooled over the five stocks. The bars show the average 20-day excess return by band; a cut-off only counts if the gap is more than about two standard errors.
+- **NHPC** uses all-India hydro generation as a stand-in. **Adani Green** has no generation data (wind and solar are not in the CEA report), so only its price tests run.
+- A screen for ideas: about a dozen independent observations per test per year, no costs, hand-matched ownership.
