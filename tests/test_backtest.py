@@ -98,3 +98,13 @@ def test_the_page_shows_three_years_of_tables_and_says_how_experimental_it_is():
     assert html.count("<table") >= 3 * 2 + 1 and "Adani Green" in html and "NO DATA" in html and "COULD WORK, NOT TESTED YET" in html
     assert "no generation series for this company" in html
     assert "needs share prices" in webpage.tab_backtest({}) or "needs share prices" in webpage.tab_backtest({"backtest": None})
+
+
+def test_nhpc_is_scored_against_all_india_hydro_and_says_so():
+    gen, iexp, prices = make_world(effect=0.0)
+    res = bt.run({"NTPC": gen, "NHPC": gen}, iexp, prices)
+    rows = [r for r in res["years"]["2025"]["rows"] if r["stock"] == "NHPC"]
+    gen_rows = [r for r in rows if r["signal"] in ("GEN_YOY", "GEN_MOM")]
+    assert gen_rows and all("hydro" in r["note"] and r["verdict"] != "NO DATA" for r in gen_rows)
+    assert not any("hydro" in r["note"] for r in rows if r["signal"] in ("PX_YOY", "PX_MOM"))      # the price signals are not a proxy
+    assert not any("reservoir" in i[0].lower() for i in bt.IDEAS)

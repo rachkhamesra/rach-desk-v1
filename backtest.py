@@ -20,6 +20,8 @@ YEARS = (2024, 2025, 2026)
 HORIZONS = (10, 20)
 STEP = 5                      # a signal is sampled every fifth trading day
 GEN_LAG, IEX_LAG = 2, 1       # calendar days between a day and the moment its figure is public
+PROXIES = {"NHPC": "HYDRO"}   # no per-company series: NHPC is tested against all-India hydro generation (CEA, domestic hydro stations)
+PROXY_NOTES = {"NHPC": "all-India hydro generation used as a stand-in for NHPC's own"}
 SIGNALS = [("GEN_YOY", "Generation: 30-day average against the same dates a year earlier", "gen"),
            ("GEN_MOM", "Generation: 14-day average against its 60-day average", "gen"),
            ("PX_YOY", "IEX price: 30-day average against the same dates a year earlier", "iex"),
@@ -33,7 +35,6 @@ RULES = {"WORKS": "t of 2 or more over 20 days, the same sign over 10 days, and 
          "INVERSE": "t of -1.5 or less over 20 days (or -2 over 10 days): it worked backwards that year",
          "NO DATA": "no series to test, or fewer than 8 sampled dates"}
 IDEAS = [("Adani Green against its own generation", "Wind and solar are not in the CEA conventional report. Needs Grid-India's daily renewable generation, or the company's monthly disclosures."),
-         ("NHPC against reservoir levels and monsoon", "Hydro output follows rainfall: CEA's weekly reservoir storage would lead the generation data by weeks."),
          ("Merchant exposure", "Adani Power and JSW Energy sell part of their output on the exchange; a price signal weighted by each company's merchant share should beat the plain price."),
          ("Coal stock days", "Already in the power dataset per company: low stock can cap generation. Not tested here."),
          ("Peak demand and shortage", "Grid-India's daily peak demand and shortage figures would separate demand-led from supply-led generation.")]
@@ -155,12 +156,13 @@ def evaluate(sig, px, nifty, year):
     return dict(verdict=v, n=r20["n"], ic10=r10["ic"], ic20=r20["ic"], t10=r10["t"], t20=r20["t"], spread20=r20["spread"], hit20=r20["hit"])
 
 
-def run(gen_by_stock, iexp, prices, years=YEARS):
+def run(gen_by_stock, iexp, prices, years=YEARS, proxy_notes=None):
     """The whole backtest. gen_by_stock: {ticker: daily Series or None}; iexp: daily Series (Rs/MWh) or None; prices: DataFrame by Yahoo symbol."""
     if prices is None or NIFTY not in prices: return None
     out = {"years": {}, "rules": RULES, "ideas": IDEAS, "signals": {k: d for k, d, _ in SIGNALS}, "asof": f"{prices.index.max():%Y-%m-%d}",
            "prices_from": f"{prices.index.min():%Y-%m-%d}"}
     sigs = {t: make_signals(gen_by_stock.get(t), iexp) for t, _, _ in STOCKS}
+    proxy_notes = PROXY_NOTES if proxy_notes is None else proxy_notes
     for y in years:
         rows = []
         for ticker, owner, sym in STOCKS:
@@ -171,6 +173,7 @@ def run(gen_by_stock, iexp, prices, years=YEARS):
                     rows.append(dict(stock=ticker, signal=key, label=label, verdict="NO DATA", note=why)); continue
                 r = evaluate(sig, px, prices[NIFTY].dropna(), y); r.update(stock=ticker, signal=key, label=label, note="")
                 if r["verdict"] == "NO DATA": r["note"] = "fewer than 8 usable dates this year (year-on-year signals need a year of history first)"
+                elif need in ("gen", "both") and ticker in proxy_notes: r["note"] = proxy_notes[ticker]
                 rows.append(r)
         scored = [r for r in rows if r["verdict"] != "NO DATA"]
         counts = {v: sum(1 for r in rows if r["verdict"] == v) for v in VERDICTS}
@@ -189,10 +192,12 @@ def load_and_run(root, today, log=print):
         iexp = None
         if os.path.exists(iex_path):
             d = pd.read_csv(iex_path, parse_dates=["date"]).dropna(subset=["wmcp"]); iexp = d.set_index("date")["wmcp"]
-        owner = power.owner_table(root)
+        owner = power._read(os.path.join(root, "power", "owner.csv"), power.OWNER_COLS)
+        fleet = power._read(os.path.join(root, "power", "fleet.csv"), power.FLEET_COLS)
+        series = power.daily_series(fleet) if len(fleet) else {}
         gen = {}
         for ticker, name, _ in STOCKS:
-            g = owner[owner["owner"] == name].groupby("date")["actual_mu"].sum() if name else None
+            g = owner[owner["owner"] == name].groupby("date")["actual_mu"].sum() if name else series.get(PROXIES.get(ticker))
             if g is not None and len(g): g.index = pd.to_datetime(g.index)
             gen[ticker] = g if g is not None and len(g) else None
         res = run(gen, iexp, prices)
