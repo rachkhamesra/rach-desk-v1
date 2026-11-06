@@ -197,7 +197,7 @@ def load_and_run(root, today, log=print):
         series = power.daily_series(fleet) if len(fleet) else {}
         gen = {}
         for ticker, name, _ in STOCKS:
-            g = owner[owner["owner"] == name].groupby("date")["actual_mu"].sum() if name else series.get(PROXIES.get(ticker))
+            g = series.get(PROXIES[ticker]) if ticker in PROXIES else (owner[owner["owner"] == name].groupby("date")["actual_mu"].sum() if name else None)
             if g is not None and len(g): g.index = pd.to_datetime(g.index)
             gen[ticker] = g if g is not None and len(g) else None
         res = run(gen, iexp, prices)
