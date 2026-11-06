@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 import heat
+import iex
 from nppdgr.fetch import fetch_one
 from nppdgr.owners import OwnerMap
 from nppdgr.parse_dgr2 import parse_dgr2, reconcile
@@ -159,6 +160,20 @@ def owner_rows(owner, last, window=30):
     return sorted(rows, key=lambda r: -r["mu"])
 
 
+def iex_block(root):
+    """IEX day-ahead prices (weighted MCP, Rs per kWh) and cleared volume (MU a day) as year-versus-year arrays, or None."""
+    path = os.path.join(root, "power", "iex_dam.csv")
+    if not os.path.exists(path): return None
+    d = pd.read_csv(path, parse_dates=["date"]).dropna(subset=["wmcp"]).sort_values("date")
+    if len(d) < 30: return None
+    last = d["date"].max(); years = [last.year, last.year - 1, last.year - 2]; d = d.set_index("date")
+    price, volume, simple = d["wmcp"] / 1000.0, d["mcv_mwh"] / 1000.0, d["mcp"] / 1000.0
+    arr = lambda s: {str(y): [None if v is None else round(v, 2) for v in heat.year_arrays(pd.DataFrame({"mean": s, "max": s}), y, last)["mean"]] for y in years}
+    row = d.iloc[-1]
+    return dict(asof=f"{last:%Y-%m-%d}", years=years, price=arr(price), volume=arr(volume),
+                latest=dict(date=f"{last:%Y-%m-%d}", wmcp=round(float(row["wmcp"]) / 1000, 2), mcp=round(float(row["mcp"]) / 1000, 2), mcv=round(float(row["mcv_mwh"]) / 1000, 1)))
+
+
 def company_series(owner, names, last, years):
     """Daily generation (all fuels, MU/day) for each named owner, on the 365-day calendar, as [{name, symbol, years}]."""
     o = owner.copy(); o["date"] = pd.to_datetime(o["date"]); out = []
@@ -185,13 +200,17 @@ def build(root, asof=None):
     dates = sorted(fleet["date"].unique())
     return dict(asof=f"{last:%Y-%m-%d}", first=dates[0], n_days=len(dates), years=years, series=out_series,
                 companies=company_series(owner, [o["owner"] for o in owners], last, years), owners=owners,
-                coverage=dict(other=share(["Other"]), review=share(["REVIEW"]), state=state))
+                coverage=dict(other=share(["Other"]), review=share(["REVIEW"]), state=state), iex=iex_block(root))
 
 
 def load_and_build(root, asof, log=print, budget_s=None):
     """The one call run.py makes. A failure here never stops the desk publishing."""
     try:
         refresh(root, asof, budget_s=budget_s if budget_s is not None else float(os.environ.get("POWER_BUDGET_S", BUDGET_S)), log=log)
+        try:
+            iex.refresh(root, asof, log=log)                          # the exchange price; its failure never affects the generation data
+        except Exception as e:
+            log(f"iex: skipped ({type(e).__name__}: {e})")
         data = build(root, asof)
         log(f"power: {data['n_days']} days, {data['first']} to {data['asof']}" if data else "power: no data yet; the Power view will say so")
         return data
