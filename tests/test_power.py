@@ -129,4 +129,18 @@ def test_a_portal_that_keeps_failing_stops_the_download_for_this_build(tmp_path)
         calls.append(day); raise RuntimeError("timed out")
     logs = []
     power.refresh(str(tmp_path), D26, start=D22, log=logs.append, fetch=down, pause=0)
-    assert len(calls) == power.MAX_DOWNLOAD_FAILS and any("failed in a row" in m for m in logs)
+    assert power.MAX_DOWNLOAD_FAILS <= len(calls) <= power.MAX_DOWNLOAD_FAILS + power.AHEAD and any("failed in a row" in m for m in logs)   # a few more were already downloading
+
+
+def test_plants_are_stored_and_owners_are_applied_at_build_time(tmp_path):
+    power.refresh(str(tmp_path), D26, start=D24, log=lambda *a: None, fetch=fixture_fetch(), pause=0)
+    plant = pd.read_csv(tmp_path / "power" / "plant.csv")
+    assert set(plant["date"]) == {"2024-10-30", "2026-10-30"} and not (tmp_path / "power" / "owner.csv").exists()
+    assert plant[plant["date"] == "2026-10-30"]["actual_mu"].sum() > 4000
+    table = power.owner_table(str(tmp_path))
+    nhpc = table[(table["owner"] == "NHPC") & (table["date"] == "2026-10-30")]
+    assert nhpc["mw"].sum() > 5000 and nhpc["actual_mu"].sum() > 20                     # NHPC's stations are found by name
+    assert abs(table[table["date"] == "2026-10-30"]["actual_mu"].sum() - plant[plant["date"] == "2026-10-30"]["actual_mu"].sum()) < 1e-6
+    class Nobody:                                                                       # changing the mapping needs no reload
+        def lookup(self, *a): return "Everyone", "high", ""
+    assert set(power.owner_table(str(tmp_path), Nobody())["owner"]) == {"Everyone"}

@@ -3,7 +3,7 @@
 import argparse, json, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import nse, metrics, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power
+import nse, metrics, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MARKER = "published.json"
@@ -68,7 +68,8 @@ def main():
     M["results"] = results.build_signals(M, calendar, actual)
     M["calls"] = calls.load(a.root, end, memberships.get("fo", []))
     M["power"] = power.load_and_build(a.root, end)         # experimental alternative data; each build loads what its time budget allows
-    M["heat"] = heat.load_and_build(a.root, end)           # experimental alternative data; a failure here never stops the build
+    M["heat"] = heat.load_and_build(a.root, end)
+    M["backtest"] = backtest.load_and_run(a.root, end)      # very experimental; prices are fetched weekly and a failure never stops the build           # experimental alternative data; a failure here never stops the build
     exchange_history = exchange_tracker.load(a.root, end)
     exchange_prices = M["C"]["BSE"] if "BSE" in M["C"] else pd.Series(dtype=float)
     M["exchange_tracker"] = exchange_tracker.build(exchange_history, exchange_prices)

@@ -9,6 +9,7 @@ Each day is parsed, checked against the file's own region totals, and reduced to
 """
 import datetime as dt
 import json, os, shutil, tempfile, time
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 import pandas as pd
@@ -22,14 +23,16 @@ from nppdgr.parse_dgr2 import parse_dgr2, reconcile
 FIRST_DAY = dt.date(2023, 1, 1)
 RECENT_DAYS = 6                 # files this recent are fetched again every run: the portal revises them
 RETRY_WINDOW = 12               # a missing or failed file older than this is not retried
-PARSER_VERSION = 2              # bump when parsing changes in a way that makes stored days wrong: stored history is then reloaded
+PARSER_VERSION = 3              # bump when parsing changes in a way that makes stored days wrong: stored history is then reloaded
 BUDGET_S = 900                  # per build; a long backfill simply continues on the next build
 PAUSE_S = 0.5
+WORKERS, AHEAD = 4, 8           # files downloaded at once, and how many days ahead of the parser the downloads run
 KEYS = ["region", "sector", "fuel"]
 FLEET_COLS = ["date", "region", "sector", "fuel", "n", "mw", "actual_mu", "prog_mu", "outage_mw", "coal_mw", "coal_mwdays"]
 OWNER_COLS = ["date", "owner", "fuel", "n", "mw", "actual_mu", "outage_mw", "coal_mw", "coal_mwdays"]
+PLANT_COLS = ["date", "plant", "state", "sector", "fuel", "mw", "actual_mu", "coal_mw", "coal_mwdays"]   # one row per station per day; owners are applied at build time, so editing plant_owner.csv needs no reload
 SERIES = [("ALL", "All conventional", "MU/day"), ("THERMAL", "Coal and lignite", "MU/day"), ("HYDRO", "Hydro", "MU/day")]
-LISTED = {"NTPC": "NTPC", "Adani Power": "ADANIPOWER", "JSW Energy": "JSWENERGY", "Tata Power": "TATAPOWER", "Torrent Power": "TORNTPOWER",
+LISTED = {"NHPC": "NHPC", "NTPC": "NTPC", "Adani Power": "ADANIPOWER", "JSW Energy": "JSWENERGY", "Tata Power": "TATAPOWER", "Torrent Power": "TORNTPOWER",
           "CESC": "CESC", "NLC": "NLCINDIA", "Reliance Power": "RPOWER", "SJVN": "SJVN", "Jindal Power": "JINDALSTEL", "Vedanta": "VEDL"}
 
 
@@ -68,63 +71,93 @@ def _fetch(day, n, raw, force=False):
 def refresh(root, today, start=FIRST_DAY, budget_s=BUDGET_S, log=print, fetch=_fetch, pause=PAUSE_S, owners=None):
     """Bring data/power up to date. Newest days first, so a long backfill is resumable and the page fills from the recent end."""
     folder = os.path.join(root, "power"); os.makedirs(folder, exist_ok=True)
-    fleet_p, owner_p, status_p = (os.path.join(folder, n) for n in ("fleet.csv", "owner.csv", "status.json"))
-    fleet, owner = _read(fleet_p, FLEET_COLS), _read(owner_p, OWNER_COLS)
+    fleet_p, plant_p, status_p = (os.path.join(folder, n) for n in ("fleet.csv", "plant.csv", "status.json"))
+    fleet, plant = _read(fleet_p, FLEET_COLS), _read(plant_p, PLANT_COLS)
     try:
         with open(status_p) as f: status = json.load(f)
     except (OSError, ValueError):
         status = {}
     if status.get("version") != PARSER_VERSION:                                  # stored under an older parser: start the history again
-        fleet, owner, status = fleet.iloc[0:0], owner.iloc[0:0], {"version": PARSER_VERSION}
+        fleet, plant, status = fleet.iloc[0:0], plant.iloc[0:0], {"version": PARSER_VERSION}
     missing, problems = status.setdefault("missing", {}), status.setdefault("problems", {})
     have = set(fleet["date"].unique()); today = pd.Timestamp(today).date()
     days = [today - dt.timedelta(days=i) for i in range((today - start).days + 1)]       # newest first
     owners = owners or OwnerMap()
     raw = tempfile.mkdtemp(prefix="dgr-"); t0 = time.time(); done = skipped = streak = 0
-    new_fleet, new_owner = [], []
+    new_fleet, new_plant = [], []
     def flush(last=False):
-        nonlocal fleet, owner, new_fleet, new_owner
+        nonlocal fleet, plant, new_fleet, new_plant
         if new_fleet:
             dates = {f["date"].iloc[0] for f in new_fleet}
             fleet = pd.concat([fleet[~fleet["date"].isin(dates)]] + new_fleet, ignore_index=True).sort_values(["date"] + KEYS)
-            owner = pd.concat([owner[~owner["date"].isin(dates)]] + new_owner, ignore_index=True).sort_values(["date", "owner", "fuel"])
-            new_fleet, new_owner = [], []
-        fleet.to_csv(fleet_p, index=False); owner.to_csv(owner_p, index=False)
+            plant = pd.concat([plant[~plant["date"].isin(dates)]] + new_plant, ignore_index=True).sort_values(["date", "plant"])
+            new_fleet, new_plant = [], []
+        fleet.to_csv(fleet_p, index=False); plant.to_csv(plant_p, index=False, float_format="%.6g")
         with open(status_p, "w") as f: json.dump(status, f)
+    todo = []
+    for day in days:
+        iso, age = day.isoformat(), (today - day).days
+        recent = age <= RECENT_DAYS
+        if not recent and (iso in have or (age > RETRY_WINDOW and (iso in missing or iso in problems))): continue
+        todo.append((day, iso, recent))
+    ex = ThreadPoolExecutor(WORKERS)
+    def job(day, recent):
+        """Download one report. A download error comes back as a value, so the parser sees failures in date order."""
+        try: return fetch(day, 2, raw, force=recent)
+        except RuntimeError as e: return e
+        finally: pause and time.sleep(pause)
+    futures = {}
+    def submit(i):
+        if i < len(todo) and i not in futures: futures[i] = ex.submit(job, todo[i][0], todo[i][2])
     try:
-        for day in days:
-            iso, age = day.isoformat(), (today - day).days
-            recent = age <= RECENT_DAYS
-            if not recent and (iso in have or (age > RETRY_WINDOW and (iso in missing or iso in problems))): continue
+        for i in range(min(AHEAD, len(todo))): submit(i)
+        for i, (day, iso, recent) in enumerate(todo):                  # parsed in date order, newest first, while the next few download
             if time.time() - t0 > budget_s:
                 log(f"power: time budget reached after {done} days; the rest continues on the next run"); break
-            try:
-                path, state = fetch(day, 2, raw, force=recent); streak = 0
-            except RuntimeError as e:
-                problems[iso] = f"download: {e}"[:160]; skipped += 1; streak += 1
+            submit(i + AHEAD)
+            res = futures.pop(i).result()
+            if isinstance(res, RuntimeError):
+                problems[iso] = f"download: {res}"[:160]; skipped += 1; streak += 1
                 if streak >= MAX_DOWNLOAD_FAILS:
                     log(f"power: {streak} downloads failed in a row; stopping for this build"); break
                 continue
+            path, state = res; streak = 0
             if state == "missing":
-                missing[iso] = today.isoformat(); skipped += 1; pause and time.sleep(pause); continue
+                missing[iso] = today.isoformat(); skipped += 1; continue
             try:
                 parsed = parse_dgr2(path)
                 if parsed.date != day: raise ValueError(f"file is dated {parsed.date}")
                 bad = [r for r in reconcile(parsed) if not r[3]]
                 if bad: raise ValueError(f"station sums do not match the file's totals {bad}")
-                f_, o_, _, _ = aggregate(parsed, owners)
-                new_fleet.append(f_); new_owner.append(o_); missing.pop(iso, None); problems.pop(iso, None); done += 1
+                f_, _, st, _ = aggregate(parsed, owners)
+                pl = st[[c for c in PLANT_COLS if c != "date"]].copy(); pl.insert(0, "date", parsed.date.isoformat())
+                new_fleet.append(f_); new_plant.append(pl); missing.pop(iso, None); problems.pop(iso, None); done += 1
             except Exception as e:                                                   # one bad day must not stop the rest
                 problems[iso] = f"{type(e).__name__}: {e}"[:160]; skipped += 1
             finally:
                 if path and os.path.exists(path): os.remove(path)
             have.add(iso)
             if done and done % 100 == 0: flush()
-            pause and time.sleep(pause)
     finally:
+        ex.shutdown(wait=False, cancel_futures=True)
         flush(); shutil.rmtree(raw, ignore_errors=True)
     log(f"power: {done} days loaded, {skipped} missing or failed; {fleet['date'].nunique()} days stored, newest {fleet['date'].max() if len(fleet) else 'none'}")
-    return fleet, owner
+    return fleet, plant
+
+
+def owner_table(root, owners=None):
+    """Daily generation by plant owner and fuel, built from the stored plant rows with the current plant_owner.csv."""
+    plant = _read(os.path.join(root, "power", "plant.csv"), PLANT_COLS)
+    if not len(plant): return pd.DataFrame(columns=OWNER_COLS)
+    owners = owners or OwnerMap()
+    for c in ("state", "sector", "fuel"): plant[c] = plant[c].fillna("")
+    combos = plant[["plant", "sector", "state"]].drop_duplicates()
+    combos["owner"] = [owners.lookup(a, b, c)[0] for a, b, c in zip(combos["plant"], combos["sector"], combos["state"])]
+    plant = plant.merge(combos, on=["plant", "sector", "state"], how="left")
+    out = plant.groupby(["date", "owner", "fuel"]).agg(n=("plant", "size"), mw=("mw", "sum"), actual_mu=("actual_mu", "sum"),
+                                                       coal_mw=("coal_mw", "sum"), coal_mwdays=("coal_mwdays", "sum")).reset_index()
+    out.insert(6, "outage_mw", 0.0)
+    return out[OWNER_COLS]
 
 
 # ------------------------------------------------------------------ build
@@ -186,7 +219,7 @@ def company_series(owner, names, last, years):
 def build(root, asof=None):
     """Everything the Power view shows, or None when nothing is stored yet."""
     folder = os.path.join(root, "power")
-    fleet, owner = _read(os.path.join(folder, "fleet.csv"), FLEET_COLS), _read(os.path.join(folder, "owner.csv"), OWNER_COLS)
+    fleet, owner = _read(os.path.join(folder, "fleet.csv"), FLEET_COLS), owner_table(root)
     if not len(fleet): return None
     last = pd.Timestamp(fleet["date"].max()); series = daily_series(fleet)
     years = [last.year, last.year - 1, last.year - 2]
