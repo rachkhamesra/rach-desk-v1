@@ -9,6 +9,7 @@ Each day is parsed, checked against the file's own region totals, and reduced to
 """
 import datetime as dt
 import json, os, shutil, tempfile, time
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 import pandas as pd
@@ -25,6 +26,7 @@ RETRY_WINDOW = 12               # a missing or failed file older than this is no
 PARSER_VERSION = 2              # bump when parsing changes in a way that makes stored days wrong: stored history is then reloaded
 BUDGET_S = 900                  # per build; a long backfill simply continues on the next build
 PAUSE_S = 0.5
+WORKERS, AHEAD = 4, 8           # files downloaded at once, and how many days ahead of the parser the downloads run
 KEYS = ["region", "sector", "fuel"]
 FLEET_COLS = ["date", "region", "sector", "fuel", "n", "mw", "actual_mu", "prog_mu", "outage_mw", "coal_mw", "coal_mwdays"]
 OWNER_COLS = ["date", "owner", "fuel", "n", "mw", "actual_mu", "outage_mw", "coal_mw", "coal_mwdays"]
@@ -91,22 +93,36 @@ def refresh(root, today, start=FIRST_DAY, budget_s=BUDGET_S, log=print, fetch=_f
             new_fleet, new_owner = [], []
         fleet.to_csv(fleet_p, index=False); owner.to_csv(owner_p, index=False)
         with open(status_p, "w") as f: json.dump(status, f)
+    todo = []
+    for day in days:
+        iso, age = day.isoformat(), (today - day).days
+        recent = age <= RECENT_DAYS
+        if not recent and (iso in have or (age > RETRY_WINDOW and (iso in missing or iso in problems))): continue
+        todo.append((day, iso, recent))
+    ex = ThreadPoolExecutor(WORKERS)
+    def job(day, recent):
+        """Download one report. A download error comes back as a value, so the parser sees failures in date order."""
+        try: return fetch(day, 2, raw, force=recent)
+        except RuntimeError as e: return e
+        finally: pause and time.sleep(pause)
+    futures = {}
+    def submit(i):
+        if i < len(todo) and i not in futures: futures[i] = ex.submit(job, todo[i][0], todo[i][2])
     try:
-        for day in days:
-            iso, age = day.isoformat(), (today - day).days
-            recent = age <= RECENT_DAYS
-            if not recent and (iso in have or (age > RETRY_WINDOW and (iso in missing or iso in problems))): continue
+        for i in range(min(AHEAD, len(todo))): submit(i)
+        for i, (day, iso, recent) in enumerate(todo):                  # parsed in date order, newest first, while the next few download
             if time.time() - t0 > budget_s:
                 log(f"power: time budget reached after {done} days; the rest continues on the next run"); break
-            try:
-                path, state = fetch(day, 2, raw, force=recent); streak = 0
-            except RuntimeError as e:
-                problems[iso] = f"download: {e}"[:160]; skipped += 1; streak += 1
+            submit(i + AHEAD)
+            res = futures.pop(i).result()
+            if isinstance(res, RuntimeError):
+                problems[iso] = f"download: {res}"[:160]; skipped += 1; streak += 1
                 if streak >= MAX_DOWNLOAD_FAILS:
                     log(f"power: {streak} downloads failed in a row; stopping for this build"); break
                 continue
+            path, state = res; streak = 0
             if state == "missing":
-                missing[iso] = today.isoformat(); skipped += 1; pause and time.sleep(pause); continue
+                missing[iso] = today.isoformat(); skipped += 1; continue
             try:
                 parsed = parse_dgr2(path)
                 if parsed.date != day: raise ValueError(f"file is dated {parsed.date}")
@@ -120,8 +136,8 @@ def refresh(root, today, start=FIRST_DAY, budget_s=BUDGET_S, log=print, fetch=_f
                 if path and os.path.exists(path): os.remove(path)
             have.add(iso)
             if done and done % 100 == 0: flush()
-            pause and time.sleep(pause)
     finally:
+        ex.shutdown(wait=False, cancel_futures=True)
         flush(); shutil.rmtree(raw, ignore_errors=True)
     log(f"power: {done} days loaded, {skipped} missing or failed; {fleet['date'].nunique()} days stored, newest {fleet['date'].max() if len(fleet) else 'none'}")
     return fleet, owner

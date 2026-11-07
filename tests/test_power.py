@@ -129,4 +129,4 @@ def test_a_portal_that_keeps_failing_stops_the_download_for_this_build(tmp_path)
         calls.append(day); raise RuntimeError("timed out")
     logs = []
     power.refresh(str(tmp_path), D26, start=D22, log=logs.append, fetch=down, pause=0)
-    assert len(calls) == power.MAX_DOWNLOAD_FAILS and any("failed in a row" in m for m in logs)
+    assert power.MAX_DOWNLOAD_FAILS <= len(calls) <= power.MAX_DOWNLOAD_FAILS + power.AHEAD and any("failed in a row" in m for m in logs)   # a few more were already downloading
