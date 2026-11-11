@@ -103,3 +103,11 @@ That downloads share prices (Yahoo Finance's unofficial API, cached in `data/bac
 - **Threshold panel:** each signal is turned into standard deviations from its own past year and pooled over the five stocks. The bars show the average 20-day excess return by band; a cut-off only counts if the gap is more than about two standard errors.
 - **NHPC** uses all-India hydro generation as a stand-in. **Adani Green** has no generation data (wind and solar are not in the CEA report), so only its price tests run.
 - A screen for ideas: about a dozen independent observations per test per year, no costs, hand-matched ownership.
+
+## Exchange tracker: any weekday
+Under the BSE and MCX charts, an "Any weekday" card with two dropdowns, Day (Monday to Friday) and Window (YTD, last 6 months, all history). It charts every session on that weekday with a dashed average line, and states the count, average, median, highest, lowest and the latest session against the earlier average, plus the average for each weekday in the same window.
+
+## Short ideas tab (experimental)
+F&O stocks only, from `shorts.py`. Six yes/no screens on the existing price, delivery and open-interest data: cash selling (down day, below the 50 and 100-day averages, delivery above its 20-session average), laggards (behind Nifty by 5 points over 20 days and 10 over 3 months, below the 50-day), breakdown below the prior 40-day low on delivery, rejected at the 50-day average, short build-up (down 3% in three sessions with OI up 5%), and near the 52-week low while lagging. The overview lists stocks flagged by two or more screens.
+
+Each screen carries a **replay**: the same rule applied to every held session, then the stock's move against Nifty over the next 10 sessions (one flag per stock per 10 sessions), shown next to the average F&O stock. On the current history (about 280 sessions) none of the screens shows an edge over that baseline, and the page says so. Treat the lists as things to look at, not signals.

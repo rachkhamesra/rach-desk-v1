@@ -3,7 +3,7 @@
 import argparse, json, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import nse, metrics, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
+import nse, metrics, shorts, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MARKER = "published.json"
@@ -69,6 +69,8 @@ def main():
     M["calls"] = calls.load(a.root, end, memberships.get("fo", []))
     M["power"] = power.load_and_build(a.root, end)         # experimental alternative data; each build loads what its time budget allows
     M["heat"] = heat.load_and_build(a.root, end)
+    try: M["shorts"] = shorts.build(M)                      # experimental price-action short screens; a failure here never stops the build
+    except Exception as e: M["shorts"] = None; print(f"short ideas skipped: {type(e).__name__}: {e}")
     M["backtest"] = backtest.load_saved()      # results of `python backtest.py`, run locally; the build never fetches prices for it
     exchange_history = exchange_tracker.load(a.root, end)
     exchange_prices = M["C"]["BSE"] if "BSE" in M["C"] else pd.Series(dtype=float)
