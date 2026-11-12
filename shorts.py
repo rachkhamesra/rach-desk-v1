@@ -43,7 +43,7 @@ def flags(M, syms):
     f["buildup"] = ok((chg3 <= -3) & (oi3 >= 5))
     low = C.rolling(252, min_periods=120).min()
     f["near_lows"] = ok((C <= low * 1.04) & (rel20 < 0))
-    extra = dict(ret1=ret1, chg3=chg3, oi3=oi3, rel20=rel20, rel63=rel63, ma50=ma50, low=low)
+    extra = dict(ret1=ret1, chg3=chg3, oi3=oi3, rel20=rel20, rel63=rel63, ma50=ma50, ma100=ma100, low=low)
     return f, extra
 
 
@@ -78,6 +78,20 @@ def baseline(C, nifty, hold=HOLD):
     return dict(n=int(len(v)), avg=float(v.mean() * 100), hit=float((v < 0).mean() * 100)) if len(v) else None
 
 
+CHART_DAYS = 130      # sessions drawn per chart
+
+
+def chart_data(f, C, x, hits):
+    """For every stock flagged today: the last CHART_DAYS closes, 50 and 100-day averages, and, per screen, the sessions on which that screen's rule was true."""
+    out = {}
+    for s in hits:
+        n = min(CHART_DAYS, len(C))
+        num = lambda ser: [None if pd.isna(v) else round(float(v), 2) for v in ser.iloc[-n:]]
+        out[s] = dict(dates=[f"{d:%d %b %y}" for d in C.index[-n:]], close=num(C[s]), ma50=num(x["ma50"][s]), ma100=num(x["ma100"][s]),
+                      flags={k: [int(i) for i in np.flatnonzero(f[k][s].to_numpy()[-n:])] for k in f})
+    return out
+
+
 def build(M):
     """{asof, screens: {key: dict(title, desc, rows DataFrame, replay)}, confluence DataFrame, baseline}. None if there is no F&O universe or too little history."""
     fo = [s for s in M["memberships"].get("fo", []) if s in M["C"].columns]
@@ -103,4 +117,5 @@ def build(M):
     conf = pd.DataFrame([dict(sym=s, count=len(k), screens=k) for s, k in hits.items()])
     if len(conf): conf = conf.sort_values(["count", "sym"], ascending=[False, True]).reset_index(drop=True)
     out["confluence"] = conf
+    out["charts"] = chart_data(f, C, x, hits)
     return out

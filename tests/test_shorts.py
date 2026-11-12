@@ -45,3 +45,12 @@ def test_the_tab_renders_with_the_experimental_badge_and_every_screen():
     for _, title, _ in shorts.SCREENS: assert title in html
     assert html.count('class="subview"') + html.count("class=\"subview\"") >= 1 and "Replay:" in html
     assert "need an F&amp;O universe" in webpage.tab_shorts({"shorts": None})
+
+
+def test_every_flagged_stock_gets_a_chart_with_its_screens_marked():
+    M = world(); M["unresolved"] = set(); M["results"] = []; M["shorts"] = shorts.build(M)
+    X = M["shorts"]; assert "FALLS" in X["charts"] and len(X["charts"]["FALLS"]["close"]) == len(X["charts"]["FALLS"]["dates"]) <= shorts.CHART_DAYS
+    assert X["charts"]["FALLS"]["flags"]["laggards"] and X["charts"]["FALLS"]["flags"]["laggards"][-1] == len(X["charts"]["FALLS"]["close"]) - 1      # flagged today = last session
+    html = webpage.tab_shorts(M)
+    assert html.count('class="shsvg"') >= 3 and 'class="shgrid"' in html and "shaded bars and dots" in html
+    assert 'fill="#b58cff" opacity=".26"' in html                      # laggard bars are drawn
