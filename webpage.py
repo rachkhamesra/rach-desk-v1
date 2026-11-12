@@ -1,4 +1,5 @@
 """Static page: tabs, tables and an in-page chart. Everything is inline (no external requests), so it works on GitHub Pages or from a file."""
+import shorts as shorts_mod
 import html, json, re
 import numpy as np, pandas as pd
 import metrics
@@ -403,8 +404,8 @@ def tab_turnover_tracker(X, title, subtitle, heading=True):
                 f'{"".join(grid)}<polygon points="{area}" class="exarea"/><polyline points="{tp}" class="exto"/><polyline points="{pp}" class="expx"/>'
                 f'{note}{ticks}</svg></div>')
 
-    def bars(df, label, value, colour, current=False, month_axis=False, comparison=None):
-        w, h, l, top, bot = 560, 250, 40, 18, 52
+    def bars(df, label, value, colour, current=False, month_axis=False, comparison=None, avg=None, w=560, h=250, note=None):
+        l, top, bot = 40, 18, 52
         vals = pd.to_numeric(df[value], errors="coerce"); mx = max(float(vals.max()), 1)
         bw = (w - l - 12) / max(len(df), 1); out = []
         for j in range(5):
@@ -428,9 +429,41 @@ def tab_turnover_tracker(X, title, subtitle, heading=True):
             for month in months.drop_duplicates():
                 idx = np.flatnonzero((months == month).to_numpy()); mid = l + (idx[0] + idx[-1] + 1) * bw / 2
                 out.append(f'<text class="monthtag" x="{mid:.1f}" y="{h-23}" text-anchor="middle">{month.strftime("%b")}</text>')
-        annotation_text = X.get("comparison_annotation", "VS YTD AVG")
+        if avg is not None and pd.notna(avg):
+            ya = h - bot - float(avg) / mx * (h - top - bot)
+            out.append(f'<line x1="{l}" x2="{w-8}" y1="{ya:.1f}" y2="{ya:.1f}" stroke="#ffd17a" stroke-dasharray="4 3" stroke-width="1.2"/><text x="{w-12}" y="{ya-4:.1f}" text-anchor="end" fill="#ffd17a" font-size="9">AVERAGE ₹{avg:,.0f}cr</text>')
+        annotation_text = note or X.get("comparison_annotation", "VS YTD AVG")
         annotation = "" if comparison is None or pd.isna(comparison) else f'<text class="excompare {"up" if comparison >= 0 else "down"}" x="{w-12}" y="{top+10}" text-anchor="end">LATEST {comparison:+.0f}% {esc(annotation_text)}</text>'
         return f'<svg class="exsvg" viewBox="0 0 {w} {h}" role="img"><line x1="{l}" y1="{h-bot}" x2="{w-8}" y2="{h-bot}"/>' + "".join(out) + annotation + '</svg>'
+
+    def weekday_card():
+        full = X["series"][["date", "premium_turnover_cr"]].dropna().copy(); full["date"] = pd.to_datetime(full["date"]); full["wd"] = full.date.dt.day_name()
+        if len(full) < 10: return ""
+        periods = [("ytd", "YTD", end.replace(month=1, day=1)), ("6m", "LAST 6 MONTHS", end - pd.DateOffset(months=6)), ("all", "ALL HISTORY", full.date.min())]
+        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]; default = X["weekday"] if X["weekday"] in days else "Wednesday"
+        views = []
+        for pk, _, start in periods:
+            win = full[full.date >= start]
+            avgs = win.groupby("wd")["premium_turnover_cr"].mean()
+            for d in days:
+                df = win[win.wd == d].copy()
+                shown = (d == default and pk == "ytd")
+                if len(df) < 2:
+                    body = f'<div class="mut pnote">Fewer than two {d}s in this window.</div>'
+                else:
+                    df["label"] = df.date.dt.strftime("%d %b %y"); av = float(df.premium_turnover_cr.mean()); last_v = float(df.premium_turnover_cr.iloc[-1])
+                    prior = df.premium_turnover_cr.iloc[:-1].mean(); chg = (last_v / prior - 1) * 100 if prior else np.nan
+                    hi, lo = df.loc[df.premium_turnover_cr.idxmax()], df.loc[df.premium_turnover_cr.idxmin()]
+                    strip = " · ".join((f"<b>{x[:3]} ₹{avgs[x]:,.0f}</b>" if x == d else f"{x[:3]} ₹{avgs[x]:,.0f}") for x in days if x in avgs.index)
+                    body = (bars(df, "label", "premium_turnover_cr", "exbar", True, True, chg, avg=av, w=1000, h=260, note=f"VS EARLIER {d.upper()[:3]} AVG")
+                            + f'<div class="msum">{len(df)} {d}s · average <b>₹{av:,.0f} cr</b> · median ₹{df.premium_turnover_cr.median():,.0f} cr · highest ₹{hi.premium_turnover_cr:,.0f} cr ({hi.date:%d %b %y}) · lowest ₹{lo.premium_turnover_cr:,.0f} cr ({lo.date:%d %b %y}) · '
+                              f'last {df.date.iloc[-1]:%d %b %y} ₹{last_v:,.0f} cr ({chg:+.0f}% vs the earlier {d} average)</div>'
+                            + f'<div class="msum">Average by weekday in this window: {strip}</div>')
+                views.append(f'<div class="wdview" data-wd="{d}" data-wp="{pk}"{"" if shown else " hidden"}>{body}</div>')
+        opts_d = "".join(f'<option{" selected" if d == default else ""}>{d}</option>' for d in days)
+        opts_p = "".join(f'<option value="{k}">{lbl}</option>' for k, lbl, _ in periods)
+        return (f'<div class="card excard exwd"><div class="ch"><span class="ct">ANY WEEKDAY</span><span class="exwdctl"><label>Day <select class="exsel wdsel">{opts_d}</select></label>'
+                f'<label>Window <select class="exsel wdper">{opts_p}</select></label></span></div>{"".join(views)}</div>')
 
     comparison = X.get("comparison", X.get("same_weekday", pd.DataFrame())).copy()
     comparison["date"] = pd.to_datetime(comparison["date"])
@@ -451,6 +484,7 @@ def tab_turnover_tracker(X, title, subtitle, heading=True):
             f'<div class="card excard"><div class="ch"><span class="ct">{esc(X.get("comparison_title", X["weekday"].upper() + "S · YTD"))}</span><span class="mut">{len(comparison)} {esc(X.get("comparison_count_label", "SESSIONS"))}</span></div>{bars(comparison,"label","premium_turnover_cr","exbar",True,X.get("comparison_month_axis", True),comparison_change)}</div>'
             f'<div class="card excard"><div class="ch"><span class="ct">AVERAGE DAILY PREMIUM TURNOVER</span><span class="mut">CURRENT MONTH IS PARTIAL</span></div>{bars(monthly,"label","mean","exbar month",True)}</div>'
             f'<div class="exranges exrangesbelow">{range_buttons}</div></div>'
+            f'{weekday_card()}'
             '<p class="desc">Premium turnover is the exchange-reported daily options premium value. The current month updates incrementally; if a new session is unavailable, the last verified observation remains visible with its exact date and refresh status.</p>')
 
 
@@ -793,6 +827,56 @@ def backtest_panels(bt):
     return head + f'<div class="mgrid c4">{p1}{p2}{p3}{p4}</div>' + note
 
 
+def tab_shorts(M):
+    X = M.get("shorts")
+    head = '<h2>Short Ideas<span class="expbadge">EXPERIMENTAL</span></h2><div class="subl">F&amp;O ONLY · PRICE ACTION THAT POINTS TO A POTENTIAL SHORT</div>'
+    if not X:
+        return head + '<div class="card rempty">Short ideas need an F&amp;O universe and about 70 sessions of history.</div>'
+    note = ('<div class="expnote"><b>Read with care.</b> These are screens, not recommendations. Each flags F&amp;O stocks whose price action looks weak by a stated rule; none says a stock will fall. '
+            'The replay column applies the same rule to the sessions this desk holds and shows what the stock did against Nifty over the next 10 sessions: a few hundred sessions, overlapping windows, no costs, one market regime. '
+            'Shorting in a rising market has unlimited loss, and F&amp;O stocks can gap against you on results or news. Not investment advice.</div>')
+    base = X.get("baseline")
+    base_txt = (f'For comparison, the average F&amp;O stock moved {base["avg"]:+.1f}% against Nifty over 10 sessions and underperformed {base["hit"]:.0f}% of the time.' if base else "")
+
+    def replay_line(r):
+        if not r or r["avg"] is None: return f'<span class="mut">Replay: only {r["n"] if r else 0} past flags, too few to read.</span>'
+        edge = r["avg"] - (base["avg"] if base else 0)
+        verdict = ("Weaker than the average F&amp;O stock, as a short needs." if edge <= -0.5 else "Stronger than the average F&amp;O stock: it has not worked as a short."
+                   if edge >= 0.5 else "About the same as any F&amp;O stock: the replay shows no edge.")
+        cls = "pdn" if edge <= -0.5 else "pup" if edge >= 0.5 else ""
+        return (f'Replay: after {r["n"]} past flags the stock moved <b class="{cls}">{r["avg"]:+.1f}%</b> against Nifty over the next 10 sessions and underperformed <b>{r["hit"]:.0f}%</b> of the time. {verdict}')
+
+    def rows_table(df):
+        if not len(df): return '<div class="card rempty">No F&amp;O stock meets this rule today.</div>'
+        rows = []
+        for i, r in df.iterrows():
+            new = '<span class="newcash">NEW TODAY</span>' if r.new else ""
+            rows.append(f'<tr class="{"cashnew" if r.new else ""}"><td class="mut">{i + 1}</td><td class="l">{stk(r.sym, M)} {new}</td><td><b>{int(r.days)}D</b></td><td>{r.close:,.2f}</td>'
+                        f'<td{heat(r.px1d, 5)}>{pc(r.px1d)}</td><td{heat(r.px3d, 8)}>{pc(r.px3d)}</td><td{heat(r.rel20, 15)}>{pc(r.rel20)}</td><td{heat(r.rel63, 30)}>{pc(r.rel63)}</td>'
+                        f'<td{heat(r.ma50, 15)}>{pc(r.ma50)}</td><td>{"–" if pd.isna(r.ratio) else f"{r.ratio:.2f}×"}</td><td{heat(-(r.oi3 if pd.notna(r.oi3) else 0), 15)}>{"–" if pd.isna(r.oi3) else pc(r.oi3)}</td></tr>')
+        headr = [("#", "mut"), ("STOCK", "l"), ("DAYS FLAGGED", ""), ("CLOSE", ""), ("PX 1D", ""), ("PX 3D", ""), ("VS NIFTY 20D", ""), ("VS NIFTY 3M", ""), ("VS 50MA", ""), ("DELIVERY ÷ 20D", ""), ("SSF OI 3D", "")]
+        return table(headr, rows, "cashwatch")
+
+    def srow(v):
+        r = v["replay"]; avg = "–" if r["avg"] is None else f'{r["avg"]:+.1f}%'; hit = "–" if r["hit"] is None else f'{r["hit"]:.0f}%'
+        return f'<tr><td class="l">{esc(v["title"])}</td><td>{len(v["rows"])}</td><td{heat(-(r["avg"] or 0), 3)}>{avg}</td><td>{hit}</td><td>{r["n"]}</td></tr>'
+
+    conf = X["confluence"]; titles = {k: t for k, t, _ in shorts_mod.SCREENS}
+    crow = []
+    for _, r in conf[conf["count"] >= 2].head(40).iterrows():
+        crow.append(f'<tr><td class="l">{stk(r.sym, M)}</td><td><b>{int(r["count"])}</b></td><td class="l">{" · ".join(esc(titles[k].title()) for k in r.screens)}</td></tr>')
+    overview = ('<p class="desc">Stocks flagged by more than one screen today. Agreement between screens that look at different things (selling, relative weakness, a broken level, open interest) is the closest this page gets to conviction.</p>'
+                + (table([("STOCK", "l"), ("SCREENS", ""), ("WHICH", "l")], crow) if crow else '<div class="card rempty">No F&amp;O stock is flagged by two or more screens today.</div>')
+                + '<h3 class="fuh">HOW MANY EACH SCREEN FLAGS TODAY</h3>'
+                + table([("SCREEN", "l"), ("TODAY", ""), ("REPLAY: MOVE VS NIFTY, NEXT 10 SESSIONS", ""), ("REPLAY: UNDERPERFORMED", ""), ("PAST FLAGS", "")],
+                        [srow(v) for v in X["screens"].values()]))
+    subs = [("overview", "OVERVIEW")] + [(k, v["title"]) for k, v in X["screens"].items()]
+    body = _subtabs(subs) + f'<div class="subview" data-sub="overview">{overview}</div>'
+    for k, v in X["screens"].items():
+        body += (f'<div class="subview" data-sub="{k}" hidden><p class="desc">{esc(v["desc"])}</p><div class="msum">{replay_line(v["replay"])} {base_txt}</div>{rows_table(v["rows"])}</div>')
+    return head + f'<div class="hmeta">As of <b>{X["asof"]:%d %b %Y}</b> · {sum(len(v["rows"]) for v in X["screens"].values())} flags across {len(conf)} F&amp;O stocks</div>' + note + body
+
+
 def tab_calls(M):
     return (_subtabs([("calls", "CALLS"), ("guidance", "GUIDANCE SHIFTS"), ("results", "UPCOMING RESULTS")]) + f'<div class="subview" data-sub="calls">{tab_call_library(M)}</div>'
             f'<div class="subview" data-sub="guidance" hidden>{tab_guidance_shifts(M)}</div><div class="subview" data-sub="results" hidden>{tab_upcoming_results(M)}</div>')
@@ -809,8 +893,8 @@ def render(M, asof_text):
     panels = [("stocks", "STOCKS", tab_stocks(M)), ("bases", "BREAKOUT BASES", tab_breakout_bases(M)), ("high52", "52W HIGHS", tab_52w_highs(M)), ("signals", "SIGNAL CONFLUENCE", views(tab_signal_confluence)),
               ("cash", "CASH ACCUMULATION", tab_cash_accumulation(M)),
               ("calls", "CALL LIBRARY", tab_calls(M)),
-              ("exchange", "EXCHANGE TRACKER", tab_exchange(M)), ("alt", "ALTERNATIVE DATA", tab_alt_data(M))]
-    nav = "".join(f'<button class="tab{" on" if i == 0 else ""}{" exp" if k == "alt" else ""}" data-t="{k}"{" title=\"Experimental\"" if k == "alt" else ""}>{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
+              ("exchange", "EXCHANGE TRACKER", tab_exchange(M)), ("alt", "ALTERNATIVE DATA", tab_alt_data(M)), ("shorts", "SHORT IDEAS", tab_shorts(M))]
+    nav = "".join(f'<button class="tab{" on" if i == 0 else ""}{" exp" if k in ("alt", "shorts") else ""}" data-t="{k}"{" title=\"Experimental\"" if k in ("alt", "shorts") else ""}>{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
     body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
     opts = "".join(f'<option value="{k}">{label}</option>' for k, label in choices)
     head = (f'<header><div class="brand">RACHIT’S MARKET LENS</div><div class="headright"><select id="universe" aria-label="Stock universe">{opts}</select><div class="meta">{asof_text}<br><span class="mut">{M["N"]} sessions since {M["dates"][0]:%d %b %Y} · top 1,000 NSE shares · NSE + BSE delivery</span></div></div></header>')
@@ -859,7 +943,7 @@ td.l a.stk,td.l span{font-weight:700;letter-spacing:.02em}.stk{cursor:pointer;co
 .excard{padding:0;margin-bottom:12px;overflow:hidden}.excard .ch{display:flex;justify-content:flex-start;align-items:center;gap:18px;min-height:42px;padding:10px 12px 8px;background:#101010;border-bottom:1px solid var(--line);overflow:hidden}.excard .ch>*{white-space:nowrap}.excard .ct{flex:0 0 auto;font-size:13px;line-height:1;font-weight:800;letter-spacing:.035em}.excard .ch>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:10px}.exsvg{width:100%;height:auto;display:block;background:linear-gradient(180deg,#13171c 0%,#101010 100%)}.exsvg text{fill:var(--mut);font:10px var(--mono)}.exsvg line{stroke:var(--line)}
 .exarea{fill:url(#turnoverFill)}.exto{fill:none;stroke:#68b4ff;stroke-width:2.7;filter:drop-shadow(0 0 3px rgba(90,169,255,.35))}.expx{fill:none;stroke:#f1ae39;stroke-width:2.7;filter:drop-shadow(0 0 3px rgba(232,169,58,.25))}.exgridline{stroke:#34383d!important;stroke-width:1}.exaxis{fill:#88bdf0!important}.exaxis.price{fill:#d8a74f!important}.exkey{display:inline-block;width:17px;border-top:2px solid;margin:0 5px 2px 12px}.exkey.to{border-color:#5aa9ff}.exkey.px{border-color:var(--am)}
 .exlayout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}.exlayout>*{min-width:0}.exlayout>.excard{height:100%;margin-bottom:0}.exranges{display:flex;gap:5px;padding:0 18px 10px;flex-wrap:wrap}.exrangesbelow{grid-column:1;padding:0;align-self:start}.exrbtn{border:1px solid var(--line);background:transparent;color:var(--mut);font:800 9px var(--sans);letter-spacing:.08em;padding:6px 10px;cursor:pointer}.exrbtn:hover{color:var(--ink);border-color:var(--mut)}.exrbtn.on{background:var(--am);border-color:var(--am);color:#090909}.exbar{fill:#4e85d8;transition:opacity .12s}.exbar:hover,.exbar:focus{opacity:.72;stroke:#fff;stroke-width:1;outline:none}.exbar.month{fill:#607fc2}.exbar.latest{fill:var(--am)}.exbargrid{stroke:#30343a!important;stroke-width:1}.excompare{fill:var(--ink)!important;font-weight:800;letter-spacing:.04em}.excompare.up{fill:var(--g)!important}.excompare.down{fill:var(--r)!important}.monthtag{fill:var(--ink)!important;font-weight:700}.exbarhover{display:none;fill:var(--ink)!important;font-weight:800;paint-order:stroke;stroke:#101010;stroke-width:4px;stroke-linejoin:round;pointer-events:none}.exbaritem:hover .exbarhover,.exbaritem:focus-within .exbarhover{display:block}.excomment{margin:0 0 12px;padding:15px 16px;background:#101010;border-left:4px solid var(--am)}.excomment h3{margin:0 0 8px;font:800 10px var(--sans);letter-spacing:.11em}.excomment ul{margin:0 0 10px;padding-left:20px}.excomment li{margin:6px 0}.excomment a{font:700 9px var(--sans);letter-spacing:.08em;color:var(--am)}
-@media(max-width:1100px){.exlayout{grid-template-columns:1fr 1fr}.exmain{grid-column:1/-1}}@media(max-width:700px){.exlayout{grid-template-columns:1fr}.exmain{grid-column:auto}.exheadline{gap:16px;flex-wrap:wrap}}
+@media(max-width:1100px){.exlayout{grid-template-columns:1fr 1fr}.exwd{margin-top:12px}.exwd .ch{flex-wrap:wrap;overflow:visible}.exwdctl{flex-wrap:wrap}.subtabs{max-width:100%;overflow-x:auto}.exwdctl{display:flex;gap:14px;align-items:center;font-size:11px;color:var(--mut)}.exsel{background:#101010;color:var(--ink);border:1px solid #444;padding:6px 8px;font:600 12px var(--mono)}.exwd .msum{padding:4px 12px}.exwd svg{margin:0 6px}.exmain{grid-column:1/-1}}@media(max-width:700px){.exlayout{grid-template-columns:1fr}.exmain{grid-column:auto}.exheadline{gap:16px;flex-wrap:wrap}}
 .segs{display:flex;gap:0;margin:0 0 16px;border:2px solid #f4f4f0;width:max-content;max-width:100%;overflow-x:auto}.seg{font:600 15px var(--sans);color:var(--ink);background:none;border:0;padding:12px 22px;cursor:pointer;white-space:nowrap}.seg.on{background:#f4f4f0;color:#0a0a0a}
 .hz{display:grid;grid-template-columns:1fr 1fr;gap:20px}.ch{display:flex;justify-content:space-between;padding:20px 18px 6px}.ct{font-size:22px;font-weight:700}.g{color:var(--g)}.r{color:var(--r)}
 table.rel td,table.rel th{padding:11px 12px}tr.newrow td.tk{box-shadow:inset 5px 0 var(--r)}span.strong.g a{color:var(--g)}span.strong.r a{color:var(--r)}
@@ -1100,6 +1184,7 @@ document.querySelectorAll('.basetab').forEach(b=>{const old=b.onclick;b.onclick=
 document.querySelectorAll('.exswitchbtn').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.exswitchbtn').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.exchangegroup').forEach(x=>x.hidden=x.dataset.exchangeGroup!==b.dataset.exchange)});
 document.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{const v=b.closest('.uview')||document;v.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
 document.querySelectorAll('.seg[data-r]').forEach(b=>b.onclick=()=>{rng=+b.dataset.r;document.querySelectorAll('.seg[data-r]').forEach(x=>x.classList.toggle('on',x===b));draw()});
+document.querySelectorAll('.exwd').forEach(c=>{const f=()=>{const d=c.querySelector('.wdsel').value,p=c.querySelector('.wdper').value;c.querySelectorAll('.wdview').forEach(v=>v.hidden=!(v.dataset.wd===d&&v.dataset.wp===p))};c.querySelector('.wdsel').onchange=f;c.querySelector('.wdper').onchange=f});
 document.querySelectorAll('.exrbtn').forEach(b=>b.onclick=()=>{const v=b.closest('.exlayout');v.querySelectorAll('.exrbtn').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.exrange').forEach(x=>x.hidden=x.dataset.xr!==b.dataset.xr)});
 document.querySelectorAll('.mab').forEach(b=>{const m=+b.dataset.ma;b.disabled=D.dates.length<m+1;b.classList.toggle('on',selectedMas.has(m)&&!b.disabled);b.title=b.disabled?`Needs ${m+1} sessions; currently ${D.dates.length}`:`Toggle ${m}-day moving average`;b.onclick=()=>{selectedMas.has(m)?selectedMas.delete(m):selectedMas.add(m);b.classList.toggle('on',selectedMas.has(m));try{localStorage.setItem('desk-mas',JSON.stringify([...selectedMas]))}catch(e){}draw()}});
 document.getElementById('thr').onchange=e=>{thr=+e.target.value;draw()};

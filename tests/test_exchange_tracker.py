@@ -23,7 +23,10 @@ def test_build_uses_same_weekday_and_monthly_average():
     assert "3M" in html and "6M" in html and "1YR" in html and "2YR" in html
     assert f"{out['weekday'].upper()}S · YTD" in html
     assert html.count('class="exgridline"') == 25
-    assert html.count('class="exbargrid"') == 10
+    assert html.count('class="exbargrid"') == 10 + 15 * 5          # two main bar charts, plus five weekdays in three windows
+    assert html.count('class="wdview"') == 15 and 'class="exsel wdsel"' in html and 'class="exsel wdper"' in html
+    for day in ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"): assert f'<option{" selected" if day == out["weekday"] else ""}>{day}</option>' in html
+    assert html.count(" hidden>") >= 14 and "AVERAGE ₹" in html and "Average by weekday in this window" in html
     assert "VS YTD AVG" in html
     assert html.index('excomment') < html.index('exlayout')
     assert "AVERAGE DAILY PREMIUM TURNOVER" in html
