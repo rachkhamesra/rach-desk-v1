@@ -80,16 +80,60 @@ def baseline(C, nifty, hold=HOLD):
 
 CHART_DAYS = 90       # sessions of price drawn per chart
 RECENT_DAYS = 10      # only flags from this many latest sessions are highlighted: older ones are not relevant to today's pick
+PROFILE_DAYS = 250    # sessions of history used to find price congestion
+PROFILE_BINS = 60
+ZONE_HALF_WIDTH = 0.03   # a zone reaches at most 3% either side of its peak price
+ZONE_GAP = 0.06          # two zones' peaks are at least 6% apart
+MAX_ZONES = 2         # support and resistance zones kept on each side of the current price
 
 
-def chart_data(f, C, x, hits):
-    """For every stock flagged today: the last CHART_DAYS closes, 50 and 100-day averages, and, per screen, the sessions among the latest RECENT_DAYS on which that screen's rule was true."""
-    out = {}
+def congestion_zones(H, L, DQ, close, days=PROFILE_DAYS, bins=PROFILE_BINS):
+    """Where price has spent its time, weighted by delivered shares: each session spreads its delivered shares evenly over its high-low range.
+    Peaks in that profile are congestion: prices where many shares changed hands, so holders are anchored there. Returns zones (lo, hi, weight share)
+    below the close as support and above it as resistance, nearest first. A zone the close sits inside is reported as both."""
+    h = pd.Series(H).iloc[-days:].to_numpy(float); l = pd.Series(L).iloc[-days:].to_numpy(float); w = pd.Series(DQ).iloc[-days:].to_numpy(float)
+    ok = ~(np.isnan(h) | np.isnan(l)); h, l, w = h[ok], l[ok], w[ok]
+    if len(h) < 40 or not np.isfinite(close): return {"support": [], "resistance": []}
+    w = np.where(np.isnan(w) | (w <= 0), np.nanmedian(w[w > 0]) if (w > 0).any() else 1.0, w)
+    lo, hi = float(l.min()), float(h.max())
+    if hi <= lo: return {"support": [], "resistance": []}
+    edges = np.linspace(lo, hi, bins + 1); prof = np.zeros(bins)
+    for a_, b_, w_ in zip(l, h, w):
+        i0 = min(bins - 1, int((a_ - lo) / (hi - lo) * bins)); i1 = min(bins - 1, int((b_ - lo) / (hi - lo) * bins))
+        prof[i0:i1 + 1] += w_ / (i1 - i0 + 1)
+    prof = np.convolve(prof, [.25, .5, .25], mode="same")
+    peaks = [i for i in range(bins) if prof[i] >= prof[max(0, i - 1)] and prof[i] >= prof[min(bins - 1, i + 1)] and prof[i] >= 0.35 * prof.max()]
+    peaks.sort(key=lambda i: -prof[i]); chosen = []
+    for i in peaks:
+        pi = (edges[i] + edges[i + 1]) / 2
+        if all(abs(pi / ((edges[j] + edges[j + 1]) / 2) - 1) >= ZONE_GAP for j in chosen): chosen.append(i)
+    zones = []
+    for i in chosen:
+        a_ = b_ = i
+        pk = (edges[i] + edges[i + 1]) / 2
+        while a_ > 0 and prof[a_ - 1] >= 0.75 * prof[i] and edges[a_ - 1] >= pk * (1 - ZONE_HALF_WIDTH): a_ -= 1
+        while b_ < bins - 1 and prof[b_ + 1] >= 0.75 * prof[i] and edges[b_ + 2] <= pk * (1 + ZONE_HALF_WIDTH): b_ += 1
+        zones.append(dict(lo=float(edges[a_]), hi=float(edges[b_ + 1]), share=float(prof[a_:b_ + 1].sum() / prof.sum() * 100)))
+    sup = sorted([z for z in zones if z["hi"] <= close * 1.005], key=lambda z: -z["hi"])[:MAX_ZONES]
+    res = sorted([z for z in zones if z["lo"] >= close * .995], key=lambda z: z["lo"])[:MAX_ZONES]
+    inside = [z for z in zones if z["lo"] < close * .995 and z["hi"] > close * 1.005]          # price is sitting in congestion right now
+    for z in inside: sup.append(z); res.append(z)
+    return {"support": sup, "resistance": res}
+
+
+def chart_data(f, M, fo, x, hits):
+    """For every stock flagged today: the last CHART_DAYS sessions of open, high, low, close, delivered shares (and their 20-session average and the day's
+    direction code, as on the Stocks screen), 50 and 100-day averages, the sessions among the latest RECENT_DAYS on which each screen's rule was true,
+    and the congestion zones (support below, resistance above)."""
+    C = M["C"][fo]; out = {}
     for s in hits:
         n = min(CHART_DAYS, len(C))
-        num = lambda ser: [None if pd.isna(v) else round(float(v), 2) for v in ser.iloc[-n:]]
-        out[s] = dict(dates=[f"{d:%d %b %y}" for d in C.index[-n:]], close=num(C[s]), ma50=num(x["ma50"][s]), ma100=num(x["ma100"][s]),
-                      flags={k: [int(i) for i in np.flatnonzero(f[k][s].to_numpy()[-n:]) if i >= n - RECENT_DAYS] for k in f})
+        num = lambda ser, d=2: [None if pd.isna(v) else round(float(v), d) for v in ser.iloc[-n:]]
+        dq = M["DQ"][s]; avg = dq.shift(1).rolling(20, min_periods=15).mean()
+        out[s] = dict(dates=[f"{d:%d %b %y}" for d in C.index[-n:]], open=num(M["O"][s]), high=num(M["H"][s]), low=num(M["L"][s]), close=num(C[s]),
+                      dq=num(dq, 0), dqavg=num(avg, 0), dc=num(M["dcode"][s], 0), ma50=num(x["ma50"][s]), ma100=num(x["ma100"][s]),
+                      flags={k: [int(i) for i in np.flatnonzero(f[k][s].to_numpy()[-n:]) if i >= n - RECENT_DAYS] for k in f},
+                      zones=congestion_zones(M["H"][s], M["L"][s], dq, float(C[s].iloc[-1])))
     return out
 
 
@@ -118,5 +162,5 @@ def build(M):
     conf = pd.DataFrame([dict(sym=s, count=len(k), screens=k) for s, k in hits.items()])
     if len(conf): conf = conf.sort_values(["count", "sym"], ascending=[False, True]).reset_index(drop=True)
     out["confluence"] = conf
-    out["charts"] = chart_data(f, C, x, hits)
+    out["charts"] = chart_data(f, M, fo, x, hits)
     return out

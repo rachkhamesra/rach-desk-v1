@@ -14,7 +14,9 @@ def world(n=300, seed=1):
     oi = pd.DataFrame(1e6, index=dates, columns=syms); oi.iloc[-1, oi.columns.get_loc("BUILD")] = 1.2e6
     RAT = pd.DataFrame(1.5, index=dates, columns=syms)
     ma = {n_: C.rolling(n_, min_periods=n_).mean() for n_ in (50, 100)}
-    return dict(C=C, H=C * 1.01, O=C, RAT=RAT, OIadj=oi, nifty=nifty, ma=ma, memberships={"fo": syms}, N=n, T=n - 1, dates=list(dates))
+    DQ = pd.DataFrame(rng.uniform(1e5, 3e5, (n, len(syms))), index=dates, columns=syms)
+    dcode = np.sign(C.pct_change().fillna(0))
+    return dict(C=C, H=C * 1.01, L=C * .99, O=C.shift(1).fillna(C), DQ=DQ, dcode=dcode, RAT=RAT, OIadj=oi, nifty=nifty, ma=ma, memberships={"fo": syms}, N=n, T=n - 1, dates=list(dates))
 
 
 def test_screens_flag_the_stocks_they_should():
@@ -54,4 +56,23 @@ def test_every_flagged_stock_gets_a_chart_with_its_screens_marked():
     assert fl and fl[-1] == n - 1 and min(fl) >= n - shorts.RECENT_DAYS                       # only the latest sessions are marked, never older ones      # flagged today = last session
     html = webpage.tab_shorts(M)
     assert html.count('class="shsvg"') >= 3 and 'class="shgrid"' in html and "shaded bars and dots mark only the last 10" in html
-    assert 'fill="#b58cff" opacity=".26"' in html                      # laggard bars are drawn
+    assert 'fill="#b58cff" opacity=".24"' in html                      # laggard bars are drawn
+    assert "DELIVERED SHARES" in html and html.count("<polyline") >= 3
+
+
+def test_congestion_zones_find_where_price_spent_its_time():
+    rng = np.random.default_rng(3); n = 250
+    mid = np.r_[np.full(120, 121.0), np.linspace(121, 101, 10), np.full(100, 101.0), np.linspace(101, 110, 20)]
+    close = mid + rng.normal(0, .3, n); H, L = close + 1, close - 1
+    z = shorts.congestion_zones(H, L, np.full(n, 1e5), float(close[-1]))
+    assert z["support"] and z["resistance"]
+    assert 99 <= z["support"][0]["lo"] <= 102 and 100 <= z["support"][0]["hi"] <= 104          # the 101 shelf below the 110 close
+    assert 118 <= z["resistance"][0]["lo"] <= 122 and z["resistance"][0]["hi"] >= 121           # the old 121 shelf above it
+    assert z["support"][0]["hi"] < float(close[-1]) < z["resistance"][0]["lo"]
+    assert shorts.congestion_zones(H[:20], L[:20], np.full(20, 1e5), 100.0) == {"support": [], "resistance": []}   # too little history to say
+
+
+def test_charts_carry_candles_delivery_and_zones():
+    M = world(); X = shorts.build(M); ch = X["charts"]["FALLS"]
+    for k in ("open", "high", "low", "close", "dq", "dqavg", "dc", "ma50", "ma100", "zones"): assert k in ch
+    assert len(ch["open"]) == len(ch["dq"]) == len(ch["close"]) and set(ch["zones"]) == {"support", "resistance"}
