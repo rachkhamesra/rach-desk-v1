@@ -865,10 +865,10 @@ def short_cards(syms, M, X, keys_for, cap=SHORT_CHART_CAP):
         px1 = (c[-1] / c[-2] - 1) * 100 if len(c) > 1 and c[-1] and c[-2] else None
         days = sum(len(ch["flags"].get(k, [])) for k in keys)
         marks = " ".join(f'<i class="shkey" style="background:{SHORT_COLORS[k]}"></i>{esc(k.replace("_", " ").title())}' for k in keys)
-        cards.append(f'<div class="card shcard"><div class="shhead"><b>{stk(sym, M)}</b><span class="mut">{last:,.2f}</span><span class="{"pup" if (px1 or 0) >= 0 else "pdn"}">{pc(px1)}</span><span class="mut shdays">{days} flagged day{"s" if days != 1 else ""} in {len(c)}</span></div>'
+        cards.append(f'<div class="card shcard"><div class="shhead"><b>{stk(sym, M)}</b><span class="mut">{last:,.2f}</span><span class="{"pup" if (px1 or 0) >= 0 else "pdn"}">{pc(px1)}</span><span class="mut shdays">{days} flagged day{"s" if days != 1 else ""} in the last {shorts_mod.RECENT_DAYS}</span></div>'
                      f'<div class="shmarks">{marks}</div>{short_chart(sym, ch, keys)}</div>')
     more = f'<p class="desc">Showing the first {cap} of {len(syms)}, in the same order as the table.</p>' if len(syms) > cap else ""
-    return ('<div class="shlegend"><i class="shln w"></i>Close <i class="shln a"></i>50-day <i class="shln b"></i>100-day <span class="mut">· shaded bars and dots are the sessions on which the rule was true</span></div>'
+    return ('<div class="shlegend"><i class="shln w"></i>Close <i class="shln a"></i>50-day <i class="shln b"></i>100-day <span class="mut">· shaded bars and dots mark only the last 10 sessions on which the rule was true</span></div>'
             f'<div class="shgrid">{"".join(cards)}</div>{more}')
 
 

@@ -78,17 +78,18 @@ def baseline(C, nifty, hold=HOLD):
     return dict(n=int(len(v)), avg=float(v.mean() * 100), hit=float((v < 0).mean() * 100)) if len(v) else None
 
 
-CHART_DAYS = 130      # sessions drawn per chart
+CHART_DAYS = 90       # sessions of price drawn per chart
+RECENT_DAYS = 10      # only flags from this many latest sessions are highlighted: older ones are not relevant to today's pick
 
 
 def chart_data(f, C, x, hits):
-    """For every stock flagged today: the last CHART_DAYS closes, 50 and 100-day averages, and, per screen, the sessions on which that screen's rule was true."""
+    """For every stock flagged today: the last CHART_DAYS closes, 50 and 100-day averages, and, per screen, the sessions among the latest RECENT_DAYS on which that screen's rule was true."""
     out = {}
     for s in hits:
         n = min(CHART_DAYS, len(C))
         num = lambda ser: [None if pd.isna(v) else round(float(v), 2) for v in ser.iloc[-n:]]
         out[s] = dict(dates=[f"{d:%d %b %y}" for d in C.index[-n:]], close=num(C[s]), ma50=num(x["ma50"][s]), ma100=num(x["ma100"][s]),
-                      flags={k: [int(i) for i in np.flatnonzero(f[k][s].to_numpy()[-n:])] for k in f})
+                      flags={k: [int(i) for i in np.flatnonzero(f[k][s].to_numpy()[-n:]) if i >= n - RECENT_DAYS] for k in f})
     return out
 
 

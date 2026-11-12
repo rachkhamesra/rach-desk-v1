@@ -50,7 +50,8 @@ def test_the_tab_renders_with_the_experimental_badge_and_every_screen():
 def test_every_flagged_stock_gets_a_chart_with_its_screens_marked():
     M = world(); M["unresolved"] = set(); M["results"] = []; M["shorts"] = shorts.build(M)
     X = M["shorts"]; assert "FALLS" in X["charts"] and len(X["charts"]["FALLS"]["close"]) == len(X["charts"]["FALLS"]["dates"]) <= shorts.CHART_DAYS
-    assert X["charts"]["FALLS"]["flags"]["laggards"] and X["charts"]["FALLS"]["flags"]["laggards"][-1] == len(X["charts"]["FALLS"]["close"]) - 1      # flagged today = last session
+    fl = X["charts"]["FALLS"]["flags"]["laggards"]; n = len(X["charts"]["FALLS"]["close"])
+    assert fl and fl[-1] == n - 1 and min(fl) >= n - shorts.RECENT_DAYS                       # only the latest sessions are marked, never older ones      # flagged today = last session
     html = webpage.tab_shorts(M)
-    assert html.count('class="shsvg"') >= 3 and 'class="shgrid"' in html and "shaded bars and dots" in html
+    assert html.count('class="shsvg"') >= 3 and 'class="shgrid"' in html and "shaded bars and dots mark only the last 10" in html
     assert 'fill="#b58cff" opacity=".26"' in html                      # laggard bars are drawn

@@ -112,4 +112,4 @@ F&O stocks only, from `shorts.py`. Six yes/no screens on the existing price, del
 
 Each screen carries a **replay**: the same rule applied to every held session, then the stock's move against Nifty over the next 10 sessions (one flag per stock per 10 sessions), shown next to the average F&O stock. On the current history (about 280 sessions) none of the screens shows an edge over that baseline, and the page says so. Treat the lists as things to look at, not signals.
 
-Every Short Ideas subtab also draws a chart per flagged stock (up to 30): close, 50 and 100-day averages, with the sessions on which that screen's rule was true shaded and dotted, so you can see how often and where it fired. The overview charts stocks hit by two or more screens, with each screen in its own colour.
+Every Short Ideas subtab also draws a chart per flagged stock (up to 30): close, 50 and 100-day averages, with only the last 10 sessions on which that screen's rule was true shaded and dotted (older firings are not shown). The overview charts stocks hit by two or more screens, with each screen in its own colour.
