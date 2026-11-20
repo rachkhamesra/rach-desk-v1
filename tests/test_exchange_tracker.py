@@ -28,7 +28,7 @@ def test_build_uses_same_weekday_and_monthly_average():
     for day in ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"): assert f'<option{" selected" if day == out["weekday"] else ""}>{day}</option>' in html
     assert html.count(" hidden>") >= 14 and "AVERAGE ₹" in html and "Average by weekday in this window" in html
     assert "VS YTD AVG" in html
-    assert html.index('excomment') < html.index('exlayout')
+    assert html.index('class="exlayout"') < html.index('class="card excomment"') < html.index('class="exwdwrap"')      # the daily read sits under the first row of charts
     assert "AVERAGE DAILY PREMIUM TURNOVER" in html
 
 
