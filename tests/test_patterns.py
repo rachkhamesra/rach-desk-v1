@@ -72,14 +72,14 @@ def world():
 
 
 def test_build_scans_the_universe_and_charts_each_find():
-    M = world(); out = P.build(M)
+    M = world(); out = P.scan_timeframe(M)
     assert out["scanned"] == 4 and {r["sym"] for r in out["found"]["ascending"]} == {"ASC"} and {r["sym"] for r in out["found"]["descending"]} == {"DESC"}
     assert "RECT" in {r["sym"] for r in out["found"]["rectangle"]} and "TREND" not in {r["sym"] for k in out["found"] for r in out["found"][k]}
     asc = out["found"]["ascending"][0]; assert asc["fo"] is True and asc["turnover"] > 0
     ch = out["charts"]["ASC"]; pat = ch["patterns"]["ascending"]
     assert len(ch["close"]) == len(ch["dq"]) and len(pat["lines"]) == 2 and all(0 <= ln["a"][0] <= ln["b"][0] <= len(ch["close"]) - 1 for ln in pat["lines"])
-    M["N"] = 50; assert P.build(M) is None                                               # too little history to scan
-    M = world(); M["TQ"] = M["TQ"] * 0 + 1; assert P.build(M)["scanned"] == 0            # thin stocks are left out
+    M["N"] = 50; assert P.scan_timeframe(M) is None                                               # too little history to scan
+    M = world(); M["TQ"] = M["TQ"] * 0 + 1; assert P.scan_timeframe(M)["scanned"] == 0            # thin stocks are left out
 
 
 def test_the_tab_has_three_subtabs_with_rules_filters_tables_and_charts():
@@ -105,3 +105,61 @@ def test_a_flat_level_touched_only_twice_is_not_enough():
     H2 = H.copy()
     for i, _ in ph[2:]: H2[i - 3:i + 4] = np.minimum(H2[i - 3:i + 4], 90.0)               # flatten every later test of the top
     C2 = np.minimum(C, 89.0); assert P.triangle(H2, L, C2, True) is None
+
+
+def weekly_world(weeks=150):
+    """Five identical sessions per week, so the weekly candles are known exactly: an ascending triangle with a 14-week swing."""
+    Hw, Lw, Cw = osc(weeks, lambda t: np.full(weeks, 100.0), lambda t: 52 + 40 * t / weeks, period=14, noise=.2)
+    Cw = Cw.copy(); Cw[-2:] = 97.0; Hw = np.maximum(Hw, Cw + .5)
+    n = weeks * 5; dates = pd.bdate_range("2024-01-01", periods=n); syms = ["ASCW", "TREND"]
+    rep = lambda a: np.repeat(a, 5)
+    C = pd.DataFrame({"ASCW": rep(Cw), "TREND": 50 * 1.003 ** np.arange(n)}, index=dates)
+    H = pd.DataFrame({"ASCW": rep(Hw), "TREND": C["TREND"] * 1.01}, index=dates); L = pd.DataFrame({"ASCW": rep(Lw), "TREND": C["TREND"] * .99}, index=dates)
+    ones = pd.DataFrame(1.0, index=dates, columns=syms)
+    return dict(C=C, H=H, L=L, O=C.shift(1).fillna(C), DQ=ones * 1e5, TQ=ones * 5e6, dcode=np.sign(C.pct_change().fillna(0)), RAT=ones * 1.1, nifty=pd.Series(np.linspace(100, 130, n), index=dates),
+                dates=list(dates), syms=syms, memberships={"fo": ["ASCW"]}, N=n, T=n - 1, ma={50: C.rolling(50).mean(), 100: C.rolling(100).mean()}, unresolved=set())
+
+
+def test_weekly_candles_are_the_daily_ones_resampled():
+    M = weekly_world(); S = P.series(M, P.WEEKLY); n = len(S["C"])
+    assert n == 150 and all(b - a == 4 for a, b in S["where"])                          # five sessions a week
+    s = "ASCW"; first, last = S["where"][40]
+    assert S["O"][s].iloc[40] == M["O"][s].iloc[first] and S["C"][s].iloc[40] == M["C"][s].iloc[last]
+    assert S["H"][s].iloc[40] == M["H"][s].iloc[first:last + 1].max() and S["L"][s].iloc[40] == M["L"][s].iloc[first:last + 1].min()
+    assert S["DQ"][s].iloc[40] == M["DQ"][s].iloc[first:last + 1].sum()
+
+
+def test_the_same_rules_find_the_same_pattern_on_weekly_candles():
+    M = weekly_world(); out = P.build(M)
+    w = out["weekly"]; assert w and w["cfg"].name == "weekly"
+    rows = w["found"]["ascending"]; assert [r["sym"] for r in rows] == ["ASCW"] and rows[0]["tf"] == "weekly" and 97 <= rows[0]["level"] <= 103
+    assert not any(w["found"][k] for k in ("descending",)) and "TREND" not in {r["sym"] for k in w["found"] for r in w["found"][k]}
+    g = rows[0]["daily"]                                                                   # the same pattern, placed on the daily chart
+    assert len(g["lines"]) == 2 and all(0 <= ln["a"][0] < ln["b"][0] < len(M["dates"]) for ln in g["lines"]) and g["touches"] and g["target"] > rows[0]["level"]
+    ch = w["charts"]["ASCW"]; assert ch["ma_labels"] == [10, 30] and len(ch["close"]) <= P.WEEKLY.chart
+
+
+def test_weekly_needs_enough_weeks_and_daily_results_are_unchanged():
+    assert P.scan_timeframe(weekly_world(30), P.WEEKLY) is None and P.scan_timeframe(weekly_world(30), P.DAILY)          # 30 weeks is too few for the weekly rules, enough for daily
+    M = world(); out = P.build(M); assert out["daily"] and {r["sym"] for r in out["daily"]["found"]["ascending"]} == {"ASC"}
+    H, L, C = ascending(); assert P.triangle(H, L, C, True) == P.triangle(H, L, C, True, P.DAILY)
+
+
+def test_every_screen_that_flags_a_stock_is_listed_for_its_page():
+    import shorts
+    M = world(); M["patterns"] = P.build(M); M["unresolved"] = set(); M["results"] = []
+    M["shorts"] = {"screens": {"laggards": {"title": "LAGGARDS", "rows": pd.DataFrame([dict(sym="ASC", days=3)])}}}
+    M["cash_accumulation"] = pd.DataFrame([dict(sym="ASC", days=2, ratio=1.4)]); M["cash_tracking"] = pd.DataFrame(columns=["sym", "days", "ratio"])
+    M["breakout_bases"] = pd.DataFrame([dict(sym="ASC", stage="near")]); M["high52"] = pd.DataFrame([dict(sym="ASC", close_from_high=-1.5)])
+    out = webpage.screen_flags(M)
+    labels = [f["l"] for f in out["ASC"]["fl"]]
+    assert any(l.startswith("ASCENDING TRIANGLE · DAILY") for l in labels) and "SHORT IDEAS · LAGGARDS" in labels and "CASH ACCUMULATION · CONFIRMED" in labels
+    assert "BREAKOUT BASE · NEAR" in labels and "52-WEEK HIGH" in labels
+    pat = [f for f in out["ASC"]["fl"] if f["g"] == "pattern"][0]; assert pat["tab"] == "patterns" and pat["sub"] == "ascending" and pat["tf"] == "daily" and pat["d"]
+    g = out["ASC"]["pt"][0]; assert g["tf"] == "d" and g["k"] == "ascending" and len(g["lines"]) == 2 and g["th"] and g["tg"] > 0        # geometry for the price chart
+    assert "TREND" not in out                                                                  # a stock nothing flags has no entry
+
+
+def test_stocks_without_futures_send_no_open_interest():
+    assert webpage.oi_series(pd.Series([np.nan, np.nan, np.nan])) == []
+    assert webpage.oi_series(pd.Series([np.nan, 12.0, 15.0])) == [None, 12, 15]

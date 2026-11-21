@@ -9,6 +9,8 @@ A pattern is "fresh" for RECENT sessions after a close beyond its flat level (BR
 level without crossing it; FORMING means the pattern stands but price is further away. The measured-move target adds the pattern's widest height to the break.
 Nothing here says a break will follow through. See the page for the caveats.
 """
+from collections import namedtuple
+
 import numpy as np
 import pandas as pd
 
@@ -28,6 +30,12 @@ BREAK = 0.01          # a close 1% beyond the level counts as through it
 PIERCE = 0.03         # an earlier excursion this far beyond the level before the last RECENT sessions invalidates the pattern
 MIN_TURNOVER_CR = 2.0 # median daily rupee turnover, so thin circuit-bound names do not fill the lists
 CHART_DAYS = 230
+# Bar-count settings per timeframe. The rules are identical (levels, touches, convergence, percentages); only what "a few bars" means differs.
+#   k: a swing point beats this many bars either side; gap: bars between the first and last touch; bars: age limits of a pattern; recent: how long a break stays fresh;
+#   retest: how many bars before the sloped side starts the flat level may last be touched; pad: bars of slack when picking swing points; chart: bars drawn.
+Cfg = namedtuple("Cfg", "name unit k gap min_bars max_bars recent retest pad chart")
+DAILY = Cfg("daily", "sessions", 4, 12, 35, 270, 10, 10, 5, 230)
+WEEKLY = Cfg("weekly", "weeks", 2, 5, 26, 156, 4, 4, 2, 140)
 KINDS = [("ascending", "ASCENDING TRIANGLE", "bullish"), ("descending", "DESCENDING TRIANGLE", "bearish"), ("rectangle", "RECTANGLE", "range")]
 
 
@@ -71,10 +79,10 @@ def streak_start(C, level, up, n):
     return i
 
 
-def _status(C, level, up, n):
+def _status(C, level, up, n, cfg=DAILY):
     """BREAKOUT/BREAKDOWN if the first close beyond the level came within the last RECENT sessions and it still holds; SETUP when near; else FORMING."""
     now = C[n - 1]; begun = streak_start(C, level, up, n)
-    if begun is not None and begun >= n - RECENT: return "BREAKOUT" if up else "BREAKDOWN", int(begun)
+    if begun is not None and begun >= n - cfg.recent: return "BREAKOUT" if up else "BREAKDOWN", int(begun)
     gap = (level / now - 1) if up else (now / level - 1)
     if 0 <= gap <= NEAR: return "SETUP", None
     return ("FORMING", None) if 0 <= gap <= FORMING_MAX else (None, None)
@@ -90,18 +98,18 @@ def chain(points, up):
     return out
 
 
-def triangle(H, L, C, up):
+def triangle(H, L, C, up, cfg=DAILY):
     """Ascending (up=True: flat top, rising lows) or descending (flat bottom, falling highs). Returns the best match or None."""
     n = len(C)
-    flat_pts = swings(H if up else L, high=up); slope_pts = swings(L if up else H, high=not up)
+    flat_pts = swings(H if up else L, cfg.k, up); slope_pts = swings(L if up else H, cfg.k, not up)
     best = None
-    for level, mem in clusters(flat_pts):
-        run = [(i, p) for i, p in chain([q for q in slope_pts if q[0] >= mem[0][0] - 5], up) if ((p < level * .97) if up else (p > level * 1.03))]
+    for level, mem in clusters(flat_pts, TOL, cfg.gap):
+        run = [(i, p) for i, p in chain([q for q in slope_pts if q[0] >= mem[0][0] - cfg.pad], up) if ((p < level * .97) if up else (p > level * 1.03))]
         if len(mem) < MIN_TOUCHES: continue
         if len(run) < 3: continue                                                              # three points on the sloped side, so it is a line and not just two dots
         i_s = run[0][0]; touches = mem
-        if mem[-1][0] < i_s - 10 or not (MIN_DAYS <= n - i_s <= MAX_DAYS): continue            # the flat level must be tested again once the sloped side has started
-        seg = H[i_s:n - RECENT] if up else L[i_s:n - RECENT]
+        if mem[-1][0] < i_s - cfg.retest or not (cfg.min_bars <= n - i_s <= cfg.max_bars): continue            # the flat level must be tested again once the sloped side has started
+        seg = H[i_s:n - cfg.recent] if up else L[i_s:n - cfg.recent]
         if len(seg) and ((seg.max() > level * (1 + PIERCE)) if up else (seg.min() < level * (1 - PIERCE))): continue          # it already broke out once: not this pattern
         slope, icpt = _line(run); line = lambda i: slope * i + icpt
         first, last = run[0][1], run[-1][1]
@@ -112,7 +120,7 @@ def triangle(H, L, C, up):
         ix = np.arange(i_s, n)
         inside = (C[i_s:] >= line(ix) * .97) if up else (C[i_s:] <= line(ix) * 1.03)
         if inside.mean() < .95: continue
-        status, brk = _status(C, level, up, n)
+        status, brk = _status(C, level, up, n, cfg)
         if status is None: continue
         score = len(touches) + len(run) + (n - i_s) / 40
         if best is None or score > best["score"]:
@@ -122,25 +130,25 @@ def triangle(H, L, C, up):
     return best
 
 
-def rectangle(H, L, C):
+def rectangle(H, L, C, cfg=DAILY):
     n = len(C); best = None
-    for r_level, r_mem in clusters(swings(H, high=True), RECT_TOL):
-        for s_level, s_mem in clusters(swings(L, high=False), RECT_TOL):
+    for r_level, r_mem in clusters(swings(H, cfg.k, True), RECT_TOL, cfg.gap):
+        for s_level, s_mem in clusters(swings(L, cfg.k, False), RECT_TOL, cfg.gap):
             if s_level >= r_level: continue
             i0 = min(r_mem[0][0], s_mem[0][0])
-            if not (MIN_DAYS <= n - i0 <= MAX_DAYS): continue
+            if not (cfg.min_bars <= n - i0 <= cfg.max_bars): continue
             h = r_level - s_level; hp = h / s_level
             if not (RANGE_MIN <= hp <= RANGE_MAX): continue
-            if H[i0:n - RECENT].max() > r_level * (1 + PIERCE) or L[i0:n - RECENT].min() < s_level * (1 - PIERCE): continue
-            body = C[i0:n - RECENT]
+            if H[i0:n - cfg.recent].max() > r_level * (1 + PIERCE) or L[i0:n - cfg.recent].min() < s_level * (1 - PIERCE): continue
+            body = C[i0:n - cfg.recent]
             if len(body) < 10 or ((body >= s_level * .98) & (body <= r_level * 1.02)).mean() < .90: continue
-            if abs(C[i0:i0 + 10].mean() - C[-10:].mean()) > 0.5 * h: continue                       # a drifting channel is not a range: the average close must not have moved more than half the range
+            if abs(C[i0:i0 + cfg.recent].mean() - C[-cfg.recent:].mean()) > 0.5 * h: continue                       # a drifting channel is not a range: the average close must not have moved more than half the range
             touches = len(r_mem) + len(s_mem)
             if len(r_mem) < MIN_TOUCHES or len(s_mem) < MIN_TOUCHES or touches < 7: continue
             now = C[n - 1]
             up_at, dn_at = streak_start(C, r_level, True, n), streak_start(C, s_level, False, n)
-            if up_at is not None and up_at >= n - RECENT: status, brk, up = "BREAKOUT", int(up_at), True
-            elif dn_at is not None and dn_at >= n - RECENT: status, brk, up = "BREAKDOWN", int(dn_at), False
+            if up_at is not None and up_at >= n - cfg.recent: status, brk, up = "BREAKOUT", int(up_at), True
+            elif dn_at is not None and dn_at >= n - cfg.recent: status, brk, up = "BREAKDOWN", int(dn_at), False
             elif now >= r_level * (1 - NEAR) and now <= r_level * (1 + BREAK): status, brk, up = "AT TOP", None, True
             elif now <= s_level * (1 + NEAR) and now >= s_level * (1 - BREAK): status, brk, up = "AT BOTTOM", None, False
             elif s_level * (1 - BREAK) <= now <= r_level * (1 + BREAK): status, brk, up = "IN RANGE", None, True
@@ -154,54 +162,95 @@ def rectangle(H, L, C):
     return best
 
 
-def scan(H, L, C):
+def scan(H, L, C, cfg=DAILY):
     """All three detectors on one stock's arrays (oldest first). {kind: result or None}"""
-    return {"ascending": triangle(H, L, C, True), "descending": triangle(H, L, C, False), "rectangle": rectangle(H, L, C)}
+    return {"ascending": triangle(H, L, C, True, cfg), "descending": triangle(H, L, C, False, cfg), "rectangle": rectangle(H, L, C, cfg)}
 
 
-def build(M):
-    """Scans every liquid stock in the universe. None when there is too little history."""
-    if M["N"] < 120: return None
-    syms = list(M["syms"]); C, H, L, O = M["C"][syms], M["H"][syms], M["L"][syms], M["O"][syms]
-    turn = (C * M["TQ"][syms]).iloc[-60:].median() / 1e7                                  # rupees traded per day, in crore
-    fo = set(M["memberships"].get("fo", [])); n = len(C)
-    out = {"asof": M["dates"][M["T"]], "found": {k: [] for k, _, _ in KINDS}, "charts": {}, "scanned": 0}
-    nifty = M["nifty"].reindex(C.index).ffill()
+def series(M, cfg=DAILY):
+    """The bars the detectors and charts work on. Daily comes straight from the panels; weekly resamples them: open of the first session, highest high, lowest low,
+    close of the last session, delivered shares summed. The week still in progress is the last bar. `where` maps a bar to the daily session positions it covers."""
+    syms = list(M["syms"]); idx = M["C"].index
+    if cfg.name == "daily":
+        S = dict(C=M["C"][syms], H=M["H"][syms], L=M["L"][syms], O=M["O"][syms], DQ=M["DQ"][syms], dc=M["dcode"][syms], ma=(50, 100),
+                 ma1=M["ma"][50][syms], ma2=M["ma"][100][syms], where=[(i, i) for i in range(len(idx))], ends=list(idx))
+        S["avg"] = S["DQ"].shift(1).rolling(20, min_periods=15).mean()
+        return S
+    wk = pd.Series(np.arange(len(idx)), index=idx).groupby(idx.to_period("W-FRI"))
+    first, last = wk.min().to_numpy(), wk.max().to_numpy(); ends = idx[last]
+    pick = lambda df, f: df[syms].groupby(idx.to_period("W-FRI")).agg(f).set_axis(ends)
+    C = pick(M["C"], "last"); DQ = pick(M["DQ"], "sum")
+    ret = C.pct_change(fill_method=None)
+    S = dict(C=C, H=pick(M["H"], "max"), L=pick(M["L"], "min"), O=pick(M["O"], "first"), DQ=DQ, dc=np.sign(ret).where(ret.abs() > 0.01, 0.0).where(ret.notna()), ma=(10, 30),
+             ma1=C.rolling(10, min_periods=10).mean(), ma2=C.rolling(30, min_periods=30).mean(), where=list(zip(first.tolist(), last.tolist())), ends=list(ends))
+    S["avg"] = DQ.shift(1).rolling(10, min_periods=7).mean()
+    return S
+
+
+def scan_timeframe(M, cfg=DAILY):
+    """Scans every liquid stock in the universe on one timeframe. None when there is too little history for it."""
+    S = series(M, cfg); n = len(S["C"])
+    if (M["N"] < 120) or n < cfg.min_bars + cfg.k * 2 + 10: return None
+    syms = list(S["C"].columns); C, H, L = S["C"], S["H"], S["L"]; Cd = M["C"][syms]
+    turn = (Cd * M["TQ"][syms]).iloc[-60:].median() / 1e7                                  # rupees traded per day, in crore
+    fo = set(M["memberships"].get("fo", [])); nd = len(Cd)
+    out = {"asof": M["dates"][M["T"]], "found": {k: [] for k, _, _ in KINDS}, "charts": {}, "scanned": 0, "cfg": cfg}
+    nifty = M["nifty"].reindex(Cd.index).ffill()
     for s in syms:
-        if not turn.get(s, 0) >= MIN_TURNOVER_CR or C[s].iloc[-120:].isna().sum() > 5: continue
+        if not turn.get(s, 0) >= MIN_TURNOVER_CR or C[s].iloc[-max(8, cfg.min_bars // 4):].isna().sum() > 1: continue
         out["scanned"] += 1
-        res = scan(H[s].to_numpy(float), L[s].to_numpy(float), C[s].ffill().to_numpy(float))
+        res = scan(H[s].to_numpy(float), L[s].to_numpy(float), C[s].ffill().to_numpy(float), cfg)
         for kind, r in res.items():
             if not r: continue
-            c = C[s]; r.update(sym=s, close=float(c.iloc[-1]), px1d=float((c.iloc[-1] / c.iloc[-2] - 1) * 100), fo=s in fo,
-                               rs3m=float(((c.iloc[-1] / c.iloc[-64]) / (nifty.iloc[-1] / nifty.iloc[-64]) - 1) * 100) if n > 64 else np.nan,
-                               ratio=float(M["RAT"][s].iloc[-1]) if pd.notna(M["RAT"][s].iloc[-1]) else np.nan, turnover=float(turn[s]))
+            c = Cd[s]; rat = M["RAT"][s].iloc[-1]
+            r.update(sym=s, close=float(c.iloc[-1]), px1d=float((c.iloc[-1] / c.iloc[-2] - 1) * 100), fo=s in fo, tf=cfg.name,
+                     rs3m=float(((c.iloc[-1] / c.iloc[-64]) / (nifty.iloc[-1] / nifty.iloc[-64]) - 1) * 100) if nd > 64 else np.nan,
+                     ratio=float(rat) if pd.notna(rat) else np.nan, turnover=float(turn[s]))
             out["found"][kind].append(r)
     order = {"BREAKOUT": 0, "BREAKDOWN": 0, "AT TOP": 1, "AT BOTTOM": 1, "SETUP": 1, "IN RANGE": 2, "FORMING": 2}
     for kind in out["found"]:
         out["found"][kind].sort(key=lambda r: (order.get(r["status"], 3), -r["score"]))
-    out["charts"] = chart_data(M, out["found"])
+    out["charts"] = chart_data(S, cfg, out["found"])
+    for kind, rows in out["found"].items():
+        for r in rows: r["daily"] = daily_geometry(r, S)
     return out
 
 
-def chart_data(M, found, cap=40):
-    """Per stock charted (the first `cap` of each kind): sessions of candles and delivery, plus each pattern's lines and touch points in chart coordinates."""
-    n = len(M["C"]); w = min(CHART_DAYS, n); off = n - w; res = {}
+def build(M):
+    """{"daily": scan or None, "weekly": scan or None}. None for both when there is no history to speak of."""
+    d, w = scan_timeframe(M, DAILY), scan_timeframe(M, WEEKLY)
+    return {"daily": d, "weekly": w} if (d or w) else None
+
+
+def _lines(kind, r, n):
+    """The two lines of a pattern as ((bar, price), (bar, price), role), in bar coordinates."""
+    i0, i1 = r["i0"], n - 1
+    if kind == "rectangle": return [((i0, r["top"]), (i1, r["top"]), "resistance"), ((i0, r["bottom"]), (i1, r["bottom"]), "support")]
+    sl = ((i0, r["slope"] * i0 + r["icpt"]), (i1, r["slope"] * i1 + r["icpt"]))
+    if kind == "ascending": return [((i0, r["level"]), (i1, r["level"]), "resistance"), (sl[0], sl[1], "support")]
+    return [((i0, r["level"]), (i1, r["level"]), "support"), (sl[0], sl[1], "resistance")]
+
+
+def daily_geometry(r, S):
+    """The pattern placed on the DAILY chart of the stock page: bar positions become session positions (a weekly bar spans its first to its last session)."""
+    n = len(S["C"]); wh = S["where"]
+    start = lambda b: wh[max(0, min(b, n - 1))][0]; end = lambda b: wh[max(0, min(b, n - 1))][1]
+    lines = [dict(a=[int(start(a[0])), round(a[1], 2)], b=[int(end(b[0])), round(b[1], 2)], role=role) for a, b, role in _lines(r["kind"], r, n)]
+    pts = [[int((start(i) + end(i)) // 2), round(p, 2)] for i, p in r["flat_pts"] + r["line_pts"]]
+    return dict(lines=lines, touches=pts, target=round(r["target"], 2))
+
+
+def chart_data(S, cfg, found, cap=40):
+    """Per stock charted (the first `cap` of each kind): the bars, delivery and averages, plus each pattern's lines and touch points in chart coordinates."""
+    n = len(S["C"]); w = min(cfg.chart, n); off = n - w; res = {}
+    num = lambda ser, d=2: [None if pd.isna(v) else round(float(v), d) for v in ser.iloc[-w:]]
     for kind, rows in found.items():
         for r in rows[:cap]:
             s = r["sym"]
             if s not in res:
-                dq = M["DQ"][s]; avg = dq.shift(1).rolling(20, min_periods=15).mean()
-                num = lambda ser, d=2: [None if pd.isna(v) else round(float(v), d) for v in ser.iloc[-w:]]
-                res[s] = dict(dates=[f"{d:%d %b %y}" for d in M["C"].index[-w:]], open=num(M["O"][s]), high=num(M["H"][s]), low=num(M["L"][s]), close=num(M["C"][s]),
-                              dq=num(dq, 0), dqavg=num(avg, 0), dc=num(M["dcode"][s], 0), ma50=num(M["ma"][50][s]), ma100=num(M["ma"][100][s]), flags={}, zones={"support": [], "resistance": []}, patterns={})
-            i0, i1 = r["i0"] - off, n - 1 - off
-            if kind == "rectangle":
-                lines = [dict(a=[i0, r["top"]], b=[i1, r["top"]], role="resistance"), dict(a=[i0, r["bottom"]], b=[i1, r["bottom"]], role="support")]
-            elif kind == "ascending":
-                lines = [dict(a=[i0, r["level"]], b=[i1, r["level"]], role="resistance"), dict(a=[i0, r["slope"] * r["i0"] + r["icpt"]], b=[i1, r["slope"] * (n - 1) + r["icpt"]], role="support")]
-            else:
-                lines = [dict(a=[i0, r["level"]], b=[i1, r["level"]], role="support"), dict(a=[i0, r["slope"] * r["i0"] + r["icpt"]], b=[i1, r["slope"] * (n - 1) + r["icpt"]], role="resistance")]
-            res[s]["patterns"][kind] = dict(lines=[dict(a=[round(l["a"][0]), round(l["a"][1], 2)], b=[round(l["b"][0]), round(l["b"][1], 2)], role=l["role"]) for l in lines],
+                res[s] = dict(dates=[f"{d:%d %b %y}" for d in S["ends"][-w:]], open=num(S["O"][s]), high=num(S["H"][s]), low=num(S["L"][s]), close=num(S["C"][s]),
+                              dq=num(S["DQ"][s], 0), dqavg=num(S["avg"][s], 0), dc=num(S["dc"][s], 0), ma50=num(S["ma1"][s]), ma100=num(S["ma2"][s]), ma_labels=list(S["ma"]),
+                              flags={}, zones={"support": [], "resistance": []}, patterns={})
+            res[s]["patterns"][kind] = dict(lines=[dict(a=[round(a[0] - off), round(a[1], 2)], b=[round(b[0] - off), round(b[1], 2)], role=role) for a, b, role in _lines(kind, r, n)],
                                            touches=[[i - off, round(p, 2)] for i, p in r["flat_pts"] + r["line_pts"]], target=round(r["target"], 2))
     return res
