@@ -27,7 +27,7 @@ def download(kind, d, root):
     for k in range(3):
         try:
             r = requests.get(URL[kind].format(d=d), headers=HDR.get(kind, UA), timeout=45)
-            if r.status_code == 200 and len(r.content) > 2000:
+            if r.status_code == 200 and len(r.content) > 2000 and not r.content[:200].lstrip().lower().startswith((b"<!doctype", b"<html")):          # an error page served with a 200 is not data
                 with open(p, "wb") as f: f.write(r.content)
                 return "ok"
             if r.status_code == 404: return "404"
@@ -55,13 +55,19 @@ def recent_without_bse(parsed):
     return {d for d in sorted(parsed) if parsed[d].get("bse") is None}
 
 
-def sync(root, start, end, wait_minutes=0, budget_s=None, workers=6, log=print):
+def sync(root, start, end, wait_minutes=0, budget_s=None, workers=6, log=print, backfill=None):
     """Download whatever is missing for every weekday in [start, end]. Returns the list of trading days.
-    budget_s lets a caller stop early (resumable): the cache keeps whatever was fetched."""
+    budget_s lets a caller stop early (resumable): the cache keeps whatever was fetched.
+    backfill caps how many weekdays older than the oldest day already parsed are fetched in this call (newest first), so extending the history
+    to a longer window takes a few runs instead of one very long one. The history stays contiguous."""
     t0 = time.time(); days = list(pd.bdate_range(start, end)); hol = _ghosts(root)
     pf = os.path.join(root, "parsed.pkl")
     cached = pd.read_pickle(pf) if os.path.exists(pf) else {}
-    have = set(cached.keys())                                                    # days already parsed: nothing to download for them
+    have = set(cached.keys())
+    if backfill and have:
+        older = [d for d in days if d < min(have) and d.strftime('%Y-%m-%d') not in hol]
+        if len(older) > backfill: days = [d for d in days if d >= older[-backfill]]
+        log(f"history backfill: {min(len([d for d in older]), backfill)} older weekdays this run")                                                    # days already parsed: nothing to download for them
     late_bse = recent_without_bse(cached)                                        # but BSE publishes later than NSE: keep asking for those
     key = lambda d: d.strftime("%Y-%m-%d")
     deadline = time.time() + wait_minutes * 60

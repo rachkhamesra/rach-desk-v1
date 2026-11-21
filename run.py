@@ -39,13 +39,14 @@ def set_output(name, value):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=os.path.join(HERE, "data")); ap.add_argument("--out", default=os.path.join(HERE, "site"))
-    ap.add_argument("--days", type=int, default=420, help="calendar days of history (420 is about 14 months; 1100+ for 3 years)")
+    ap.add_argument("--days", type=int, default=760, help="calendar days of history (760 is about 2 years)")
+    ap.add_argument("--backfill", type=int, default=150, help="most older weekdays to fetch in one run while extending the history (newest first, resumable)")
     ap.add_argument("--asof", help="build as of this date (YYYY-MM-DD)"); ap.add_argument("--wait-minutes", type=int, default=0)
     ap.add_argument("--skip-if-unchanged", action="store_true", help="exit without building when the newest session (and its BSE delivery) is already published")
     ap.add_argument("--daily", action="store_true", help="with --skip-if-unchanged: still build if nothing has been published yet today (a morning retry for a dropped 6 AM run)")
     a = ap.parse_args()
     end = pd.Timestamp(a.asof) if a.asof else pd.Timestamp.now(tz="Asia/Kolkata").tz_localize(None).normalize()
-    t0 = time.time(); trading = nse.sync(a.root, end - pd.Timedelta(days=a.days), end, a.wait_minutes)
+    t0 = time.time(); trading = nse.sync(a.root, end - pd.Timedelta(days=a.days), end, a.wait_minutes, backfill=a.backfill)
     parsed = nse.parse_all(a.root, trading)
     ov = pd.read_csv(os.path.join(HERE, "corp_actions.csv")) if os.path.exists(os.path.join(HERE, "corp_actions.csv")) else None
     feed = corp_feed.load(a.root, min(parsed), end)
