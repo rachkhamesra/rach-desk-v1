@@ -61,14 +61,37 @@ def find_events(close, isin, lot, turn=None, overrides=None):
     ev = pd.DataFrame(out, columns=["date", "symbol", "ratio", "isin_change", "lot_ratio", "decision", "factor", "note"])
     # a split often shows up on two adjacent days (ISIN one day, price the next): keep the first, drop the repeat
     ev = ev.sort_values(["symbol", "date"]).drop_duplicates(["symbol", "decision", "factor"], keep="first") if len(ev) else ev
-    ev = _apply_overrides(ev, overrides)
+    ev = _apply_overrides(ev, overrides, close)
     return ev.sort_values("date").reset_index(drop=True)
 
 
-def _apply_overrides(ev, ov):
+def _feed_date(close, sym, d, ratio):
+    """The session on which the exchange-announced ratio really shows in the price: the ex-date or the next session, whichever fits better.
+    None when the price did not move by anything like the announced ratio (a stale or mismatched row), so a feed row can never invent an adjustment."""
+    if sym not in close.columns: return None
+    idx = close.index; pos = idx.searchsorted(d)
+    best = None
+    for t in (pos, pos + 1):
+        if 1 <= t < len(idx) and (idx[t] - d).days <= 5:
+            r = close[sym].iloc[t] / close[sym].iloc[t - 1]
+            if pd.notna(r) and r > 0:
+                err = abs(np.log(r / ratio))
+                if best is None or err < best[0]: best = (err, idx[t])
+    return best[1] if best and best[0] < max(0.12, 0.5 * abs(np.log(ratio))) else None      # the price must show at least about half the announced move, allowing for the market that day
+
+
+def _apply_overrides(ev, ov, close=None):
     if ov is None or not len(ov): return ev
     ev = ev.copy()
     for _, o in ov.iterrows():
+        if str(o.get("source", "")) == "nse":                 # an exchange-announced bonus or split: applied where the price confirms it
+            ratio = float(o["ratio"]); when = _feed_date(close, o["symbol"], pd.Timestamp(o["date"]), ratio) if close is not None else None
+            if when is None: continue
+            m = (ev["symbol"] == o["symbol"]) & ((ev["date"] - when).abs() <= pd.Timedelta(days=3)) if len(ev) else pd.Series(False, index=ev.index)
+            note = str(o["note"])
+            if m.any(): ev.loc[m, ["decision", "factor", "note"]] = ["accepted", ratio, note]
+            else: ev = pd.concat([ev, pd.DataFrame([dict(date=when, symbol=o["symbol"], ratio=np.nan, isin_change=False, lot_ratio=np.nan, decision="accepted", factor=ratio, note=note)])], ignore_index=True)
+            continue
         d = pd.Timestamp(o["date"]); act = str(o["action"]).strip().lower(); sym = o["symbol"]
         m = (ev["symbol"] == sym) & ((ev["date"] - d).abs() <= pd.Timedelta(days=3))
         ratio = float(o["ratio"]) if pd.notna(o.get("ratio")) else np.nan
