@@ -3,7 +3,7 @@
 import argparse, json, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import nse, metrics, shorts, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
+import nse, metrics, corp_feed, shorts, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MARKER = "published.json"
@@ -48,6 +48,8 @@ def main():
     t0 = time.time(); trading = nse.sync(a.root, end - pd.Timedelta(days=a.days), end, a.wait_minutes)
     parsed = nse.parse_all(a.root, trading)
     ov = pd.read_csv(os.path.join(HERE, "corp_actions.csv")) if os.path.exists(os.path.join(HERE, "corp_actions.csv")) else None
+    feed = corp_feed.load(a.root, min(parsed), end)
+    ov = pd.concat([feed, ov], ignore_index=True) if len(feed) else ov              # exchange-announced bonuses and splits first; hand overrides still win
     last = sorted(parsed)[-1]; warn = ""
     complete = parsed[last].get("bse") is not None
     def mcx_newest():                                   # MCX posts its Summary Report overnight, after the NSE/BSE files
