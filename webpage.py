@@ -993,21 +993,21 @@ def tab_credit(M):
 
 PATTERN_RULES = {
     "ascending": ("Flat top, rising lows. A potential breakout on the upside.",
-                  ["Resistance: two or more swing highs within 2% of each other, at least 12 sessions apart.",
+                  ["Resistance: three or more swing highs within 2% of each other (touched more than twice), at least 12 sessions apart.",
                    "Support: at least three swing lows, each lower than every swing low after it, so the lows keep rising by at least 3%; the trendline joins the first and last of them.",
                    "Converging: the gap between the flat top and the rising line starts 6% to 50% of the price tall and has shrunk to 80% or less of that now; the pattern is 35 to 270 sessions old.",
                    "Closes stay above the rising line (95% of sessions, 3% leeway) and nothing has pushed more than 3% through the top before the latest 10 sessions.",
                    "BREAKOUT: the first close 1% above the top came in the last 10 sessions and still holds. SETUP: close within 4% under the top. FORMING: within 10% under it.",
                    "Target: the top plus the pattern's widest height."]),
     "descending": ("Flat bottom, falling highs. A potential breakdown on the downside.",
-                   ["Support: two or more swing lows within 2% of each other, at least 12 sessions apart.",
+                   ["Support: three or more swing lows within 2% of each other (touched more than twice), at least 12 sessions apart.",
                     "Resistance: at least three swing highs, each higher than every swing high after it, so the highs keep falling by at least 3%; the trendline joins the first and last of them.",
                     "Converging: the gap starts 6% to 50% of the price tall and has shrunk to 80% or less of that now; the pattern is 35 to 270 sessions old.",
                     "Closes stay below the falling line (95% of sessions, 3% leeway) and nothing has dropped more than 3% through the bottom before the latest 10 sessions.",
                     "BREAKDOWN: the first close 1% below the bottom came in the last 10 sessions and still holds. SETUP: close within 4% above the bottom. FORMING: within 10% above it.",
                     "Target: the bottom minus the pattern's widest height."]),
     "rectangle": ("A clean, defined range: flat top and flat bottom.",
-                  ["Resistance and support each have three or more swing points within 2% of their level, at least 12 sessions apart, seven or more touches in all.",
+                  ["Resistance and support must each be touched more than twice: three or more swing points within 2% of their level, at least 12 sessions apart, seven or more touches in all.",
                    "The range is 7% to 40% of the price and 35 to 270 sessions old; at least 90% of closes sit inside it (2% leeway), the average close has not drifted by more than half the range from start to now, and nothing has pushed more than 3% outside it before the latest 10 sessions.",
                    "BREAKOUT or BREAKDOWN: the first close 1% beyond a side came in the last 10 sessions and still holds. AT TOP or AT BOTTOM: within 4% of that side. IN RANGE: anywhere else inside.",
                    "Target: the break level plus (or minus) the range height."]),
@@ -1049,7 +1049,7 @@ def tab_patterns(M):
         return table(headr, body, "cashwatch ptable")
 
     def cards_for(kind, rows, cap=30):
-        out = []
+        out = []; total = len(rows); rows = [r for r in rows if r["status"] not in ("FORMING", "IN RANGE")]            # charts for the actionable ones; the rest stay in the table
         for r in rows[:cap]:
             ch = X["charts"].get(r["sym"])
             if not ch or kind not in ch["patterns"]: continue
@@ -1057,7 +1057,8 @@ def tab_patterns(M):
             px1 = r["px1d"]
             out.append(f'<div class="card shcard" data-status="{esc(r["status"])}" data-fo="{1 if r["fo"] else 0}"><div class="shhead"><b>{stk(r["sym"], M)}</b><span class="mut">{r["close"]:,.2f}</span><span class="{"pup" if px1 >= 0 else "pdn"}">{pc(px1)}</span>'
                        f'<span class="ptst {cls.get(r["status"], "mut")} shdays">{esc(r["status"])}</span></div><div class="shzones">{info(r)}</div>{short_chart(r["sym"], ch, [], start=start, pattern=pat)}</div>')
-        more = f'<p class="desc">Charts for the first {cap} of {len(rows)}, in the same order as the table.</p>' if len(rows) > cap else ""
+        more = (f'<p class="desc">Charts for the {len(out)} stocks that have broken out or are at or near their trigger level; the {total - len(rows)} still forming or sitting mid-range are in the table only.'
+                + (f' Showing the first {cap} of {len(rows)}.' if len(rows) > cap else "") + '</p>')
         legend = ('<div class="shlegend"><i class="shln" style="border-color:#ef5a4d"></i>Resistance <i class="shln" style="border-color:#2fbf71"></i>Support <i class="shln" style="border-color:#ffd17a;border-top-style:dashed"></i>Target '
                   '<i class="shln a"></i>50-day <i class="shln b"></i>100-day <span class="mut">· circles are the swing points the lines are drawn through</span></div>')
         return legend + f'<div class="shgrid">{"".join(out)}</div>{more}' if out else ""

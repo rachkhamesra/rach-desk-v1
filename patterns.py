@@ -16,6 +16,7 @@ K = 4                 # a swing point beats the k sessions either side
 TOL = 0.02            # swing highs (lows) within 2% of each other touch the same level
 RECT_TOL = 0.02       # both of a rectangle's levels have to hold
 MIN_GAP = 12          # sessions between the first and last touch of a flat level
+MIN_TOUCHES = 3       # a flat level must have been touched more than twice: two touches are just a developing pattern
 MIN_DAYS, MAX_DAYS = 35, 270
 CONVERGE = 0.80       # a triangle's gap now is at most this share of its starting gap
 HEIGHT_MIN, HEIGHT_MAX = 0.06, 0.50   # a triangle starts between 6% and 50% of price tall; a rectangle is between RANGE_MIN and RANGE_MAX
@@ -96,6 +97,7 @@ def triangle(H, L, C, up):
     best = None
     for level, mem in clusters(flat_pts):
         run = [(i, p) for i, p in chain([q for q in slope_pts if q[0] >= mem[0][0] - 5], up) if ((p < level * .97) if up else (p > level * 1.03))]
+        if len(mem) < MIN_TOUCHES: continue
         if len(run) < 3: continue                                                              # three points on the sloped side, so it is a line and not just two dots
         i_s = run[0][0]; touches = mem
         if mem[-1][0] < i_s - 10 or not (MIN_DAYS <= n - i_s <= MAX_DAYS): continue            # the flat level must be tested again once the sloped side has started
@@ -134,7 +136,7 @@ def rectangle(H, L, C):
             if len(body) < 10 or ((body >= s_level * .98) & (body <= r_level * 1.02)).mean() < .90: continue
             if abs(C[i0:i0 + 10].mean() - C[-10:].mean()) > 0.5 * h: continue                       # a drifting channel is not a range: the average close must not have moved more than half the range
             touches = len(r_mem) + len(s_mem)
-            if len(r_mem) < 3 or len(s_mem) < 3 or touches < 7: continue
+            if len(r_mem) < MIN_TOUCHES or len(s_mem) < MIN_TOUCHES or touches < 7: continue
             now = C[n - 1]
             up_at, dn_at = streak_start(C, r_level, True, n), streak_start(C, s_level, False, n)
             if up_at is not None and up_at >= n - RECENT: status, brk, up = "BREAKOUT", int(up_at), True

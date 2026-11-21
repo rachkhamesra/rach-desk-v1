@@ -62,6 +62,8 @@ def world():
     Hd, Ld, Cd = osc(n, lambda t: 86 - 19 * t / n, lambda t: np.full(n, 60.0), period=34)
     Hr, Lr, Cr = osc(n, lambda t: np.full(n, 100.0), lambda t: np.full(n, 78.0), period=30)
     Ct = 50 * 1.004 ** np.arange(n)
+    Ca = Ca.copy(); Ca[-3:] = 97.0; Cd = Cd.copy(); Cd[-3:] = 61.5; Cr = Cr.copy(); Cr[-3:] = 98.5          # each ends near its trigger, so each is charted
+    Ha = np.maximum(Ha, Ca + .5); Hd = np.maximum(Hd, Cd + .5); Hr = np.maximum(Hr, Cr + .5)
     C = pd.DataFrame({"ASC": Ca, "DESC": Cd, "RECT": Cr, "TREND": Ct}, index=dates)
     H = pd.DataFrame({"ASC": Ha, "DESC": Hd, "RECT": Hr, "TREND": Ct * 1.01}, index=dates); L = pd.DataFrame({"ASC": La, "DESC": Ld, "RECT": Lr, "TREND": Ct * .99}, index=dates)
     ones = pd.DataFrame(1.0, index=dates, columns=syms)
@@ -93,3 +95,13 @@ def test_signal_confluence_is_archived_and_credit_desk_renamed():
     html = webpage.render.__doc__ or ""
     import inspect; src = inspect.getsource(webpage.render)
     assert "PEER RADAR" in src and "TECHNICAL PATTERNS" in src and "k not in archived" in src
+
+
+def test_a_flat_level_touched_only_twice_is_not_enough():
+    n = 190; H, L, C = ascending(n)
+    assert P.triangle(H, L, C, True)["touches_flat"] >= 3
+    ph = P.swings(H, high=True); keep = ph[:2]                                           # leave just two swing highs near the top
+    assert len(P.clusters(keep)) == 1 and P.MIN_TOUCHES == 3                              # the cluster exists, but a triangle needs three
+    H2 = H.copy()
+    for i, _ in ph[2:]: H2[i - 3:i + 4] = np.minimum(H2[i - 3:i + 4], 90.0)               # flatten every later test of the top
+    C2 = np.minimum(C, 89.0); assert P.triangle(H2, L, C2, True) is None
