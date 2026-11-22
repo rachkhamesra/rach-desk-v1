@@ -651,6 +651,12 @@ def fl_detail(r, kind, unit):
             f'{r["height_pct"]:.0f}% tall · {r["days"]} {unit} · target {r["target"]:,.0f} ({(r["target"] / r["close"] - 1) * 100:+.0f}%)')
 
 
+def lazy_panel(k, html):
+    """A panel's HTML held as inert text (not parsed into the DOM) until its tab is first opened. `</script` and `<!--` would end or confuse a script element, so they are escaped here and
+    the page undoes it when it fills the panel in."""
+    return f'<script type="text/plain" id="lazy-{k}">{html.replace("</script", "<\\/script").replace("<!--", "<\\!--")}</script>'
+
+
 def screen_flags(M):
     """{symbol: {"fl": [...], "pt": [...]}}: every screen and pattern that flags the stock today, for the stock page.
     fl items: g group, l label, t tone (up/down/near/mut), d detail, tab and sub (where to jump), tf (pattern timeframe). pt items are pattern geometry in daily-session coordinates."""
@@ -716,9 +722,11 @@ def stocks_json(M):
         if call and call.get("analysis"):
             changes = validated_changes(call["analysis"], call.get("source_url"))
             call = {**call, "analysis": {**call["analysis"], "material_guidance_changes": changes}, "outlook": outlook.classify(call["analysis"], changes)}
-        out[s] = dict(c=[nz(x, lambda v: round(float(v), 2)) for x in M["C"][s]],
-                      o=ohl(M["O"][s], M["C"][s]), h=ohl(M["H"][s], M["C"][s]), l=ohl(M["L"][s], M["C"][s]), dq=[nz(x, int) for x in M["DQ"][s]],
-                      oi=oi_series(M["OIadj"][s]), sm=sm,
+        closes = [nz(x, lambda v: round(float(v), 2)) for x in M["C"][s]]
+        heavy = dict(c=closes, o=ohl(M["O"][s], M["C"][s]), h=ohl(M["H"][s], M["C"][s]), l=ohl(M["L"][s], M["C"][s]), dq=[nz(x, int) for x in M["DQ"][s]], oi=oi_series(M["OIadj"][s]))
+        sm["last"] = next((v for v in reversed(closes) if v is not None), None)
+        out[s] = dict(a=json.dumps(heavy, separators=(",", ":")),             # the price, delivery and open-interest arrays as one string: the page parses it only when the stock is opened
+                      sm=sm,
                       result=None if result is None else dict(date=f'{result["event_date"]:%Y-%m-%d}', status=result["status"], purpose=result.get("purpose", ""),
                                                               period=result.get("period", ""), url=result.get("source_url") or ""), at=at, call=call,
                       ev=[[di[e["date"]], round(float(e["factor"]), 4), e["decision"]] for _, e in ev[ev["symbol"] == s].iterrows() if e["date"] in di and e["decision"] in ("auto", "accepted")])
@@ -1233,7 +1241,9 @@ def render(M, asof_text):
                   ("alt", "ALTERNATIVE DATA", lambda: tab_alt_data(M))]
     panels = [(k, lbl, build()) for k, lbl, build in candidates if k not in archived]
     nav = "".join(f'<button class="tab{" on" if i == 0 else ""}{" exp" if k in ("alt", "shorts", "patterns") else ""}" data-t="{k}"{" title=\"Experimental\"" if k in ("alt", "shorts", "patterns") else ""}>{lbl}</button>' for i, (k, lbl, _) in enumerate(panels))
-    body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}>{h}</section>' for i, (k, _, h) in enumerate(panels))
+    LAZY_PANELS = ("patterns", "calls", "high52", "exchange")          # held as inert text until their tab is first opened: most of the page's HTML, none of it in the DOM at start
+    lazy = lazy_panel
+    body = "".join(f'<section class="panel" id="p-{k}"{"" if i == 0 else " hidden"}{" data-lazy=\"1\"" if k in LAZY_PANELS and i else ""}>{lazy(k, h) if k in LAZY_PANELS and i else h}</section>' for i, (k, _, h) in enumerate(panels))
     opts = "".join(f'<option value="{k}">{label}</option>' for k, label in choices)
     head = (f'<header><div class="brand">RACHIT’S MARKET LENS</div><div class="headright"><select id="universe" aria-label="Stock universe">{opts}</select><div class="meta">{asof_text}<br><span class="mut">{M["N"]} sessions since {M["dates"][0]:%d %b %Y} · top 1,000 NSE shares · NSE + BSE delivery</span></div></div></header>')
     foot = '<footer>Splits, bonuses and demergers are detected and adjusted automatically (prices, averages and delivered shares are all on today\'s share basis). Delivery % is shown for reference and never used to rank.</footer>'
@@ -1318,25 +1328,23 @@ footer{max-width:1280px;margin:0 auto;padding:0 22px 40px;color:var(--mut);font-
 
 JS = r"""
 const D=JSON.parse(document.getElementById('data').textContent),ALL=Object.keys(D.stocks);
-ALL.forEach(k=>{const S=D.stocks[k],n=S.c.length,c=S.c,q=S.dq;
- /* The delivery ratio (delivered shares against the mean of the previous 20 sessions, at least 15 of them present) and each day's direction (up, down, or flat when the move is under half the prior 60-session standard deviation) are rebuilt here instead of being sent. Same rules as the build. */
+/* A stock's price, delivery and open-interest arrays arrive as one string (S.a) and are parsed only when the stock is first opened. Open, high and low are sent as paise from the close;
+   the delivery ratio (delivered shares against the mean of the previous 20 sessions, at least 15 of them present) and each day's direction (up, down, or flat when the move is under half the
+   prior 60-session standard deviation) are rebuilt here instead of being sent. Same rules as the build. */
+function ensureStock(k){const S=D.stocks[k];if(!S||!S.a)return S;Object.assign(S,JSON.parse(S.a));delete S.a;const n=S.c.length,c=S.c,q=S.dq;
  const rat=new Array(n).fill(null),d=new Array(n).fill(null),ret=new Array(n).fill(null);
  for(let i=0;i<n;i++){if(q[i]!=null&&i>=15){let s=0,m=0;for(let j=Math.max(0,i-20);j<i;j++)if(q[j]!=null){s+=q[j];m++}if(m>=15&&s>0)rat[i]=q[i]/(s/m)}
   if(i>0&&c[i]!=null&&c[i-1]!=null)ret[i]=c[i]/c[i-1]-1}
  for(let i=1;i<n;i++){if(ret[i]==null)continue;let s=0,s2=0,m=0;for(let j=Math.max(1,i-60);j<i;j++)if(ret[j]!=null){s+=ret[j];s2+=ret[j]*ret[j];m++}
   let sd=null;if(m>=30){const v=(s2-s*s/m)/(m-1);sd=Math.sqrt(Math.max(0,v))}
   d[i]=sd!=null&&Math.abs(ret[i])<0.5*sd?0:Math.sign(ret[i])}
- S.rat=rat;S.d=d});
-ALL.forEach(k=>{const S=D.stocks[k];if(S.o)for(const f of ['o','h','l'])S[f]=S[f].map((d,i)=>d==null||S.c[i]==null?null:Math.round(S.c[i]*100+d)/100)});   /* open, high and low are sent as paise from the close */
+ S.rat=rat;S.d=d;if(S.o)for(const f of ['o','h','l'])S[f]=S[f].map((d,i)=>d==null||S.c[i]==null?null:Math.round(S.c[i]*100+d)/100);return S}
 const COL={32:'#5aa9ff',50:'#f5a623',100:'#b58cff',200:'#ffd84d',233:'#3fd0a0',377:'#ff7aa2',610:'#9a9a94'};
 const G='#2fbf71',R='#ef5a4d',GL='rgba(47,191,113,.64)',RL='rgba(239,90,77,.64)',GR='#a3a39c',GRL='rgba(163,163,156,.46)';
 let cur=null,rng=252,thr=1.25,universe='top1000',SY=D.universes[universe]||ALL,selectedMas=new Set([50,200]);
 try{const saved=JSON.parse(localStorage.getItem('desk-mas'));if(Array.isArray(saved))selectedMas=new Set(saved.map(Number))}catch(e){}
 function tab(t){const b=document.querySelector('.tab[data-t="'+t+'"]');if(b)b.click()}
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+b.dataset.t);if(b.dataset.t==='stocks'){draw()}if(b.dataset.t==='alt'){drawAlt()}if(b.dataset.t==='credit'){loadCredit()}});
-document.querySelectorAll('.h52tab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.h52tab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.h52group').forEach(x=>x.hidden=x.dataset.h52Group!==b.dataset.h52)});
-document.querySelectorAll('.h52cap').forEach(b=>b.onclick=()=>{const g=b.closest('.h52group'),f=b.dataset.mcapFilter;g.querySelectorAll('.h52cap').forEach(x=>x.classList.toggle('on',x===b));g.querySelectorAll('.h52card').forEach(x=>x.hidden=f!=='all'&&x.dataset.mcap!==f)});
-document.querySelectorAll('.basetab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.basetab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.basegroup').forEach(x=>x.hidden=x.dataset.baseGroup!==b.dataset.base)});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{ensurePanel(b.dataset.t);document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!=='p-'+b.dataset.t);if(b.dataset.t==='stocks'){draw()}if(b.dataset.t==='alt'){drawAlt()}if(b.dataset.t==='credit'){loadCredit()}});
 /* ---------- results calendar ---------- */
 function istToday(){const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata'}).format(new Date());return Date.UTC(+p.slice(0,4),+p.slice(5,7)-1,+p.slice(8,10))}
 function daysTo(iso){return Math.round((Date.UTC(+iso.slice(0,4),+iso.slice(5,7)-1,+iso.slice(8,10))-istToday())/864e5)}
@@ -1387,8 +1395,6 @@ function renderUpcoming(){const t=document.querySelector('.urtable');if(!t)retur
  t.querySelectorAll('tbody tr').forEach(tr=>{const n=daysTo(tr.dataset.date),cell=tr.querySelector('.rin');cell.textContent=n<0?'PAST':inLabel(n);cell.classList.toggle('soonc',n>=0&&n<=3);
   const w=+urState.within,ok=n>=0&&(urState.set==='all'||(urState.set==='top500'&&tr.dataset.top500==='1')||(urState.set==='fo'&&tr.dataset.fo==='1'))&&(urState.cap==='any'||tr.dataset.cap===urState.cap)&&(!w||n<w)&&(!q||tr.dataset.sym.toLowerCase().includes(q)||tr.dataset.name.includes(q));
   tr.hidden=!ok;if(ok)shown++});document.getElementById('ur-count').textContent=shown+' SHOWN'}
-document.querySelectorAll('.urchip').forEach(b=>b.onclick=()=>{const g=b.closest('.urgrp');g.querySelectorAll('.urchip').forEach(x=>x.classList.toggle('on',x===b));urState[g.dataset.grp]=b.dataset.v;renderUpcoming()});
-document.getElementById('ur-q').oninput=renderUpcoming;
 /* ---------- alternative data (experimental): shared pieces ---------- */
 const HEAT=D.heat,POWER=D.power;let heatWin=14,heatMetric='mean',powerWin=14,powerCo=null;const heatHidden=new Set(),powerHidden=new Set();
 const hT=(v,d=1)=>v==null?'–':(v>=0?'+':'−')+Math.abs(v).toFixed(d)+'°C',hCls=v=>v==null?'':v>.2?'hhot':v<-.2?'hcool':'hflat',hWord=v=>v==null?'–':v>.2?'HOTTER':v<-.2?'COOLER':'ABOUT THE SAME';
@@ -1515,8 +1521,6 @@ document.addEventListener('click',e=>{const b=e.target,btn=b.closest&&b.closest(
 document.addEventListener('change',e=>{if(e.target.id==='pco'){powerCo=e.target.value;drawPower()}});
 window.addEventListener('resize',()=>{if(!document.getElementById('p-alt').hidden)drawAlt()});
 /* ---------- sub-tabs inside a tab ---------- */
-document.querySelectorAll('.subtab').forEach(b=>b.onclick=()=>{const bar=b.closest('.subtabs'),root=bar.parentElement;bar.querySelectorAll('.subtab').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b))});root.querySelectorAll(':scope > .subview').forEach(v=>v.hidden=v.dataset.sub!==b.dataset.sub);
- if(b.dataset.sub==='chart')draw();else if(b.dataset.sub==='watch')renderWatch();else if(b.dataset.sub==='follow')renderFollow();else if(b.dataset.sub==='results')renderUpcoming();else if(b.dataset.sub==='temp'||b.dataset.sub==='power')drawAlt();const bc=root.querySelector('.basecount');if(bc)bc.hidden=b.dataset.sub==='follow'});
 /* ---------- watchlist ---------- */
 let WL=[],wlOnly=false;try{const s=JSON.parse(localStorage.getItem('desk-watchlist'));if(Array.isArray(s))WL=s.filter(x=>D.stocks[x])}catch(e){}
 function saveWL(){try{localStorage.setItem('desk-watchlist',JSON.stringify(WL))}catch(e){}}
@@ -1528,7 +1532,7 @@ function renderWatch(){wlDigest();const el=document.getElementById('wl-body');if
  if(!WL.length){el.innerHTML='<div class="card rempty">Your watchlist is empty. Add a ticker above, or press ☆ next to any stock on the Stocks tab.</div>';return}
  const stageName={fresh:'FRESH BREAKOUT',near:'NEAR BREAKOUT',building:'BUILDING A BASE'};
  el.innerHTML='<div class="card"><div class="tw"><table><thead><tr><th class="l">STOCK</th><th>PRICE</th><th>1D</th><th>DELIVERY ÷ 20D</th><th>20D VS NIFTY</th><th>NEAR MA (±0.5σ)</th><th>RESULT</th><th>OUTLOOK</th><th>GUIDANCE</th><th>BASE</th><th></th></tr></thead><tbody>'+WL.map(s=>{
-  const S=D.stocks[s],m=S.sm,last=[...S.c].reverse().find(v=>v!=null),g=((S.call&&S.call.analysis&&S.call.analysis.material_guidance_changes)||[])[0],rel=m.rel&&m.rel[1]?m.rel[1][0]:null;
+  const S=D.stocks[s],m=S.sm,last=m.last,g=((S.call&&S.call.analysis&&S.call.analysis.material_guidance_changes)||[])[0],rel=m.rel&&m.rel[1]?m.rel[1][0]:null;
   return `<tr><td class="l"><a class="stk" data-s="${escH(s)}">${escH(s)}</a></td><td>${last==null?'–':last.toFixed(2)}</td><td class="${cls(m.px)}">${pc(m.px)}</td><td>${m.ratio==null?'–':m.ratio.toFixed(2)+'×'}</td><td class="${cls(rel)}">${pc(rel)}</td><td>${S.at.length?S.at.map(a=>a.ma+'D').join(' · '):'–'}</td><td>${S.result?escH(resultLabel(S.result)):'–'}</td><td>${S.call&&S.call.outlook?`<span class="olab ${S.call.outlook.label}">${OUTLOOK_NAMES[S.call.outlook.label]}</span>`:'–'}</td><td>${g?`<span class="${g.direction==='upgrade'||g.direction==='increase'||g.direction==='improvement'?'g':'r'}">${escH(g.direction.toUpperCase())}</span>`:'–'}</td><td>${S.bs?escH(stageName[S.bs[0]]||S.bs[0])+' · '+S.bs[1]+'/5':'–'}</td><td><button type="button" class="wlx" data-rm="${escH(s)}" title="Remove" aria-label="Remove ${escH(s)}">✕</button></td></tr>`}).join('')+'</tbody></table></div></div>'}
 function wlAdd(){const i=document.getElementById('wl-add'),msg=document.getElementById('wl-msg'),s=i.value.trim().toUpperCase();if(!s)return;
  if(!D.stocks[s]){msg.textContent=s+' is not in the tracked universe.';return}
@@ -1559,21 +1563,10 @@ function renderFollow(){const sum=document.getElementById('fu-summary'),lst=docu
 const baseFilterDefaults=['range','compression','trend','touches','delivery'];let activeBaseFilters=new Set(baseFilterDefaults);
 try{const saved=JSON.parse(localStorage.getItem('desk-base-filters'));if(Array.isArray(saved))activeBaseFilters=new Set(saved)}catch(e){}
 function applyBaseFilters(){const p=document.getElementById('p-bases');if(!p)return;document.querySelectorAll('.basefilter').forEach(b=>{const on=activeBaseFilters.has(b.dataset.baseFilter);b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on))});let shown=0;p.querySelectorAll('.basecard').forEach(card=>{const visible=[...activeBaseFilters].every(f=>card.dataset[f]==='true');card.hidden=!visible;if(visible&&!card.closest('.basegroup').hidden)shown++});const count=p.querySelector('.basecount');if(count)count.textContent=`${shown} SHOWN`;renderFollow()}
-document.querySelectorAll('.basefilter').forEach(b=>b.onclick=()=>{const f=b.dataset.baseFilter;activeBaseFilters.has(f)?activeBaseFilters.delete(f):activeBaseFilters.add(f);try{localStorage.setItem('desk-base-filters',JSON.stringify([...activeBaseFilters]))}catch(e){}applyBaseFilters()});
-document.querySelectorAll('.basetab').forEach(b=>{const old=b.onclick;b.onclick=()=>{old();applyBaseFilters()}});applyBaseFilters();
-document.querySelectorAll('.exswitchbtn').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.exswitchbtn').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.exchangegroup').forEach(x=>x.hidden=x.dataset.exchangeGroup!==b.dataset.exchange)});
-document.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{const v=b.closest('.uview')||document;v.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
 document.querySelectorAll('.seg[data-r]').forEach(b=>b.onclick=()=>{rng=+b.dataset.r;document.querySelectorAll('.seg[data-r]').forEach(x=>x.classList.toggle('on',x===b));draw()});
-document.querySelectorAll('.ptchip').forEach(b=>b.onclick=()=>{const v=b.closest('.ptview');
- if(b.dataset.fo||b.dataset.ev){b.classList.toggle('on')}else{v.querySelectorAll('.ptchip[data-st]').forEach(x=>x.classList.toggle('on',x===b))}
- const st=v.querySelector('.ptchip[data-st].on').dataset.st,fo=!!v.querySelector('.ptchip[data-fo].on'),ev=!!v.querySelector('.ptchip[data-ev].on');
- v.querySelectorAll('tr[data-status],.shcard[data-status]').forEach(e=>{e.hidden=!((st==='ALL'||(st==='CONF'?e.dataset.conf==='1':e.dataset.status===st))&&(!fo||e.dataset.fo==='1')&&(!ev||e.dataset.ev==='1'))})});
-document.querySelectorAll('.ptfbtn').forEach(b=>b.onclick=()=>{const v=b.closest('.subview');v.querySelectorAll('.ptfbtn').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.ptview').forEach(x=>x.hidden=x.dataset.tf!==b.dataset.tf)});
 function loadCredit(){document.querySelectorAll('#p-credit .subview:not([hidden]) iframe.creditframe').forEach(f=>{if(f.dataset.loaded)return;f.dataset.loaded='1';try{f.srcdoc=JSON.parse(document.getElementById('credit-doc-'+f.dataset.key).textContent)}catch(e){}})}
 document.querySelectorAll('#p-credit .subtab').forEach(b=>b.addEventListener('click',loadCredit));
 window.addEventListener('message',e=>{const d=e.data;if(!d||!d.creditFrame)return;const f=document.querySelector('iframe.creditframe[data-key="'+d.creditFrame+'"]');if(f&&e.source===f.contentWindow)f.style.height=Math.max(520,+d.height||0)+'px'});
-document.querySelectorAll('.exwd').forEach(c=>{const f=()=>{const d=c.querySelector('.wdsel').value,p=c.querySelector('.wdper').value;c.querySelectorAll('.wdview').forEach(v=>v.hidden=!(v.dataset.wd===d&&v.dataset.wp===p))};c.querySelector('.wdsel').onchange=f;c.querySelector('.wdper').onchange=f});
-document.querySelectorAll('.exrbtn').forEach(b=>b.onclick=()=>{const v=b.closest('.exlayout');v.querySelectorAll('.exrbtn').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.exrange').forEach(x=>x.hidden=x.dataset.xr!==b.dataset.xr)});
 document.querySelectorAll('.mab').forEach(b=>{const m=+b.dataset.ma;b.disabled=D.dates.length<m+1;b.classList.toggle('on',selectedMas.has(m)&&!b.disabled);b.title=b.disabled?`Needs ${m+1} sessions; currently ${D.dates.length}`:`Toggle ${m}-day moving average`;b.onclick=()=>{selectedMas.has(m)?selectedMas.delete(m):selectedMas.add(m);b.classList.toggle('on',selectedMas.has(m));try{localStorage.setItem('desk-mas',JSON.stringify([...selectedMas]))}catch(e){}draw()}});
 document.getElementById('thr').onchange=e=>{thr=+e.target.value;draw()};
 document.getElementById('universe').onchange=e=>{universe=e.target.value;SY=D.universes[universe]||ALL;document.querySelectorAll('.uview').forEach(v=>v.hidden=v.dataset.u!==universe);if(!SY.includes(cur))cur=SY[0]||D.default;list();draw()};
@@ -1603,7 +1596,7 @@ document.addEventListener('click',e=>{const a=e.target.closest('a.stk');if(a){e.
 /* ---------- chart ---------- */
 function drawLegacy(){
  if(!cur||document.getElementById('p-stocks').hidden)return;
- const S=D.stocks[cur],n=S.c.length,v0=Math.max(0,n-rng),box=document.getElementById('chartbox'),W=Math.max(320,Math.min(1460,box.clientWidth-8)),sm=W<560,fs=sm?9:10,L=sm?42:54,Rr=8;
+ const S=ensureStock(cur),n=S.c.length,v0=Math.max(0,n-rng),box=document.getElementById('chartbox'),W=Math.max(320,Math.min(1460,box.clientWidth-8)),sm=W<560,fs=sm?9:10,L=sm?42:54,Rr=8;
  const H=sm?[150,62,58,46,46]:[205,76,70,54,54],gap=sm?18:21,tops=[6];for(let k=1;k<5;k++)tops.push(tops[k-1]+H[k-1]+gap);const TH=tops[4]+H[4]+18;
  const xs=i=>L+(i-v0)*(W-L-Rr)/Math.max(1,n-1-v0),bw=Math.max(1.4,(W-L-Rr)/(n-v0)*.82);
  const y=(v,lo,hi,k)=>tops[k]+(1-(v-lo)/(hi-lo||1))*H[k];
@@ -1657,7 +1650,7 @@ function drawLegacy(){
 }
 function draw(){
  if(!cur||document.getElementById('p-stocks').hidden||document.getElementById('sv-chart').hidden)return;
- const S=D.stocks[cur],n=S.c.length,v0=Math.max(0,n-rng),box=document.getElementById('chartbox'),W=Math.max(320,box.clientWidth-8),sm=W<560,fs=sm?9:10,L=sm?42:54,Rr=8;
+ const S=ensureStock(cur),n=S.c.length,v0=Math.max(0,n-rng),box=document.getElementById('chartbox'),W=Math.max(320,box.clientWidth-8),sm=W<560,fs=sm?9:10,L=sm?42:54,Rr=8;
  const xs=i=>L+(i-v0)*(W-L-Rr)/Math.max(1,n-1-v0),bw=Math.max(1.4,(W-L-Rr)/(n-v0)*.82);
  const line=(a,y,col,sw=1.5,dash=null,map=v=>v)=>{let d='',pen=false;for(let i=v0;i<n;i++){const v=a[i];if(v==null){pen=false;continue}d+=(pen?'L':'M')+xs(i).toFixed(1)+','+y(map(v)).toFixed(1);pen=true}return `<path d="${d}" fill="none" stroke="${col}" stroke-width="${sw}"${dash?' stroke-dasharray="'+dash+'"':''} stroke-linejoin="round"/>`};
  const candles=(S,y)=>{let o='';for(let i=v0;i<n;i++){const O=S.o[i],Hh=S.h[i],Ll=S.l[i],C=S.c[i];if(O==null||Hh==null||Ll==null||C==null)continue;const col=C>=O?G:R,x=xs(i).toFixed(1),top=y(Math.max(O,C)),bot=y(Math.min(O,C));o+=`<line x1="${x}" x2="${x}" y1="${y(Hh).toFixed(1)}" y2="${y(Ll).toFixed(1)}" stroke="${col}"/><rect x="${(xs(i)-bw/2).toFixed(1)}" y="${top.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(1,bot-top).toFixed(1)}" fill="${col}"/>`}return o};
@@ -1681,5 +1674,29 @@ function draw(){
  const ro=document.getElementById('ro');ro.innerHTML='<span class="mut">Move over the price chart for daily detail</span>';const mv=e=>{const r=main.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W;let i=Math.round(v0+(x-L)*(n-1-v0)/(W-L-Rr));i=Math.max(v0,Math.min(n-1,i));const xh=document.getElementById('xh');xh.setAttribute('x1',xs(i));xh.setAttribute('x2',xs(i));xh.setAttribute('visibility','visible');const ch=S.c[i]!=null&&S.c[i-1]!=null?(S.c[i]/S.c[i-1]-1)*100:null,op=dl[i]!=null&&S.oi[i-1]?dl[i]/S.oi[i-1]*100:null;ro.innerHTML=`${D.dates[i]} · close ${S.c[i]??'–'} <span class="${cls(ch)}">${pc(ch,2)}</span> · delivered ${fmt(S.dq[i])} (${S.rat[i]==null?'–':S.rat[i].toFixed(2)+'× avg'}) · OI ${fmt(S.oi[i])} · ΔOI ${pc(op)}`};main.onpointermove=mv;main.onpointerdown=mv;main.onpointerleave=()=>document.getElementById('xh').setAttribute('visibility','hidden');
 }
 let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(draw,120)});
-const h0=location.hash.slice(1);cur=D.stocks[h0]?h0:D.default;renderWatch();renderUpcoming();renderHeat();renderPower();list();draw();
+const h0=location.hash.slice(1);cur=D.stocks[h0]?h0:D.default;/* Click handlers for everything inside `R` (the whole page at start, a panel when it is first opened). The heavy panels are held as inert text until their tab is first opened. */
+function bindPanel(R){
+R.querySelectorAll('.h52tab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.h52tab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.h52group').forEach(x=>x.hidden=x.dataset.h52Group!==b.dataset.h52)});
+R.querySelectorAll('.h52cap').forEach(b=>b.onclick=()=>{const g=b.closest('.h52group'),f=b.dataset.mcapFilter;g.querySelectorAll('.h52cap').forEach(x=>x.classList.toggle('on',x===b));g.querySelectorAll('.h52card').forEach(x=>x.hidden=f!=='all'&&x.dataset.mcap!==f)});
+R.querySelectorAll('.basetab').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.basetab').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.basegroup').forEach(x=>x.hidden=x.dataset.baseGroup!==b.dataset.base)});
+R.querySelectorAll('.urchip').forEach(b=>b.onclick=()=>{const g=b.closest('.urgrp');g.querySelectorAll('.urchip').forEach(x=>x.classList.toggle('on',x===b));urState[g.dataset.grp]=b.dataset.v;renderUpcoming()});
+{const q=R.querySelector('#ur-q');if(q)q.oninput=renderUpcoming}
+R.querySelectorAll('.subtab').forEach(b=>b.onclick=()=>{const bar=b.closest('.subtabs'),root=bar.parentElement;bar.querySelectorAll('.subtab').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-pressed',String(x===b))});root.querySelectorAll(':scope > .subview').forEach(v=>v.hidden=v.dataset.sub!==b.dataset.sub);
+ if(b.dataset.sub==='chart')draw();else if(b.dataset.sub==='watch')renderWatch();else if(b.dataset.sub==='follow')renderFollow();else if(b.dataset.sub==='results')renderUpcoming();else if(b.dataset.sub==='temp'||b.dataset.sub==='power')drawAlt();const bc=root.querySelector('.basecount');if(bc)bc.hidden=b.dataset.sub==='follow'});
+R.querySelectorAll('.basefilter').forEach(b=>b.onclick=()=>{const f=b.dataset.baseFilter;activeBaseFilters.has(f)?activeBaseFilters.delete(f):activeBaseFilters.add(f);try{localStorage.setItem('desk-base-filters',JSON.stringify([...activeBaseFilters]))}catch(e){}applyBaseFilters()});
+R.querySelectorAll('.basetab').forEach(b=>{const old=b.onclick;b.onclick=()=>{old();applyBaseFilters()}});applyBaseFilters();
+R.querySelectorAll('.exswitchbtn').forEach(b=>b.onclick=()=>{const p=b.closest('.panel');p.querySelectorAll('.exswitchbtn').forEach(x=>x.classList.toggle('on',x===b));p.querySelectorAll('.exchangegroup').forEach(x=>x.hidden=x.dataset.exchangeGroup!==b.dataset.exchange)});
+R.querySelectorAll('.seg[data-h]').forEach(b=>b.onclick=()=>{const v=b.closest('.uview')||document;v.querySelectorAll('.seg[data-h]').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.hz').forEach(h=>h.hidden=h.dataset.h!==b.dataset.h)});
+R.querySelectorAll('.ptchip').forEach(b=>b.onclick=()=>{const v=b.closest('.ptview');
+ if(b.dataset.fo||b.dataset.ev){b.classList.toggle('on')}else{v.querySelectorAll('.ptchip[data-st]').forEach(x=>x.classList.toggle('on',x===b))}
+ const st=v.querySelector('.ptchip[data-st].on').dataset.st,fo=!!v.querySelector('.ptchip[data-fo].on'),ev=!!v.querySelector('.ptchip[data-ev].on');
+ v.querySelectorAll('tr[data-status],.shcard[data-status]').forEach(e=>{e.hidden=!((st==='ALL'||(st==='CONF'?e.dataset.conf==='1':e.dataset.status===st))&&(!fo||e.dataset.fo==='1')&&(!ev||e.dataset.ev==='1'))})});
+R.querySelectorAll('.ptfbtn').forEach(b=>b.onclick=()=>{const v=b.closest('.subview');v.querySelectorAll('.ptfbtn').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.ptview').forEach(x=>x.hidden=x.dataset.tf!==b.dataset.tf)});
+R.querySelectorAll('.exwd').forEach(c=>{const f=()=>{const d=c.querySelector('.wdsel').value,p=c.querySelector('.wdper').value;c.querySelectorAll('.wdview').forEach(v=>v.hidden=!(v.dataset.wd===d&&v.dataset.wp===p))};c.querySelector('.wdsel').onchange=f;c.querySelector('.wdper').onchange=f});
+R.querySelectorAll('.exrbtn').forEach(b=>b.onclick=()=>{const v=b.closest('.exlayout');v.querySelectorAll('.exrbtn').forEach(x=>x.classList.toggle('on',x===b));v.querySelectorAll('.exrange').forEach(x=>x.hidden=x.dataset.xr!==b.dataset.xr)});
+}
+const LAZY_INIT={calls:()=>renderUpcoming(),patterns:()=>{wlDigest();applyBaseFilters()}};
+function ensurePanel(k){const p=document.getElementById('p-'+k);if(!p||!p.dataset.lazy)return;const t=document.getElementById('lazy-'+k);
+ p.innerHTML=t.textContent.replace(/<\\\/script/g,'</script').replace(/<\\!--/g,'<!--');delete p.dataset.lazy;bindPanel(p);if(LAZY_INIT[k])LAZY_INIT[k]()}
+bindPanel(document);renderWatch();renderHeat();renderPower();list();draw();
 """
