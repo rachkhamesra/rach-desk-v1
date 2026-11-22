@@ -31,3 +31,10 @@ def test_the_page_script_scopes_its_click_handlers_to_a_panel_and_loads_lazily()
 def test_unescape_in_the_page_matches_the_escape_in_the_server():
     m = re.search(r"p\.innerHTML=t\.textContent\.replace\((/.*?/g),'</script'\)\.replace\((/.*?/g),'<!--'\)", webpage.JS)
     assert m and m.group(1) == r"/<\\\/script/g" and m.group(2) == r"/<\\!--/g"             # the two patterns the browser uses to undo lazy_panel
+
+
+def test_the_today_tab_is_first_and_links_through_to_its_sources():
+    import inspect
+    src = inspect.getsource(webpage.render)
+    assert src.index('("today", "TODAY"') < src.index('("stocks", "STOCKS"')                 # the first tab is the one the page opens on
+    assert "today-wl" in webpage.JS and "a.tdlink" in webpage.JS                              # the watchlist box is filled by the page; each card opens its full tab
