@@ -156,7 +156,8 @@ def test_every_screen_that_flags_a_stock_is_listed_for_its_page():
     assert any(l.startswith("ASCENDING TRIANGLE · DAILY") for l in labels) and "SHORT IDEAS · LAGGARDS" in labels and "CASH ACCUMULATION · CONFIRMED" in labels
     assert "BREAKOUT BASE · NEAR" in labels and "52-WEEK HIGH" in labels
     pat = [f for f in out["ASC"]["fl"] if f["g"] == "pattern"][0]; assert pat["tab"] == "patterns" and pat["sub"] == "ascending" and pat["tf"] == "daily" and pat["d"]
-    g = out["ASC"]["pt"][0]; assert g["tf"] == "d" and g["k"] == "ascending" and len(g["lines"]) == 2 and g["th"] and g["tg"] > 0        # geometry for the price chart
+    g = out["ASC"]["pt"][0]; assert g["tf"] == "d" and g["k"] == "ascending" and len(g["lines"]) == 2 and g["th"] and g["tg"] > 0        # geometry for the side-panel chart
+    assert "br" in g and g["d"] and (g["br"] is None or 0 <= g["br"] < len(M["dates"]))                          # where the break happened, and the text under the chart
     assert "TREND" not in out                                                                  # a stock nothing flags has no entry
 
 

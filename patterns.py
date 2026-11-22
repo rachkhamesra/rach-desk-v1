@@ -237,7 +237,8 @@ def daily_geometry(r, S):
     start = lambda b: wh[max(0, min(b, n - 1))][0]; end = lambda b: wh[max(0, min(b, n - 1))][1]
     lines = [dict(a=[int(start(a[0])), round(a[1], 2)], b=[int(end(b[0])), round(b[1], 2)], role=role) for a, b, role in _lines(r["kind"], r, n)]
     pts = [[int((start(i) + end(i)) // 2), round(p, 2)] for i, p in r["flat_pts"] + r["line_pts"]]
-    return dict(lines=lines, touches=pts, target=round(r["target"], 2))
+    brk = r.get("break_idx")
+    return dict(lines=lines, touches=pts, target=round(r["target"], 2), brk=None if brk is None else int(start(brk)))
 
 
 def chart_data(S, cfg, found, cap=40):
