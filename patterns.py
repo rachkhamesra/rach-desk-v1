@@ -28,6 +28,7 @@ FORMING_MAX = 0.10    # a standing pattern whose price is further than 10% from 
 NEAR = 0.04
 BREAK = 0.01          # a close 1% beyond the level counts as through it
 PIERCE = 0.03         # an earlier excursion this far beyond the level before the last RECENT sessions invalidates the pattern
+CONFIRM = 1.25        # delivery on the break session at least this multiple of its own 20-session average (10-week for weekly) is high-delivery
 MIN_TURNOVER_CR = 2.0 # median daily rupee turnover, so thin circuit-bound names do not fill the lists
 CHART_DAYS = 230
 # Bar-count settings per timeframe. The rules are identical (levels, touches, convergence, percentages); only what "a few bars" means differs.
@@ -187,7 +188,7 @@ def series(M, cfg=DAILY):
     return S
 
 
-def scan_timeframe(M, cfg=DAILY):
+def scan_timeframe(M, cfg=DAILY, charts=True):
     """Scans every liquid stock in the universe on one timeframe. None when there is too little history for it."""
     S = series(M, cfg); n = len(S["C"])
     if (M["N"] < 120) or n < cfg.min_bars + cfg.k * 2 + 10: return None
@@ -203,23 +204,87 @@ def scan_timeframe(M, cfg=DAILY):
         for kind, r in res.items():
             if not r: continue
             c = Cd[s]; rat = M["RAT"][s].iloc[-1]
-            r.update(sym=s, close=float(c.iloc[-1]), px1d=float((c.iloc[-1] / c.iloc[-2] - 1) * 100), fo=s in fo, tf=cfg.name,
+            b = r.get("break_idx"); bd = S["avg"][s].iloc[b] if b is not None else np.nan
+            brk = float(S["DQ"][s].iloc[b] / bd) if b is not None and pd.notna(bd) and bd > 0 and pd.notna(S["DQ"][s].iloc[b]) else np.nan
+            r.update(brk_ratio=brk, confirmed=bool(b is not None and pd.notna(brk) and brk >= CONFIRM), sym=s, close=float(c.iloc[-1]), px1d=float((c.iloc[-1] / c.iloc[-2] - 1) * 100), fo=s in fo, tf=cfg.name,
                      rs3m=float(((c.iloc[-1] / c.iloc[-64]) / (nifty.iloc[-1] / nifty.iloc[-64]) - 1) * 100) if nd > 64 else np.nan,
                      ratio=float(rat) if pd.notna(rat) else np.nan, turnover=float(turn[s]))
             out["found"][kind].append(r)
     order = {"BREAKOUT": 0, "BREAKDOWN": 0, "AT TOP": 1, "AT BOTTOM": 1, "SETUP": 1, "IN RANGE": 2, "FORMING": 2}
     for kind in out["found"]:
         out["found"][kind].sort(key=lambda r: (order.get(r["status"], 3), -r["score"]))
-    out["charts"] = chart_data(S, cfg, out["found"])
-    for kind, rows in out["found"].items():
-        for r in rows: r["daily"] = daily_geometry(r, S)
+    for rows in out["found"].values():
+        for r in rows: r["event"] = None
+    if charts:
+        out["charts"] = chart_data(S, cfg, out["found"])
+        for kind, rows in out["found"].items():
+            for r in rows: r["daily"] = daily_geometry(r, S)
     return out
 
 
+def previous_view(M):
+    """The panels as they stood one session earlier: the same data with the newest session cut off."""
+    P2 = dict(M)
+    for k in ("C", "H", "L", "O", "DQ", "TQ", "dcode", "RAT"): P2[k] = M[k].iloc[:-1]
+    P2["ma"] = {k: v.iloc[:-1] for k, v in M["ma"].items()}
+    P2["nifty"] = M["nifty"].iloc[:-1]; P2["dates"] = M["dates"][:-1]; P2["N"] = M["N"] - 1; P2["T"] = M["T"] - 1
+    return P2
+
+
+def mark_changes(cur, prev):
+    """event on each pattern found today: NEW when the stock had no such pattern at the previous session, BROKE when it had one that had not yet broken (or had broken the other way)
+    and has broken now. Nothing is marked when there is no earlier scan to compare with. Returns the number of NEW and BROKE marks."""
+    counts = dict(new=0, broke=0)
+    if not prev: return counts
+    for kind, rows in cur["found"].items():
+        before = {r["sym"]: r["status"] for r in prev["found"][kind]}
+        for r in rows:
+            was = before.get(r["sym"])
+            if was is None: r["event"] = "NEW"; counts["new"] += 1
+            elif r["status"] in ("BREAKOUT", "BREAKDOWN") and was != r["status"]: r["event"] = "BROKE"; counts["broke"] += 1
+    return counts
+
+
+def direction(kind, status):
+    """+1 for a pattern that points up, -1 for one that points down, 0 for a range with no lean yet."""
+    if kind == "ascending": return 1
+    if kind == "descending": return -1
+    return 1 if status in ("BREAKOUT", "AT TOP") else -1 if status in ("BREAKDOWN", "AT BOTTOM") else 0
+
+
+def conviction(r, other_tf_dirs):
+    """0 to 5. A fresh break (2) or a setup within reach of the trigger (1); delivery at least 1.25x its 20-session average, on the break session for a break and on the latest session otherwise (1);
+    the stock's 3-month return against Nifty leaning the pattern's way (1); the other timeframe showing a pattern with the same lean (1).
+    A way of ordering today's list, not a probability."""
+    d = direction(r["kind"], r["status"]); sc = 0
+    sc += 2 if r["status"] in ("BREAKOUT", "BREAKDOWN") else 1 if r["status"] in ("SETUP", "AT TOP", "AT BOTTOM") else 0
+    dv = r.get("brk_ratio") if r["status"] in ("BREAKOUT", "BREAKDOWN") and pd.notna(r.get("brk_ratio", np.nan)) else r["ratio"]      # a break is judged on the delivery of the break itself
+    sc += 1 if pd.notna(dv) and dv >= CONFIRM else 0
+    sc += 1 if d and pd.notna(r["rs3m"]) and (r["rs3m"] > 0) == (d > 0) and r["rs3m"] != 0 else 0
+    sc += 1 if d and d in other_tf_dirs.get(r["sym"], set()) else 0
+    return sc
+
+
 def build(M):
-    """{"daily": scan or None, "weekly": scan or None}. None for both when there is no history to speak of."""
+    """{"daily": scan or None, "weekly": scan or None}. None for both when there is no history to speak of. Each pattern is marked NEW or BROKE against the previous session."""
     d, w = scan_timeframe(M, DAILY), scan_timeframe(M, WEEKLY)
-    return {"daily": d, "weekly": w} if (d or w) else None
+    if not (d or w): return None
+    prev = previous_view(M) if M["N"] > 130 else None
+    for cur, cfg in ((d, DAILY), (w, WEEKLY)):
+        if cur:
+            before = scan_timeframe(prev, cfg, charts=False) if prev else None
+            cur["compared"] = before is not None; cur["changes"] = mark_changes(cur, before)
+    leans = {name: {} for name in ("daily", "weekly")}
+    for name, cur in (("daily", d), ("weekly", w)):
+        for rows in (cur["found"].values() if cur else []):
+            for r in rows:
+                if direction(r["kind"], r["status"]): leans[name].setdefault(r["sym"], set()).add(direction(r["kind"], r["status"]))
+    order = {"BREAKOUT": 0, "BREAKDOWN": 0, "AT TOP": 1, "AT BOTTOM": 1, "SETUP": 1, "IN RANGE": 2, "FORMING": 2}
+    for name, cur in (("daily", d), ("weekly", w)):
+        for rows in (cur["found"].values() if cur else []):
+            for r in rows: r["conv"] = conviction(r, leans["weekly" if name == "daily" else "daily"])
+            rows.sort(key=lambda r: (order.get(r["status"], 3), not r.get("confirmed"), -r["conv"], -r["score"]))
+    return {"daily": d, "weekly": w}
 
 
 def _lines(kind, r, n):

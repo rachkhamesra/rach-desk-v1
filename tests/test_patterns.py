@@ -86,7 +86,8 @@ def test_the_tab_has_three_subtabs_with_rules_filters_tables_and_charts():
     M = world(); M["patterns"] = P.build(M); M["results"] = []
     html = webpage.tab_patterns(M)
     for t in ("ASCENDING TRIANGLE", "DESCENDING TRIANGLE", "RECTANGLE", "EXPERIMENTAL", "HOW THIS PATTERN IS DEFINED"): assert t in html
-    assert html.count('class="subview"') == 3 and html.count("<svg") >= 3 and 'class="ptchip' in html and 'data-fo="1"' in html and "TARGET" in html
+    assert html.count('data-sub="ascending"') == 2 and html.count('data-sub="bases"') == 2 and html.count('data-sub="shorts"') == 2 and html.count("<svg") >= 3
+    assert "BREAKOUT BASES" in html and "SHORT IDEAS" in html and 'id="p-bases"' in html          # the two former tabs now live here, with the base scanner's id kept for its filters and 'class="ptchip' in html and 'data-fo="1"' in html and "TARGET" in html
     assert "need about 120 sessions" in webpage.tab_patterns({"patterns": None})
 
 
@@ -164,3 +165,100 @@ def test_every_screen_that_flags_a_stock_is_listed_for_its_page():
 def test_stocks_without_futures_send_no_open_interest():
     assert webpage.oi_series(pd.Series([np.nan, np.nan, np.nan])) == []
     assert webpage.oi_series(pd.Series([np.nan, 12.0, 15.0])) == [None, 12, 15]
+
+
+def test_breakout_bases_and_short_ideas_are_no_longer_top_level_tabs():
+    import inspect
+    src = inspect.getsource(webpage.render)
+    assert '("bases", "BREAKOUT BASES"' not in src and '("shorts", "SHORT IDEAS"' not in src
+    M = world(); M["unresolved"] = set(); M["results"] = []
+    M["breakout_bases"] = pd.DataFrame([dict(sym="ASC", stage="near")]); M["shorts"] = None
+    out = webpage.screen_flags(M | {"patterns": None, "cash_accumulation": None, "cash_tracking": None, "high52": pd.DataFrame()})
+    base = out["ASC"]["fl"][0]; assert base["tab"] == "patterns" and base["sub"] == "bases"
+    M["patterns"] = P.build(M); M["shorts"] = {"screens": {"laggards": {"title": "LAGGARDS", "rows": pd.DataFrame([dict(sym="ASC", days=2)])}}}
+    sh = [f for f in webpage.screen_flags(M | {"cash_accumulation": None, "cash_tracking": None, "high52": pd.DataFrame()})["ASC"]["fl"] if f["g"] == "short"][0]
+    assert sh["tab"] == "patterns" and sh["sub"] == "shorts" and sh["sub2"] == "laggards"
+
+
+def test_new_patterns_and_fresh_breaks_are_marked_against_the_previous_session():
+    M = world(); out = P.build(M)
+    d = out["daily"]; assert d["compared"] and set(d["changes"]) == {"new", "broke"}
+    assert all("event" in r for rows in d["found"].values() for r in rows)
+    prev = P.previous_view(M); assert len(prev["C"]) == len(M["C"]) - 1 and prev["T"] == M["T"] - 1 and prev["dates"][-1] < M["dates"][-1]
+    # a stock that set up one session ago and breaks today is BROKE; one that was not there yesterday is NEW
+    H, L, C = ascending(end=None); n = len(C)
+    before = {"found": {"ascending": [dict(sym="X", status="SETUP")], "descending": [], "rectangle": []}}
+    cur = {"found": {"ascending": [dict(sym="X", status="BREAKOUT", event=None), dict(sym="Y", status="SETUP", event=None)], "descending": [], "rectangle": []}}
+    counts = P.mark_changes(cur, before)
+    assert cur["found"]["ascending"][0]["event"] == "BROKE" and cur["found"]["ascending"][1]["event"] == "NEW" and counts == {"new": 1, "broke": 1}
+    cur2 = {"found": {"ascending": [dict(sym="X", status="BREAKOUT", event=None)], "descending": [], "rectangle": []}}
+    assert P.mark_changes(cur2, None) == {"new": 0, "broke": 0} and cur2["found"]["ascending"][0]["event"] is None     # nothing to compare with: nothing marked
+    M["N"] = 100; assert P.previous_view(M)["N"] == 99
+
+
+def test_conviction_scores_a_fresh_confirmed_leaning_break_highest():
+    base = dict(kind="ascending", status="BREAKOUT", ratio=2.0, rs3m=15.0, sym="X")
+    assert P.conviction(base, {"X": {1}}) == 5                                          # fresh break, delivery, relative strength and the other timeframe agree
+    assert P.conviction(base, {}) == 4 and P.conviction({**base, "ratio": 0.8}, {}) == 3 and P.conviction({**base, "rs3m": -5.0}, {}) == 3
+    assert P.conviction({**base, "status": "FORMING", "ratio": 0.5, "rs3m": -1.0}, {}) == 0
+    assert P.conviction({**base, "kind": "descending", "status": "BREAKDOWN", "rs3m": -9.0}, {"X": {-1}}) == 5      # for a pattern that points down, weakness is what agrees
+    assert P.conviction({**base, "kind": "rectangle", "status": "IN RANGE"}, {"X": {1}}) == 1                        # a range with no lean gets only its delivery point
+    M = world(); out = P.build(M)
+    for rows in out["daily"]["found"].values():
+        assert all(0 <= r["conv"] <= 5 for r in rows)
+        by = {}
+        for r in rows: by.setdefault(r["status"], []).append(r["conv"])
+        assert all(v == sorted(v, reverse=True) for v in by.values())                   # within a status, higher conviction comes first
+
+
+def fake_replay(n=40, avg=3.2, base=0.4):
+    h = lambda n_, a: dict(n=n_, avg=a, median=a - 1.0, right=58.0, n_conf=n_ // 2, avg_conf=5.1, median_conf=3.0, right_conf=67.0)
+    grp = lambda n_, a: dict(found=n_, **{k: h(n_, a) for k in ("10", "20", "40", "60")})
+    bs = lambda a: dict(n=9000, avg=a, median=a - 0.5, up=51.0)
+    return dict(generated="2026-11-22", sessions=514, asof="2026-11-20", horizons=[10, 20, 40, 60], step=5, total=100, baseline={k: bs(base) for k in ("10", "20", "40", "60")},
+                groups={"daily|ascending|BREAKOUT": grp(n, avg), "weekly|ascending|BREAKOUT": grp(6, 1.0), "daily|rectangle|BREAKOUT": grp(30, -1.0), "daily|rectangle|BREAKDOWN": grp(20, -2.5)})
+
+
+def test_the_tab_shows_a_digest_badges_a_score_column_and_the_replay():
+    M = world(); M["patterns"] = P.build(M); M["results"] = []; M["pattern_replay"] = fake_replay()
+    html = webpage.tab_patterns(M)
+    assert "SINCE THE PREVIOUS SESSION" in html and 'id="pt-wl"' in html and "Short Ideas:" in html
+    assert "SCORE" in html and 'data-ev="' in html
+    assert "Replay · past daily breakouts on high delivery" in html and "HIGH-DELIVERY BREAKS" in html and "ALL BREAKS" in html
+    assert "~1 month" in html and "~2 months" in html and "~3 months" in html                                                    # three horizons
+    assert "+5.1%" in html and "+3.0%" in html and "67%" in html                                                                  # the high-delivery breaks lead: average, median, share that went up
+    assert "+3.2%" in html and "+2.2%" in html and "+0.4%" in html and "51% up" in html                                          # all breaks, and the average stock, beside them
+    assert "too few with that much follow-up to read" in html                                                                    # six weekly breaks: said, not hidden
+    assert "past daily breakdowns" in html and "WENT DOWN" in html                                                               # a rectangle is replayed both ways
+    M["pattern_replay"] = None; assert "Replay ·" not in webpage.tab_patterns(M)
+
+
+def test_flags_carry_the_event_so_the_watchlist_can_show_what_is_new():
+    M = world(); M["patterns"] = P.build(M); M["unresolved"] = set(); M["results"] = []
+    M["shorts"] = {"screens": {"laggards": {"title": "LAGGARDS", "rows": pd.DataFrame([dict(sym="ASC", days=1, new=True)])}}}
+    out = webpage.screen_flags(M | {"cash_accumulation": None, "cash_tracking": None, "high52": pd.DataFrame(), "breakout_bases": pd.DataFrame()})
+    fl = out["ASC"]["fl"]; assert any(f["g"] == "short" and f["ev"] == "NEW" for f in fl) and all("ev" in f for f in fl if f["g"] in ("pattern", "short"))
+
+
+def test_high_delivery_is_judged_on_the_break_session_and_leads_the_tables():
+    out = P.scan_timeframe(world(), P.DAILY)
+    for rows in out["found"].values():
+        for r in rows:
+            assert "brk_ratio" in r and "confirmed" in r
+            if r["status"] not in ("BREAKOUT", "BREAKDOWN"): assert r["confirmed"] is False                     # nothing to confirm before a break
+    brk = {"kind": "ascending", "status": "BREAKOUT", "ratio": 0.8, "rs3m": 5.0, "sym": "X", "brk_ratio": 2.0}
+    assert P.conviction(brk, {}) == 4                                                          # fresh break 2, delivery on the break itself 1, relative strength 1: the latest day's 0.8x does not count against it
+    assert P.conviction({**brk, "brk_ratio": 0.9, "ratio": 3.0}, {}) == 3                       # high delivery today does not rescue a break on ordinary delivery
+    M = world(); col = M["C"].columns.get_loc("ASC")
+    M["C"] = M["C"].copy(); M["C"].iloc[-3:, col] = 108.0; M["H"] = np.maximum(M["H"], M["C"] + .5)             # a break three sessions ago
+    M["ma"] = {50: M["C"].rolling(50).mean(), 100: M["C"].rolling(100).mean()}
+    ordinary = P.scan_timeframe(M, P.DAILY)["found"]["ascending"]
+    asc = [r for r in ordinary if r["sym"] == "ASC"]
+    assert asc and asc[0]["status"] == "BREAKOUT" and asc[0]["brk_ratio"] < P.CONFIRM and not asc[0]["confirmed"]
+    M["DQ"] = M["DQ"].copy(); M["DQ"].iloc[-3, col] = 8e5                                                  # the break session itself: eight times the usual delivery
+    out = P.build(M)["daily"]; asc = [r for r in out["found"]["ascending"] if r["sym"] == "ASC"]
+    assert asc and asc[0]["brk_ratio"] >= P.CONFIRM and asc[0]["confirmed"]
+    rows = out["found"]["ascending"]; breaks = [r for r in rows if r["status"] == "BREAKOUT"]
+    assert [r["confirmed"] for r in breaks] == sorted([r["confirmed"] for r in breaks], reverse=True)         # confirmed breaks come first within the break status
+    M["patterns"] = P.build(M); M["results"] = []; html = webpage.tab_patterns(M)
+    assert "HIGH-DELIVERY BREAKS" in html and "DELIVERY ON THE BREAK" in html and "HIGH DELIVERY" in html and 'data-conf="1"' in html
