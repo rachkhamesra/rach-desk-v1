@@ -169,6 +169,14 @@ def base_followthrough(C, H, L, DQ, RAT, symbols, T, nifty=None, cooldown=10):
     return pd.DataFrame(rows, columns=FOLLOW_COLUMNS)
 
 
+def carry_last_trade(adj):
+    """Prices with the sessions a stock did not trade filled in: the last traded price carries forward whatever the length of the gap (a suspension, a thin stock), but never beyond the
+    stock's last real trade, so a delisted stock does not run on. Returns (prices, mask of the sessions that were filled)."""
+    inside = adj.notna()[::-1].cummax()[::-1]                         # True up to each stock's last real trade
+    C = adj.ffill(limit=5).fillna(adj.ffill().where(inside))           # a trailing run of up to 5 sessions is still carried, as before
+    return C, adj.isna() & C.notna()
+
+
 def build(parsed, overrides=None, memberships=None):
     dates = sorted(parsed); memberships = memberships or {}
     fo_date = [d for d in dates if parsed[d]["fo"] is not None][-1]
@@ -187,7 +195,8 @@ def build(parsed, overrides=None, memberships=None):
     turn = W("deliv", "turn_cr")
     ev = corp.find_events(close_raw.ffill(limit=5), isin, lot, turn, overrides)
     F = corp.factors(pd.DatetimeIndex(dates), syms, ev)
-    C = (close_raw * F).ffill(limit=5); O = open_raw * F; H = high_raw * F; L = low_raw * F; DQ = dq_raw / F; TQ = tq_raw / F
+    C, quiet = carry_last_trade(close_raw * F)
+    O = (open_raw * F).where(~quiet, C); H = (high_raw * F).where(~quiet, C); L = (low_raw * F).where(~quiet, C); DQ = dq_raw / F; TQ = tq_raw / F      # flat candles on filled days
     allowed = set(syms)
     memberships = {k: [s for s in v if s in allowed] for k, v in memberships.items()}
     M = dict(bse_share=bse_share, dates=dates, syms=syms, memberships=memberships, N=N, T=T, events=ev, O=O, C=C, H=H, L=L, DQ=DQ, TQ=TQ, oi=oi, doi=doi, nifty=nifty, close_raw=close_raw, dq_raw=dq_raw, tq_raw=tq_raw)

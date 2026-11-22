@@ -43,6 +43,7 @@ jobs:
         with:
           path: |
             data/parsed.pkl
+            data/parsed.version
             data/holidays.txt
             data/results_calendar.csv
             data/results_actual.csv
@@ -100,6 +101,7 @@ jobs:
         with:
           path: |
             data/parsed.pkl
+            data/parsed.version
             data/holidays.txt
             data/results_calendar.csv
             data/results_actual.csv

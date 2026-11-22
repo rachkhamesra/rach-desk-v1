@@ -34,5 +34,21 @@ class CashAccumulationEpisodeTest(unittest.TestCase):
         self.assertEqual((state["days"], state["cooldown"]), (2, 0))
 
 
+
+class CarryLastTradeTest(unittest.TestCase):
+    def test_gaps_of_any_length_are_filled_but_never_past_the_last_trade(self):
+        import numpy as np
+        nan = np.nan
+        adj = pd.DataFrame({"THIN": [10, nan, nan, nan, nan, nan, nan, nan, 12, 13, nan],          # a seven-session gap in the middle, and one missing session at the end
+                            "GONE": [5, 5.5, nan, nan, nan, nan, nan, nan, nan, nan, nan],          # delisted: no trade after the second session
+                            "LATE": [nan, nan, nan, 7, 7, 7, 7, 7, 7, 7, 7]})                       # listed on the fourth session: nothing before it
+        C, quiet = metrics.carry_last_trade(adj)
+        self.assertEqual(C["THIN"].tolist(), [10, 10, 10, 10, 10, 10, 10, 10, 12, 13, 13])           # no hole in the middle
+        self.assertEqual(quiet["THIN"].tolist(), [False] + [True] * 7 + [False, False, True])
+        self.assertEqual(C["GONE"].iloc[:2].tolist(), [5, 5.5]); self.assertEqual(C["GONE"].iloc[2:7].tolist(), [5.5] * 5)      # the old five-session carry still applies
+        self.assertTrue(C["GONE"].iloc[7:].isna().all())                                              # but a delisted stock does not run on to today
+        self.assertTrue(C["LATE"].iloc[:3].isna().all() and not quiet["LATE"].any())                  # nothing is invented before a listing
+
+
 if __name__ == "__main__":
     unittest.main()
