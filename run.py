@@ -50,6 +50,8 @@ def main():
     parsed = nse.parse_all(a.root, trading)
     ov = pd.read_csv(os.path.join(HERE, "corp_actions.csv")) if os.path.exists(os.path.join(HERE, "corp_actions.csv")) else None
     feed = corp_feed.load(a.root, min(parsed), end)
+    feed = feed.assign(symbol=feed["symbol"].replace(parsed.aliases)) if len(feed) else feed         # a stock renamed during the history is one stock
+    if ov is not None: ov = ov.assign(symbol=ov["symbol"].replace(parsed.aliases))
     ov = pd.concat([feed, ov], ignore_index=True) if len(feed) else ov              # exchange-announced bonuses and splits first; hand overrides still win
     last = sorted(parsed)[-1]; warn = ""
     complete = parsed[last].get("bse") is not None

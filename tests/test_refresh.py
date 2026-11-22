@@ -54,7 +54,7 @@ def test_bse_delivery_dates_without_a_leading_zero_are_accepted(tmp_path):
 
 def test_sync_asks_for_bse_again_for_a_day_parsed_without_it(tmp_path, monkeypatch):
     d = pd.Timestamp("2026-11-02")
-    pd.to_pickle({d: day_entry(None)}, tmp_path / "parsed.pkl")
+    nse.save_parsed(str(tmp_path), {d: day_entry(None)})
     calls = []
     monkeypatch.setattr(nse, "download", lambda kind, day, root: calls.append(kind) or "404")
     assert nse.sync(str(tmp_path), d, d) == [d]
@@ -63,14 +63,14 @@ def test_sync_asks_for_bse_again_for_a_day_parsed_without_it(tmp_path, monkeypat
 
 def test_parse_all_fills_in_bse_once_published(tmp_path, monkeypatch):
     d = pd.Timestamp("2026-11-02"); root = str(tmp_path)
-    pd.to_pickle({d: day_entry(None)}, tmp_path / "parsed.pkl")
+    nse.save_parsed(str(tmp_path), {d: day_entry(None)})
     for kind in ("cm", "fo", "idx", "bsedel", "bsecm"):
         p = nse.path(root, kind, d); os.makedirs(os.path.dirname(p), exist_ok=True); open(p, "w").write("x")
     bse = pd.DataFrame({"dq": [5.0], "vol": [9.0]}, index=["AAA"])
     monkeypatch.setattr(nse, "read_bse", lambda root, day, cm: bse)
     out = nse.parse_all(root, [d])
     assert out[d]["bse"] is bse or out[d]["bse"].equals(bse)
-    assert pd.read_pickle(tmp_path / "parsed.pkl")[d]["bse"] is not None
+    assert nse.load_parsed(str(tmp_path))[d]["bse"] is not None
 
 
 def test_morning_retry_rules():

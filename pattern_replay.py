@@ -132,6 +132,8 @@ def build_panels(root="data"):
     here = os.path.dirname(os.path.abspath(__file__))
     ov = pd.read_csv(os.path.join(here, "corp_actions.csv")) if os.path.exists(os.path.join(here, "corp_actions.csv")) else None
     feed = corp_feed.load(root, min(parsed), max(parsed))
+    feed = feed.assign(symbol=feed["symbol"].replace(parsed.aliases)) if len(feed) else feed
+    if ov is not None: ov = ov.assign(symbol=ov["symbol"].replace(parsed.aliases))
     ov = pd.concat([feed, ov], ignore_index=True) if len(feed) else ov
     mem = universes.load(root); mem.pop("market_cap_cr", None)
     return metrics.build(parsed, ov, mem)

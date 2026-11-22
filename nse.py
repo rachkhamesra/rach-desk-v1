@@ -4,6 +4,9 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np, pandas as pd, requests
 
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+PARSER_VERSION = 3          # 3: trade-for-trade series (BE, BZ) are kept, with the whole volume counted as delivery, so a stock moved there keeps its history. Changing this re-parses every cached day.
+SERIES_OK = ("EQ", "BE", "BZ")   # BL is the block-deal session and SM/ST are SME boards: not part of a stock's own price history
+TFT = ("BE", "BZ")               # trade-for-trade: no intraday trading is allowed, so every share traded is a delivered share
 BASE = "https://nsearchives.nseindia.com"
 URL = dict(
     deliv=BASE + "/products/content/sec_bhavdata_full_{d:%d%m%Y}.csv",          # delivery quantity, EQ series
@@ -15,6 +18,18 @@ URL = dict(
 )
 EXT = dict(deliv="csv", cm="zip", fo="zip", idx="csv", bsedel="zip", bsecm="csv")
 HDR = {"bsedel": {**UA, "Referer": "https://www.bseindia.com/"}, "bsecm": {**UA, "Referer": "https://www.bseindia.com/"}}
+
+
+def load_parsed(root):
+    """The cached parsed days, or nothing when they were parsed by an older version of the parser."""
+    f, v = os.path.join(root, "parsed.pkl"), os.path.join(root, "parsed.version")
+    try: ok = os.path.exists(f) and open(v).read().strip() == str(PARSER_VERSION)
+    except OSError: ok = False
+    return pd.read_pickle(f) if ok else {}
+
+
+def save_parsed(root, parsed):
+    pd.to_pickle(parsed, os.path.join(root, "parsed.pkl")); open(os.path.join(root, "parsed.version"), "w").write(str(PARSER_VERSION))
 
 
 def path(root, kind, d):
@@ -61,8 +76,7 @@ def sync(root, start, end, wait_minutes=0, budget_s=None, workers=6, log=print, 
     backfill caps how many weekdays older than the oldest day already parsed are fetched in this call (newest first), so extending the history
     to a longer window takes a few runs instead of one very long one. The history stays contiguous."""
     t0 = time.time(); days = list(pd.bdate_range(start, end)); hol = _ghosts(root)
-    pf = os.path.join(root, "parsed.pkl")
-    cached = pd.read_pickle(pf) if os.path.exists(pf) else {}
+    cached = load_parsed(root)
     have = set(cached.keys())
     if backfill and have:
         older = [d for d in days if d < min(have) and d.strftime('%Y-%m-%d') not in hol]
@@ -114,9 +128,12 @@ def _num(s): return pd.to_numeric(s.astype(str).str.strip().replace("-", np.nan)
 
 def read_deliv(root, d):
     df = pd.read_csv(path(root, "deliv", d), skipinitialspace=True); df.columns = [c.strip() for c in df.columns]
-    df["SYMBOL"] = df["SYMBOL"].astype(str).str.strip(); df = df[df["SERIES"].astype(str).str.strip() == "EQ"]
-    return pd.DataFrame({"dq": _num(df["DELIV_QTY"]).values, "tq": _num(df["TTL_TRD_QNTY"]).values,
-                         "turn_cr": _num(df["TURNOVER_LACS"]).values / 100}, index=df["SYMBOL"].values)
+    df["SYMBOL"] = df["SYMBOL"].astype(str).str.strip(); df["SERIES"] = df["SERIES"].astype(str).str.strip()
+    df = df[df["SERIES"].isin(SERIES_OK)]
+    df = df.assign(_rank=df["SERIES"].map({k: i for i, k in enumerate(SERIES_OK)})).sort_values("_rank").drop_duplicates("SYMBOL")        # EQ wins if a symbol is somehow in two series
+    tq = _num(df["TTL_TRD_QNTY"])
+    dq = _num(df["DELIV_QTY"]).where(~df["SERIES"].isin(TFT), tq)           # the file prints "-" for delivery in trade-for-trade, where all of the volume is delivery
+    return pd.DataFrame({"dq": dq.values, "tq": tq.values, "turn_cr": _num(df["TURNOVER_LACS"]).values / 100}, index=df["SYMBOL"].values)
 
 
 def _read_zip_csv(p):
@@ -126,7 +143,8 @@ def _read_zip_csv(p):
 def read_cm(root, d):
     p = path(root, "cm", d)
     if not os.path.exists(p): return None
-    df = _read_zip_csv(p); df = df[df["SctySrs"] == "EQ"]
+    df = _read_zip_csv(p); df = df[df["SctySrs"].isin(SERIES_OK)]
+    df = df.assign(_rank=df["SctySrs"].map({k: i for i, k in enumerate(SERIES_OK)})).sort_values("_rank").drop_duplicates("TckrSymb")
     return pd.DataFrame({"isin": df["ISIN"].values, "open": df["OpnPric"].values, "high": df["HghPric"].values, "low": df["LwPric"].values,
                          "close": df["ClsPric"].values, "prev": df["PrvsClsgPric"].values}, index=df["TckrSymb"].astype(str).str.strip().values)
 
@@ -172,10 +190,49 @@ def read_nifty(root, d):
     return float(r["Closing Index Value"].iloc[0])
 
 
+class Parsed(dict):
+    """The parsed days (date to frames) plus `aliases`: {earlier symbol: current symbol} for every stock that was renamed during the history."""
+    aliases = {}
+
+
+def symbol_aliases(parsed):
+    """Stocks keep their ISIN when the exchange renames their symbol (Zomato became Eternal, Tata Motors became TMPV). Where one ISIN was traded under several symbols that never
+    overlapped in time, every earlier symbol maps to the latest, so the history is one stock and not a short life under the new name. An ISIN seen under two symbols on the same
+    day is left alone: that is two instruments, not a rename."""
+    frames = []
+    for d, p in parsed.items():
+        cm = p.get("cm")
+        if cm is not None and len(cm): frames.append(pd.DataFrame({"isin": cm["isin"].to_numpy(), "sym": cm.index.to_numpy(), "d": d}))
+    if not frames: return {}
+    long = pd.concat(frames, ignore_index=True).dropna(subset=["isin"])
+    span = long.groupby(["isin", "sym"])["d"].agg(["min", "max"]).reset_index()
+    alias = {}
+    for isin, g in span.groupby("isin"):
+        if len(g) < 2: continue
+        g = g.sort_values("min")
+        if (g["min"].to_numpy()[1:] <= g["max"].to_numpy()[:-1]).any(): continue                      # symbols overlap in time: not a rename
+        latest = g["sym"].iloc[-1]
+        for sym in g["sym"].iloc[:-1]:
+            if sym != latest: alias[sym] = latest
+    return alias
+
+
+def canonical(parsed):
+    """The parsed days with every renamed stock under its current symbol (see symbol_aliases)."""
+    alias = symbol_aliases(parsed); out = Parsed()
+    out.aliases = alias
+    for d, p in parsed.items():
+        q = dict(p)
+        for part in ("cm", "deliv", "fo", "bse"):
+            df = q.get(part)
+            if df is not None and len(df) and alias: q[part] = df.rename(index=alias)
+        out[d] = q
+    return out
+
+
 def parse_all(root, trading, log=print):
     """Parse each trading day once; results are cached in data/parsed.pkl."""
-    f = os.path.join(root, "parsed.pkl")
-    parsed = pd.read_pickle(f) if os.path.exists(f) else {}
+    parsed = load_parsed(root)
     retry = recent_without_bse({d: v for d, v in parsed.items() if d in trading})
     todo = [d for d in trading if (d not in parsed or "bse" not in parsed[d] or (d in retry and os.path.exists(path(root, "bsedel", d)) and os.path.exists(path(root, "bsecm", d)))) and os.path.exists(path(root, "cm", d)) and os.path.exists(path(root, "fo", d)) and os.path.exists(path(root, "idx", d))]
     if todo: log(f"parsing {len(todo)} days")
@@ -183,5 +240,5 @@ def parse_all(root, trading, log=print):
         if d in parsed: parsed[d]["bse"] = read_bse(root, d, parsed[d]["cm"]); continue
         cm = read_cm(root, d)
         parsed[d] = dict(deliv=read_deliv(root, d), cm=cm, fo=read_fo(root, d), nifty=read_nifty(root, d), bse=read_bse(root, d, cm))
-    if todo: pd.to_pickle(parsed, f)
-    return {d: parsed[d] for d in trading if d in parsed}
+    if todo: save_parsed(root, parsed)
+    return canonical({d: parsed[d] for d in trading if d in parsed})
