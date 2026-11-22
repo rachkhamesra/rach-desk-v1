@@ -3,7 +3,7 @@
 import argparse, json, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import nse, metrics, corp_feed, shorts, patterns, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
+import nse, metrics, corp_feed, shorts, patterns, pattern_replay, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MARKER = "published.json"
@@ -76,6 +76,7 @@ def main():
     except Exception as e: M["shorts"] = None; print(f"short ideas skipped: {type(e).__name__}: {e}")
     try: M["patterns"] = patterns.build(M)                  # experimental chart-pattern scans; a failure here never stops the build
     except Exception as e: M["patterns"] = None; print(f"technical patterns skipped: {type(e).__name__}: {e}")
+    M["pattern_replay"] = pattern_replay.load_saved()       # results of `python pattern_replay.py`, run locally
     M["backtest"] = backtest.load_saved()      # results of `python backtest.py`, run locally; the build never fetches prices for it
     exchange_history = exchange_tracker.load(a.root, end)
     exchange_prices = M["C"]["BSE"] if "BSE" in M["C"] else pd.Series(dtype=float)
