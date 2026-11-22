@@ -28,6 +28,7 @@ FORMING_MAX = 0.10    # a standing pattern whose price is further than 10% from 
 NEAR = 0.04
 BREAK = 0.01          # a close 1% beyond the level counts as through it
 PIERCE = 0.03         # an earlier excursion this far beyond the level before the last RECENT sessions invalidates the pattern
+CONFIRM = 1.25        # delivery on the break session at least this multiple of its own 20-session average (10-week for weekly) is high-delivery
 MIN_TURNOVER_CR = 2.0 # median daily rupee turnover, so thin circuit-bound names do not fill the lists
 CHART_DAYS = 230
 # Bar-count settings per timeframe. The rules are identical (levels, touches, convergence, percentages); only what "a few bars" means differs.
@@ -203,7 +204,9 @@ def scan_timeframe(M, cfg=DAILY, charts=True):
         for kind, r in res.items():
             if not r: continue
             c = Cd[s]; rat = M["RAT"][s].iloc[-1]
-            r.update(sym=s, close=float(c.iloc[-1]), px1d=float((c.iloc[-1] / c.iloc[-2] - 1) * 100), fo=s in fo, tf=cfg.name,
+            b = r.get("break_idx"); bd = S["avg"][s].iloc[b] if b is not None else np.nan
+            brk = float(S["DQ"][s].iloc[b] / bd) if b is not None and pd.notna(bd) and bd > 0 and pd.notna(S["DQ"][s].iloc[b]) else np.nan
+            r.update(brk_ratio=brk, confirmed=bool(b is not None and pd.notna(brk) and brk >= CONFIRM), sym=s, close=float(c.iloc[-1]), px1d=float((c.iloc[-1] / c.iloc[-2] - 1) * 100), fo=s in fo, tf=cfg.name,
                      rs3m=float(((c.iloc[-1] / c.iloc[-64]) / (nifty.iloc[-1] / nifty.iloc[-64]) - 1) * 100) if nd > 64 else np.nan,
                      ratio=float(rat) if pd.notna(rat) else np.nan, turnover=float(turn[s]))
             out["found"][kind].append(r)
@@ -250,12 +253,13 @@ def direction(kind, status):
 
 
 def conviction(r, other_tf_dirs):
-    """0 to 5. A fresh break (2) or a setup within reach of the trigger (1); delivery on the latest session at least 1.25x its 20-session average (1);
+    """0 to 5. A fresh break (2) or a setup within reach of the trigger (1); delivery at least 1.25x its 20-session average, on the break session for a break and on the latest session otherwise (1);
     the stock's 3-month return against Nifty leaning the pattern's way (1); the other timeframe showing a pattern with the same lean (1).
     A way of ordering today's list, not a probability."""
     d = direction(r["kind"], r["status"]); sc = 0
     sc += 2 if r["status"] in ("BREAKOUT", "BREAKDOWN") else 1 if r["status"] in ("SETUP", "AT TOP", "AT BOTTOM") else 0
-    sc += 1 if pd.notna(r["ratio"]) and r["ratio"] >= 1.25 else 0
+    dv = r.get("brk_ratio") if r["status"] in ("BREAKOUT", "BREAKDOWN") and pd.notna(r.get("brk_ratio", np.nan)) else r["ratio"]      # a break is judged on the delivery of the break itself
+    sc += 1 if pd.notna(dv) and dv >= CONFIRM else 0
     sc += 1 if d and pd.notna(r["rs3m"]) and (r["rs3m"] > 0) == (d > 0) and r["rs3m"] != 0 else 0
     sc += 1 if d and d in other_tf_dirs.get(r["sym"], set()) else 0
     return sc
@@ -279,7 +283,7 @@ def build(M):
     for name, cur in (("daily", d), ("weekly", w)):
         for rows in (cur["found"].values() if cur else []):
             for r in rows: r["conv"] = conviction(r, leans["weekly" if name == "daily" else "daily"])
-            rows.sort(key=lambda r: (order.get(r["status"], 3), -r["conv"], -r["score"]))
+            rows.sort(key=lambda r: (order.get(r["status"], 3), not r.get("confirmed"), -r["conv"], -r["score"]))
     return {"daily": d, "weekly": w}
 
 

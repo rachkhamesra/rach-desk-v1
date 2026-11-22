@@ -16,14 +16,14 @@ import patterns as P
 HORIZONS = (10, 20, 40, 60)     # sessions after the signal; 20 is about a month, 60 about three
 MIN_FOLLOW = 10                # a break needs at least this much follow-up to be counted at all; longer horizons count only those with enough
 STEP = 5                       # sessions between daily scans
-CONFIRM = 1.25                 # delivery at least this multiple of its 20-session average counts as confirmation
+CONFIRM = P.CONFIRM            # delivery on the break session at least this multiple of its own recent average counts as confirmation
 START = {"daily": 120, "weekly": 45}      # first bar scanned: before this there is too little history for the rules to see a pattern
 SAVED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config", "pattern_replay.json")
 
 
 def _worker(a):
     """All fresh breaks of one stock over every scan time. a = (sym, H, L, C, rat, where, cfg name, scan times)."""
-    sym, H, L, C, rat, where, name, times = a
+    sym, H, L, C, bratio, where, name, times = a
     cfg = P.DAILY if name == "daily" else P.WEEKLY
     out, seen = [], set()
     for t in times:
@@ -34,7 +34,8 @@ def _worker(a):
             if key in seen: continue
             seen.add(key)
             day = t if where is None else where[t][1]
-            out.append(dict(sym=sym, kind=kind, status=r["status"], tf=name, t_day=int(day), ratio=None if not np.isfinite(rat[day]) else float(rat[day])))
+            b = r["break_idx"]                                                      # the delivery that matters is the delivery of the break itself, not of the day it was first noticed
+            out.append(dict(sym=sym, kind=kind, status=r["status"], tf=name, t_day=int(day), ratio=None if not np.isfinite(bratio[b]) else float(bratio[b])))
     return out
 
 
@@ -50,7 +51,7 @@ def events(M, name, workers=4, log=print):
     for s in syms:
         if not (turn[s].iloc[-1] >= P.MIN_TURNOVER_CR): continue                           # the same liquidity bar as the page, judged on the latest sessions
         ts = [t for t in times if np.isfinite(S["C"][s].iloc[t])]
-        jobs.append((s, S["H"][s].to_numpy(float), S["L"][s].to_numpy(float), S["C"][s].ffill().to_numpy(float), M["RAT"][s].to_numpy(float), where, name, ts))
+        jobs.append((s, S["H"][s].to_numpy(float), S["L"][s].to_numpy(float), S["C"][s].ffill().to_numpy(float), (S["DQ"][s] / S["avg"][s]).to_numpy(float), where, name, ts))
     log(f"{name}: {len(jobs)} stocks x {len(times)} scan times")
     t0 = time.time(); out = []
     if workers > 1:
