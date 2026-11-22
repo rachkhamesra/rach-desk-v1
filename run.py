@@ -67,7 +67,7 @@ def main():
     memberships = universes.load(a.root)
     market_cap_cr = memberships.pop("market_cap_cr", {})
     print(f"market-cap universe: {len(market_cap_cr)} NSE companies loaded in ₹ crore")
-    M = metrics.build(parsed, ov, memberships)
+    M = metrics.build(parsed, ov, memberships, cache_dir=a.root)
     M["market_cap_cr"] = market_cap_cr
     calendar, actual = results.load(a.root, end)
     M["results"] = results.build_signals(M, calendar, actual)

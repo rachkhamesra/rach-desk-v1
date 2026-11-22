@@ -1,5 +1,5 @@
 """Everything the pages show, computed from adjusted panels."""
-import time
+import hashlib, os, pickle, time
 import numpy as np, pandas as pd
 import corp, panel
 
@@ -135,37 +135,72 @@ FOLLOW_COLUMNS = ["sym", "t", "stage", "support", "close", "quality", *FOLLOW_FL
                   "r5", "r10", "r20", "x5", "x10", "x20", "mdd20", "fail20", "to_date", "age"]
 
 
-def base_followthrough(C, H, L, DQ, RAT, symbols, T, nifty=None, cooldown=10):
+BASE_CACHE_VERSION = 1
+
+
+def _data_fingerprint(C, H, L, DQ, symbols, t):
+    """A hash of everything the base scan reads up to and including session t, to 4 decimals: it changes if any earlier price or delivery figure is restated."""
+    h = hashlib.sha1()
+    for df in (C, H, L, DQ):
+        h.update(np.round(np.nan_to_num(df[list(symbols)].iloc[:t + 1].to_numpy(float), nan=-1.0), 4).tobytes())
+    return h.hexdigest()
+
+
+def base_followthrough(C, H, L, DQ, RAT, symbols, T, nifty=None, cooldown=10, cache_path=None):
     """Replay the base scan on every past session and measure what happened next.
 
     A signal is the first day a stock appears in a stage after at least `cooldown` sessions out of
     it. Returns are from that day's close, so nothing after the signal date feeds the signal.
     `fail20` means the low undercut the base support within 20 sessions; it is only set once those
     20 sessions exist. `mdd20` is the worst low versus the signal close over the sessions seen.
+
+    The signals found at each session depend only on data up to that session, so with `cache_path` they are kept between builds and only the newest
+    sessions are scanned. The cache is used only if the earlier data is unchanged (see _data_fingerprint) and the symbol list is the same; otherwise everything is
+    scanned again. What happened after each signal is always recomputed from the current data.
     """
+    symbols = list(symbols); start = max(BASE_WINDOWS) + 1
+    events, last_seen, done = [], {}, start - 1
+    if cache_path and os.path.exists(cache_path):
+        try:
+            with open(cache_path, "rb") as f: c = pickle.load(f)
+            if (c.get("v") == BASE_CACHE_VERSION and c["symbols"] == symbols and start - 1 <= c["t"] <= T and c["sig"] == _data_fingerprint(C, H, L, DQ, symbols, c["t"])):
+                events, last_seen, done = c["events"], dict(c["last_seen"]), c["t"]
+        except Exception:
+            events, last_seen, done = [], {}, start - 1                                     # an unreadable cache is no cache
     pre = _base_pre(C, H, L, DQ, RAT)
-    nifty = None if nifty is None else np.asarray(nifty, dtype=float)
-    last_seen, rows = {}, []
-    for t in range(max(BASE_WINDOWS) + 1, T + 1):
+    for t in range(done + 1, T + 1):
         frame = breakout_bases(C, H, L, DQ, RAT, symbols, t, pre=pre)
         for r in frame.itertuples():
             key = (r.sym, r.stage)
             fresh_signal = key not in last_seen or t - last_seen[key] > cooldown
             last_seen[key] = t
-            if not fresh_signal: continue
-            close, path = C[r.sym].iloc[t], C[r.sym].iloc[t + 1:]
-            item = dict(sym=r.sym, t=t, stage=r.stage, support=r.support, close=close, quality=sum(getattr(r, f) for f in FOLLOW_FLAGS),
-                        age=T - t, to_date=(path.iloc[-1] / close - 1) * 100 if len(path) and pd.notna(path.iloc[-1]) else np.nan)
-            for f in FOLLOW_FLAGS: item[f] = bool(getattr(r, f))
-            for h in FOLLOW_HORIZONS:
-                ok = t + h <= T and pd.notna(C[r.sym].iloc[t + h]) and close > 0
-                item[f"r{h}"] = (C[r.sym].iloc[t + h] / close - 1) * 100 if ok else np.nan
-                bench = nifty is not None and ok and nifty[t] and not np.isnan(nifty[t]) and not np.isnan(nifty[t + h])
-                item[f"x{h}"] = item[f"r{h}"] - (nifty[t + h] / nifty[t] - 1) * 100 if bench else np.nan
-            lows = L[r.sym].iloc[t + 1:t + 1 + max(FOLLOW_HORIZONS)].dropna()
-            item["mdd20"] = (lows.min() / close - 1) * 100 if len(lows) else np.nan
-            item["fail20"] = (bool(lows.min() < r.support) if len(lows) else None) if t + max(FOLLOW_HORIZONS) <= T else None
-            rows.append(item)
+            if fresh_signal:
+                events.append(dict(sym=r.sym, t=t, stage=r.stage, support=r.support, close=C[r.sym].iloc[t], quality=sum(getattr(r, f) for f in FOLLOW_FLAGS),
+                                   flags={f: bool(getattr(r, f)) for f in FOLLOW_FLAGS}))
+    if cache_path:
+        try:
+            os.makedirs(os.path.dirname(os.path.abspath(cache_path)), exist_ok=True)
+            with open(cache_path, "wb") as f:
+                pickle.dump(dict(v=BASE_CACHE_VERSION, symbols=symbols, t=T, last_seen=last_seen, events=events, sig=_data_fingerprint(C, H, L, DQ, symbols, T)), f)
+        except OSError:
+            pass
+    nifty = None if nifty is None else np.asarray(nifty, dtype=float)
+    series = {s: (C[s].to_numpy(float), L[s].to_numpy(float)) for s in {e["sym"] for e in events}}
+    rows = []
+    for e in events:
+        t, close = e["t"], e["close"]; c, lo = series[e["sym"]]
+        item = dict(sym=e["sym"], t=t, stage=e["stage"], support=e["support"], close=close, quality=e["quality"], age=T - t,
+                    to_date=(c[-1] / close - 1) * 100 if t + 1 < len(c) and not np.isnan(c[-1]) else np.nan)
+        for f in FOLLOW_FLAGS: item[f] = e["flags"][f]
+        for h in FOLLOW_HORIZONS:
+            ok = t + h <= T and not np.isnan(c[t + h]) and close > 0
+            item[f"r{h}"] = (c[t + h] / close - 1) * 100 if ok else np.nan
+            bench = nifty is not None and ok and nifty[t] and not np.isnan(nifty[t]) and not np.isnan(nifty[t + h])
+            item[f"x{h}"] = item[f"r{h}"] - (nifty[t + h] / nifty[t] - 1) * 100 if bench else np.nan
+        lows = lo[t + 1:t + 1 + max(FOLLOW_HORIZONS)]; lows = lows[~np.isnan(lows)]
+        item["mdd20"] = (lows.min() / close - 1) * 100 if len(lows) else np.nan
+        item["fail20"] = (bool(lows.min() < e["support"]) if len(lows) else None) if t + max(FOLLOW_HORIZONS) <= T else None
+        rows.append(item)
     return pd.DataFrame(rows, columns=FOLLOW_COLUMNS)
 
 
@@ -177,7 +212,7 @@ def carry_last_trade(adj):
     return C, adj.isna() & C.notna()
 
 
-def build(parsed, overrides=None, memberships=None):
+def build(parsed, overrides=None, memberships=None, cache_dir=None):
     dates = sorted(parsed); memberships = memberships or {}
     fo_date = [d for d in dates if parsed[d]["fo"] is not None][-1]
     memberships["fo"] = list(parsed[fo_date]["fo"].index)
@@ -294,7 +329,7 @@ def build(parsed, overrides=None, memberships=None):
     # ---------------- F&O consolidation and breakout candidates
     M["breakout_bases"] = breakout_bases(C, H, L, DQ, RAT, memberships.get("fo", []), T)
     started = time.time()
-    M["base_signals"] = base_followthrough(C, H, L, DQ, RAT, memberships.get("fo", []), T, nifty=M.get("nifty"))
+    M["base_signals"] = base_followthrough(C, H, L, DQ, RAT, memberships.get("fo", []), T, nifty=M.get("nifty"), cache_path=os.path.join(cache_dir, "base_events.pkl") if cache_dir else None)
     print(f"base follow-through: {len(M['base_signals'])} past signals replayed in {time.time() - started:.0f}s")
 
     # ---------------- relative performance
