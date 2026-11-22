@@ -13,7 +13,8 @@ import numpy as np
 import pandas as pd
 import patterns as P
 
-HORIZONS = (10, 20)
+HORIZONS = (10, 20, 40, 60)     # sessions after the signal; 20 is about a month, 60 about three
+MIN_FOLLOW = 10                # a break needs at least this much follow-up to be counted at all; longer horizons count only those with enough
 STEP = 5                       # sessions between daily scans
 CONFIRM = 1.25                 # delivery at least this multiple of its 20-session average counts as confirmation
 START = {"daily": 120, "weekly": 45}      # first bar scanned: before this there is too little history for the rules to see a pattern
@@ -42,7 +43,7 @@ def events(M, name, workers=4, log=print):
     cfg = P.DAILY if name == "daily" else P.WEEKLY
     S = P.series(M, cfg); n = len(S["C"]); syms = list(S["C"].columns)
     turn = ((M["C"][syms] * M["TQ"][syms]) / 1e7).rolling(60, min_periods=30).median()
-    last = n - 1 - (HORIZONS[-1] if name == "daily" else 4)                              # leave room to see what happened next
+    last = n - 1 - (MIN_FOLLOW if name == "daily" else 2)                                # leave room for at least the shortest horizon
     times = list(range(START[name], last + 1, STEP if name == "daily" else 1))
     where = None if name == "daily" else S["where"]
     jobs = []
@@ -82,22 +83,25 @@ def baseline(M, step=STEP, start=START["daily"]):
             ok = turn.iloc[t] >= P.MIN_TURNOVER_CR
             r = ((C.iloc[t + h] / C.iloc[t]) - (nf.iloc[t + h] / nf.iloc[t])) * 100
             vals += list(r[ok].dropna().to_numpy())
-        v = np.array(vals); out[str(h)] = dict(n=int(len(v)), avg=float(v.mean()), up=float((v > 0).mean() * 100)) if len(v) else None
+        v = np.array(vals)
+        out[str(h)] = dict(n=int(len(v)), avg=float(v.mean()), median=float(np.median(v)), up=float((v > 0).mean() * 100)) if len(v) else None
     return out
 
 
 def summarise(rows):
-    """{'tf|kind|status': {...}}: counts, average excess return, and the share that went the right way, with and without delivery confirmation."""
+    """{'tf|kind|status': {...}}: for every horizon, the count with that much follow-up, average and median excess return, and the share that went the right way,
+    for all breaks and for those with delivery confirmation (delivery at least CONFIRM times its 20-session average on the day)."""
     groups = {}
     for r in rows: groups.setdefault(f'{r["tf"]}|{r["kind"]}|{r["status"]}', []).append(r)
     out = {}
     for key, rs in groups.items():
         up = key.endswith("BREAKOUT"); d = dict(found=len(rs))
+        right = lambda a: float(((a > 0) if up else (a < 0)).mean() * 100) if len(a) else None
         for h in HORIZONS:
             v = np.array([r[f"x{h}"] for r in rs if r[f"x{h}"] is not None])
             c = np.array([r[f"x{h}"] for r in rs if r[f"x{h}"] is not None and (r["ratio"] or 0) >= CONFIRM])
-            right = (lambda a: float(((a > 0) if up else (a < 0)).mean() * 100) if len(a) else None)
-            d[str(h)] = dict(n=int(len(v)), avg=float(v.mean()) if len(v) else None, right=right(v), n_conf=int(len(c)), avg_conf=float(c.mean()) if len(c) else None, right_conf=right(c))
+            d[str(h)] = dict(n=int(len(v)), avg=float(v.mean()) if len(v) else None, median=float(np.median(v)) if len(v) else None, right=right(v),
+                             n_conf=int(len(c)), avg_conf=float(c.mean()) if len(c) else None, median_conf=float(np.median(c)) if len(c) else None, right_conf=right(c))
         out[key] = d
     return out
 

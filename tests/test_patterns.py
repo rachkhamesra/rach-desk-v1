@@ -212,10 +212,11 @@ def test_conviction_scores_a_fresh_confirmed_leaning_break_highest():
 
 
 def fake_replay(n=40, avg=3.2, base=0.4):
-    h = lambda n_, a: dict(n=n_, avg=a, right=58.0, n_conf=12, avg_conf=5.1, right_conf=67.0)
-    return dict(generated="2026-11-22", sessions=514, asof="2026-11-20", horizons=[10, 20], step=5, total=100, baseline={"10": dict(n=9000, avg=0.2, up=50.0), "20": dict(n=8000, avg=base, up=51.0)},
-                groups={"daily|ascending|BREAKOUT": dict(found=n, **{"10": h(n, avg), "20": h(n, avg)}), "weekly|ascending|BREAKOUT": dict(found=6, **{"10": h(6, 1.0), "20": h(6, 1.0)}),
-                        "daily|rectangle|BREAKOUT": dict(found=30, **{"10": h(30, -1.0), "20": h(30, -1.0)}), "daily|rectangle|BREAKDOWN": dict(found=20, **{"10": h(20, -2.5), "20": h(20, -2.5)})})
+    h = lambda n_, a: dict(n=n_, avg=a, median=a - 1.0, right=58.0, n_conf=12, avg_conf=5.1, median_conf=3.0, right_conf=67.0)
+    grp = lambda n_, a: dict(found=n_, **{k: h(n_, a) for k in ("10", "20", "40", "60")})
+    bs = lambda a: dict(n=9000, avg=a, median=a - 0.5, up=51.0)
+    return dict(generated="2026-11-22", sessions=514, asof="2026-11-20", horizons=[10, 20, 40, 60], step=5, total=100, baseline={k: bs(base) for k in ("10", "20", "40", "60")},
+                groups={"daily|ascending|BREAKOUT": grp(n, avg), "weekly|ascending|BREAKOUT": grp(6, 1.0), "daily|rectangle|BREAKOUT": grp(30, -1.0), "daily|rectangle|BREAKDOWN": grp(20, -2.5)})
 
 
 def test_the_tab_shows_a_digest_badges_a_score_column_and_the_replay():
@@ -223,10 +224,12 @@ def test_the_tab_shows_a_digest_badges_a_score_column_and_the_replay():
     html = webpage.tab_patterns(M)
     assert "SINCE THE PREVIOUS SESSION" in html and 'id="pt-wl"' in html and "Short Ideas:" in html
     assert "SCORE" in html and 'data-ev="' in html
-    assert "Replay: after <b>40</b> past daily breakouts" in html and "+3.2%" in html and "the average stock: +0.4%" in html          # beside the average stock
-    assert "only 6 past weekly breakouts" in html                                                                                     # too few to read is said, not hidden
-    assert "past daily breakdowns" in html and "went down" in html                                                                     # a rectangle is replayed both ways
-    assert "With delivery at least 1.25×" in html
+    assert "Replay · past daily breakouts" in html and "~1 month" in html and "~2 months" in html and "~3 months" in html          # three horizons
+    assert "+3.2%" in html and "+2.2%" in html and "MEDIAN" in html                                                              # the average, and the median beside it
+    assert "+0.4%" in html and "51% up" in html                                                                                  # the average stock beside it
+    assert "too few with that much follow-up to read" in html                                                                    # six weekly breaks: said, not hidden
+    assert "past daily breakdowns" in html and "WENT DOWN" in html                                                               # a rectangle is replayed both ways
+    assert "WITH DELIVERY ≥1.25×" in html and "12 · +5.1% · +3.0%" in html
     M["pattern_replay"] = None; assert "Replay:" not in webpage.tab_patterns(M)
 
 
