@@ -262,3 +262,45 @@ def test_high_delivery_is_judged_on_the_break_session_and_leads_the_tables():
     assert [r["confirmed"] for r in breaks] == sorted([r["confirmed"] for r in breaks], reverse=True)         # confirmed breaks come first within the break status
     M["patterns"] = P.build(M); M["results"] = []; html = webpage.tab_patterns(M)
     assert "HIGH-DELIVERY BREAKS" in html and "DELIVERY ON THE BREAK" in html and "HIGH DELIVERY" in html and 'data-conf="1"' in html
+
+
+def swings_reference(x, k, high):
+    """The straightforward loop the vectorised version replaced."""
+    out = []
+    for i in range(k, len(x) - k):
+        v = x[i]
+        if np.isnan(v): continue
+        left, right = x[i - k:i], x[i + 1:i + k + 1]
+        if np.isnan(left).any() or np.isnan(right).any(): continue
+        if high and v > left.max() and v >= right.max(): out.append((i, float(v)))
+        if not high and v < left.min() and v <= right.min(): out.append((i, float(v)))
+    return out
+
+
+def clusters_reference(points, tol, min_gap):
+    out, seen = [], set()
+    for _, p0 in points:
+        mem = tuple(m for m in points if abs(m[1] / p0 - 1) <= tol)
+        if len(mem) < 2 or mem in seen or mem[-1][0] - mem[0][0] < min_gap: continue
+        seen.add(mem); out.append((float(np.median([p for _, p in mem])), list(mem)))
+    return out
+
+
+def test_vectorised_swings_and_clusters_match_the_plain_loops_exactly():
+    rng = np.random.default_rng(11)
+    for trial in range(60):
+        n = int(rng.integers(5, 400)); x = 100 * np.cumprod(1 + rng.normal(0, .02, n))
+        if trial % 3 == 0: x[rng.integers(0, n, size=max(1, n // 20))] = np.nan                       # gaps
+        if trial % 4 == 0: x = np.round(x, 0)                                                         # many ties, so flat tops and bottoms
+        for k in (1, 2, 4):
+            for high in (True, False):
+                assert P.swings(x, k, high) == swings_reference(x, k, high), (trial, k, high)
+        pts = P.swings(x, 2, True)
+        for tol, gap in ((.02, 12), (.03, 5), (.05, 1)):
+            assert P.clusters(pts, tol, gap) == clusters_reference(pts, tol, gap), (trial, tol, gap)
+    assert P.swings([1.0, 2.0], 4, True) == [] and P.swings([], 2, False) == [] and P.clusters([(3, 10.0)], .02, 1) == []        # too short to have any
+
+
+def test_a_flat_top_is_one_swing_at_its_first_bar():
+    x = np.array([1, 2, 3, 5, 5, 5, 3, 2, 1], float)
+    assert P.swings(x, 2, True) == [(3, 5.0)]                                                         # the plateau counts once, at its first bar

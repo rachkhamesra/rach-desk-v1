@@ -41,25 +41,30 @@ KINDS = [("ascending", "ASCENDING TRIANGLE", "bullish"), ("descending", "DESCEND
 
 
 def swings(x, k=K, high=True):
-    """[(index, price)] of confirmed swing highs (or lows). The newest k sessions cannot be confirmed yet."""
-    out = []
-    for i in range(k, len(x) - k):
-        v = x[i]
-        if np.isnan(v): continue
-        left, right = x[i - k:i], x[i + 1:i + k + 1]
-        if np.isnan(left).any() or np.isnan(right).any(): continue
-        if high and v > left.max() and v >= right.max(): out.append((i, float(v)))
-        if not high and v < left.min() and v <= right.min(): out.append((i, float(v)))
-    return out
+    """[(index, price)] of confirmed swing highs (or lows): a point that beats the k bars on each side (strictly the left, ties allowed on the right so a flat top is counted
+    once, at its first bar). The newest k bars cannot be confirmed yet. A window with a gap in it is skipped. Vectorised over sliding windows."""
+    x = np.asarray(x, float)
+    if len(x) < 2 * k + 1: return []
+    win = np.lib.stride_tricks.sliding_window_view(x, 2 * k + 1)
+    v, left, right = win[:, k], win[:, :k], win[:, k + 1:]
+    ok = ~np.isnan(win).any(axis=1)
+    m = ok & ((v > left.max(axis=1)) & (v >= right.max(axis=1)) if high else (v < left.min(axis=1)) & (v <= right.min(axis=1)))
+    return [(int(i), float(x[i])) for i in np.flatnonzero(m) + k]
 
 
 def clusters(points, tol=TOL, min_gap=MIN_GAP):
-    """Every group of swing points within tol of a seed point and spanning at least min_gap sessions: [(level, members)], widest first."""
+    """Every group of swing points within tol of a seed point and spanning at least min_gap bars: [(level, members)], in seed order. The level is the median price of the group."""
+    if len(points) < 2: return []
+    idx = np.array([i for i, _ in points]); pr = np.array([p for _, p in points], float)
     out, seen = [], set()
-    for _, p0 in points:
-        mem = tuple(m for m in points if abs(m[1] / p0 - 1) <= tol)
-        if len(mem) < 2 or mem in seen or mem[-1][0] - mem[0][0] < min_gap: continue
-        seen.add(mem); out.append((float(np.median([p for _, p in mem])), list(mem)))
+    for p0 in pr:
+        m = np.abs(pr / p0 - 1) <= tol
+        if m.sum() < 2: continue
+        key = m.tobytes()
+        if key in seen: continue
+        ii = idx[m]
+        if ii[-1] - ii[0] < min_gap: continue
+        seen.add(key); out.append((float(np.median(pr[m])), [(int(i), float(p)) for i, p in zip(ii, pr[m])]))
     return out
 
 
@@ -133,8 +138,9 @@ def triangle(H, L, C, up, cfg=DAILY):
 
 def rectangle(H, L, C, cfg=DAILY):
     n = len(C); best = None
+    bottoms = clusters(swings(L, cfg.k, False), RECT_TOL, cfg.gap)                     # the same for every top, so found once
     for r_level, r_mem in clusters(swings(H, cfg.k, True), RECT_TOL, cfg.gap):
-        for s_level, s_mem in clusters(swings(L, cfg.k, False), RECT_TOL, cfg.gap):
+        for s_level, s_mem in bottoms:
             if s_level >= r_level: continue
             i0 = min(r_mem[0][0], s_mem[0][0])
             if not (cfg.min_bars <= n - i0 <= cfg.max_bars): continue
