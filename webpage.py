@@ -1065,6 +1065,27 @@ SHORT_COLORS = {"cash_selling": "#ff7a5c", "laggards": "#b58cff", "breakdown": "
 SHORT_CHART_CAP = 30
 
 
+def earlier_touches(ch, pat, start):
+    """Touches of a pattern that fall before the part of the chart that is drawn (older than `start`, or older than the bars the chart carries): how many, and the whole-history strip that shows them."""
+    if not ch.get("full"): return 0, ""
+    off = ch.get("off", 0); pts = [(i + off, p) for i, p in pat["touches"]]; first = off + start
+    n_before = sum(1 for i, _ in pts if i < first)
+    if not n_before: return 0, ""
+    full = ch["full"]; N = len(full); vals = [v for v in full if v is not None] + [p for _, p in pts]
+    lo, hi = min(vals), max(vals); w, h, l, r, t, b = 420, 78, 4, 44, 6, 14
+    X = lambda i: l + (i + .5) * (w - l - r) / N; Y = lambda v: t + (1 - (v - lo) / ((hi - lo) or 1)) * (h - t - b)
+    q = f'<rect x="{X(first):.1f}" y="{t}" width="{w - r - X(first):.1f}" height="{h - t - b}" fill="rgba(232,169,58,.12)"/>'
+    q += f'<polyline points="{" ".join(f"{X(i):.1f},{Y(v):.1f}" for i, v in enumerate(full) if v is not None)}" fill="none" stroke="#8b8b86" stroke-width="1.2"/>'
+    for ln in pat["lines"]:
+        if abs(ln["a"][1] - ln["b"][1]) < 1e-6 * abs(ln["a"][1]):
+            q += f'<line x1="{l}" x2="{w - r}" y1="{Y(ln["a"][1]):.1f}" y2="{Y(ln["a"][1]):.1f}" stroke="{"#ef5a4d" if ln["role"] == "resistance" else "#2fbf71"}" stroke-width="1.2" stroke-dasharray="4 3"/>'
+    q += "".join(f'<circle cx="{X(i):.1f}" cy="{Y(p):.1f}" r="3" fill="none" stroke="#f1f1ec" stroke-width="1.2"/>' for i, p in pts)
+    q += (f'<text x="{l + 2}" y="{h - 3}" fill="#77776f" font-size="9" font-family="monospace">{esc(ch.get("full_first", ""))}</text>'
+          f'<text x="{w - r}" y="{h - 3}" text-anchor="end" fill="#77776f" font-size="9" font-family="monospace">{esc(ch["dates"][-1])}</text>')
+    return n_before, (f'<div class="ptfull mut">WHOLE HISTORY · the shaded part is the chart above · {len(pts)} touches in all, {n_before} before it</div>'
+                      f'<svg class="shsvg" viewBox="0 0 {w} {h}" role="img" aria-label="The pattern against the whole price history">{q}</svg>')
+
+
 def short_chart(sym, ch, keys, w=420, ph=170, dh=52, start=0, pattern=None):
     """Candlesticks with 50 and 100-day averages over delivered-share bars, as on the Stocks screen. The sessions among the latest few on which a screen in
     `keys` was true are shaded; support and resistance zones (delivery-weighted price congestion) are drawn as bands. `start` hides everything before that session;
@@ -1107,6 +1128,12 @@ def short_chart(sym, ch, keys, w=420, ph=170, dh=52, start=0, pattern=None):
             col = "#ef5a4d" if ln["role"] == "resistance" else "#2fbf71"
             g += f'<line x1="{X(max(x0, 0)):.1f}" y1="{Y(y0 + (y1 - y0) * (max(x0, 0) - x0) / ((x1 - x0) or 1)):.1f}" x2="{X(x1):.1f}" y2="{Y(y1):.1f}" stroke="{col}" stroke-width="1.6"/>'
         g += "".join(f'<circle cx="{X(i - start):.1f}" cy="{Y(p):.1f}" r="2.6" fill="none" stroke="#f1f1ec" stroke-width="1"/>' for i, p in pattern["touches"] if i >= start)
+        if pattern.get("earlier"):
+            for ln in pattern["lines"]:
+                if abs(ln["a"][1] - ln["b"][1]) < 1e-6 * abs(ln["a"][1]) and lo < ln["a"][1] < hi:
+                    col = "#ef5a4d" if ln["role"] == "resistance" else "#2fbf71"; yy = Y(ln["a"][1]); xa = X(max(ln["a"][0] - start, 0))
+                    g += (f'<line x1="{l}" x2="{xa:.1f}" y1="{yy:.1f}" y2="{yy:.1f}" stroke="{col}" stroke-width="1.4" stroke-dasharray="4 3" opacity=".85"/>'
+                          f'<text x="{l + 3}" y="{yy - 4:.1f}" fill="#f1f1ec" font-size="9" font-family="monospace">◄ {pattern["earlier"]} EARLIER TOUCH{"ES" if pattern["earlier"] > 1 else ""} · OFF THE LEFT OF THIS CHART</text>')
         tg = pattern.get("target")
         if tg is not None and lo < tg < hi:
             g += (f'<line x1="{l}" x2="{w - r}" y1="{Y(tg):.1f}" y2="{Y(tg):.1f}" stroke="#ffd17a" stroke-dasharray="5 3" stroke-width="1.2"/>'
@@ -1381,7 +1408,7 @@ def tab_patterns(M):
             pat = ch["patterns"][kind]; start = max(0, min(a[0] for ln in pat["lines"] for a in (ln["a"], ln["b"])) - 12)
             px1 = r["px1d"]
             out.append(f'<div class="card shcard" data-status="{esc(r["status"])}" data-fo="{1 if r["fo"] else 0}" data-ev="{1 if r.get("event") else 0}" data-conf="{1 if r.get("confirmed") else 0}"{" hidden" if only and not r.get("confirmed") else ""}><div class="shhead"><b>{stk(r["sym"], M)}</b><span class="mut">{r["close"]:,.2f}</span><span class="{"pup" if px1 >= 0 else "pdn"}">{pc(px1)}</span>'
-                       f'{ev_badge(r)}{dv_badge(r)}{regime_badge(M, r["status"])}<span class="ptst {cls.get(r["status"], "mut")} shdays">{esc(r["status"])}</span></div><div class="shzones">{info(r, XX["cfg"].unit)}</div>{short_chart(r["sym"], ch, [], start=start, pattern=pat)}</div>')
+                       f'{ev_badge(r)}{dv_badge(r)}{regime_badge(M, r["status"])}<span class="ptst {cls.get(r["status"], "mut")} shdays">{esc(r["status"])}</span></div><div class="shzones">{info(r, XX["cfg"].unit)}</div>{short_chart(r["sym"], ch, [], start=start, pattern=dict(pat, earlier=earlier_touches(ch, pat, start)[0]))}{earlier_touches(ch, pat, start)[1]}</div>')
         more = (f'<p class="desc">Charts for the {len(out)} stocks that have broken out or are at or near their trigger level; the {total - len(rows)} still forming or sitting mid-range are in the table only.'
                 + (f' Showing the first {cap} of {len(rows)}.' if len(rows) > cap else "") + '</p>')
         legend = ('<div class="shlegend"><i class="shln" style="border-color:#ef5a4d"></i>Resistance <i class="shln" style="border-color:#2fbf71"></i>Support <i class="shln" style="border-color:#ffd17a;border-top-style:dashed"></i>Target '

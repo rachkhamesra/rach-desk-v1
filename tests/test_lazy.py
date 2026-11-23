@@ -38,3 +38,12 @@ def test_the_today_tab_is_first_and_links_through_to_its_sources():
     src = inspect.getsource(webpage.render)
     assert src.index('("today", "TODAY"') < src.index('("stocks", "STOCKS"')                 # the first tab is the one the page opens on
     assert "today-wl" in webpage.JS and "a[data-go]" in webpage.JS and "renderToday" in webpage.JS                              # the watchlist box is filled by the page; each card opens its full tab
+
+
+def test_earlier_touches_get_a_whole_history_strip_only_when_some_fall_before_the_chart():
+    ch = dict(full=[100.0 + (i % 7) for i in range(300)], full_first="01 Jan 24", off=150, dates=["01 Nov 26"] * 150)
+    lines = [dict(a=[30, 105.0], b=[149, 105.0], role="support"), dict(a=[30, 120.0], b=[149, 108.0], role="resistance")]
+    n, html = webpage.earlier_touches(ch, dict(lines=lines, touches=[[-100, 105.0], [-40, 105.0], [35, 105.0], [140, 106.0]]), start=20)
+    assert n == 2 and "2 before it" in html and "4 touches in all" in html                 # two touches lie before the drawn part (negative = before the bars the chart carries)
+    n, html = webpage.earlier_touches(ch, dict(lines=lines, touches=[[35, 105.0], [140, 106.0]]), start=20)
+    assert n == 0 and html == ""

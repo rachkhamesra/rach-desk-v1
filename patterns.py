@@ -334,7 +334,8 @@ def chart_data(S, cfg, found, cap=40):
             if s not in res:
                 res[s] = dict(dates=[f"{d:%d %b %y}" for d in S["ends"][-w:]], open=num(S["O"][s]), high=num(S["H"][s]), low=num(S["L"][s]), close=num(S["C"][s]),
                               dq=num(S["DQ"][s], 0), dqavg=num(S["avg"][s], 0), dc=num(S["dc"][s], 0), ma50=num(S["ma1"][s]), ma100=num(S["ma2"][s]), ma_labels=list(S["ma"]),
-                              flags={}, zones={"support": [], "resistance": []}, patterns={})
+                              flags={}, zones={"support": [], "resistance": []}, patterns={},
+                              full=[None if pd.isna(v) else round(float(v), 2) for v in S["C"][s]], full_first=f"{S['ends'][0]:%d %b %y}", off=off)      # the whole series, for the strip that shows touches older than the chart
             res[s]["patterns"][kind] = dict(lines=[dict(a=[round(a[0] - off), round(a[1], 2)], b=[round(b[0] - off), round(b[1], 2)], role=role) for a, b, role in _lines(kind, r, n)],
                                            touches=[[i - off, round(p, 2)] for i, p in r["flat_pts"] + r["line_pts"]], target=round(r["target"], 2))
     return res
