@@ -39,7 +39,7 @@ def set_output(name, value):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", default=os.path.join(HERE, "data")); ap.add_argument("--out", default=os.path.join(HERE, "site"))
-    ap.add_argument("--days", type=int, default=760, help="calendar days of history (760 is about 2 years)")
+    ap.add_argument("--days", type=int, default=1100, help="calendar days of history (1100 is about 3 years)")
     ap.add_argument("--backfill", type=int, default=150, help="most older weekdays to fetch in one run while extending the history (newest first, resumable)")
     ap.add_argument("--asof", help="build as of this date (YYYY-MM-DD)"); ap.add_argument("--wait-minutes", type=int, default=0)
     ap.add_argument("--skip-if-unchanged", action="store_true", help="exit without building when the newest session (and its BSE delivery) is already published")

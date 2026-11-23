@@ -28,11 +28,21 @@ def test_load_caches_refreshes_recent_and_survives_a_failed_fetch(tmp_path):
     def ok(a, b): seen.append((a, b)); return RAW
     first = corp_feed.load(str(tmp_path), "2025-09-08", "2026-11-20", fetch=ok, log=lambda *x: None)
     assert len(first) == 2 and seen[0][0] == pd.Timestamp("2025-09-08")                    # first run reads the whole window
-    corp_feed.load(str(tmp_path), "2025-09-08", "2026-11-21", fetch=ok, log=lambda *x: None)
-    assert seen[1][0] == pd.Timestamp("2026-11-21") - pd.Timedelta(days=corp_feed.REFRESH_DAYS)      # later runs only re-read the recent window
+    n = len(seen); corp_feed.load(str(tmp_path), "2025-09-08", "2026-11-21", fetch=ok, log=lambda *x: None)
+    assert len(seen) == n + 1 and seen[n][0] == pd.Timestamp("2026-11-21") - pd.Timedelta(days=corp_feed.REFRESH_DAYS)      # later runs only re-read the recent window
     def boom(a, b): raise RuntimeError("blocked")
     msgs = []; again = corp_feed.load(str(tmp_path), "2025-09-08", "2026-11-22", fetch=boom, log=msgs.append)
     assert len(again) == 2 and msgs and "cached" in msgs[0]                                   # a failure keeps what was cached
+
+
+def test_extending_the_history_backwards_fetches_the_older_span_once(tmp_path):
+    seen = []
+    def ok(a, b): seen.append((a, b)); return RAW
+    corp_feed.load(str(tmp_path), "2025-09-08", "2026-11-20", fetch=ok, log=lambda *x: None)
+    seen.clear(); corp_feed.load(str(tmp_path), "2024-06-01", "2026-11-21", fetch=ok, log=lambda *x: None)
+    assert seen[0][0] == pd.Timestamp("2024-06-01") and seen[-2][1] <= pd.Timestamp("2025-09-08") and all((b - a).days <= 180 for a, b in seen)      # older span in chunks, ending where the cache began
+    seen.clear(); corp_feed.load(str(tmp_path), "2024-06-01", "2026-11-22", fetch=ok, log=lambda *x: None)
+    assert len(seen) == 1                                                                      # afterwards only the recent window is re-read
 
 
 def world(drop=0.7855, turnover_spike=True):

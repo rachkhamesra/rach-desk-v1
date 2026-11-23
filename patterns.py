@@ -33,10 +33,10 @@ MIN_TURNOVER_CR = 2.0 # median daily rupee turnover, so thin circuit-bound names
 CHART_DAYS = 230
 # Bar-count settings per timeframe. The rules are identical (levels, touches, convergence, percentages); only what "a few bars" means differs.
 #   k: a swing point beats this many bars either side; gap: bars between the first and last touch; bars: age limits of a pattern; recent: how long a break stays fresh;
-#   retest: how many bars before the sloped side starts the flat level may last be touched; pad: bars of slack when picking swing points; chart: bars drawn.
-Cfg = namedtuple("Cfg", "name unit k gap min_bars max_bars recent retest pad chart")
-DAILY = Cfg("daily", "sessions", 4, 12, 35, 270, 10, 10, 5, 230)
-WEEKLY = Cfg("weekly", "weeks", 2, 5, 26, 156, 4, 4, 2, 140)
+#   wide: a flat level whose first and last touch are at least this many bars apart (about a quarter) needs only two touches, not three; retest: how many bars before the sloped side starts the flat level may last be touched; pad: bars of slack when picking swing points; chart: bars drawn.
+Cfg = namedtuple("Cfg", "name unit k gap min_bars max_bars recent retest pad chart wide")
+DAILY = Cfg("daily", "sessions", 4, 12, 35, 270, 10, 10, 5, 230, 60)
+WEEKLY = Cfg("weekly", "weeks", 2, 5, 26, 156, 4, 4, 2, 140, 12)
 KINDS = [("ascending", "ASCENDING TRIANGLE", "bullish"), ("descending", "DESCENDING TRIANGLE", "bearish"), ("rectangle", "RECTANGLE", "range")]
 
 
@@ -120,7 +120,7 @@ def triangle(H, L, C, up, cfg=DAILY):
     for level, mem in clusters(flat_pts, TOL, cfg.gap):
         run = [(i, p) for i, p in chain([q for q in slope_pts if q[0] >= mem[0][0] - cfg.pad], up) if ((p < level * .97) if up else (p > level * 1.03))]
         mem = spaced(mem, cfg.gap)
-        if len(mem) < MIN_TOUCHES: continue
+        if len(mem) < (2 if len(mem) >= 2 and mem[-1][0] - mem[0][0] >= cfg.wide else MIN_TOUCHES): continue          # touches far apart are evidence enough: two will do
         if len(run) < 3: continue                                                              # three points on the sloped side, so it is a line and not just two dots
         i_s = run[0][0]; touches = mem
         if mem[-1][0] < i_s - cfg.retest or not (cfg.min_bars <= n - i_s <= cfg.max_bars): continue            # the flat level must be tested again once the sloped side has started

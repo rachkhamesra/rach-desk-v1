@@ -44,18 +44,31 @@ def rows(raw):
 
 
 def load(root, start, end, fetch=None, log=print):
-    """The cached feed rows from `start`, after refreshing the recent window. Never raises: on failure the cache is used."""
-    path = os.path.join(root, "corp_feed.csv")
+    """The cached feed rows from `start`, after refreshing the recent window and filling in any earlier span the cache has not covered. Never raises: on failure the cache is used.
+    data/corp_feed.from records the earliest date already fetched, so a history that is extended backwards fetches the older ex-dates once (in chunks, as the exchange limits a request's span)."""
+    path = os.path.join(root, "corp_feed.csv"); marker = os.path.join(root, "corp_feed.from")
     old = pd.read_csv(path, parse_dates=["date"]) if os.path.exists(path) else pd.DataFrame(columns=COLUMNS)
     if fetch is None:
         import results
         fetch = lambda a, b: results._get(ENDPOINT, {"index": "equities", "from_date": f"{a:%d-%m-%Y}", "to_date": f"{b:%d-%m-%Y}"})
-    first = pd.Timestamp(start) if not len(old) else max(pd.Timestamp(start), pd.Timestamp(end) - pd.Timedelta(days=REFRESH_DAYS))
-    try:
-        fresh = rows(fetch(first, pd.Timestamp(end) + pd.Timedelta(days=45)))        # announced ex-dates a little ahead are harmless: they only apply once the price has moved
-        if len(fresh):
-            old = pd.concat([old, fresh], ignore_index=True).drop_duplicates(["symbol", "date", "ratio"], keep="last")
-            os.makedirs(root, exist_ok=True); old.to_csv(path, index=False, date_format="%Y-%m-%d")
-    except Exception as e:
-        log(f"corporate-action feed not refreshed ({type(e).__name__}); using the cached copy of {len(old)} rows")
-    return old[old["date"] >= pd.Timestamp(start)].reset_index(drop=True)
+    start = pd.Timestamp(start); end = pd.Timestamp(end)
+    try: covered = pd.Timestamp(open(marker).read().strip()) if os.path.exists(marker) and len(old) else None
+    except (OSError, ValueError): covered = None
+    spans = []
+    if covered is None or covered > start:                                              # nothing cached, or the history now reaches further back than the cache: fetch the missing older part
+        top = (end + pd.Timedelta(days=45)) if covered is None else covered
+        a = start
+        while a < top:
+            b = min(a + pd.Timedelta(days=180), top); spans.append((a, b)); a = b + pd.Timedelta(days=1)
+    if covered is not None: spans.append((max(start, end - pd.Timedelta(days=REFRESH_DAYS)), end + pd.Timedelta(days=45)))      # announced ex-dates a little ahead are harmless: they only apply once the price has moved
+    ok = True
+    for a, b in spans:
+        try:
+            fresh = rows(fetch(a, b))
+            if len(fresh): old = pd.concat([old, fresh], ignore_index=True).drop_duplicates(["symbol", "date", "ratio"], keep="last")
+        except Exception as e:
+            ok = False; log(f"corporate-action feed not refreshed for {a:%d %b %Y} to {b:%d %b %Y} ({type(e).__name__}); using the cached rows")
+    if spans:
+        os.makedirs(root, exist_ok=True); old.to_csv(path, index=False, date_format="%Y-%m-%d")
+        if ok and (covered is None or covered > start): open(marker, "w").write(f"{start:%Y-%m-%d}")
+    return old[old["date"] >= start].reset_index(drop=True)

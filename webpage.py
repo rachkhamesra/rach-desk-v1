@@ -1263,7 +1263,7 @@ def tab_calls(M):
 
 
 def render(M, asof_text):
-    M["hist_label"] = "1Y" if M["N"] < 600 else "3Y"
+    M["hist_label"] = f"{max(1, round(M['N'] / 252))}Y"
     data = json.dumps(stocks_json(M), separators=(",", ":"))
     choices = [("top1000", "TOP 1000"), ("nifty500", "NIFTY 500"), ("smallcap250", "NIFTY SMALLCAP 250"),
                ("nifty250", "NIFTY 100 + MIDCAP 150"), ("nifty100", "NIFTY 100"), ("fo", "F&O")]

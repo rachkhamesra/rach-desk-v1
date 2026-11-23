@@ -56,6 +56,7 @@ jobs:
             data/heat
             data/power
             data/corp_feed.csv
+            data/corp_feed.from
           key: desk-data-${{ github.run_id }}
           restore-keys: desk-data-
       - name: Build latest published market session
@@ -115,6 +116,7 @@ jobs:
             data/heat
             data/power
             data/corp_feed.csv
+            data/corp_feed.from
           key: desk-data-${{ github.run_id }}
 
   deploy:
