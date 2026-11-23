@@ -304,3 +304,9 @@ def test_vectorised_swings_and_clusters_match_the_plain_loops_exactly():
 def test_a_flat_top_is_one_swing_at_its_first_bar():
     x = np.array([1, 2, 3, 5, 5, 5, 3, 2, 1], float)
     assert P.swings(x, 2, True) == [(3, 5.0)]                                                         # the plateau counts once, at its first bar
+
+
+def test_touches_a_few_bars_apart_count_as_one_test_of_the_level():
+    assert P.spaced([(0, 1.0), (6, 1.0), (20, 1.0), (24, 1.0), (40, 1.0)], 12) == [(0, 1.0), (20, 1.0), (40, 1.0)]
+    # a flat top tested twice close together and once much later has two real touches, so no triangle or rectangle is built on it
+    assert len(P.spaced([(409, 241.0), (403, 241.0)][::-1] + [(800, 241.0)], P.DAILY.gap)) == 2

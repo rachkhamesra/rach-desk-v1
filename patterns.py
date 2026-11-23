@@ -18,7 +18,7 @@ K = 4                 # a swing point beats the k sessions either side
 TOL = 0.02            # swing highs (lows) within 2% of each other touch the same level
 RECT_TOL = 0.02       # both of a rectangle's levels have to hold
 MIN_GAP = 12          # sessions between the first and last touch of a flat level
-MIN_TOUCHES = 3       # a flat level must have been touched more than twice: two touches are just a developing pattern
+MIN_TOUCHES = 3       # a flat level must have been touched more than twice, by touches at least `gap` bars apart (swing highs a few bars apart are one test): two touches are just a developing pattern
 MIN_DAYS, MAX_DAYS = 35, 270
 CONVERGE = 0.80       # a triangle's gap now is at most this share of its starting gap
 HEIGHT_MIN, HEIGHT_MAX = 0.06, 0.50   # a triangle starts between 6% and 50% of price tall; a rectangle is between RANGE_MIN and RANGE_MAX
@@ -68,6 +68,14 @@ def clusters(points, tol=TOL, min_gap=MIN_GAP):
     return out
 
 
+def spaced(members, sep):
+    """The touches that count: each at least sep bars after the one before. Swing highs a few bars apart are one test of a level, not two."""
+    out = []
+    for m in members:
+        if not out or m[0] - out[-1][0] >= sep: out.append(m)
+    return out
+
+
 def _line(points):
     """The trendline as you would draw it: through the first and last point of the chain. Points between that sit well beyond it on the wrong side disqualify the pattern."""
     (x0, y0), (x1, y1) = points[0], points[-1]
@@ -111,6 +119,7 @@ def triangle(H, L, C, up, cfg=DAILY):
     best = None
     for level, mem in clusters(flat_pts, TOL, cfg.gap):
         run = [(i, p) for i, p in chain([q for q in slope_pts if q[0] >= mem[0][0] - cfg.pad], up) if ((p < level * .97) if up else (p > level * 1.03))]
+        mem = spaced(mem, cfg.gap)
         if len(mem) < MIN_TOUCHES: continue
         if len(run) < 3: continue                                                              # three points on the sloped side, so it is a line and not just two dots
         i_s = run[0][0]; touches = mem
@@ -140,7 +149,10 @@ def rectangle(H, L, C, cfg=DAILY):
     n = len(C); best = None
     bottoms = clusters(swings(L, cfg.k, False), RECT_TOL, cfg.gap)                     # the same for every top, so found once
     for r_level, r_mem in clusters(swings(H, cfg.k, True), RECT_TOL, cfg.gap):
+        r_mem = spaced(r_mem, cfg.gap)
+        if len(r_mem) < MIN_TOUCHES: continue
         for s_level, s_mem in bottoms:
+            s_mem = spaced(s_mem, cfg.gap)
             if s_level >= r_level: continue
             i0 = min(r_mem[0][0], s_mem[0][0])
             if not (cfg.min_bars <= n - i0 <= cfg.max_bars): continue
