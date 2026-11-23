@@ -17,6 +17,7 @@ SCREENS = [
     ("breakdown", "BREAKDOWN", "Closes below its lowest close of the prior 40 sessions on delivery above its 20-session average: support gave way with real selling behind it."),
     ("rejection", "REJECTED AT 50MA", "Traded up to or through the 50-day average today but closed back under it, down on the day, after closing under it yesterday. A failed attempt to reclaim the trend."),
     ("buildup", "SHORT BUILD-UP", "Down 3% or more over three sessions while single-stock-futures open interest rose 5% or more: new short positions are going on into the fall."),
+    ("retest", "200DMA RETEST", "Closed below its 200-day average on delivery at least 1.25x its 20-session average, fell at least 4% under it afterwards, and has now come back to within 3% under it (or 1% over): a retest of the level it lost. Not counted once it closes more than 3% back above the average, and only for 60 sessions after the break. Covers every liquid share, with an F&O filter."),
     ("near_lows", "NEAR 52-WEEK LOW", "Within 4% of the lowest close of the past year (or all history held) and still behind Nifty over 20 days. A weak stock with no floor yet."),
 ]
 
@@ -45,6 +46,44 @@ def flags(M, syms):
     f["near_lows"] = ok((C <= low * 1.04) & (rel20 < 0))
     extra = dict(ret1=ret1, chg3=chg3, oi3=oi3, rel20=rel20, rel63=rel63, ma50=ma50, ma100=ma100, low=low)
     return f, extra
+
+
+RETEST_CONFIRM = 1.25   # delivery on the session the 200-day average was lost, against its own 20-session average
+RETEST_DROP = 0.04      # it must have fallen at least this far under the average after the break: it really left, so coming back is a retest
+RETEST_BAND = (-0.03, 0.01)    # a retest is a close this close to the average: up to 3% under it, up to 1% over
+RETEST_RECLAIM = 0.03   # a close more than 3% back over the average ends the idea: it has reclaimed the level
+RETEST_MIN_AGE, RETEST_MAX_AGE = 3, 60   # sessions between the break and the retest
+MIN_TURNOVER_CR = 2.0   # median daily rupee turnover, as for the pattern scans
+
+
+def retest_state(C, ma, rat):
+    """For one stock: per session, whether it is retesting a 200-day average it lost on high delivery, with the age of the break, how far it fell under the average and the delivery on the break.
+    A plain state machine over the session arrays: a break starts it, a reclaim, an expiry or a new break restarts it."""
+    n = len(C); flag = np.zeros(n, bool); age = np.full(n, np.nan); depth = np.full(n, np.nan); bratio = np.full(n, np.nan); bidx = np.full(n, -1)
+    b = None; low = 0.0; br = np.nan; prev = None
+    for t in range(n):
+        c, m = C[t], ma[t]
+        if not (np.isfinite(c) and np.isfinite(m) and m > 0): continue
+        r = c / m - 1
+        if prev is not None and r < 0 and prev >= 0 and np.isfinite(rat[t]) and rat[t] >= RETEST_CONFIRM:
+            b, low, br = t, r, rat[t]; prev = r; continue
+        prev = r
+        if b is None: continue
+        if r > RETEST_RECLAIM or t - b > RETEST_MAX_AGE: b = None; continue
+        low = min(low, r)
+        if t - b >= RETEST_MIN_AGE and low <= -RETEST_DROP and RETEST_BAND[0] <= r <= RETEST_BAND[1]:
+            flag[t] = True; age[t] = t - b; depth[t] = low * 100; bratio[t] = br; bidx[t] = b
+    return flag, age, depth, bratio, bidx
+
+
+def retest_flags(M, syms):
+    """({sym: ...} flags as a sessions x syms DataFrame, plus the per-session age, depth, break delivery and break session panels)."""
+    C = M["C"][syms]; ma = M["ma"][200][syms]; RAT = M["RAT"][syms]
+    cols = {k: {} for k in ("flag", "age", "depth", "bratio", "bidx")}
+    for s in syms:
+        f, a, d, r, i = retest_state(C[s].to_numpy(float), ma[s].to_numpy(float), RAT[s].to_numpy(float))
+        for k, v in zip(cols, (f, a, d, r, i)): cols[k][s] = v
+    return {k: pd.DataFrame(v, index=C.index) for k, v in cols.items()}
 
 
 def _streak(col):
@@ -121,18 +160,18 @@ def congestion_zones(H, L, DQ, close, days=PROFILE_DAYS, bins=PROFILE_BINS):
     return {"support": sup, "resistance": res}
 
 
-def chart_data(f, M, fo, x, hits):
+def chart_data(f, M, fo, x, hits):   # fo: unused beyond the dates; stocks outside it (the 200DMA retest covers every liquid share) are drawn from the full panels
     """For every stock flagged today: the last CHART_DAYS sessions of open, high, low, close, delivered shares (and their 20-session average and the day's
     direction code, as on the Stocks screen), 50 and 100-day averages, the sessions among the latest RECENT_DAYS on which each screen's rule was true,
     and the congestion zones (support below, resistance above)."""
-    C = M["C"][fo]; out = {}
+    C = M["C"]; out = {}
     for s in hits:
         n = min(CHART_DAYS, len(C))
         num = lambda ser, d=2: [None if pd.isna(v) else round(float(v), d) for v in ser.iloc[-n:]]
         dq = M["DQ"][s]; avg = dq.shift(1).rolling(20, min_periods=15).mean()
         out[s] = dict(dates=[f"{d:%d %b %y}" for d in C.index[-n:]], open=num(M["O"][s]), high=num(M["H"][s]), low=num(M["L"][s]), close=num(C[s]),
-                      dq=num(dq, 0), dqavg=num(avg, 0), dc=num(M["dcode"][s], 0), ma50=num(x["ma50"][s]), ma100=num(x["ma100"][s]),
-                      flags={k: [int(i) for i in np.flatnonzero(f[k][s].to_numpy()[-n:]) if i >= n - RECENT_DAYS] for k in f},
+                      dq=num(dq, 0), dqavg=num(avg, 0), dc=num(M["dcode"][s], 0), ma50=num(M["ma"][50][s]), ma100=num(M["ma"][100][s]), ma200=num(M["ma"][200][s]) if 200 in M["ma"] else [],
+                      flags={k: [int(i) for i in np.flatnonzero(f[k][s].to_numpy()[-n:]) if i >= n - RECENT_DAYS] for k in f if s in f[k].columns},
                       zones=congestion_zones(M["H"][s], M["L"][s], dq, float(C[s].iloc[-1])))
     return out
 
@@ -146,6 +185,7 @@ def build(M):
     out = {"asof": M["dates"][T], "screens": {}, "baseline": baseline(C, nifty)}
     hits = {}
     for key, title, desc in SCREENS:
+        if key == "retest": continue                                # covers every liquid share, built below
         fl = f[key]; syms = [s for s in fo if fl[s].iloc[-1]]
         rows = []
         for s in syms:
@@ -159,8 +199,28 @@ def build(M):
                  "rejection": (["px1d"], [True]), "buildup": (["oi3"], [False]), "near_lows": (["rel20"], [True])}[key]
         if len(df): df = df.sort_values(order[0], ascending=order[1]).reset_index(drop=True)
         out["screens"][key] = dict(title=title, desc=desc, rows=df, replay=replay(fl, C, nifty))
+    # 200DMA retest: every liquid share, flagged with whether it is in F&O (the page has an F&O filter)
+    turn = ((M["C"] * M["TQ"]) / 1e7).rolling(60, min_periods=30).median().iloc[-1] if "TQ" in M else None
+    univ = [s for s in M["C"].columns if (turn is None or turn.get(s, 0) >= MIN_TURNOVER_CR) and 200 in M["ma"] and M["ma"][200][s].notna().any()]
+    if not univ: univ = list(fo[:0])
+    R = retest_flags(M, univ) if univ else None; fl = R["flag"] if univ else pd.DataFrame(False, index=M["C"].index, columns=[]); infos = set(fo)
+    Ca = M["C"][univ]; RATa = M["RAT"][univ]; r1 = Ca.pct_change(fill_method=None) * 100
+    rows = []
+    for s in [s for s in univ if fl[s].iloc[-1]]:
+        rows.append(dict(sym=s, days=int(R["age"][s].iloc[-1]), close=float(Ca[s].iloc[-1]), px1d=float(r1[s].iloc[-1]), ratio=float(RATa[s].iloc[-1]) if pd.notna(RATa[s].iloc[-1]) else np.nan,
+                         brk_ratio=float(R["bratio"][s].iloc[-1]), depth=float(R["depth"][s].iloc[-1]), dist=float((Ca[s].iloc[-1] / M["ma"][200][s].iloc[-1] - 1) * 100),
+                         brk_date=M["dates"][int(R["bidx"][s].iloc[-1])], fo=s in infos, new=bool(len(fl) > 1 and not fl[s].iloc[-2])))
+        if s in infos: hits.setdefault(s, []).append("retest")
+    df = pd.DataFrame(rows, columns=["sym", "days", "close", "px1d", "ratio", "brk_ratio", "depth", "dist", "brk_date", "fo", "new"])
+    if len(df): df = df.sort_values(["fo", "brk_ratio"], ascending=[False, False]).reset_index(drop=True)
+    fo_cols = [s for s in univ if s in infos]
+    keep = dict(SCREENS_BY_KEY := {k: (t, d) for k, t, d in SCREENS})["retest"]
+    out["screens"]["retest"] = dict(title=keep[0], desc=keep[1], rows=df, replay=replay(fl, Ca, nifty), replay_fo=replay(fl[fo_cols], Ca[fo_cols], nifty) if fo_cols else None, universe=len(univ), fo_universe=len(fo_cols))
+    ff = dict(f); ff["retest"] = fl
+    f = ff
     conf = pd.DataFrame([dict(sym=s, count=len(k), screens=k) for s, k in hits.items()])
     if len(conf): conf = conf.sort_values(["count", "sym"], ascending=[False, True]).reset_index(drop=True)
     out["confluence"] = conf
-    out["charts"] = chart_data(f, M, fo, x, hits)
+    chart_syms = dict.fromkeys(list(hits) + list(df["sym"]))             # F&O hits, plus every retest name (outside F&O too)
+    out["charts"] = chart_data(f, M, fo, x, chart_syms)
     return out
