@@ -304,3 +304,23 @@ def test_vectorised_swings_and_clusters_match_the_plain_loops_exactly():
 def test_a_flat_top_is_one_swing_at_its_first_bar():
     x = np.array([1, 2, 3, 5, 5, 5, 3, 2, 1], float)
     assert P.swings(x, 2, True) == [(3, 5.0)]                                                         # the plateau counts once, at its first bar
+
+
+def test_touches_a_few_bars_apart_count_as_one_test_of_the_level():
+    assert P.spaced([(0, 1.0), (6, 1.0), (20, 1.0), (24, 1.0), (40, 1.0)], 12) == [(0, 1.0), (20, 1.0), (40, 1.0)]
+    # a flat top tested twice close together and once much later has two real touches, so no triangle or rectangle is built on it
+    assert len(P.spaced([(409, 241.0), (403, 241.0)][::-1] + [(800, 241.0)], P.DAILY.gap)) == 2
+
+
+def test_two_touches_far_apart_are_enough_for_a_flat_level_but_two_close_ones_are_not():
+    def tri(top_days):
+        n = 140; x = np.arange(n); C = 100 + 0.06 * x + 2 * np.sin(x / 3.0)
+        H = C + 1.0; L = C - 1.0; H = H.copy()
+        for d in top_days: H[d] = 125.0                                                       # a spike high at the flat level on each given day
+        return H, L, C
+    cfg = P.DAILY
+    far = P.triangle(*tri([20, 100]), True, cfg)
+    near = P.triangle(*tri([90, 105]), True, cfg)
+    assert cfg.wide == 60 and P.WEEKLY.wide == 12
+    assert not (near and near["touches_flat"] < 3)                                           # two touches 15 bars apart still do not make a triangle
+    assert far is None or far["touches_flat"] == 2                                           # two touches 80 bars apart may

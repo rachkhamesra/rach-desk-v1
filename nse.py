@@ -165,7 +165,7 @@ def read_bse(root, d, nse_cm):
     pd_, pc = path(root, "bsedel", d), path(root, "bsecm", d)
     if not (os.path.exists(pd_) and os.path.exists(pc)) or nse_cm is None: return None
     dl = _read_zip_csv_sep(pd_)
-    dl.columns = [c.strip() for c in dl.columns]
+    dl.columns = [c.strip().replace("`", "'") for c in dl.columns]       # one day (25 Apr 2024) spells DAY'S with a backtick
     # BSE writes the date as a number (2 Nov 2026 is 2112026), so the leading zero of days 1-9 is lost
     if str(dl["DATE"].iloc[0]).strip().split(".")[0].zfill(8) != f"{d:%d%m%Y}": return None
     num = lambda c: pd.to_numeric(dl[c], errors="coerce")
