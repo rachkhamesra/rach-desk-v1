@@ -54,6 +54,17 @@ def _latest_mcap_url(session):
     return url if url.startswith("http") else "https://www.nseindia.com" + url
 
 
+def complete_top1000(raw):
+    """NSE's average-market-cap ranking is a half-yearly snapshot and can leave out a stock that is in an index today (MCX is in the Nifty 500, the midcap and F&O lists but not in the
+    July-December 2025 ranking). The page's default universe is meant to hold everything the other lists do, so any stock in them that the ranking lacks is added after it."""
+    top = list(raw.get("top1000", [])); have = set(top)
+    for key in ("nifty500", "nifty100", "midcap150", "smallcap250", "fo"):
+        for sym in raw.get(key, []):
+            if sym not in have: have.add(sym); top.append(sym)
+    raw["top1000"] = top
+    return raw
+
+
 def load(root, log=print):
     """Return ordered membership lists; fall back to the last good local copy."""
     path = os.path.join(root, "universes.json")
@@ -70,10 +81,10 @@ def load(root, log=print):
         os.makedirs(root, exist_ok=True)
         with open(path, "w", encoding="utf-8") as f:
             json.dump(raw, f, indent=2)
-        return raw
+        return complete_top1000(raw)
     except Exception as e:
         if os.path.exists(path):
             log(f"universe refresh failed; using cached memberships: {e}")
             with open(path, encoding="utf-8") as f:
-                return json.load(f)
+                return complete_top1000(json.load(f))
         raise RuntimeError(f"could not load official NSE universe lists: {e}") from e
