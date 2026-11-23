@@ -26,3 +26,10 @@ class UniverseParsingTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CompleteTop1000Test(unittest.TestCase):
+    def test_a_stock_in_an_index_but_missing_from_the_ranking_is_added_after_it(self):
+        raw = {"top1000": ["A", "B"], "nifty500": ["B", "MCX"], "nifty100": ["A"], "midcap150": ["MCX", "C"], "smallcap250": [], "fo": ["D"]}
+        out = universes.complete_top1000(raw)
+        self.assertEqual(out["top1000"], ["A", "B", "MCX", "C", "D"])             # ranking order kept, no duplicates

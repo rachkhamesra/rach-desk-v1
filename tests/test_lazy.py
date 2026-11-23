@@ -37,4 +37,4 @@ def test_the_today_tab_is_first_and_links_through_to_its_sources():
     import inspect
     src = inspect.getsource(webpage.render)
     assert src.index('("today", "TODAY"') < src.index('("stocks", "STOCKS"')                 # the first tab is the one the page opens on
-    assert "today-wl" in webpage.JS and "a.tdlink" in webpage.JS                              # the watchlist box is filled by the page; each card opens its full tab
+    assert "today-wl" in webpage.JS and "a[data-go]" in webpage.JS and "renderToday" in webpage.JS                              # the watchlist box is filled by the page; each card opens its full tab
