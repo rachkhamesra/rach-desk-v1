@@ -4,7 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 import numpy as np, pandas as pd, requests
 
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
-PARSER_VERSION = 3          # 3: trade-for-trade series (BE, BZ) are kept, with the whole volume counted as delivery, so a stock moved there keeps its history. Changing this re-parses every cached day.
+PARSER_VERSION = 4          # 4: open interest leaves out the contracts expiring on the session (their open interest is settled to zero at the close). 3: trade-for-trade series (BE, BZ) are kept, with the whole volume counted as delivery, so a stock moved there keeps its history. Changing this re-parses every cached day.
 SERIES_OK = ("EQ", "BE", "BZ")   # BL is the block-deal session and SM/ST are SME boards: not part of a stock's own price history
 TFT = ("BE", "BZ")               # trade-for-trade: no intraday trading is allowed, so every share traded is a delivered share
 BASE = "https://nsearchives.nseindia.com"
@@ -149,15 +149,38 @@ def read_cm(root, d):
                          "close": df["ClsPric"].values, "prev": df["PrvsClsgPric"].values}, index=df["TckrSymb"].astype(str).str.strip().values)
 
 
+def fo_open_interest(df, d):
+    """Single stock futures open interest per symbol for one session, from that day's F&O bhavcopy rows.
+
+    A contract that expires on the session is settled at its close, so its open interest is zero afterwards: NSE's file still lists it with the open interest it had going into the
+    close. Counting it makes the day's total too high by the whole expiring series, and the next session then shows a drop that never happened (Blue Star: 51.9 lakh shares on the
+    expiry day against 39.1 lakh once the expiring series is out, so the next day read as down 25% when it was down 1%). So:
+      oi   open interest of the contracts that continue past the session (those expiring on it are excluded)
+      doi  the change from the previous session's total, which is the continuing contracts' own change less the open interest the expiring contracts carried in
+    Lot and futures price come from the nearest continuing contract."""
+    df = df[df["FinInstrmTp"] == "STF"].copy()
+    d = pd.Timestamp(d).normalize()
+    actual = pd.to_datetime(df["FininstrmActlXpryDt"], errors="coerce") if "FininstrmActlXpryDt" in df else pd.Series(pd.NaT, index=df.index)
+    df["exp"] = actual.fillna(pd.to_datetime(df["XpryDt"], errors="coerce")).dt.normalize()
+    df["sym"] = df["TckrSymb"].astype(str).str.strip()
+    oi_, chg = pd.to_numeric(df["OpnIntrst"], errors="coerce"), pd.to_numeric(df["ChngInOpnIntrst"], errors="coerce")
+    live = df["exp"] > d
+    syms = pd.Index(sorted(df["sym"].unique()))
+    oi = oi_[live].groupby(df.loc[live, "sym"]).sum().reindex(syms, fill_value=0)
+    carried_in = (oi_ - chg)[~live].groupby(df.loc[~live, "sym"]).sum().reindex(syms, fill_value=0)       # what the expiring contracts held at the previous close
+    doi = chg[live].groupby(df.loc[live, "sym"]).sum().reindex(syms, fill_value=0) - carried_in
+    pool = df[live] if live.any() else df
+    near = pool.sort_values("exp").groupby("sym").first().reindex(syms)
+    allnear = df.sort_values("exp").groupby("sym").first().reindex(syms)                                    # a symbol with nothing past today still gets its lot and price
+    lot = near["NewBrdLotQty"].fillna(allnear["NewBrdLotQty"]); fut = near["ClsPric"].fillna(allnear["ClsPric"])
+    return pd.DataFrame({"oi": oi, "doi": doi, "lot": lot, "fut": fut})
+
+
 def read_fo(root, d):
-    """Single stock futures only, all expiries summed. Open interest here is in shares (verified against lot size)."""
+    """Single stock futures only, all expiries summed, with the contracts expiring on the day taken out (see fo_open_interest). Open interest here is in shares (verified against lot size)."""
     p = path(root, "fo", d)
     if not os.path.exists(p): return None
-    df = _read_zip_csv(p); df = df[df["FinInstrmTp"] == "STF"].copy()
-    df["XpryDt"] = pd.to_datetime(df["XpryDt"])
-    g = df.groupby(df["TckrSymb"].astype(str).str.strip())
-    near = df.sort_values("XpryDt").groupby(df["TckrSymb"].astype(str).str.strip()).first()
-    return pd.DataFrame({"oi": g["OpnIntrst"].sum(), "doi": g["ChngInOpnIntrst"].sum(), "lot": near["NewBrdLotQty"], "fut": near["ClsPric"]})
+    return fo_open_interest(_read_zip_csv(p), d)
 
 
 def read_bse(root, d, nse_cm):
