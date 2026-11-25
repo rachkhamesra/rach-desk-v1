@@ -1,5 +1,5 @@
 {
- "covered_pr": 94,
+ "covered_pr": 95,
  "phases": [
   {
    "key": "foundation",
@@ -655,6 +655,18 @@
    "title": "This timeline",
    "what": "How the page evolved, from the first screen to the latest change, read from a curated file plus the repository's own history.",
    "insight": "New changes appear here as nodes: automatically from merged pull requests, and in more detail when the story is written up."
+  },
+  {
+   "date": "2026-11-25",
+   "phase": "efficiency",
+   "kind": "added",
+   "tab": "Today",
+   "prs": [
+    95
+   ],
+   "title": "Sector clusters",
+   "what": "When several stocks of the same kind of business (life insurers, private banks, cement) are near a breakout or through one together, it is called out on Today, on the Breakout Bases cards and on each stock's own page, with the group's delivery alongside.",
+   "insight": "NSE's broad industries were too coarse (Financial Services holds banks, insurers and brokers together), so groups are hand-kept in config/sector_groups.csv. On the 20 Nov data, 19 groups had three or more candidates; the life insurers were five."
   }
  ],
  "repo": "rachkhamesra/rach-desk-v1"
