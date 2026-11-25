@@ -1,0 +1,474 @@
+symbol,group
+AXISBANK,Private banks
+BANDHANBNK,Private banks
+CUB,Private banks
+FEDERALBNK,Private banks
+HDFCBANK,Private banks
+ICICIBANK,Private banks
+IDFCFIRSTB,Private banks
+INDUSINDBK,Private banks
+J&KBANK,Private banks
+KARURVYSYA,Private banks
+KOTAKBANK,Private banks
+RBLBANK,Private banks
+YESBANK,Private banks
+AUBANK,Private banks
+BANKBARODA,PSU banks
+BANKINDIA,PSU banks
+CANBK,PSU banks
+CENTRALBK,PSU banks
+IDBI,PSU banks
+INDIANB,PSU banks
+IOB,PSU banks
+MAHABANK,PSU banks
+PNB,PSU banks
+SBIN,PSU banks
+UCOBANK,PSU banks
+UNIONBANK,PSU banks
+ABCAPITAL,NBFCs
+BAJFINANCE,NBFCs
+CGCL,NBFCs
+CHOLAFIN,NBFCs
+CREDITACC,NBFCs
+FIVESTAR,NBFCs
+HDBFS,NBFCs
+IIFL,NBFCs
+JIOFIN,NBFCs
+LTF,NBFCs
+M&MFIN,NBFCs
+MANAPPURAM,NBFCs
+MUTHOOTFIN,NBFCs
+PIRAMALFIN,NBFCs
+POONAWALLA,NBFCs
+SAMMAANCAP,NBFCs
+SBICARD,NBFCs
+SHRIRAMFIN,NBFCs
+SUNDARMFIN,NBFCs
+TATACAP,NBFCs
+AADHARHFC,Housing finance
+AAVAS,Housing finance
+APTUS,Housing finance
+BAJAJHFL,Housing finance
+CANFINHOME,Housing finance
+HOMEFIRST,Housing finance
+LICHSGFIN,Housing finance
+PNBHOUSING,Housing finance
+HUDCO,Infrastructure lenders
+IFCI,Infrastructure lenders
+IRFC,Infrastructure lenders
+IREDA,Infrastructure lenders
+PFC,Infrastructure lenders
+RECLTD,Infrastructure lenders
+CANHLIFE,Life insurers
+HDFCLIFE,Life insurers
+ICICILIFE,Life insurers
+LICI,Life insurers
+MFSL,Life insurers
+SBILIFE,Life insurers
+GICRE,General and health insurers
+ICICIGI,General and health insurers
+NIACL,General and health insurers
+STARHEALTH,General and health insurers
+ABSLAMC,Asset managers
+HDFCAMC,Asset managers
+ICICIAMC,Asset managers
+NAM-INDIA,Asset managers
+UTIAMC,Asset managers
+360ONE,Brokers and wealth
+ANANDRATHI,Brokers and wealth
+ANGELONE,Brokers and wealth
+CHOICEIN,Brokers and wealth
+GROWW,Brokers and wealth
+JMFINANCIL,Brokers and wealth
+MOTILALOFS,Brokers and wealth
+NUVAMA,Brokers and wealth
+BSE,Exchanges and market infrastructure
+CAMS,Exchanges and market infrastructure
+CDSL,Exchanges and market infrastructure
+CRISIL,Exchanges and market infrastructure
+IEX,Exchanges and market infrastructure
+KFINTECH,Exchanges and market infrastructure
+MCX,Exchanges and market infrastructure
+PAYTM,Fintech and payments
+PINELABS,Fintech and payments
+POLICYBZR,Fintech and payments
+BAJAJFINSV,Financial holding companies
+BAJAJHLDNG,Financial holding companies
+CHOLAHLDNG,Financial holding companies
+TATAINVEST,Financial holding companies
+AZAD,Defence and shipbuilding
+BDL,Defence and shipbuilding
+BEL,Defence and shipbuilding
+BEML,Defence and shipbuilding
+COCHINSHIP,Defence and shipbuilding
+DATAPATTNS,Defence and shipbuilding
+GRSE,Defence and shipbuilding
+HAL,Defence and shipbuilding
+MAZDOCK,Defence and shipbuilding
+MTARTECH,Defence and shipbuilding
+ZENTEC,Defence and shipbuilding
+JWL,Rail equipment
+TITAGARH,Rail equipment
+APARINDS,Cables and wires
+FINCABLES,Cables and wires
+KEI,Cables and wires
+POLYCAB,Cables and wires
+RRKABEL,Cables and wires
+ABB,Power equipment
+BHEL,Power equipment
+CGPOWER,Power equipment
+ENRIN,Power equipment
+GVT&D,Power equipment
+POWERINDIA,Power equipment
+SCHNEIDER,Power equipment
+SIEMENS,Power equipment
+TARIL,Power equipment
+TDPOWERSYS,Power equipment
+THERMAX,Power equipment
+TRITURBINE,Power equipment
+EMMVEE,Wind and solar equipment
+INOXWIND,Wind and solar equipment
+PREMIERENE,Wind and solar equipment
+SUZLON,Wind and solar equipment
+WAAREEENER,Wind and solar equipment
+ACE,Industrial machinery
+AIAENG,Industrial machinery
+CARBORUNIV,Industrial machinery
+CUMMINSIND,Industrial machinery
+ELECON,Industrial machinery
+ELGIEQUIP,Industrial machinery
+HONAUT,Industrial machinery
+INOXINDIA,Industrial machinery
+JYOTICNC,Industrial machinery
+KIRLOSBROS,Industrial machinery
+KIRLOSENG,Industrial machinery
+KSB,Industrial machinery
+TEGA,Industrial machinery
+TIMKEN,Industrial machinery
+CPPLUS,Electronics manufacturing
+DIXON,Electronics manufacturing
+KAYNES,Electronics manufacturing
+SYRMA,Electronics manufacturing
+ASHOKLEY,Commercial vehicles and farm equipment
+ESCORTS,Commercial vehicles and farm equipment
+TMCV,Commercial vehicles and farm equipment
+APLAPOLLO,Pipes and tubes
+ASTRAL,Pipes and tubes
+JINDALSAW,Pipes and tubes
+SUPREMEIND,Pipes and tubes
+WELCORP,Pipes and tubes
+ATHERENERG,Auto OEMs
+BAJAJ-AUTO,Auto OEMs
+EICHERMOT,Auto OEMs
+FORCEMOT,Auto OEMs
+HEROMOTOCO,Auto OEMs
+HYUNDAI,Auto OEMs
+M&M,Auto OEMs
+MARUTI,Auto OEMs
+OLAELEC,Auto OEMs
+OLECTRA,Auto OEMs
+TMPV,Auto OEMs
+TVSMOTOR,Auto OEMs
+ASAHIINDIA,Auto components
+BELRISE,Auto components
+BHARATFORG,Auto components
+BOSCHLTD,Auto components
+CIEINDIA,Auto components
+CRAFTSMAN,Auto components
+ENDURANCE,Auto components
+GABRIEL,Auto components
+JBMA,Auto components
+MINDACORP,Auto components
+MOTHERSON,Auto components
+MSUMI,Auto components
+RKFORGE,Auto components
+SANSERA,Auto components
+SCHAEFFLER,Auto components
+SHRIPISTON,Auto components
+SONACOMS,Auto components
+TENNIND,Auto components
+TIINDIA,Auto components
+UNOMINDA,Auto components
+ZFCVINDIA,Auto components
+APOLLOTYRE,Tyres
+BALKRISIND,Tyres
+CEATLTD,Tyres
+JKTYRE,Tyres
+MRF,Tyres
+ARE&M,Batteries
+EXIDEIND,Batteries
+ABBOTINDIA,Pharma
+AJANTPHARM,Pharma
+ALKEM,Pharma
+AUROPHARMA,Pharma
+BIOCON,Pharma
+CAPLIPOINT,Pharma
+CIPLA,Pharma
+DRREDDY,Pharma
+EMCURE,Pharma
+GLAND,Pharma
+GLAXO,Pharma
+GLENMARK,Pharma
+GRANULES,Pharma
+IPCALAB,Pharma
+LUPIN,Pharma
+MANKIND,Pharma
+NATCOPHARM,Pharma
+PPLPHARMA,Pharma
+RUBICON,Pharma
+SUNPHARMA,Pharma
+TORNTPHARM,Pharma
+WOCKPHARMA,Pharma
+ZYDUSLIFE,Pharma
+ACUTAAS,Pharma contract research and manufacturing
+ANTHEM,Pharma contract research and manufacturing
+COHANCE,Pharma contract research and manufacturing
+CONCORDBIO,Pharma contract research and manufacturing
+DIVISLAB,Pharma contract research and manufacturing
+LAURUSLABS,Pharma contract research and manufacturing
+NEULANDLAB,Pharma contract research and manufacturing
+ONESOURCE,Pharma contract research and manufacturing
+SAILIFE,Pharma contract research and manufacturing
+SYNGENE,Pharma contract research and manufacturing
+APOLLOHOSP,Hospitals
+ASTERDM,Hospitals
+FORTIS,Hospitals
+KIMS,Hospitals
+MAXHEALTH,Hospitals
+MEDANTA,Hospitals
+NH,Hospitals
+RAINBOW,Hospitals
+LALPATHLAB,Diagnostics and devices
+POLYMED,Diagnostics and devices
+VIJAYA,Diagnostics and devices
+BSOFT,IT services
+COFORGE,IT services
+HCLTECH,IT services
+INFY,IT services
+LTM,IT services
+MPHASIS,IT services
+PERSISTENT,IT services
+TCS,IT services
+TECHM,IT services
+WIPRO,IT services
+ZENSARTECH,IT services
+SAGILITY,IT services
+HEXT,IT services
+BBOX,IT services
+FRACTAL,IT services
+IKS,IT services
+CYIENT,Engineering R&D
+KPITTECH,Engineering R&D
+LTTS,Engineering R&D
+TATAELXSI,Engineering R&D
+TATATECH,Engineering R&D
+AFFLE,Software and platforms
+INTELLECT,Software and platforms
+NETWEB,Software and platforms
+OFSS,Software and platforms
+COLPAL,Household and personal care
+CUPID,Household and personal care
+DABUR,Household and personal care
+DOMS,Household and personal care
+EMAMILTD,Household and personal care
+GILLETTE,Household and personal care
+GODREJCP,Household and personal care
+HINDUNILVR,Household and personal care
+HONASA,Household and personal care
+MARICO,Household and personal care
+PATANJALI,Household and personal care
+ZYDUSWELL,Household and personal care
+AVANTIFEED,Food and beverages
+AWL,Food and beverages
+BRITANNIA,Food and beverages
+CCL,Food and beverages
+LTFOODS,Food and beverages
+NESTLEIND,Food and beverages
+TATACONSUM,Food and beverages
+VBL,Food and beverages
+GODFRYPHLP,Tobacco
+ITC,Tobacco
+ABDL,Liquor
+RADICO,Liquor
+UBL,Liquor
+UNITDSPR,Liquor
+BALRAMCHIN,Sugar
+EIDPARRY,Sugar
+AARTIIND,Specialty chemicals
+AETHER,Specialty chemicals
+ANURAS,Specialty chemicals
+ATUL,Specialty chemicals
+CLEAN,Specialty chemicals
+DEEPAKNTR,Specialty chemicals
+FLUOROCHEM,Specialty chemicals
+HSCL,Specialty chemicals
+NAVINFLUOR,Specialty chemicals
+PCBL,Specialty chemicals
+PIDILITIND,Specialty chemicals
+PIIND,Specialty chemicals
+PRIVISCL,Specialty chemicals
+SOLARINDS,Specialty chemicals
+SRF,Specialty chemicals
+SUMICHEM,Specialty chemicals
+SWANCORP,Specialty chemicals
+CHAMBLFERT,Fertilisers and agrochemicals
+COROMANDEL,Fertilisers and agrochemicals
+DEEPAKFERT,Fertilisers and agrochemicals
+FACT,Fertilisers and agrochemicals
+PARADEEP,Fertilisers and agrochemicals
+UPL,Fertilisers and agrochemicals
+JUBLINGREA,Industrial gases and chemicals
+LINDEINDIA,Industrial gases and chemicals
+TATACHEM,Industrial gases and chemicals
+ASIANPAINT,Paints
+BERGEPAINT,Paints
+AMBER,Consumer electricals and appliances
+BLUESTARCO,Consumer electricals and appliances
+CROMPTON,Consumer electricals and appliances
+HAVELLS,Consumer electricals and appliances
+LGEINDIA,Consumer electricals and appliances
+PGEL,Consumer electricals and appliances
+VOLTAS,Consumer electricals and appliances
+WHIRLPOOL,Consumer electricals and appliances
+KALYANKJIL,Jewellery
+THANGAMAYL,Jewellery
+TITAN,Jewellery
+BATAINDIA,Footwear and building materials
+KAJARIACER,Footwear and building materials
+CARTRADE,Internet platforms
+ETERNAL,Internet platforms
+FIRSTCRY,Internet platforms
+INDIAMART,Internet platforms
+LENSKART,Internet platforms
+MEESHO,Internet platforms
+NAUKRI,Internet platforms
+NYKAA,Internet platforms
+PWL,Internet platforms
+SWIGGY,Internet platforms
+URBANCO,Internet platforms
+DMART,Retail
+TRENT,Retail
+VMM,Retail
+DEVYANI,Hotels and restaurants
+EIHOTEL,Hotels and restaurants
+INDHOTEL,Hotels and restaurants
+ITCHOTELS,Hotels and restaurants
+JUBLFOOD,Hotels and restaurants
+LEMONTREE,Hotels and restaurants
+BLS,Travel services
+IRCTC,Travel services
+TBOTEK,Travel services
+GMRAIRPORT,Airlines and airports
+INDIGO,Airlines and airports
+ADANIPORTS,Ports and logistics
+CONCOR,Ports and logistics
+DELHIVERY,Ports and logistics
+GESHIP,Ports and logistics
+JSWINFRA,Ports and logistics
+SCI,Ports and logistics
+BPCL,Oil marketing and refining
+CHENNPETRO,Oil marketing and refining
+HINDPETRO,Oil marketing and refining
+IOC,Oil marketing and refining
+MRPL,Oil marketing and refining
+OIL,Oil and gas producers
+ONGC,Oil and gas producers
+ATGL,Gas distribution
+GAIL,Gas distribution
+IGL,Gas distribution
+MGL,Gas distribution
+PETRONET,Gas distribution
+BHARATCOAL,Coal
+COALINDIA,Coal
+JINDALSTEL,Steel
+JSL,Steel
+JSWSTEEL,Steel
+NSLNISP,Steel
+SAIL,Steel
+TATASTEEL,Steel
+VISL,Steel
+SARDAEN,Steel
+HINDALCO,"Aluminium, zinc and copper"
+HINDCOPPER,"Aluminium, zinc and copper"
+HINDZINC,"Aluminium, zinc and copper"
+NATIONALUM,"Aluminium, zinc and copper"
+VEDL,"Aluminium, zinc and copper"
+GMDCLTD,Mining
+NMDC,Mining
+ADANIPOWER,Power utilities
+CESC,Power utilities
+JPPOWER,Power utilities
+JSWENERGY,Power utilities
+NAVA,Power utilities
+NLCINDIA,Power utilities
+NTPC,Power utilities
+POWERGRID,Power utilities
+RPOWER,Power utilities
+TATAPOWER,Power utilities
+TORNTPOWER,Power utilities
+VEDPOWER,Power utilities
+ACMESOLAR,Renewable power
+ADANIENSOL,Renewable power
+ADANIGREEN,Renewable power
+CLEANMAX,Renewable power
+NHPC,Renewable power
+NTPCGREEN,Renewable power
+SJVN,Renewable power
+ACC,Cement
+AMBUJACEM,Cement
+DALBHARAT,Cement
+GRASIM,Cement
+INDIACEM,Cement
+JKCEMENT,Cement
+JSWCEMENT,Cement
+NUVOCO,Cement
+RAMCOCEM,Cement
+SHREECEM,Cement
+ULTRACEMCO,Cement
+AFCONS,Infrastructure and EPC
+CEMPRO,Infrastructure and EPC
+ENGINERSIN,Infrastructure and EPC
+IRB,Infrastructure and EPC
+IRCON,Infrastructure and EPC
+KEC,Infrastructure and EPC
+KPIL,Infrastructure and EPC
+LT,Infrastructure and EPC
+NBCC,Infrastructure and EPC
+NCC,Infrastructure and EPC
+RITES,Infrastructure and EPC
+RVNL,Infrastructure and EPC
+TECHNOE,Infrastructure and EPC
+ABREL,Real estate
+ANANTRAJ,Real estate
+BAGMANE,Real estate
+BIRET,Real estate
+BRIGADE,Real estate
+DLF,Real estate
+EMBASSY,Real estate
+GODREJPROP,Real estate
+LODHA,Real estate
+OBEROIRLTY,Real estate
+PHOENIXLTD,Real estate
+PRESTIGE,Real estate
+SIGNATURE,Real estate
+SOBHA,Real estate
+BHARTIARTL,Telecom
+BHARTIHEXA,Telecom
+HFCL,Telecom
+IDEA,Telecom
+INDUSTOWER,Telecom
+ITI,Telecom
+RAILTEL,Telecom
+STLTECH,Telecom
+TATACOMM,Telecom
+TEJASNET,Telecom
+TTML,Telecom
+KPRMILL,Textiles and apparel
+PAGEIND,Textiles and apparel
+TRIDENT,Textiles and apparel
+VTL,Textiles and apparel
+WELSPUNLIV,Textiles and apparel
+PFOCUS,Media and entertainment
+PVRINOX,Media and entertainment
+SUNTV,Media and entertainment
+ZEEL,Media and entertainment
