@@ -1,5 +1,5 @@
 {
- "covered_pr": 95,
+ "covered_pr": 97,
  "phases": [
   {
    "key": "foundation",
@@ -667,6 +667,18 @@
    "title": "Sector clusters",
    "what": "When several stocks of the same kind of business (life insurers, private banks, cement) are near a breakout or through one together, it is called out on Today, on the Breakout Bases cards and on each stock's own page, with the group's delivery alongside.",
    "insight": "NSE's broad industries were too coarse (Financial Services holds banks, insurers and brokers together), so groups are hand-kept in config/sector_groups.csv. On the 20 Nov data, 19 groups had three or more candidates; the life insurers were five."
+  },
+  {
+   "date": "2026-11-25",
+   "phase": "efficiency",
+   "kind": "added",
+   "tab": "52W Highs",
+   "prs": [
+    97
+   ],
+   "title": "A copy-and-paste table for 52-week highs",
+   "what": "A Copy Table sub-tab with two plain tables, F&O names and non-F&O names, each with its own copy button: last price, one-day change, and the distance from the 52-week high and from the 50-day average.",
+   "insight": "The charts are for reading; these are for taking the list somewhere else. An all-time-high column was built and dropped: the desk holds three years of history, so it would have understated the distance for stocks whose real peak is older."
   }
  ],
  "repo": "rachkhamesra/rach-desk-v1"
