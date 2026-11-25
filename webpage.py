@@ -185,7 +185,7 @@ def tab_52w_highs(M):
         if fr.empty: return '<div class="card rempty">No stock reached a fresh 52-week intraday high today.</div>'
         rows = []
         for r in fr.sort_values("px1d", ascending=False).itertuples():
-            s_ = r.sym; hi52 = max(r.day_high, r.prior_high); ath = float(M["H"][s_].max()); ma50 = M["ma"][50][s_].iloc[-1] if 50 in M["ma"] else np.nan
+            s_ = r.sym; hi52 = max(r.day_high, r.prior_high); ath = float(M["H"][s_].max()) if "H" in M and s_ in M["H"] else float(M["C"][s_].max()); ma50 = M["ma"][50][s_].iloc[-1] if 50 in M.get("ma", {}) and s_ in M["ma"][50] else np.nan
             f = lambda v: "" if v is None or pd.isna(v) else f"{v:.2f}"
             rows.append((s_, bool(r.fo), [f(r.close), f(r.px1d) + "%", f((r.close / hi52 - 1) * 100) + "%", f((r.close / ath - 1) * 100) + "%", "" if pd.isna(ma50) else f((r.close / ma50 - 1) * 100) + "%"]))
         head = ["Stock", "Last price", "1D change", "% from 52W high", "% from ATH (3Y data)", "% from 50DMA"]
@@ -195,7 +195,7 @@ def tab_52w_highs(M):
                '<button type="button" class="seg copytbl">COPY TABLE</button><span class="copymsg mut" aria-live="polite"></span></div>')
         return (ctl + f'<table class="copytable"><thead><tr>{"".join(f"<th>{h}</th>" for h in head)}</tr></thead><tbody>{body}</tbody></table>'
                 f'<p class="desc">As of {M["dates"][-1]:%d %b %Y}. Sorted by the day\'s change. Copy table puts what is shown (the F&amp;O filter applies) on the clipboard, tab-separated, ready to paste into a spreadsheet. '
-                f'"ATH" here is the highest price in the {M["N"]} sessions the desk holds (about three years), not the true all-time high. A stock whose real all-time high is older than that will show a smaller distance here than it really has.</p>')
+                f'"ATH" here is the highest price in the {M.get("N", "")} sessions the desk holds (about three years), not the true all-time high. A stock whose real all-time high is older than that will show a smaller distance here than it really has.</p>')
 
     charts = ('<p class="desc">Three compact one-year charts per row. Delivery bars are highlighted when they are at least 1.25× the prior 20-session average. Click a ticker to open its full Stocks chart.</p>'
               '<div class="h52tabs"><button class="h52tab on" data-h52="fo">F&amp;O</button><button class="h52tab" data-h52="nonfo">NON F&amp;O</button></div>'
