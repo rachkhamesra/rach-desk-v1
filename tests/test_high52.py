@@ -23,3 +23,11 @@ def test_52_week_high_screen_has_both_groups_and_three_column_cards():
     assert "&lt; ₹5,000 CR" in html and "₹5,000–10,000 CR" in html
     assert "₹10,000–20,000 CR" in html and "&gt; ₹20,000 CR" in html
     assert 'data-mcap="10to20"' in html
+
+
+def test_a_new_intraday_high_only_counts_if_the_close_is_above_every_prior_close():
+    import metrics
+    assert metrics.closes_above_prior_closes(105.0, 104.0)
+    assert not metrics.closes_above_prior_closes(103.0, 104.0)                    # touched a new high intraday but closed under an earlier close
+    assert not metrics.closes_above_prior_closes(104.0, 104.0)                    # equal to it is not above it
+    assert not metrics.closes_above_prior_closes(float("nan"), 104.0) and not metrics.closes_above_prior_closes(105.0, float("nan"))

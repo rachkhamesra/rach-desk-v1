@@ -189,3 +189,6 @@ When three or more stocks of the same kind of business are near a breakout (or j
 
 ## 52-week highs: copy table
 The 52W Highs tab has a **Copy Table** sub-tab with two small plain tables, F&O names and non-F&O names, each sorted by the day's change and each with its own Copy Table button that puts the table on the clipboard tab-separated for pasting into a spreadsheet. Columns: stock, last price, one-day change, % from the 52-week high and % from the 50-day average. (A % from all-time-high column was built and dropped: the desk holds only about three years of history, so it would understate the distance for stocks whose real peak is older.)
+
+## 52-week highs: the close has to confirm
+A stock counts as a fresh 52-week high only if its intraday high reaches the prior 252-session high **and** it closes above every close of that window. A new high that closes back under an earlier close is dropped. On the 20 Nov data this removed 5 of 22 names.

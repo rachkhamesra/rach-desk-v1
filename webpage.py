@@ -205,7 +205,7 @@ def tab_52w_highs(M):
               '<button class="h52cap" data-mcap-filter="5to10">₹5,000–10,000 CR</button><button class="h52cap" data-mcap-filter="10to20">₹10,000–20,000 CR</button>'
               '<button class="h52cap" data-mcap-filter="over20">&gt; ₹20,000 CR</button></div>'
               f'{group(False)}</div>')
-    return ('<h2>Fresh 52-Week Highs</h2><div class="subl">TODAY’S INTRADAY HIGH REACHED OR EXCEEDED THE PRIOR 252-SESSION HIGH</div>'
+    return ('<h2>Fresh 52-Week Highs</h2><div class="subl">TODAY’S INTRADAY HIGH REACHED THE PRIOR 252-SESSION HIGH AND THE CLOSE IS ABOVE EVERY CLOSE IN THAT WINDOW</div>'
             + _subtabs([("charts", "CHARTS"), ("copy", "COPY TABLE")])
             + f'<div class="subview" data-sub="charts">{charts}</div><div class="subview" data-sub="copy" hidden>{copy_table()}</div>')
 

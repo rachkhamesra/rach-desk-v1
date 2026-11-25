@@ -1,5 +1,5 @@
 {
- "covered_pr": 97,
+ "covered_pr": 98,
  "phases": [
   {
    "key": "foundation",
@@ -679,6 +679,18 @@
    "title": "A copy-and-paste table for 52-week highs",
    "what": "A Copy Table sub-tab with two plain tables, F&O names and non-F&O names, each with its own copy button: last price, one-day change, and the distance from the 52-week high and from the 50-day average.",
    "insight": "The charts are for reading; these are for taking the list somewhere else. An all-time-high column was built and dropped: the desk holds three years of history, so it would have understated the distance for stocks whose real peak is older."
+  },
+  {
+   "date": "2026-11-25",
+   "phase": "efficiency",
+   "kind": "fixed",
+   "tab": "52W Highs",
+   "prs": [
+    98
+   ],
+   "title": "A 52-week high has to close above every prior close",
+   "what": "A stock that touches a new 52-week high intraday but closes under any earlier close in the 252-session window no longer counts.",
+   "insight": "On the 20 Nov data the rule dropped 5 of 22 names (Coforge, Phoenix Mills, Fluorochem, LIC Housing Finance, DCB Bank), 3 of them in F&O. A new high that closes back inside the old range is a failed attempt, not a breakout."
   }
  ],
  "repo": "rachkhamesra/rach-desk-v1"

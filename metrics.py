@@ -212,6 +212,11 @@ def carry_last_trade(adj):
     return C, adj.isna() & C.notna()
 
 
+def closes_above_prior_closes(close, prior_close_high):
+    """A fresh 52-week high counts only if the day closes above every close of the prior 252 sessions, not merely touches a new high intraday."""
+    return bool(pd.notna(close) and pd.notna(prior_close_high) and close > prior_close_high)
+
+
 def build(parsed, overrides=None, memberships=None, cache_dir=None):
     dates = sorted(parsed); memberships = memberships or {}
     fo_date = [d for d in dates if parsed[d]["fo"] is not None][-1]
@@ -247,11 +252,13 @@ def build(parsed, overrides=None, memberships=None, cache_dir=None):
     # ---------------- fresh 52-week highs (intraday high versus prior 252 sessions)
     # Use adjusted exchange highs so splits/bonuses do not create false breakouts.
     prior_52w = H.shift(1).rolling(252, min_periods=252).max()
+    prior_close_52w = C.shift(1).rolling(252, min_periods=252).max()
     fo_set = set(memberships.get("fo", [])); highs = []
     for s in memberships.get("top1000", syms):
         today, prior = H[s].iloc[T], prior_52w[s].iloc[T]
         if pd.isna(today) or pd.isna(prior) or today < prior * (1 - 1e-10): continue
         close = C[s].iloc[T]
+        if not closes_above_prior_closes(close, prior_close_52w[s].iloc[T]): continue          # a new intraday high that closes back under an earlier close in the window does not count
         highs.append(dict(sym=s, fo=s in fo_set, day_high=today, prior_high=prior, close=close,
                           close_from_high=(close / today - 1) * 100 if pd.notna(close) and today else np.nan,
                           px1d=ret1[s].iloc[T] * 100, ratio=RAT[s].iloc[T]))
