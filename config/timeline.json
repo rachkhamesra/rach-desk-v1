@@ -1,5 +1,5 @@
 {
- "covered_pr": 98,
+ "covered_pr": 99,
  "phases": [
   {
    "key": "foundation",
@@ -691,6 +691,30 @@
    "title": "A 52-week high has to close above every prior close",
    "what": "A stock that touches a new 52-week high intraday but closes under any earlier close in the 252-session window no longer counts.",
    "insight": "On the 20 Nov data the rule dropped 5 of 22 names (Coforge, Phoenix Mills, Fluorochem, LIC Housing Finance, DCB Bank), 3 of them in F&O. A new high that closes back inside the old range is a failed attempt, not a breakout."
+  },
+  {
+   "date": "2026-11-25",
+   "phase": "efficiency",
+   "kind": "added",
+   "tab": "Exchange Tracker",
+   "prs": [
+    99
+   ],
+   "title": "NSE options tracker",
+   "what": "A third exchange next to BSE and MCX: all NSE options premium turnover, equity options on their own (index and single-stock, with the split by month), and commodity options, from NSE's own daily bhavcopies. History from January 2024.",
+   "insight": "Commodity options trade almost only around expiry: over the last three full months, 66% of NSE commodity option premium came on expiry day and the session before it, and crude oil carried nearly all of it. The commodity view tracks those two sessions for every expiry and the month's cumulative turnover."
+  },
+  {
+   "date": "2026-11-25",
+   "phase": "efficiency",
+   "kind": "fixed",
+   "tab": "Data",
+   "prs": [
+    99
+   ],
+   "title": "Open interest on expiry days",
+   "what": "Single-stock-futures open interest no longer counts the contract that expires on the session: NSE's file still lists it with the open interest it had going into the close, although it is settled to zero. A continuity audit over every F&O stock and session, oi_audit.py, was added.",
+   "insight": "Blue Star showed 51.9 lakh shares on its 23 Nov expiry day and 38.8 lakh two sessions later, a 25% drop; without the expiring series the 23 Nov total is 39.1 lakh and the change is 1%. Across the 42 monthly expiries held, 7,056 stock-sessions were affected, and the next-session change was overstated as a drop by more than 10 points in 28% of them. The real drop now shows on the expiry day itself."
   }
  ],
  "repo": "rachkhamesra/rach-desk-v1"

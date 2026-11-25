@@ -231,6 +231,13 @@ def build(parsed, overrides=None, memberships=None, cache_dir=None):
     dq_raw, tq_raw = nse_dq + bse_dq, nse_tq + bse_vol                      # NSE + BSE, in shares, as on the reference page
     bse_share = (bse_dq / dq_raw * 100)
     oi, doi = W("fo", "oi"), W("fo", "doi")
+    # continuity check: the change a session reports must equal the difference between its closing total and the previous session's (a break means missing contract rows, a restated series,
+    # or a special session such as a Saturday budget session that is not in the sessions held). oi_audit.py runs this over every session held.
+    base = oi.shift(1).iloc[-1]; resid = ((oi - oi.shift(1)) - doi).iloc[-1]
+    off = [s_ for s_ in resid.index if pd.notna(resid[s_]) and pd.notna(base[s_]) and abs(resid[s_]) > 2000 and abs(resid[s_]) > 0.02 * abs(base[s_])]
+    n_oi = int(oi.iloc[-1].notna().sum())
+    if off: print(f"open-interest check: {len(off)} of {n_oi} F&O stocks' reported change differs from the change in their totals on {dates[-1]:%d %b %Y} ({', '.join(off[:6])}{' ...' if len(off) > 6 else ''})")
+    else: print(f"open-interest check: all {n_oi} F&O stocks' reported changes match the change in their totals on {dates[-1]:%d %b %Y}")
     nifty = pd.Series({d: parsed[d]["nifty"] for d in dates}).astype(float).ffill()
     turn = W("deliv", "turn_cr")
     ev = corp.find_events(close_raw.ffill(limit=5), isin, lot, turn, overrides)
