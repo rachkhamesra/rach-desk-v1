@@ -33,3 +33,14 @@ def test_a_fresh_breakout_counts_and_a_stock_without_a_group_never_clusters():
 def test_the_group_file_is_readable_and_has_the_life_insurers():
     g = sectors.load()
     assert g["HDFCLIFE"] == g["SBILIFE"] == g["ICICILIFE"] == "Life insurers" and len(g) > 300
+
+
+def test_a_mini_chart_is_drawn_from_the_panels_and_left_out_when_there_is_too_little_history():
+    import webpage
+    n = 120; idx = pd.bdate_range("2026-01-01", periods=n); px = pd.Series(100 + np.cumsum(np.sin(np.arange(n) / 5.0)), index=idx)
+    df = lambda s: pd.DataFrame({"AAA": s})
+    M = {"T": n - 1, "O": df(px), "H": df(px + 1), "L": df(px - 1), "C": df(px), "DQ": df(pd.Series(1000.0 + np.arange(n), index=idx)), "RAT": df(pd.Series(1.3, index=idx)),
+         "ma": {k: df(px.rolling(k, min_periods=1).mean()) for k in (50, 100, 200)}}
+    svg = webpage.mini_chart(M, "AAA")
+    assert svg.startswith("<svg") and svg.count("<polyline") == 3 and 'class="basevol hot"' in svg and svg.count("<rect") > 70
+    assert webpage.mini_chart(M, "ZZZ") == ""
