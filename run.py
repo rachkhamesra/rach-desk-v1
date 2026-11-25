@@ -3,7 +3,7 @@
 import argparse, json, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import sectors, timeline, nse, metrics, corp_feed, shorts, patterns, pattern_replay, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
+import nse_tracker, sectors, timeline, nse, metrics, corp_feed, shorts, patterns, pattern_replay, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MARKER = "published.json"
@@ -94,6 +94,11 @@ def main():
     M["mcx_tracker"] = mcx_tracker.build(mcx_history, mcx_prices, mcx_expiries, end, mcx_status)
     if M["mcx_tracker"].get("available"):
         print(f"MCX Tracker refreshed through {M['mcx_tracker']['asof']:%d %b %Y}")
+    try:
+        nse_eq, nse_co, nse_status = nse_tracker.load(a.root, end)
+        M["nse_tracker"] = nse_tracker.build(nse_eq, nse_co, M["nifty"], nse_status)
+        if M["nse_tracker"].get("available"): print(f"NSE options tracker: {nse_status}")
+    except Exception as e: M["nse_tracker"] = None; print(f"NSE options tracker skipped: {type(e).__name__}: {e}")
     os.makedirs(a.out, exist_ok=True)
     page = webpage.render(M, f"AS OF {M['dates'][-1]:%a %d %b %Y}".upper() + warn)
     M["events"].to_csv(os.path.join(a.out, "corporate_actions.csv"), index=False)       # audit log only, not shown in the UI

@@ -59,6 +59,9 @@ jobs:
             data/power
             data/corp_feed.csv
             data/corp_feed.from
+            data/nse_options_daily.csv
+            data/nse_commodity_daily.csv
+            data/nse_options_nofile.csv
           key: desk-data-${{ github.run_id }}
           restore-keys: desk-data-
       - name: Build latest published market session
@@ -119,6 +122,9 @@ jobs:
             data/power
             data/corp_feed.csv
             data/corp_feed.from
+            data/nse_options_daily.csv
+            data/nse_commodity_daily.csv
+            data/nse_options_nofile.csv
           key: desk-data-${{ github.run_id }}
 
   deploy:
