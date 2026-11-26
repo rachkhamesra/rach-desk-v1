@@ -65,6 +65,6 @@ def test_nse_share_of_nse_plus_mcx_is_a_rolling_three_month_ratio_that_starts_wh
     mcx = pd.DataFrame({"date": days, "premium_turnover_cr": 100.0})
     sh = T.share_of_combined(eq, co, mcx)
     assert sh["date"].iloc[0] >= pd.Timestamp("2026-01-01") + pd.Timedelta(days=92)                 # no point without a full three months of both
-    assert round(sh["share_all"].iloc[-1], 6) == round(910 / (910 + 100) * 100, 6)                 # (800 + 100 + 10) / ((800 + 100 + 10) + 100)
+    assert "share_all" not in sh.columns                                                          # equity options are not compared with MCX
     assert round(sh["share_commodity"].iloc[-1], 6) == round(10 / (10 + 100) * 100, 6)
     assert T.share_of_combined(eq, co, None) is None and T.share_of_combined(eq, co, mcx.iloc[:5]) is None   # too little MCX history

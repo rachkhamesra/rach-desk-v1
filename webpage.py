@@ -879,9 +879,8 @@ def _nse_commodity(C, combined=None):
     share_cards = ""
     if combined is not None and len(combined):
         last = combined.iloc[-1]
-        share_cards = (_share_card(combined, "share_commodity", "NSE COMMODITY OPTIONS · SHARE OF NSE + MCX", f"ROLLING 3 MONTHS · MCX DATA THROUGH {last['date']:%d %b %Y}", "#e8a93a")
-                       + _share_card(combined, "share_all", "ALL NSE OPTIONS · SHARE OF NSE + MCX", "ROLLING 3 MONTHS · EQUITY AND COMMODITY OPTIONS ON NSE", "#5aa9ff"))
-        C["commentary"] = list(C["commentary"]) + [f"Against MCX, NSE commodity options were {last['share_commodity']:.1f}% of NSE plus MCX option premium over the three months to {last['date']:%d %b} ({combined['share_commodity'].iloc[0]:.1f}% three months after MCX's history begins); all NSE options were {last['share_all']:.0f}%."]
+        share_cards = _share_card(combined, "share_commodity", "NSE COMMODITY OPTIONS · SHARE OF NSE + MCX", f"ROLLING 3 MONTHS · MCX DATA THROUGH {last['date']:%d %b %Y}", "#e8a93a")
+        C["commentary"] = list(C["commentary"]) + [f"Against MCX, NSE commodity options were {last['share_commodity']:.1f}% of NSE plus MCX option premium over the three months to {last['date']:%d %b} ({combined['share_commodity'].iloc[0]:.1f}% three months after MCX's history begins)."]
     comments = "".join(f"<li>{esc(x)}</li>" for x in C["commentary"])
     return (head + f'<div class="excomment"><h3>COMMODITY OPTIONS</h3><ul>{comments}</ul></div>' + daily_card + f'<div class="cogrid">{monthly_card}{cum_card}{share_cards}</div>'
             + '<h3 class="fuh">EACH EXPIRY: THE SESSION BEFORE AND THE DAY ITSELF</h3>' + ev + '<h3 class="fuh">PREMIUM TURNOVER BY COMMODITY · LAST THREE MONTHS</h3>' + ub

@@ -287,20 +287,18 @@ def build_commodity(co):
 
 
 def share_of_combined(eq, co, mcx, days=92):
-    """NSE's share of NSE plus MCX options premium turnover over a rolling three calendar months, at each MCX date: all NSE options (equity and commodity) against MCX, and NSE commodity options
-    against MCX. A point needs a full window of both, so the series starts three months after MCX's history does. None when there is no MCX history."""
+    """NSE commodity options' share of NSE commodity plus MCX options premium turnover over a rolling three calendar months, at each MCX date. A point needs a full window of both, so the
+    series starts three months after MCX's history does. None when there is no MCX history. (Equity options are left out: they have no MCX counterpart, so comparing them with MCX says nothing.)"""
     if mcx is None or len(mcx) == 0 or eq is None or len(eq) == 0: return None
     m = pd.Series(mcx["premium_turnover_cr"].values, index=pd.DatetimeIndex(mcx["date"])).sort_index()
     m = m[~m.index.duplicated(keep="last")]
-    nse_eq = pd.Series((eq["idx_premium_cr"].fillna(0) + eq["stk_premium_cr"].fillna(0)).values, index=pd.DatetimeIndex(eq["date"])).sort_index()
-    nse_co = co.groupby("date")["premium_cr"].sum() if co is not None and len(co) else pd.Series(dtype=float)
-    nse_co.index = pd.DatetimeIndex(nse_co.index)
-    nse_all = nse_eq.add(nse_co, fill_value=0)
+    if co is None or len(co) == 0: return None
+    nse_co = co.groupby("date")["premium_cr"].sum(); nse_co.index = pd.DatetimeIndex(nse_co.index)
     roll = lambda x: x.rolling(f"{days}D").sum()
     at = m.index[m.index >= m.index[0] + pd.Timedelta(days=days)]
     if len(at) == 0: return None
-    a, c, mm = roll(nse_all).reindex(at, method="ffill"), roll(nse_co).reindex(at, method="ffill"), roll(m).reindex(at)
-    out = pd.DataFrame({"date": at, "share_all": (a / (a + mm) * 100).values, "share_commodity": (c / (c + mm) * 100).values, "nse_all": a.values, "nse_commodity": c.values, "mcx": mm.values}).dropna()
+    c, mm = roll(nse_co).reindex(at, method="ffill"), roll(m).reindex(at)
+    out = pd.DataFrame({"date": at, "share_commodity": (c / (c + mm) * 100).values, "nse_commodity": c.values, "mcx": mm.values}).dropna()
     return out.reset_index(drop=True) if len(out) else None
 
 
