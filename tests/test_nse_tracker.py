@@ -56,3 +56,15 @@ def test_the_nse_share_price_is_read_from_the_bse_bhavcopy():
     csv = b"TckrSymb,FinInstrmNm,ClsPric\nRELIANCE,RELIANCE INDUSTRIES,1500.5\nNSE,National Stock Exchange of Ind,2317.65\nNSE,SOMETHING ELSE,9.0\n"
     assert T.share_close(csv) == 2317.65
     assert T.share_close(b"TckrSymb,FinInstrmNm,ClsPric\nRELIANCE,RELIANCE INDUSTRIES,1500.5\n") is None
+
+
+def test_nse_share_of_nse_plus_mcx_is_a_rolling_three_month_ratio_that_starts_when_a_window_is_full():
+    days = pd.bdate_range("2026-01-01", "2026-06-30")
+    eq = pd.DataFrame({"date": days, "idx_premium_cr": 800.0, "stk_premium_cr": 100.0})
+    co = pd.DataFrame({"date": days, "underlying": "CRUDEOIL", "premium_cr": 10.0})
+    mcx = pd.DataFrame({"date": days, "premium_turnover_cr": 100.0})
+    sh = T.share_of_combined(eq, co, mcx)
+    assert sh["date"].iloc[0] >= pd.Timestamp("2026-01-01") + pd.Timedelta(days=92)                 # no point without a full three months of both
+    assert round(sh["share_all"].iloc[-1], 6) == round(910 / (910 + 100) * 100, 6)                 # (800 + 100 + 10) / ((800 + 100 + 10) + 100)
+    assert round(sh["share_commodity"].iloc[-1], 6) == round(10 / (10 + 100) * 100, 6)
+    assert T.share_of_combined(eq, co, None) is None and T.share_of_combined(eq, co, mcx.iloc[:5]) is None   # too little MCX history

@@ -286,7 +286,25 @@ def build_commodity(co):
     return dict(available=True, asof=asof, daily=daily, monthly=months, cumulative=cum, events=events, by_underlying=by_u, commentary=com)
 
 
-def build(eq, co, prices, status=""):                # prices: NSE's own share price (see load_share_price)
+def share_of_combined(eq, co, mcx, days=92):
+    """NSE's share of NSE plus MCX options premium turnover over a rolling three calendar months, at each MCX date: all NSE options (equity and commodity) against MCX, and NSE commodity options
+    against MCX. A point needs a full window of both, so the series starts three months after MCX's history does. None when there is no MCX history."""
+    if mcx is None or len(mcx) == 0 or eq is None or len(eq) == 0: return None
+    m = pd.Series(mcx["premium_turnover_cr"].values, index=pd.DatetimeIndex(mcx["date"])).sort_index()
+    m = m[~m.index.duplicated(keep="last")]
+    nse_eq = pd.Series((eq["idx_premium_cr"].fillna(0) + eq["stk_premium_cr"].fillna(0)).values, index=pd.DatetimeIndex(eq["date"])).sort_index()
+    nse_co = co.groupby("date")["premium_cr"].sum() if co is not None and len(co) else pd.Series(dtype=float)
+    nse_co.index = pd.DatetimeIndex(nse_co.index)
+    nse_all = nse_eq.add(nse_co, fill_value=0)
+    roll = lambda x: x.rolling(f"{days}D").sum()
+    at = m.index[m.index >= m.index[0] + pd.Timedelta(days=days)]
+    if len(at) == 0: return None
+    a, c, mm = roll(nse_all).reindex(at, method="ffill"), roll(nse_co).reindex(at, method="ffill"), roll(m).reindex(at)
+    out = pd.DataFrame({"date": at, "share_all": (a / (a + mm) * 100).values, "share_commodity": (c / (c + mm) * 100).values, "nse_all": a.values, "nse_commodity": c.values, "mcx": mm.values}).dropna()
+    return out.reset_index(drop=True) if len(out) else None
+
+
+def build(eq, co, prices, status="", mcx=None):                # prices: NSE's own share price (see load_share_price); mcx: the MCX tracker's daily premium turnover
     """{all, equity, equity_monthly, commodity, status}: the all-NSE and equity series in the shape the BSE and MCX trackers use, plus the commodity analysis."""
     import exchange_tracker
     eq = eq.copy() if eq is not None else pd.DataFrame(columns=EQ_COLS)
@@ -310,4 +328,4 @@ def build(eq, co, prices, status=""):                # prices: NSE's own share p
     m = eq.assign(month=eq["date"].dt.to_period("M")).groupby("month").agg(idx=("idx_premium_cr", "mean"), stk=("stk_premium_cr", "mean"), sessions=("date", "count"),
                                                                        idx_c=("idx_contracts", "mean"), stk_c=("stk_contracts", "mean")).reset_index()
     m["month"] = m["month"].astype(str); m["idx_share"] = m["idx"] / (m["idx"] + m["stk"]) * 100
-    return {"available": True, "status": status, "all": X_all, "equity": X_eq, "equity_monthly": m, "commodity": build_commodity(co if co is not None else pd.DataFrame(columns=CO_COLS))}
+    return {"available": True, "status": status, "all": X_all, "equity": X_eq, "equity_monthly": m, "commodity": build_commodity(co if co is not None else pd.DataFrame(columns=CO_COLS)), "share": share_of_combined(eq, co, mcx)}

@@ -810,7 +810,22 @@ def tab_turnover_tracker(X, title, subtitle, heading=True):
             '<p class="desc">Premium turnover is the exchange-reported daily options premium value. The current month updates incrementally; if a new session is unavailable, the last verified observation remains visible with its exact date and refresh status.</p>')
 
 
-def _nse_commodity(C):
+def _share_card(df, col, title, sub, colour):
+    """A small line chart of one rolling share (percent) over time, with the latest value marked."""
+    w, h, l, r, t, b = 600, 200, 46, 52, 14, 28
+    v = df[col].to_numpy(float); lo, hi = float(np.nanmin(v)), float(np.nanmax(v)); pad = (hi - lo) * .15 or 1; lo, hi = max(0, lo - pad), hi + pad
+    xs = lambda i: l + (w - l - r) * i / max(1, len(v) - 1); ys = lambda x: t + (1 - (x - lo) / (hi - lo)) * (h - t - b)
+    g = "".join(f'<line class="exbargrid" x1="{l}" x2="{w - r}" y1="{ys(lo + (hi - lo) * j / 3):.1f}" y2="{ys(lo + (hi - lo) * j / 3):.1f}"/><text x="{l - 5}" y="{ys(lo + (hi - lo) * j / 3) + 3:.1f}" text-anchor="end">{lo + (hi - lo) * j / 3:.1f}%</text>' for j in range(4))
+    pts = " ".join(f"{xs(i):.1f},{ys(x):.1f}" for i, x in enumerate(v))
+    g += f'<polyline points="{pts}" fill="none" stroke="{colour}" stroke-width="2"/><circle cx="{xs(len(v) - 1):.1f}" cy="{ys(v[-1]):.1f}" r="3.5" fill="{colour}"/><text x="{xs(len(v) - 1) + 7:.1f}" y="{ys(v[-1]) + 4:.1f}" fill="{colour}" font-size="11" font-weight="700">{v[-1]:.1f}%</text>'
+    dates = pd.to_datetime(df["date"])
+    for i in range(0, len(v) - len(v) // 8, max(1, len(v) // 5)): g += f'<text x="{xs(i):.1f}" y="{h - 10}" text-anchor="middle">{dates.iloc[i]:%b %y}</text>'
+    g += f'<text x="{xs(len(v) - 1):.1f}" y="{h - 10}" text-anchor="end">{dates.iloc[-1]:%d %b}</text>'
+    return (f'<div class="card excard"><div class="ch"><span class="ct">{title}</span><span class="mut">{sub}</span></div>'
+            f'<svg class="exsvg" viewBox="0 0 {w} {h}" role="img" aria-label="{esc(title)}">{g}</svg></div>')
+
+
+def _nse_commodity(C, combined=None):
     """NSE commodity options: how the premium turnover has trended, what trades on expiry day and the session before it, and the month's cumulative turnover against earlier months."""
     if not C or not C.get("available"):
         return '<div class="card rempty">NSE commodity options data is not available yet.</div>'
@@ -861,8 +876,14 @@ def _nse_commodity(C):
     by = C["by_underlying"]; lastm = sorted(by["month"].unique())[-3:]; pv = by[by["month"].isin(lastm)].pivot_table(index="underlying", columns="month", values="premium_cr", aggfunc="sum", fill_value=0)
     pv = pv[pv.sum(axis=1) > 0].sort_values(list(pv.columns)[-1], ascending=False).head(8)
     ub = table([("COMMODITY", "l")] + [(f"{pd.Timestamp(str(c) + '-01'):%b %y} ₹ CR", "") for c in pv.columns], [f'<tr><td class="l">{esc(u)}</td>' + "".join(f"<td>{v:,.1f}</td>" for v in r) + "</tr>" for u, r in pv.iterrows()]) if len(pv) else ""
+    share_cards = ""
+    if combined is not None and len(combined):
+        last = combined.iloc[-1]
+        share_cards = (_share_card(combined, "share_commodity", "NSE COMMODITY OPTIONS · SHARE OF NSE + MCX", f"ROLLING 3 MONTHS · MCX DATA THROUGH {last['date']:%d %b %Y}", "#e8a93a")
+                       + _share_card(combined, "share_all", "ALL NSE OPTIONS · SHARE OF NSE + MCX", "ROLLING 3 MONTHS · EQUITY AND COMMODITY OPTIONS ON NSE", "#5aa9ff"))
+        C["commentary"] = list(C["commentary"]) + [f"Against MCX, NSE commodity options were {last['share_commodity']:.1f}% of NSE plus MCX option premium over the three months to {last['date']:%d %b} ({combined['share_commodity'].iloc[0]:.1f}% three months after MCX's history begins); all NSE options were {last['share_all']:.0f}%."]
     comments = "".join(f"<li>{esc(x)}</li>" for x in C["commentary"])
-    return (head + f'<div class="excomment"><h3>COMMODITY OPTIONS</h3><ul>{comments}</ul></div>' + daily_card + f'<div class="cogrid">{monthly_card}{cum_card}</div>'
+    return (head + f'<div class="excomment"><h3>COMMODITY OPTIONS</h3><ul>{comments}</ul></div>' + daily_card + f'<div class="cogrid">{monthly_card}{cum_card}{share_cards}</div>'
             + '<h3 class="fuh">EACH EXPIRY: THE SESSION BEFORE AND THE DAY ITSELF</h3>' + ev + '<h3 class="fuh">PREMIUM TURNOVER BY COMMODITY · LAST THREE MONTHS</h3>' + ub
             + '<p class="desc">Premium turnover is NSE\'s transfer value less strike notional, from the exchange\'s commodity bhavcopy. Each commodity\'s expiry dates are read from the option series it lists; a session is "expiry day" when any commodity\'s options expire that day and "the day before" when one expires on the next session. Contract multipliers (100 barrels for crude oil, 1,250 mmBtu for natural gas, and so on) are not in the file and are inferred from each day\'s own rows.</p>')
 
@@ -879,7 +900,7 @@ def tab_nse(M):
     equity = e + '<h3 class="fuh">INDEX AND SINGLE-STOCK OPTIONS, BY MONTH · DAILY AVERAGE</h3>' + split
     return ('<div class="nsegroup">' + _subtabs([("all", "ALL NSE OPTIONS"), ("equity", "EQUITY OPTIONS"), ("commodity", "COMMODITY OPTIONS")])
             + f'<div class="subview" data-sub="all">{a}<p class="desc">Equity options (index and single-stock) plus commodity options. Currency options are not included. {esc(N["status"])}.</p></div>'
-            + f'<div class="subview" data-sub="equity" hidden>{equity}</div><div class="subview" data-sub="commodity" hidden>{_nse_commodity(N["commodity"])}</div></div>')
+            + f'<div class="subview" data-sub="equity" hidden>{equity}</div><div class="subview" data-sub="commodity" hidden>{_nse_commodity(N["commodity"], N.get("share"))}</div></div>')
 
 
 def tab_exchange(M):
