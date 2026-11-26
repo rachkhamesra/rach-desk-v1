@@ -701,7 +701,7 @@
     99
    ],
    "title": "NSE options tracker",
-   "what": "A third exchange next to BSE and MCX: all NSE options premium turnover, equity options on their own (index and single-stock, with the split by month), and commodity options, from NSE's own daily bhavcopies. History from January 2024.",
+   "what": "A third exchange next to BSE and MCX: all NSE options premium turnover, equity options on their own (index and single-stock, with the split by month), and commodity options, from NSE's own daily bhavcopies. History from January 2024. The charts plot NSE's own share price (listed on BSE from 24 Sep 2026), not Nifty.",
    "insight": "Commodity options trade almost only around expiry: over the last three full months, 66% of NSE commodity option premium came on expiry day and the session before it, and crude oil carried nearly all of it. The commodity view tracks those two sessions for every expiry and the month's cumulative turnover."
   },
   {

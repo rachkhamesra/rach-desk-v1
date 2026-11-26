@@ -50,3 +50,9 @@ def test_the_commodity_analysis_splits_a_month_into_expiry_day_the_day_before_an
     assert m.loc["2026-10", "p_E"] == 400.0 and m.loc["2026-10", "p_E-1"] == 100.0 and round(m.loc["2026-10", "share_ee1"], 1) == round(500 / m.loc["2026-10", "premium"] * 100, 1)
     assert list(C["events"]["expiry"]) == [pd.Timestamp("2026-10-08"), pd.Timestamp("2026-11-10")] and C["events"]["prem_p"].tolist() == [100.0, 200.0]
     assert len(C["cumulative"]["2026-11"]) == 10 and C["commentary"]
+
+
+def test_the_nse_share_price_is_read_from_the_bse_bhavcopy():
+    csv = b"TckrSymb,FinInstrmNm,ClsPric\nRELIANCE,RELIANCE INDUSTRIES,1500.5\nNSE,National Stock Exchange of Ind,2317.65\nNSE,SOMETHING ELSE,9.0\n"
+    assert T.share_close(csv) == 2317.65
+    assert T.share_close(b"TckrSymb,FinInstrmNm,ClsPric\nRELIANCE,RELIANCE INDUSTRIES,1500.5\n") is None
