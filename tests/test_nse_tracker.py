@@ -68,3 +68,13 @@ def test_nse_share_of_nse_plus_mcx_is_a_rolling_three_month_ratio_that_starts_wh
     assert "share_all" not in sh.columns                                                          # equity options are not compared with MCX
     assert round(sh["share_commodity"].iloc[-1], 6) == round(10 / (10 + 100) * 100, 6)
     assert T.share_of_combined(eq, co, None) is None and T.share_of_combined(eq, co, mcx.iloc[:5]) is None   # too little MCX history
+
+
+def test_a_fresh_build_server_with_no_cache_still_builds_the_tracker(tmp_path):
+    # no cache files at all: only the seeds in config/. An empty frame with an object date column once made the concatenated dates object dtype, and .dt then failed.
+    import os
+    eq, co, status = T.load(str(tmp_path), pd.Timestamp("2026-11-25"), budget=0)
+    assert str(eq["date"].dtype).startswith("datetime64") and str(co["date"].dtype).startswith("datetime64") and len(eq) > 600
+    px = pd.Series([2000.0, 2010.0], index=pd.to_datetime(["2026-11-24", "2026-11-25"]))
+    N = T.build(eq, co, px, status)
+    assert N["available"] and N["all"]["available"] and N["equity"]["available"] and N["commodity"]["available"] and len(N["equity_monthly"]) > 20
