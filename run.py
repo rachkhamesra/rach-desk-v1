@@ -99,7 +99,8 @@ def main():
         nse_px = nse_tracker.load_share_price(a.root, end)
         M["nse_tracker"] = nse_tracker.build(nse_eq, nse_co, nse_px, nse_status, mcx=(M.get("mcx_tracker") or {}).get("series"))
         if M["nse_tracker"].get("available"): print(f"NSE options tracker: {nse_status}")
-    except Exception as e: M["nse_tracker"] = None; print(f"NSE options tracker skipped: {type(e).__name__}: {e}")
+    except Exception as e:
+        M["nse_tracker"] = {"available": False, "status": f"The NSE tracker could not be built in this run ({type(e).__name__}: {e})."}; print(f"NSE options tracker skipped: {type(e).__name__}: {e}")
     os.makedirs(a.out, exist_ok=True)
     page = webpage.render(M, f"AS OF {M['dates'][-1]:%a %d %b %Y}".upper() + warn)
     M["events"].to_csv(os.path.join(a.out, "corporate_actions.csv"), index=False)       # audit log only, not shown in the UI

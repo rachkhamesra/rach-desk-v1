@@ -91,8 +91,15 @@ def commodity_summary(df):
 
 
 # ------------------------------------------------------------------ files: seed + cache, fetch what is missing
+def _empty(cols):
+    """An empty frame whose date column is a real datetime (an object-dtype empty frame turns the whole column to object when concatenated, and .dt then fails: that is how a fresh
+    build server with no cache once lost the NSE tracker)."""
+    df = pd.DataFrame({c: pd.Series(dtype="datetime64[ns]" if c == "date" else "object") for c in cols})
+    return df
+
+
 def _read(path, cols):
-    if not os.path.exists(path): return pd.DataFrame(columns=cols)
+    if not os.path.exists(path): return _empty(cols)
     df = pd.read_csv(path)
     df["date"] = pd.to_datetime(df["date"], errors="coerce").dt.normalize()
     return df.dropna(subset=["date"])
@@ -130,7 +137,7 @@ def load(root, end, budget=160, workers=6, log=print, seed_dir=os.path.join(HERE
     end = pd.Timestamp(end).normalize()
     eq = pd.concat([_read(os.path.join(seed_dir, "nse_options_seed.csv"), EQ_COLS), _read(os.path.join(root, EQ_FILE), EQ_COLS)], ignore_index=True).drop_duplicates("date", keep="last")
     co = pd.concat([_read(os.path.join(seed_dir, "nse_commodity_seed.csv"), CO_COLS), _read(os.path.join(root, CO_FILE), CO_COLS)], ignore_index=True).drop_duplicates(["date", "underlying"], keep="last")
-    nof = _read(os.path.join(root, NOFILE), ["date", "segment"]) if os.path.exists(os.path.join(root, NOFILE)) else pd.DataFrame(columns=["date", "segment"])
+    nof = _read(os.path.join(root, NOFILE), ["date", "segment"])
     nofile = {(r.date, r.segment) for r in nof.itertuples()}; new_nofile = set(); problems = []
     days = [d for d in pd.bdate_range(START, end)]
 
@@ -159,6 +166,7 @@ def load(root, end, budget=160, workers=6, log=print, seed_dir=os.path.join(HERE
     have_co = set(co["date"])
     for d, rows in work("co", CO_URL, commodity_summary, have_co):
         if rows: co = pd.concat([co, pd.DataFrame([dict(date=d, underlying=u, **r) for u, r in rows])], ignore_index=True); added += 1
+    eq["date"] = pd.to_datetime(eq["date"]); co["date"] = pd.to_datetime(co["date"])                  # whatever was concatenated, the dates are datetimes
     eq = eq.drop_duplicates("date", keep="last").sort_values("date").reset_index(drop=True)
     co = co.drop_duplicates(["date", "underlying"], keep="last").sort_values(["date", "underlying"]).reset_index(drop=True)
     if added or new_nofile:
