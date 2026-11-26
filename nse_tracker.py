@@ -26,7 +26,8 @@ CO_URL = BASE + "/content/com/BhavCopy_NSE_CO_0_0_0_{d:%Y%m%d}_F_0000.csv.zip"
 UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36", "Accept": "*/*"}
 START = pd.Timestamp("2024-01-01")
 HERE = os.path.dirname(os.path.abspath(__file__))
-EQ_FILE, CO_FILE, NOFILE = "nse_options_daily.csv", "nse_commodity_daily.csv", "nse_options_nofile.csv"
+EQ_FILE, CO_FILE, NOFILE, PX_FILE = "nse_options_daily.csv", "nse_commodity_daily.csv", "nse_options_nofile.csv", "nse_share_price.csv"
+LIST_DATE = pd.Timestamp("2026-09-24")      # National Stock Exchange of India shares began trading on BSE
 EQ_COLS = ["date", "idx_contracts", "idx_premium_cr", "idx_notional_cr", "stk_contracts", "stk_premium_cr", "stk_notional_cr"]
 CO_COLS = ["date", "underlying", "contracts", "premium_cr", "notional_cr", "trades", "expiries"]
 OPTION_TYPES_EQ = ("IDO", "STO")
@@ -99,6 +100,7 @@ def _read(path, cols):
 
 def _write(path, df):
     os.makedirs(os.path.dirname(path), exist_ok=True)
+    df = df.assign(date=pd.to_datetime(df["date"]).dt.normalize())
     df.sort_values([c for c in ("date", "underlying") if c in df.columns]).to_csv(path, index=False, date_format="%Y-%m-%d")
 
 
@@ -170,6 +172,43 @@ def load(root, end, budget=160, workers=6, log=print, seed_dir=os.path.join(HERE
               else "NSE options data is not available yet")
     if missing > 5: status += f" · {missing} older sessions still to be filled in"
     return eq[eq["date"] <= end], co[co["date"] <= end], status
+
+
+def _bse_cm_url():
+    import nse
+    return nse.URL["bsecm"], nse.HDR.get("bsecm", UA)
+
+
+def share_close(content):
+    """The closing price of National Stock Exchange of India's share from a BSE equity bhavcopy (csv bytes), or None when it is not in the file."""
+    df = pd.read_csv(io.BytesIO(content), usecols=lambda c: c in ("TckrSymb", "FinInstrmNm", "ClsPric"))
+    m = df[(df["TckrSymb"].astype(str).str.strip() == "NSE") & df["FinInstrmNm"].astype(str).str.contains("National Stock", case=False)]
+    return None if m.empty else float(pd.to_numeric(m["ClsPric"], errors="coerce").iloc[0])
+
+
+def load_share_price(root, end, workers=6, log=print, seed_dir=os.path.join(HERE, "config")):
+    """Daily closes of NSE's own share (BSE: NSE) from its listing date, from the seed, the cache and, for sessions not yet held, the BSE bhavcopy: the desk's NSE price file does not carry it,
+    since the share trades on BSE. A Series indexed by date; short because the share is new."""
+    end = pd.Timestamp(end).normalize()
+    have = pd.concat([_read(os.path.join(seed_dir, "nse_share_seed.csv"), ["date", "close"]), _read(os.path.join(root, PX_FILE), ["date", "close"])], ignore_index=True).drop_duplicates("date", keep="last")
+    seen = set(have["date"]); url, hdr = _bse_cm_url(); sess = requests.Session(); new = []
+    days = [d for d in pd.bdate_range(LIST_DATE, end) if d not in seen]
+
+    def one(d):
+        try:
+            p = os.path.join(root, "raw", "bsecm", f"{d:%Y%m%d}.csv")
+            if os.path.exists(p): return d, share_close(open(p, "rb").read())
+            r = sess.get(url.format(d=d), headers=hdr, timeout=45)
+            return (d, share_close(r.content)) if r.status_code == 200 else (d, None)
+        except Exception:
+            return d, None
+    with ThreadPoolExecutor(workers) as ex:
+        for d, c in ex.map(one, days):
+            if c is not None: new.append(dict(date=d, close=c))
+    if new:
+        have = pd.concat([have, pd.DataFrame(new)], ignore_index=True).drop_duplicates("date", keep="last"); _write(os.path.join(root, PX_FILE), have[["date", "close"]])
+    have = have.sort_values("date")
+    return pd.Series(have["close"].values, index=pd.DatetimeIndex(have["date"]))
 
 
 # ------------------------------------------------------------------ the dashboard data
@@ -247,7 +286,23 @@ def build_commodity(co):
     return dict(available=True, asof=asof, daily=daily, monthly=months, cumulative=cum, events=events, by_underlying=by_u, commentary=com)
 
 
-def build(eq, co, prices, status=""):
+def share_of_combined(eq, co, mcx, days=92):
+    """NSE commodity options' share of NSE commodity plus MCX options premium turnover over a rolling three calendar months, at each MCX date. A point needs a full window of both, so the
+    series starts three months after MCX's history does. None when there is no MCX history. (Equity options are left out: they have no MCX counterpart, so comparing them with MCX says nothing.)"""
+    if mcx is None or len(mcx) == 0 or eq is None or len(eq) == 0: return None
+    m = pd.Series(mcx["premium_turnover_cr"].values, index=pd.DatetimeIndex(mcx["date"])).sort_index()
+    m = m[~m.index.duplicated(keep="last")]
+    if co is None or len(co) == 0: return None
+    nse_co = co.groupby("date")["premium_cr"].sum(); nse_co.index = pd.DatetimeIndex(nse_co.index)
+    roll = lambda x: x.rolling(f"{days}D").sum()
+    at = m.index[m.index >= m.index[0] + pd.Timedelta(days=days)]
+    if len(at) == 0: return None
+    c, mm = roll(nse_co).reindex(at, method="ffill"), roll(m).reindex(at)
+    out = pd.DataFrame({"date": at, "share_commodity": (c / (c + mm) * 100).values, "nse_commodity": c.values, "mcx": mm.values}).dropna()
+    return out.reset_index(drop=True) if len(out) else None
+
+
+def build(eq, co, prices, status="", mcx=None):                # prices: NSE's own share price (see load_share_price); mcx: the MCX tracker's daily premium turnover
     """{all, equity, equity_monthly, commodity, status}: the all-NSE and equity series in the shape the BSE and MCX trackers use, plus the commodity analysis."""
     import exchange_tracker
     eq = eq.copy() if eq is not None else pd.DataFrame(columns=EQ_COLS)
@@ -263,7 +318,7 @@ def build(eq, co, prices, status=""):
         h.attrs["update_status"] = status
         X = exchange_tracker.build(h, px)
         if X.get("available"):
-            X.update(source="https://www.nseindia.com/all-reports-derivatives", source_label="NSE UDIFF BHAVCOPY", price_label="Nifty", comparison_title=X["comparison_title"].replace("YTD", "YTD"), what=what)
+            X.update(source="https://www.nseindia.com/all-reports-derivatives", source_label="NSE UDIFF BHAVCOPY", price_label="NSE price", what=what)
         return X
 
     X_all = tracker(allv, "all", "Equity and commodity options")
@@ -271,4 +326,4 @@ def build(eq, co, prices, status=""):
     m = eq.assign(month=eq["date"].dt.to_period("M")).groupby("month").agg(idx=("idx_premium_cr", "mean"), stk=("stk_premium_cr", "mean"), sessions=("date", "count"),
                                                                        idx_c=("idx_contracts", "mean"), stk_c=("stk_contracts", "mean")).reset_index()
     m["month"] = m["month"].astype(str); m["idx_share"] = m["idx"] / (m["idx"] + m["stk"]) * 100
-    return {"available": True, "status": status, "all": X_all, "equity": X_eq, "equity_monthly": m, "commodity": build_commodity(co if co is not None else pd.DataFrame(columns=CO_COLS))}
+    return {"available": True, "status": status, "all": X_all, "equity": X_eq, "equity_monthly": m, "commodity": build_commodity(co if co is not None else pd.DataFrame(columns=CO_COLS)), "share": share_of_combined(eq, co, mcx)}

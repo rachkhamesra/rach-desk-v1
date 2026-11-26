@@ -96,7 +96,8 @@ def main():
         print(f"MCX Tracker refreshed through {M['mcx_tracker']['asof']:%d %b %Y}")
     try:
         nse_eq, nse_co, nse_status = nse_tracker.load(a.root, end)
-        M["nse_tracker"] = nse_tracker.build(nse_eq, nse_co, M["nifty"], nse_status)
+        nse_px = nse_tracker.load_share_price(a.root, end)
+        M["nse_tracker"] = nse_tracker.build(nse_eq, nse_co, nse_px, nse_status, mcx=(M.get("mcx_tracker") or {}).get("series"))
         if M["nse_tracker"].get("available"): print(f"NSE options tracker: {nse_status}")
     except Exception as e: M["nse_tracker"] = None; print(f"NSE options tracker skipped: {type(e).__name__}: {e}")
     os.makedirs(a.out, exist_ok=True)
