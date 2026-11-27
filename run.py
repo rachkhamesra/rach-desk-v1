@@ -3,7 +3,7 @@
 import argparse, json, os, sys, time
 import pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import nse_tracker, sectors, timeline, nse, metrics, corp_feed, shorts, patterns, pattern_replay, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
+import ranges, nse_tracker, sectors, timeline, nse, metrics, corp_feed, shorts, patterns, pattern_replay, webpage, results, universes, calls, exchange_tracker, mcx_tracker, heat, power, backtest
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MARKER = "published.json"
@@ -80,6 +80,9 @@ def main():
     except Exception as e: M["patterns"] = None; print(f"technical patterns skipped: {type(e).__name__}: {e}")
     try: M["sector_clusters"] = sectors.clusters(M)       # several stocks of one kind of business near a breakout together
     except Exception as e: M["sector_clusters"] = []; print(f"sector clusters skipped: {type(e).__name__}: {e}")
+    try: M["ranges"] = ranges.build(M)                      # the stricter rectangle, as a trade (experimental, beside the old rectangle)
+    except Exception as e: M["ranges"] = None; print(f"range breakouts skipped: {type(e).__name__}: {e}")
+    M["range_replay"] = ranges.load_replay()
     M["pattern_replay"] = pattern_replay.load_saved()       # results of `python pattern_replay.py`, run locally
     try: M["timeline"] = timeline.build()                 # the story of how the page evolved, from config/timeline.json and the repository's history
     except Exception as e: M["timeline"] = None; print(f"timeline skipped: {type(e).__name__}: {e}")
