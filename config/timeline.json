@@ -1,5 +1,5 @@
 {
- "covered_pr": 101,
+ "covered_pr": 102,
  "phases": [
   {
    "key": "foundation",
@@ -727,6 +727,18 @@
    "title": "NSE tracker blank on the live site",
    "what": "The NSE view was empty after the first live build: on a build server with no cache the tracker's date column came out as plain objects, a newer pandas then refused it, and the failure was swallowed. The dates are now always datetimes, a test builds the tracker with no cache at all, and a failure now shows its reason on the page.",
    "insight": "The tracker had only ever been built where its cache files already existed. A fresh runner exposed the gap, which is why a cold-start test now exists."
+  },
+  {
+   "date": "2026-11-27",
+   "phase": "efficiency",
+   "kind": "added",
+   "tab": "Technical Patterns",
+   "prs": [
+    102
+   ],
+   "title": "Ranges: a stricter rectangle, judged as a trade",
+   "what": "A new sub-tab beside the old Rectangle one (which is untouched): a horizontal range whose breaking boundary has three touches, with touches that alternate between the sides, closes that cross the middle, and a trade plan (entry, stop at the middle, measured-move target, prior trend). Every past break is replayed as a trade in R against the old rectangle scan.",
+   "insight": "On 1,901 past breaks the new ranges had an expectancy between -0.07R and +0.02R per trade in the large groups, an average win of at most 1.4R and at most 3% of trades reaching 4R: no sign of the asymmetry that a 35-45% win rate needs. Daily breakdowns taken to the measured move did best, at +0.13R on 922 trades. The old rectangle finds far fewer breaks (68 up and 119 down on the daily scan against 562 and 927)."
   }
  ],
  "repo": "rachkhamesra/rach-desk-v1"
